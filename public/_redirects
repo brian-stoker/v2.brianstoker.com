@@ -1,0 +1,38 @@
+# Link used in the demos, avoid 404
+/drafts / 301
+/inbox* / 301
+/trash / 301
+/spam / 301
+/sign-up / 301
+
+## SUI Store
+/store-asset/* https://mui-store.netlify.app/:splat 200
+/store/* https://mui-store.netlify.app/store/:splat 200
+/r/store-* https://mui-store.netlify.app/r/store-:splat 200
+/legal/* https://mui-store.netlify.app/legal/:splat 200
+/r/legal-* https://mui-store.netlify.app/r/legal-:splat 200
+/.well-known/apple-developer-merchantid-domain-association https://store-wp.mui.com/.well-known/apple-developer-merchantid-domain-association 200
+
+## SUI X
+## Unlike the store that expect to be hosted under a subfolder,
+## SUI X is configured to be hosted at the root.
+/static/x/* https://stoked-ui-x.netlify.app/static/x/:splat 200
+/x/_next/* https://stoked-ui-x.netlify.app/_next/:splat 200
+/x/* https://stoked-ui-x.netlify.app/x/:splat 200
+/r/x-* https://stoked-ui-x.netlify.app/r/x-:splat 200
+/:lang/x/* https://stoked-ui-x.netlify.app/:lang/x/:splat 200
+
+## SUI Toolpad
+/static/toolpad/* https://mui-toolpad-docs.netlify.app/static/toolpad/:splat 200
+/toolpad/_next/* https://mui-toolpad-docs.netlify.app/_next/:splat 200
+/toolpad/* https://mui-toolpad-docs.netlify.app/toolpad/:splat 200
+/r/toolpad-* https://mui-toolpad-docs.netlify.app/r/toolpad-:splat 200
+
+### SUI Design kits
+/figma/getting-started/ /stoked-ui/design-resources/stoked-ui-for-figma/ 302
+/r/stoked-ui-figma-* https://mui-store.netlify.app/r/stoked-ui-figma-:splat 200
+/r/joy-ui-figma-* https://mui-store.netlify.app/r/joy-ui-figma-:splat 200
+
+### SUI File Explorer
+/file-explorer/ /file-explorer/overview 301
+/file-explorer/ / 301

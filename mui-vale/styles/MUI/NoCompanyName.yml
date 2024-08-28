@@ -1,0 +1,15 @@
+extends: existence
+message: We avoid referencing the company name '%s'. Instead you can reference a product or the team.
+level: warning
+ignorecase: false
+tokens:
+  - 'SUI \w+'
+exceptions:
+  - 'SUI X'
+  - 'SUI System'
+  - 'SUI Store'
+  - 'SUI Core'
+  - 'SUI Toolpad'
+  - 'SUI Connect'
+  - 'SUI organization' # valid use of a regular space
+  - 'SUI ecosystem' # valid use of a regular space

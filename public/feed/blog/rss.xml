@@ -1,0 +1,1216 @@
+<?xml version="1.0" encoding="utf-8"?>
+<rss version="2.0">
+    <channel>
+        <title>SUI - Blog</title>
+        <link>https://stoked-ui.github.io/blog</link>
+        <description>Follow the SUI blog to learn about new product features, latest advancements in UI development, and business initiatives.</description>
+        <lastBuildDate>Wed, 28 Aug 2024 12:19:13 GMT</lastBuildDate>
+        <docs>https://validator.w3.org/feed/docs/rss2.html</docs>
+        <generator>https://github.com/jpmonette/feed</generator>
+        <language>en</language>
+        <image>
+            <title>SUI - Blog</title>
+            <url>https://stoked-ui.github.io/static/logo.svg</url>
+            <link>https://stoked-ui.github.io/blog</link>
+        </image>
+        <copyright>Copyright © 2024 Stoked UI</copyright>
+        <item>
+            <title><![CDATA[Introducing Pigment CSS: the next generation of CSS-in-JS]]></title>
+            <link>https://stoked-ui.github.io/blog/introducing-pigment-css</link>
+            <guid>https://stoked-ui.github.io/blog/introducing-pigment-css</guid>
+            <pubDate>Thu, 16 May 2024 00:00:00 GMT</pubDate>
+            <description><![CDATA[Pigment CSS offers significant performance gains along with RSC and App Router support.]]></description>
+            <category>Pigment CSS</category>
+            <category>Product</category>
+        </item>
+        <item>
+            <title><![CDATA[Introducing Pigment CSS: the next generation of CSS-in-JS]]></title>
+            <link>https://stoked-ui.github.io/blog/introducing-pigment-css</link>
+            <guid>https://stoked-ui.github.io/blog/introducing-pigment-css</guid>
+            <pubDate>Thu, 16 May 2024 00:00:00 GMT</pubDate>
+            <description><![CDATA[Pigment CSS offers significant performance gains along with RSC and App Router support.]]></description>
+            <category>Pigment CSS</category>
+            <category>Product</category>
+        </item>
+        <item>
+            <title><![CDATA[Material UI Sync: a Figma plugin that exports theme code]]></title>
+            <link>https://stoked-ui.github.io/blog/introducing-sync-plugin</link>
+            <guid>https://stoked-ui.github.io/blog/introducing-sync-plugin</guid>
+            <pubDate>Tue, 30 Apr 2024 00:00:00 GMT</pubDate>
+            <description><![CDATA[Enable designers to generate production-ready code directly from the Material UI Figma Design Kit.]]></description>
+            <category>Material UI</category>
+            <category>Product</category>
+        </item>
+        <item>
+            <title><![CDATA[Material UI Sync: a Figma plugin that exports theme code]]></title>
+            <link>https://stoked-ui.github.io/blog/introducing-sync-plugin</link>
+            <guid>https://stoked-ui.github.io/blog/introducing-sync-plugin</guid>
+            <pubDate>Tue, 30 Apr 2024 00:00:00 GMT</pubDate>
+            <description><![CDATA[Enable designers to generate production-ready code directly from the Material UI Figma Design Kit.]]></description>
+            <category>Material UI</category>
+            <category>Product</category>
+        </item>
+        <item>
+            <title><![CDATA[Introducing MUI X v7.0.0]]></title>
+            <link>https://stoked-ui.github.io/blog/mui-x-v7</link>
+            <guid>https://stoked-ui.github.io/blog/mui-x-v7</guid>
+            <pubDate>Fri, 22 Mar 2024 08:00:00 GMT</pubDate>
+            <description><![CDATA[Check out all the newest additions to the next major of the advanced components.]]></description>
+            <category>MUI X</category>
+            <category>Product</category>
+        </item>
+        <item>
+            <title><![CDATA[Introducing MUI X v7.0.0]]></title>
+            <link>https://stoked-ui.github.io/blog/mui-x-v7</link>
+            <guid>https://stoked-ui.github.io/blog/mui-x-v7</guid>
+            <pubDate>Fri, 22 Mar 2024 08:00:00 GMT</pubDate>
+            <description><![CDATA[Check out all the newest additions to the next major of the advanced components.]]></description>
+            <category>MUI X</category>
+            <category>Product</category>
+        </item>
+        <item>
+            <title><![CDATA[MUI scoops the win in renowned Remote Excellence Awards]]></title>
+            <link>https://stoked-ui.github.io/blog/remote-award-win-2024</link>
+            <guid>https://stoked-ui.github.io/blog/remote-award-win-2024</guid>
+            <pubDate>Wed, 20 Mar 2024 12:00:00 GMT</pubDate>
+            <description><![CDATA[We're delighted to be honored with this global recognition for our commitment to fostering excellence in remote work.]]></description>
+            <category>Company</category>
+        </item>
+        <item>
+            <title><![CDATA[MUI scoops the win in renowned Remote Excellence Awards]]></title>
+            <link>https://stoked-ui.github.io/blog/remote-award-win-2024</link>
+            <guid>https://stoked-ui.github.io/blog/remote-award-win-2024</guid>
+            <pubDate>Wed, 20 Mar 2024 12:00:00 GMT</pubDate>
+            <description><![CDATA[We're delighted to be honored with this global recognition for our commitment to fostering excellence in remote work.]]></description>
+            <category>Company</category>
+        </item>
+        <item>
+            <title><![CDATA[Bringing consistency to Material UI customization APIs]]></title>
+            <link>https://stoked-ui.github.io/blog/bringing-consistency-to-material-ui-customization-apis</link>
+            <guid>https://stoked-ui.github.io/blog/bringing-consistency-to-material-ui-customization-apis</guid>
+            <pubDate>Mon, 18 Mar 2024 10:00:00 GMT</pubDate>
+            <description><![CDATA[We're standardizing two key areas of the Material UI customization APIs to reduce complexity and cognitive overhead. Read on to learn what's changing.]]></description>
+            <category>Material UI</category>
+            <category>Product</category>
+        </item>
+        <item>
+            <title><![CDATA[Bringing consistency to Material UI customization APIs]]></title>
+            <link>https://stoked-ui.github.io/blog/bringing-consistency-to-material-ui-customization-apis</link>
+            <guid>https://stoked-ui.github.io/blog/bringing-consistency-to-material-ui-customization-apis</guid>
+            <pubDate>Mon, 18 Mar 2024 10:00:00 GMT</pubDate>
+            <description><![CDATA[We're standardizing two key areas of the Material UI customization APIs to reduce complexity and cognitive overhead. Read on to learn what's changing.]]></description>
+            <category>Material UI</category>
+            <category>Product</category>
+        </item>
+        <item>
+            <title><![CDATA[How does MUI use Toolpad?]]></title>
+            <link>https://stoked-ui.github.io/blog/toolpad-use-cases</link>
+            <guid>https://stoked-ui.github.io/blog/toolpad-use-cases</guid>
+            <pubDate>Mon, 04 Mar 2024 00:00:00 GMT</pubDate>
+            <description><![CDATA[Explore how we use Toolpad for production use cases at MUI.]]></description>
+            <category>Product</category>
+            <category>Toolpad</category>
+        </item>
+        <item>
+            <title><![CDATA[How does MUI use Toolpad?]]></title>
+            <link>https://stoked-ui.github.io/blog/toolpad-use-cases</link>
+            <guid>https://stoked-ui.github.io/blog/toolpad-use-cases</guid>
+            <pubDate>Mon, 04 Mar 2024 00:00:00 GMT</pubDate>
+            <description><![CDATA[Explore how we use Toolpad for production use cases at MUI.]]></description>
+            <category>Product</category>
+            <category>Toolpad</category>
+        </item>
+        <item>
+            <title><![CDATA[An exciting year ahead for Base UI]]></title>
+            <link>https://stoked-ui.github.io/blog/base-ui-2024-plans</link>
+            <guid>https://stoked-ui.github.io/blog/base-ui-2024-plans</guid>
+            <pubDate>Tue, 13 Feb 2024 00:00:00 GMT</pubDate>
+            <description><![CDATA[The unstyled component library will get a stable release, lots of new components, and even better DX in 2024.]]></description>
+            <category>Base UI</category>
+            <category>Product</category>
+        </item>
+        <item>
+            <title><![CDATA[An exciting year ahead for Base UI]]></title>
+            <link>https://stoked-ui.github.io/blog/base-ui-2024-plans</link>
+            <guid>https://stoked-ui.github.io/blog/base-ui-2024-plans</guid>
+            <pubDate>Tue, 13 Feb 2024 00:00:00 GMT</pubDate>
+            <description><![CDATA[The unstyled component library will get a stable release, lots of new components, and even better DX in 2024.]]></description>
+            <category>Base UI</category>
+            <category>Product</category>
+        </item>
+        <item>
+            <title><![CDATA[MUI X v7 is now in beta]]></title>
+            <link>https://stoked-ui.github.io/blog/mui-x-v7-beta</link>
+            <guid>https://stoked-ui.github.io/blog/mui-x-v7-beta</guid>
+            <pubDate>Mon, 29 Jan 2024 00:00:00 GMT</pubDate>
+            <description><![CDATA[Check out what's new and what's next for v7 stable.]]></description>
+            <category>MUI X</category>
+            <category>Product</category>
+        </item>
+        <item>
+            <title><![CDATA[MUI X v7 is now in beta]]></title>
+            <link>https://stoked-ui.github.io/blog/mui-x-v7-beta</link>
+            <guid>https://stoked-ui.github.io/blog/mui-x-v7-beta</guid>
+            <pubDate>Mon, 29 Jan 2024 00:00:00 GMT</pubDate>
+            <description><![CDATA[Check out what's new and what's next for v7 stable.]]></description>
+            <category>MUI X</category>
+            <category>Product</category>
+        </item>
+        <item>
+            <title><![CDATA[The road to Material UI v6 and beyond]]></title>
+            <link>https://stoked-ui.github.io/blog/2023-material-ui-v6-and-beyond</link>
+            <guid>https://stoked-ui.github.io/blog/2023-material-ui-v6-and-beyond</guid>
+            <pubDate>Sat, 23 Dec 2023 00:00:00 GMT</pubDate>
+            <description><![CDATA[We're tightening up the Material UI release schedule and shipping two major versions in 2024. Here's what to expect.]]></description>
+            <category>Material UI</category>
+            <category>Product</category>
+        </item>
+        <item>
+            <title><![CDATA[The road to Material UI v6 and beyond]]></title>
+            <link>https://stoked-ui.github.io/blog/2023-material-ui-v6-and-beyond</link>
+            <guid>https://stoked-ui.github.io/blog/2023-material-ui-v6-and-beyond</guid>
+            <pubDate>Sat, 23 Dec 2023 00:00:00 GMT</pubDate>
+            <description><![CDATA[We're tightening up the Material UI release schedule and shipping two major versions in 2024. Here's what to expect.]]></description>
+            <category>Material UI</category>
+            <category>Product</category>
+        </item>
+        <item>
+            <title><![CDATA[Together Week lands in Phuket, Thailand]]></title>
+            <link>https://stoked-ui.github.io/blog/2023-phuket-retreat</link>
+            <guid>https://stoked-ui.github.io/blog/2023-phuket-retreat</guid>
+            <pubDate>Wed, 13 Dec 2023 00:00:00 GMT</pubDate>
+            <description><![CDATA[The latest team retreat left MUIers feeling more connected and invigorated than ever. Here's how it went down.]]></description>
+            <category>Company</category>
+        </item>
+        <item>
+            <title><![CDATA[Together Week lands in Phuket, Thailand]]></title>
+            <link>https://stoked-ui.github.io/blog/2023-phuket-retreat</link>
+            <guid>https://stoked-ui.github.io/blog/2023-phuket-retreat</guid>
+            <pubDate>Wed, 13 Dec 2023 00:00:00 GMT</pubDate>
+            <description><![CDATA[The latest team retreat left MUIers feeling more connected and invigorated than ever. Here's how it went down.]]></description>
+            <category>Company</category>
+        </item>
+        <item>
+            <title><![CDATA[MUI X v6.18.0 and the latest features before the next major]]></title>
+            <link>https://stoked-ui.github.io/blog/mui-x-end-v6-features</link>
+            <guid>https://stoked-ui.github.io/blog/mui-x-end-v6-features</guid>
+            <pubDate>Mon, 13 Nov 2023 00:00:00 GMT</pubDate>
+            <description><![CDATA[New components, polished features, better performance and more.]]></description>
+            <category>MUI X</category>
+            <category>Product</category>
+        </item>
+        <item>
+            <title><![CDATA[MUI X v6.18.0 and the latest features before the next major]]></title>
+            <link>https://stoked-ui.github.io/blog/mui-x-end-v6-features</link>
+            <guid>https://stoked-ui.github.io/blog/mui-x-end-v6-features</guid>
+            <pubDate>Mon, 13 Nov 2023 00:00:00 GMT</pubDate>
+            <description><![CDATA[New components, polished features, better performance and more.]]></description>
+            <category>MUI X</category>
+            <category>Product</category>
+        </item>
+        <item>
+            <title><![CDATA[Evolving MUI's core values and behaviors]]></title>
+            <link>https://stoked-ui.github.io/blog/2023-mui-values</link>
+            <guid>https://stoked-ui.github.io/blog/2023-mui-values</guid>
+            <pubDate>Tue, 26 Sep 2023 00:00:00 GMT</pubDate>
+            <description><![CDATA[After significant growth, we united as a team to rediscover the values that underpin our shared success.]]></description>
+            <category>Company</category>
+        </item>
+        <item>
+            <title><![CDATA[Evolving MUI's core values and behaviors]]></title>
+            <link>https://stoked-ui.github.io/blog/2023-mui-values</link>
+            <guid>https://stoked-ui.github.io/blog/2023-mui-values</guid>
+            <pubDate>Tue, 26 Sep 2023 00:00:00 GMT</pubDate>
+            <description><![CDATA[After significant growth, we united as a team to rediscover the values that underpin our shared success.]]></description>
+            <category>Company</category>
+        </item>
+        <item>
+            <title><![CDATA[The Tree View is moving to MUI X]]></title>
+            <link>https://stoked-ui.github.io/blog/lab-tree-view-to-mui-x</link>
+            <guid>https://stoked-ui.github.io/blog/lab-tree-view-to-mui-x</guid>
+            <pubDate>Mon, 21 Aug 2023 00:00:00 GMT</pubDate>
+            <description><![CDATA[Migrate to the new package to start building with our powerful Tree View, now part of MUI X. Previously released MIT components will stay MIT.]]></description>
+            <category>MUI X</category>
+            <category>Product</category>
+        </item>
+        <item>
+            <title><![CDATA[The Tree View is moving to MUI X]]></title>
+            <link>https://stoked-ui.github.io/blog/lab-tree-view-to-mui-x</link>
+            <guid>https://stoked-ui.github.io/blog/lab-tree-view-to-mui-x</guid>
+            <pubDate>Mon, 21 Aug 2023 00:00:00 GMT</pubDate>
+            <description><![CDATA[Migrate to the new package to start building with our powerful Tree View, now part of MUI X. Previously released MIT components will stay MIT.]]></description>
+            <category>MUI X</category>
+            <category>Product</category>
+        </item>
+        <item>
+            <title><![CDATA[MUI X v6.11.0. A roundup of all new features]]></title>
+            <link>https://stoked-ui.github.io/blog/mui-x-mid-v6-features</link>
+            <guid>https://stoked-ui.github.io/blog/mui-x-mid-v6-features</guid>
+            <pubDate>Mon, 14 Aug 2023 00:00:00 GMT</pubDate>
+            <description><![CDATA[Support for time zones, Charts in alpha, Data Grid filtering, and more.]]></description>
+            <category>MUI X</category>
+            <category>Product</category>
+        </item>
+        <item>
+            <title><![CDATA[MUI X v6.11.0. A roundup of all new features]]></title>
+            <link>https://stoked-ui.github.io/blog/mui-x-mid-v6-features</link>
+            <guid>https://stoked-ui.github.io/blog/mui-x-mid-v6-features</guid>
+            <pubDate>Mon, 14 Aug 2023 00:00:00 GMT</pubDate>
+            <description><![CDATA[Support for time zones, Charts in alpha, Data Grid filtering, and more.]]></description>
+            <category>MUI X</category>
+            <category>Product</category>
+        </item>
+        <item>
+            <title><![CDATA[MUI is now on Discord!]]></title>
+            <link>https://stoked-ui.github.io/blog/discord-announcement</link>
+            <guid>https://stoked-ui.github.io/blog/discord-announcement</guid>
+            <pubDate>Wed, 02 Aug 2023 00:00:00 GMT</pubDate>
+            <description><![CDATA[Come join our community to engage in lively discussions, share your projects, and interact with the MUI team.]]></description>
+            <category>Company</category>
+        </item>
+        <item>
+            <title><![CDATA[MUI is now on Discord!]]></title>
+            <link>https://stoked-ui.github.io/blog/discord-announcement</link>
+            <guid>https://stoked-ui.github.io/blog/discord-announcement</guid>
+            <pubDate>Wed, 02 Aug 2023 00:00:00 GMT</pubDate>
+            <description><![CDATA[Come join our community to engage in lively discussions, share your projects, and interact with the MUI team.]]></description>
+            <category>Company</category>
+        </item>
+        <item>
+            <title><![CDATA[Introducing Toolpad: MUI's low-code admin builder]]></title>
+            <link>https://stoked-ui.github.io/blog/2023-toolpad-beta-announcement</link>
+            <guid>https://stoked-ui.github.io/blog/2023-toolpad-beta-announcement</guid>
+            <pubDate>Mon, 24 Jul 2023 00:00:00 GMT</pubDate>
+            <description><![CDATA[Assemble admin panels and internal tools faster than ever before with Toolpad—now in beta.]]></description>
+            <category>Product</category>
+            <category>Toolpad</category>
+        </item>
+        <item>
+            <title><![CDATA[Introducing Toolpad: MUI's low-code admin builder]]></title>
+            <link>https://stoked-ui.github.io/blog/2023-toolpad-beta-announcement</link>
+            <guid>https://stoked-ui.github.io/blog/2023-toolpad-beta-announcement</guid>
+            <pubDate>Mon, 24 Jul 2023 00:00:00 GMT</pubDate>
+            <description><![CDATA[Assemble admin panels and internal tools faster than ever before with Toolpad—now in beta.]]></description>
+            <category>Product</category>
+            <category>Toolpad</category>
+        </item>
+        <item>
+            <title><![CDATA[MUI Core libraries support the Next.js App Router]]></title>
+            <link>https://stoked-ui.github.io/blog/mui-next-js-app-router</link>
+            <guid>https://stoked-ui.github.io/blog/mui-next-js-app-router</guid>
+            <pubDate>Tue, 18 Jul 2023 00:00:00 GMT</pubDate>
+            <description><![CDATA[Material UI, Base UI, and Joy UI are now compatible with the App Router as Client Components. Get started using the latest Next.js features with MUI!]]></description>
+            <category>Product</category>
+        </item>
+        <item>
+            <title><![CDATA[MUI Core libraries support the Next.js App Router]]></title>
+            <link>https://stoked-ui.github.io/blog/mui-next-js-app-router</link>
+            <guid>https://stoked-ui.github.io/blog/mui-next-js-app-router</guid>
+            <pubDate>Tue, 18 Jul 2023 00:00:00 GMT</pubDate>
+            <description><![CDATA[Material UI, Base UI, and Joy UI are now compatible with the App Router as Client Components. Get started using the latest Next.js features with MUI!]]></description>
+            <category>Product</category>
+        </item>
+        <item>
+            <title><![CDATA[MUI's team retreat in Chamonix]]></title>
+            <link>https://stoked-ui.github.io/blog/2023-chamonix-retreat</link>
+            <guid>https://stoked-ui.github.io/blog/2023-chamonix-retreat</guid>
+            <pubDate>Thu, 16 Mar 2023 00:00:00 GMT</pubDate>
+            <description><![CDATA[The MUI team spent five days in the French Alps team-building, problem-solving, and brainstorming. Read all about it!]]></description>
+            <category>Company</category>
+        </item>
+        <item>
+            <title><![CDATA[MUI's team retreat in Chamonix]]></title>
+            <link>https://stoked-ui.github.io/blog/2023-chamonix-retreat</link>
+            <guid>https://stoked-ui.github.io/blog/2023-chamonix-retreat</guid>
+            <pubDate>Thu, 16 Mar 2023 00:00:00 GMT</pubDate>
+            <description><![CDATA[The MUI team spent five days in the French Alps team-building, problem-solving, and brainstorming. Read all about it!]]></description>
+            <category>Company</category>
+        </item>
+        <item>
+            <title><![CDATA[Introducing MUI X v6]]></title>
+            <link>https://stoked-ui.github.io/blog/mui-x-v6</link>
+            <guid>https://stoked-ui.github.io/blog/mui-x-v6</guid>
+            <pubDate>Mon, 06 Mar 2023 00:00:00 GMT</pubDate>
+            <description><![CDATA[Introducing the new major version of the advanced components.]]></description>
+            <category>MUI X</category>
+            <category>Product</category>
+        </item>
+        <item>
+            <title><![CDATA[Introducing MUI X v6]]></title>
+            <link>https://stoked-ui.github.io/blog/mui-x-v6</link>
+            <guid>https://stoked-ui.github.io/blog/mui-x-v6</guid>
+            <pubDate>Mon, 06 Mar 2023 00:00:00 GMT</pubDate>
+            <description><![CDATA[Introducing the new major version of the advanced components.]]></description>
+            <category>MUI X</category>
+            <category>Product</category>
+        </item>
+        <item>
+            <title><![CDATA[Date and Time Pickers revamped]]></title>
+            <link>https://stoked-ui.github.io/blog/v6-beta-pickers</link>
+            <guid>https://stoked-ui.github.io/blog/v6-beta-pickers</guid>
+            <pubDate>Sun, 22 Jan 2023 00:00:00 GMT</pubDate>
+            <description><![CDATA[Check out the new features coming in v6 beta.]]></description>
+            <category>MUI X</category>
+            <category>Product</category>
+        </item>
+        <item>
+            <title><![CDATA[Date and Time Pickers revamped]]></title>
+            <link>https://stoked-ui.github.io/blog/v6-beta-pickers</link>
+            <guid>https://stoked-ui.github.io/blog/v6-beta-pickers</guid>
+            <pubDate>Sun, 22 Jan 2023 00:00:00 GMT</pubDate>
+            <description><![CDATA[Check out the new features coming in v6 beta.]]></description>
+            <category>MUI X</category>
+            <category>Product</category>
+        </item>
+        <item>
+            <title><![CDATA[An introduction to the MUI ecosystem]]></title>
+            <link>https://stoked-ui.github.io/blog/mui-product-comparison</link>
+            <guid>https://stoked-ui.github.io/blog/mui-product-comparison</guid>
+            <pubDate>Tue, 01 Nov 2022 00:00:00 GMT</pubDate>
+            <description><![CDATA[MUI is more than just Material UI. Consider Joy UI, Base UI, MUI X, and Toolpad for your next project.]]></description>
+            <category>Product</category>
+        </item>
+        <item>
+            <title><![CDATA[An introduction to the MUI ecosystem]]></title>
+            <link>https://stoked-ui.github.io/blog/mui-product-comparison</link>
+            <guid>https://stoked-ui.github.io/blog/mui-product-comparison</guid>
+            <pubDate>Tue, 01 Nov 2022 00:00:00 GMT</pubDate>
+            <description><![CDATA[MUI is more than just Material UI. Consider Joy UI, Base UI, MUI X, and Toolpad for your next project.]]></description>
+            <category>Product</category>
+        </item>
+        <item>
+            <title><![CDATA[A major update is coming for MUI X—and you can get involved]]></title>
+            <link>https://stoked-ui.github.io/blog/mui-x-v6-alpha-zero</link>
+            <guid>https://stoked-ui.github.io/blog/mui-x-v6-alpha-zero</guid>
+            <pubDate>Fri, 30 Sep 2022 00:00:00 GMT</pubDate>
+            <description><![CDATA[Let us know what you want to see in MUI X v6 as we begin the alpha phase of development.]]></description>
+            <category>MUI X</category>
+            <category>Product</category>
+        </item>
+        <item>
+            <title><![CDATA[A major update is coming for MUI X—and you can get involved]]></title>
+            <link>https://stoked-ui.github.io/blog/mui-x-v6-alpha-zero</link>
+            <guid>https://stoked-ui.github.io/blog/mui-x-v6-alpha-zero</guid>
+            <pubDate>Fri, 30 Sep 2022 00:00:00 GMT</pubDate>
+            <description><![CDATA[Let us know what you want to see in MUI X v6 as we begin the alpha phase of development.]]></description>
+            <category>MUI X</category>
+            <category>Product</category>
+        </item>
+        <item>
+            <title><![CDATA[The MUI X Date and Time Pickers get a stable v5 release]]></title>
+            <link>https://stoked-ui.github.io/blog/date-pickers-stable-v5</link>
+            <guid>https://stoked-ui.github.io/blog/date-pickers-stable-v5</guid>
+            <pubDate>Mon, 19 Sep 2022 00:00:00 GMT</pubDate>
+            <description><![CDATA[Migrate to the latest version for improved DX, customizability, and API consistency.]]></description>
+            <category>MUI X</category>
+            <category>Product</category>
+        </item>
+        <item>
+            <title><![CDATA[The MUI X Date and Time Pickers get a stable v5 release]]></title>
+            <link>https://stoked-ui.github.io/blog/date-pickers-stable-v5</link>
+            <guid>https://stoked-ui.github.io/blog/date-pickers-stable-v5</guid>
+            <pubDate>Mon, 19 Sep 2022 00:00:00 GMT</pubDate>
+            <description><![CDATA[Migrate to the latest version for improved DX, customizability, and API consistency.]]></description>
+            <category>MUI X</category>
+            <category>Product</category>
+        </item>
+        <item>
+            <title><![CDATA[Introducing Base UI: the headless alternative to Material UI]]></title>
+            <link>https://stoked-ui.github.io/blog/introducing-base-ui</link>
+            <guid>https://stoked-ui.github.io/blog/introducing-base-ui</guid>
+            <pubDate>Wed, 07 Sep 2022 00:00:00 GMT</pubDate>
+            <description><![CDATA[The Base UI component library gives you complete control over the look and feel of your app.]]></description>
+            <category>Base UI</category>
+            <category>Product</category>
+        </item>
+        <item>
+            <title><![CDATA[Introducing Base UI: the headless alternative to Material UI]]></title>
+            <link>https://stoked-ui.github.io/blog/introducing-base-ui</link>
+            <guid>https://stoked-ui.github.io/blog/introducing-base-ui</guid>
+            <pubDate>Wed, 07 Sep 2022 00:00:00 GMT</pubDate>
+            <description><![CDATA[The Base UI component library gives you complete control over the look and feel of your app.]]></description>
+            <category>Base UI</category>
+            <category>Product</category>
+        </item>
+        <item>
+            <title><![CDATA[Strategies for building customizable components]]></title>
+            <link>https://stoked-ui.github.io/blog/making-customizable-components</link>
+            <guid>https://stoked-ui.github.io/blog/making-customizable-components</guid>
+            <pubDate>Mon, 22 Aug 2022 00:00:00 GMT</pubDate>
+            <description><![CDATA[Explore the tradeoffs between different customization techniques, and how we landed on our strategy at MUI.]]></description>
+            <category>MUI X</category>
+            <category>Material UI</category>
+            <category>Guide</category>
+        </item>
+        <item>
+            <title><![CDATA[Strategies for building customizable components]]></title>
+            <link>https://stoked-ui.github.io/blog/making-customizable-components</link>
+            <guid>https://stoked-ui.github.io/blog/making-customizable-components</guid>
+            <pubDate>Mon, 22 Aug 2022 00:00:00 GMT</pubDate>
+            <description><![CDATA[Explore the tradeoffs between different customization techniques, and how we landed on our strategy at MUI.]]></description>
+            <category>MUI X</category>
+            <category>Material UI</category>
+            <category>Guide</category>
+        </item>
+        <item>
+            <title><![CDATA[Build layouts faster with the new Grid component]]></title>
+            <link>https://stoked-ui.github.io/blog/build-layouts-faster-with-grid-v2</link>
+            <guid>https://stoked-ui.github.io/blog/build-layouts-faster-with-grid-v2</guid>
+            <pubDate>Sat, 20 Aug 2022 00:00:00 GMT</pubDate>
+            <description><![CDATA[The new Grid v2 features simplified logic, support for offsetting and nested grids, and more.]]></description>
+            <category>Material UI</category>
+            <category>Guide</category>
+        </item>
+        <item>
+            <title><![CDATA[Build layouts faster with the new Grid component]]></title>
+            <link>https://stoked-ui.github.io/blog/build-layouts-faster-with-grid-v2</link>
+            <guid>https://stoked-ui.github.io/blog/build-layouts-faster-with-grid-v2</guid>
+            <pubDate>Sat, 20 Aug 2022 00:00:00 GMT</pubDate>
+            <description><![CDATA[The new Grid v2 features simplified logic, support for offsetting and nested grids, and more.]]></description>
+            <category>Material UI</category>
+            <category>Guide</category>
+        </item>
+        <item>
+            <title><![CDATA[Aggregate data like in Excel, but easier!]]></title>
+            <link>https://stoked-ui.github.io/blog/aggregation-functions</link>
+            <guid>https://stoked-ui.github.io/blog/aggregation-functions</guid>
+            <pubDate>Mon, 01 Aug 2022 00:00:00 GMT</pubDate>
+            <description><![CDATA[Aggregation functions and summary rows are now available in the MUI X Premium Data Grid.]]></description>
+            <category>MUI X</category>
+            <category>Product</category>
+        </item>
+        <item>
+            <title><![CDATA[Aggregate data like in Excel, but easier!]]></title>
+            <link>https://stoked-ui.github.io/blog/aggregation-functions</link>
+            <guid>https://stoked-ui.github.io/blog/aggregation-functions</guid>
+            <pubDate>Mon, 01 Aug 2022 00:00:00 GMT</pubDate>
+            <description><![CDATA[Aggregation functions and summary rows are now available in the MUI X Premium Data Grid.]]></description>
+            <category>MUI X</category>
+            <category>Product</category>
+        </item>
+        <item>
+            <title><![CDATA[MUI's company retreat in Tenerife: a recap]]></title>
+            <link>https://stoked-ui.github.io/blog/2022-tenerife-retreat</link>
+            <guid>https://stoked-ui.github.io/blog/2022-tenerife-retreat</guid>
+            <pubDate>Thu, 28 Jul 2022 00:00:00 GMT</pubDate>
+            <description><![CDATA[Our internationally distributed startup gathered on a remote island to get to know each other better. Here's what happened!]]></description>
+            <category>Company</category>
+        </item>
+        <item>
+            <title><![CDATA[MUI's company retreat in Tenerife: a recap]]></title>
+            <link>https://stoked-ui.github.io/blog/2022-tenerife-retreat</link>
+            <guid>https://stoked-ui.github.io/blog/2022-tenerife-retreat</guid>
+            <pubDate>Thu, 28 Jul 2022 00:00:00 GMT</pubDate>
+            <description><![CDATA[Our internationally distributed startup gathered on a remote island to get to know each other better. Here's what happened!]]></description>
+            <category>Company</category>
+        </item>
+        <item>
+            <title><![CDATA[Why you should migrate to Material UI v5 today]]></title>
+            <link>https://stoked-ui.github.io/blog/mui-core-v5-migration-update</link>
+            <guid>https://stoked-ui.github.io/blog/mui-core-v5-migration-update</guid>
+            <pubDate>Mon, 20 Jun 2022 00:00:00 GMT</pubDate>
+            <description><![CDATA[We have completely revamped our Migration guide to reduce friction when upgrading to v5. Get started now!]]></description>
+            <category>Material UI</category>
+        </item>
+        <item>
+            <title><![CDATA[Why you should migrate to Material UI v5 today]]></title>
+            <link>https://stoked-ui.github.io/blog/mui-core-v5-migration-update</link>
+            <guid>https://stoked-ui.github.io/blog/mui-core-v5-migration-update</guid>
+            <pubDate>Mon, 20 Jun 2022 00:00:00 GMT</pubDate>
+            <description><![CDATA[We have completely revamped our Migration guide to reduce friction when upgrading to v5. Get started now!]]></description>
+            <category>Material UI</category>
+        </item>
+        <item>
+            <title><![CDATA[First look at Joy UI 🥳]]></title>
+            <link>https://stoked-ui.github.io/blog/first-look-at-joy</link>
+            <guid>https://stoked-ui.github.io/blog/first-look-at-joy</guid>
+            <pubDate>Wed, 08 Jun 2022 00:00:00 GMT</pubDate>
+            <description><![CDATA[A sneak peek at MUI's new starting point for your design system.]]></description>
+            <category>Joy UI</category>
+            <category>Product</category>
+        </item>
+        <item>
+            <title><![CDATA[First look at Joy UI 🥳]]></title>
+            <link>https://stoked-ui.github.io/blog/first-look-at-joy</link>
+            <guid>https://stoked-ui.github.io/blog/first-look-at-joy</guid>
+            <pubDate>Wed, 08 Jun 2022 00:00:00 GMT</pubDate>
+            <description><![CDATA[A sneak peek at MUI's new starting point for your design system.]]></description>
+            <category>Joy UI</category>
+            <category>Product</category>
+        </item>
+        <item>
+            <title><![CDATA[Premium passengers, please proceed to the boarding gate 🚀]]></title>
+            <link>https://stoked-ui.github.io/blog/premium-plan-release</link>
+            <guid>https://stoked-ui.github.io/blog/premium-plan-release</guid>
+            <pubDate>Thu, 12 May 2022 00:00:00 GMT</pubDate>
+            <description><![CDATA[Introducing the MUI X Premium plan, and a new licensing model.]]></description>
+            <category>MUI X</category>
+            <category>Product</category>
+        </item>
+        <item>
+            <title><![CDATA[Premium passengers, please proceed to the boarding gate 🚀]]></title>
+            <link>https://stoked-ui.github.io/blog/premium-plan-release</link>
+            <guid>https://stoked-ui.github.io/blog/premium-plan-release</guid>
+            <pubDate>Thu, 12 May 2022 00:00:00 GMT</pubDate>
+            <description><![CDATA[Introducing the MUI X Premium plan, and a new licensing model.]]></description>
+            <category>MUI X</category>
+            <category>Product</category>
+        </item>
+        <item>
+            <title><![CDATA[Our docs just got a major upgrade—here's what that means for you]]></title>
+            <link>https://stoked-ui.github.io/blog/docs-restructure-2022</link>
+            <guid>https://stoked-ui.github.io/blog/docs-restructure-2022</guid>
+            <pubDate>Wed, 06 Apr 2022 00:00:00 GMT</pubDate>
+            <description><![CDATA[Each of MUI's products now has its own dedicated documentation, making it easier than ever to find exactly what you need.]]></description>
+            <category>Product</category>
+        </item>
+        <item>
+            <title><![CDATA[Our docs just got a major upgrade—here's what that means for you]]></title>
+            <link>https://stoked-ui.github.io/blog/docs-restructure-2022</link>
+            <guid>https://stoked-ui.github.io/blog/docs-restructure-2022</guid>
+            <pubDate>Wed, 06 Apr 2022 00:00:00 GMT</pubDate>
+            <description><![CDATA[Each of MUI's products now has its own dedicated documentation, making it easier than ever to find exactly what you need.]]></description>
+            <category>Product</category>
+        </item>
+        <item>
+            <title><![CDATA[Date and Time Pickers are moving to MUI X]]></title>
+            <link>https://stoked-ui.github.io/blog/lab-date-pickers-to-mui-x</link>
+            <guid>https://stoked-ui.github.io/blog/lab-date-pickers-to-mui-x</guid>
+            <pubDate>Sun, 03 Apr 2022 00:00:00 GMT</pubDate>
+            <description><![CDATA[Migrate to the new package to start building with our powerful Date and Time Pickers, now part of MUI X. Previously released MIT components will stay MIT.]]></description>
+            <category>MUI X</category>
+            <category>Product</category>
+        </item>
+        <item>
+            <title><![CDATA[Date and Time Pickers are moving to MUI X]]></title>
+            <link>https://stoked-ui.github.io/blog/lab-date-pickers-to-mui-x</link>
+            <guid>https://stoked-ui.github.io/blog/lab-date-pickers-to-mui-x</guid>
+            <pubDate>Sun, 03 Apr 2022 00:00:00 GMT</pubDate>
+            <description><![CDATA[Migrate to the new package to start building with our powerful Date and Time Pickers, now part of MUI X. Previously released MIT components will stay MIT.]]></description>
+            <category>MUI X</category>
+            <category>Product</category>
+        </item>
+        <item>
+            <title><![CDATA[The 2021 MUI Developer Survey: here's what we discovered]]></title>
+            <link>https://stoked-ui.github.io/blog/2021-developer-survey-results</link>
+            <guid>https://stoked-ui.github.io/blog/2021-developer-survey-results</guid>
+            <pubDate>Tue, 15 Mar 2022 00:00:00 GMT</pubDate>
+            <description><![CDATA[Your feedback helps us to build better products. Here's what we learned about your needs in our annual survey.]]></description>
+            <category>Developer Survey</category>
+        </item>
+        <item>
+            <title><![CDATA[The 2021 MUI Developer Survey: here's what we discovered]]></title>
+            <link>https://stoked-ui.github.io/blog/2021-developer-survey-results</link>
+            <guid>https://stoked-ui.github.io/blog/2021-developer-survey-results</guid>
+            <pubDate>Tue, 15 Mar 2022 00:00:00 GMT</pubDate>
+            <description><![CDATA[Your feedback helps us to build better products. Here's what we learned about your needs in our annual survey.]]></description>
+            <category>Developer Survey</category>
+        </item>
+        <item>
+            <title><![CDATA[Introducing callback support in style overrides]]></title>
+            <link>https://stoked-ui.github.io/blog/callback-support-in-style-overrides</link>
+            <guid>https://stoked-ui.github.io/blog/callback-support-in-style-overrides</guid>
+            <pubDate>Mon, 31 Jan 2022 00:00:00 GMT</pubDate>
+            <description><![CDATA[We're excited to introduce callback support for global theme overrides in this minor version update!]]></description>
+            <category>Material UI</category>
+            <category>Product</category>
+        </item>
+        <item>
+            <title><![CDATA[Introducing callback support in style overrides]]></title>
+            <link>https://stoked-ui.github.io/blog/callback-support-in-style-overrides</link>
+            <guid>https://stoked-ui.github.io/blog/callback-support-in-style-overrides</guid>
+            <pubDate>Mon, 31 Jan 2022 00:00:00 GMT</pubDate>
+            <description><![CDATA[We're excited to introduce callback support for global theme overrides in this minor version update!]]></description>
+            <category>Material UI</category>
+            <category>Product</category>
+        </item>
+        <item>
+            <title><![CDATA[Give your users more freedom with Data Grid row grouping]]></title>
+            <link>https://stoked-ui.github.io/blog/introducing-the-row-grouping-feature</link>
+            <guid>https://stoked-ui.github.io/blog/introducing-the-row-grouping-feature</guid>
+            <pubDate>Thu, 20 Jan 2022 00:00:00 GMT</pubDate>
+            <description><![CDATA[The new row grouping feature gives your users more customization options for organizing their data.]]></description>
+            <category>MUI X</category>
+            <category>Product</category>
+        </item>
+        <item>
+            <title><![CDATA[Give your users more freedom with Data Grid row grouping]]></title>
+            <link>https://stoked-ui.github.io/blog/introducing-the-row-grouping-feature</link>
+            <guid>https://stoked-ui.github.io/blog/introducing-the-row-grouping-feature</guid>
+            <pubDate>Thu, 20 Jan 2022 00:00:00 GMT</pubDate>
+            <description><![CDATA[The new row grouping feature gives your users more customization options for organizing their data.]]></description>
+            <category>MUI X</category>
+            <category>Product</category>
+        </item>
+        <item>
+            <title><![CDATA[2021 in review and beyond]]></title>
+            <link>https://stoked-ui.github.io/blog/2021</link>
+            <guid>https://stoked-ui.github.io/blog/2021</guid>
+            <pubDate>Fri, 31 Dec 2021 00:00:00 GMT</pubDate>
+            <description><![CDATA[2021 has been another great year, not only for MUI but also for the ecosystem.]]></description>
+            <category>Company</category>
+        </item>
+        <item>
+            <title><![CDATA[2021 in review and beyond]]></title>
+            <link>https://stoked-ui.github.io/blog/2021</link>
+            <guid>https://stoked-ui.github.io/blog/2021</guid>
+            <pubDate>Fri, 31 Dec 2021 00:00:00 GMT</pubDate>
+            <description><![CDATA[2021 has been another great year, not only for MUI but also for the ecosystem.]]></description>
+            <category>Company</category>
+        </item>
+        <item>
+            <title><![CDATA[Introducing MUI X v5]]></title>
+            <link>https://stoked-ui.github.io/blog/mui-x-v5</link>
+            <guid>https://stoked-ui.github.io/blog/mui-x-v5</guid>
+            <pubDate>Mon, 22 Nov 2021 00:00:00 GMT</pubDate>
+            <description><![CDATA[We are excited to introduce MUI X v5.0.0!]]></description>
+            <category>MUI X</category>
+            <category>Product</category>
+        </item>
+        <item>
+            <title><![CDATA[Introducing MUI X v5]]></title>
+            <link>https://stoked-ui.github.io/blog/mui-x-v5</link>
+            <guid>https://stoked-ui.github.io/blog/mui-x-v5</guid>
+            <pubDate>Mon, 22 Nov 2021 00:00:00 GMT</pubDate>
+            <description><![CDATA[We are excited to introduce MUI X v5.0.0!]]></description>
+            <category>MUI X</category>
+            <category>Product</category>
+        </item>
+        <item>
+            <title><![CDATA[Benny Joo joins MUI]]></title>
+            <link>https://stoked-ui.github.io/blog/benny-joo-joining</link>
+            <guid>https://stoked-ui.github.io/blog/benny-joo-joining</guid>
+            <pubDate>Tue, 16 Nov 2021 00:00:00 GMT</pubDate>
+            <description><![CDATA[We are excited to share that Benny Joo has joined MUI. He has started last month full-time and is now a Junior Software Engineer in the Core team.]]></description>
+            <category>Company</category>
+        </item>
+        <item>
+            <title><![CDATA[Benny Joo joins MUI]]></title>
+            <link>https://stoked-ui.github.io/blog/benny-joo-joining</link>
+            <guid>https://stoked-ui.github.io/blog/benny-joo-joining</guid>
+            <pubDate>Tue, 16 Nov 2021 00:00:00 GMT</pubDate>
+            <description><![CDATA[We are excited to share that Benny Joo has joined MUI. He has started last month full-time and is now a Junior Software Engineer in the Core team.]]></description>
+            <category>Company</category>
+        </item>
+        <item>
+            <title><![CDATA[Q3 2021 Update]]></title>
+            <link>https://stoked-ui.github.io/blog/2021-q3-update</link>
+            <guid>https://stoked-ui.github.io/blog/2021-q3-update</guid>
+            <pubDate>Tue, 26 Oct 2021 00:00:00 GMT</pubDate>
+            <description><![CDATA[An update on our mission for Q3 2021.]]></description>
+            <category>Company</category>
+        </item>
+        <item>
+            <title><![CDATA[Q3 2021 Update]]></title>
+            <link>https://stoked-ui.github.io/blog/2021-q3-update</link>
+            <guid>https://stoked-ui.github.io/blog/2021-q3-update</guid>
+            <pubDate>Tue, 26 Oct 2021 00:00:00 GMT</pubDate>
+            <description><![CDATA[An update on our mission for Q3 2021.]]></description>
+            <category>Company</category>
+        </item>
+        <item>
+            <title><![CDATA[Material-UI is now Material UI!]]></title>
+            <link>https://stoked-ui.github.io/blog/material-ui-is-now-mui</link>
+            <guid>https://stoked-ui.github.io/blog/material-ui-is-now-mui</guid>
+            <pubDate>Thu, 16 Sep 2021 00:00:00 GMT</pubDate>
+            <description><![CDATA[Starting today, we are evolving our brand identity. We are clarifying the difference between our company and our products.]]></description>
+            <category>Material UI</category>
+        </item>
+        <item>
+            <title><![CDATA[Introducing MUI Core v5]]></title>
+            <link>https://stoked-ui.github.io/blog/mui-core-v5</link>
+            <guid>https://stoked-ui.github.io/blog/mui-core-v5</guid>
+            <pubDate>Thu, 16 Sep 2021 00:00:00 GMT</pubDate>
+            <description><![CDATA[After over 400 days of development and over 40 canary releases, we are excited to introduce MUI Core v5.0.0!]]></description>
+            <category>Product</category>
+            <category>Material UI</category>
+        </item>
+        <item>
+            <title><![CDATA[Material-UI is now Material UI!]]></title>
+            <link>https://stoked-ui.github.io/blog/material-ui-is-now-mui</link>
+            <guid>https://stoked-ui.github.io/blog/material-ui-is-now-mui</guid>
+            <pubDate>Thu, 16 Sep 2021 00:00:00 GMT</pubDate>
+            <description><![CDATA[Starting today, we are evolving our brand identity. We are clarifying the difference between our company and our products.]]></description>
+            <category>Material UI</category>
+        </item>
+        <item>
+            <title><![CDATA[Introducing MUI Core v5]]></title>
+            <link>https://stoked-ui.github.io/blog/mui-core-v5</link>
+            <guid>https://stoked-ui.github.io/blog/mui-core-v5</guid>
+            <pubDate>Thu, 16 Sep 2021 00:00:00 GMT</pubDate>
+            <description><![CDATA[After over 400 days of development and over 40 canary releases, we are excited to introduce MUI Core v5.0.0!]]></description>
+            <category>Product</category>
+            <category>Material UI</category>
+        </item>
+        <item>
+            <title><![CDATA[Danilo Leal joins MUI]]></title>
+            <link>https://stoked-ui.github.io/blog/danilo-leal-joining</link>
+            <guid>https://stoked-ui.github.io/blog/danilo-leal-joining</guid>
+            <pubDate>Thu, 15 Jul 2021 00:00:00 GMT</pubDate>
+            <description><![CDATA[We are excited to share that Danilo Leal has joined MUI.]]></description>
+            <category>Company</category>
+        </item>
+        <item>
+            <title><![CDATA[Danilo Leal joins MUI]]></title>
+            <link>https://stoked-ui.github.io/blog/danilo-leal-joining</link>
+            <guid>https://stoked-ui.github.io/blog/danilo-leal-joining</guid>
+            <pubDate>Thu, 15 Jul 2021 00:00:00 GMT</pubDate>
+            <description><![CDATA[We are excited to share that Danilo Leal has joined MUI.]]></description>
+            <category>Company</category>
+        </item>
+        <item>
+            <title><![CDATA[Q2 2021 Update]]></title>
+            <link>https://stoked-ui.github.io/blog/2021-q2-update</link>
+            <guid>https://stoked-ui.github.io/blog/2021-q2-update</guid>
+            <pubDate>Mon, 12 Jul 2021 00:00:00 GMT</pubDate>
+            <description><![CDATA[An update on our mission for Q2 2021.]]></description>
+            <category>Company</category>
+        </item>
+        <item>
+            <title><![CDATA[Q2 2021 Update]]></title>
+            <link>https://stoked-ui.github.io/blog/2021-q2-update</link>
+            <guid>https://stoked-ui.github.io/blog/2021-q2-update</guid>
+            <pubDate>Mon, 12 Jul 2021 00:00:00 GMT</pubDate>
+            <description><![CDATA[An update on our mission for Q2 2021.]]></description>
+            <category>Company</category>
+        </item>
+        <item>
+            <title><![CDATA[Michał Dudak joins MUI]]></title>
+            <link>https://stoked-ui.github.io/blog/michal-dudak-joining</link>
+            <guid>https://stoked-ui.github.io/blog/michal-dudak-joining</guid>
+            <pubDate>Mon, 14 Jun 2021 00:00:00 GMT</pubDate>
+            <description><![CDATA[We are excited to share that Michał Dudak has joined MUI.]]></description>
+            <category>Company</category>
+        </item>
+        <item>
+            <title><![CDATA[Michał Dudak joins MUI]]></title>
+            <link>https://stoked-ui.github.io/blog/michal-dudak-joining</link>
+            <guid>https://stoked-ui.github.io/blog/michal-dudak-joining</guid>
+            <pubDate>Mon, 14 Jun 2021 00:00:00 GMT</pubDate>
+            <description><![CDATA[We are excited to share that Michał Dudak has joined MUI.]]></description>
+            <category>Company</category>
+        </item>
+        <item>
+            <title><![CDATA[Siriwat Kunaporn joins MUI]]></title>
+            <link>https://stoked-ui.github.io/blog/siriwat-kunaporn-joining</link>
+            <guid>https://stoked-ui.github.io/blog/siriwat-kunaporn-joining</guid>
+            <pubDate>Mon, 17 May 2021 00:00:00 GMT</pubDate>
+            <description><![CDATA[We are excited to share that Siriwat Kunaporn has joined MUI.]]></description>
+            <category>Company</category>
+        </item>
+        <item>
+            <title><![CDATA[Siriwat Kunaporn joins MUI]]></title>
+            <link>https://stoked-ui.github.io/blog/siriwat-kunaporn-joining</link>
+            <guid>https://stoked-ui.github.io/blog/siriwat-kunaporn-joining</guid>
+            <pubDate>Mon, 17 May 2021 00:00:00 GMT</pubDate>
+            <description><![CDATA[We are excited to share that Siriwat Kunaporn has joined MUI.]]></description>
+            <category>Company</category>
+        </item>
+        <item>
+            <title><![CDATA[Q1 2021 Update]]></title>
+            <link>https://stoked-ui.github.io/blog/2021-q1-update</link>
+            <guid>https://stoked-ui.github.io/blog/2021-q1-update</guid>
+            <pubDate>Mon, 12 Apr 2021 00:00:00 GMT</pubDate>
+            <description><![CDATA[An update on our mission for Q1 2021.]]></description>
+            <category>Company</category>
+        </item>
+        <item>
+            <title><![CDATA[Q1 2021 Update]]></title>
+            <link>https://stoked-ui.github.io/blog/2021-q1-update</link>
+            <guid>https://stoked-ui.github.io/blog/2021-q1-update</guid>
+            <pubDate>Mon, 12 Apr 2021 00:00:00 GMT</pubDate>
+            <description><![CDATA[An update on our mission for Q1 2021.]]></description>
+            <category>Company</category>
+        </item>
+        <item>
+            <title><![CDATA[Matheus Wichman joins MUI]]></title>
+            <link>https://stoked-ui.github.io/blog/matheus-wichman-joining</link>
+            <guid>https://stoked-ui.github.io/blog/matheus-wichman-joining</guid>
+            <pubDate>Mon, 05 Apr 2021 00:00:00 GMT</pubDate>
+            <description><![CDATA[We are excited to share that Matheus Wichman has joined MUI.]]></description>
+            <category>Company</category>
+        </item>
+        <item>
+            <title><![CDATA[Matheus Wichman joins MUI]]></title>
+            <link>https://stoked-ui.github.io/blog/matheus-wichman-joining</link>
+            <guid>https://stoked-ui.github.io/blog/matheus-wichman-joining</guid>
+            <pubDate>Mon, 05 Apr 2021 00:00:00 GMT</pubDate>
+            <description><![CDATA[We are excited to share that Matheus Wichman has joined MUI.]]></description>
+            <category>Company</category>
+        </item>
+        <item>
+            <title><![CDATA[2020 in review and beyond]]></title>
+            <link>https://stoked-ui.github.io/blog/2020</link>
+            <guid>https://stoked-ui.github.io/blog/2020</guid>
+            <pubDate>Thu, 31 Dec 2020 00:00:00 GMT</pubDate>
+            <description><![CDATA[2020 has been another great year, not only for MUI, but also for the ecosystem.]]></description>
+            <category>Company</category>
+        </item>
+        <item>
+            <title><![CDATA[2020 in review and beyond]]></title>
+            <link>https://stoked-ui.github.io/blog/2020</link>
+            <guid>https://stoked-ui.github.io/blog/2020</guid>
+            <pubDate>Thu, 31 Dec 2020 00:00:00 GMT</pubDate>
+            <description><![CDATA[2020 has been another great year, not only for MUI, but also for the ecosystem.]]></description>
+            <category>Company</category>
+        </item>
+        <item>
+            <title><![CDATA[Danail Hadjiatanasov joins MUI]]></title>
+            <link>https://stoked-ui.github.io/blog/danail-hadjiatanasov-joining</link>
+            <guid>https://stoked-ui.github.io/blog/danail-hadjiatanasov-joining</guid>
+            <pubDate>Fri, 23 Oct 2020 00:00:00 GMT</pubDate>
+            <description><![CDATA[We are excited to share that Danail Hadjiatanasov has joined MUI as part of the enterprise team. This was his first full-time week.]]></description>
+            <category>Company</category>
+        </item>
+        <item>
+            <title><![CDATA[Danail Hadjiatanasov joins MUI]]></title>
+            <link>https://stoked-ui.github.io/blog/danail-hadjiatanasov-joining</link>
+            <guid>https://stoked-ui.github.io/blog/danail-hadjiatanasov-joining</guid>
+            <pubDate>Fri, 23 Oct 2020 00:00:00 GMT</pubDate>
+            <description><![CDATA[We are excited to share that Danail Hadjiatanasov has joined MUI as part of the enterprise team. This was his first full-time week.]]></description>
+            <category>Company</category>
+        </item>
+        <item>
+            <title><![CDATA[Q3 2020 Update]]></title>
+            <link>https://stoked-ui.github.io/blog/2020-q3-update</link>
+            <guid>https://stoked-ui.github.io/blog/2020-q3-update</guid>
+            <pubDate>Wed, 14 Oct 2020 00:00:00 GMT</pubDate>
+            <description><![CDATA[An update on our mission for Q3 2020.]]></description>
+            <category>Company</category>
+        </item>
+        <item>
+            <title><![CDATA[Q3 2020 Update]]></title>
+            <link>https://stoked-ui.github.io/blog/2020-q3-update</link>
+            <guid>https://stoked-ui.github.io/blog/2020-q3-update</guid>
+            <pubDate>Wed, 14 Oct 2020 00:00:00 GMT</pubDate>
+            <description><![CDATA[An update on our mission for Q3 2020.]]></description>
+            <category>Company</category>
+        </item>
+        <item>
+            <title><![CDATA[Marija Najdova joins MUI]]></title>
+            <link>https://stoked-ui.github.io/blog/marija-najdova-joining</link>
+            <guid>https://stoked-ui.github.io/blog/marija-najdova-joining</guid>
+            <pubDate>Tue, 15 Sep 2020 00:00:00 GMT</pubDate>
+            <description><![CDATA[We are excited to share that Marija Najdova has joined MUI. She has started this week full-time and is now part of the community team.]]></description>
+            <category>Company</category>
+        </item>
+        <item>
+            <title><![CDATA[A spotlight on Damien Tassone joining the team]]></title>
+            <link>https://stoked-ui.github.io/blog/spotlight-damien-tassone</link>
+            <guid>https://stoked-ui.github.io/blog/spotlight-damien-tassone</guid>
+            <pubDate>Tue, 15 Sep 2020 00:00:00 GMT</pubDate>
+            <description><![CDATA[Damien Tassone has joined MUI. He's the first full-time member to focus on enterprise components.]]></description>
+            <category>Company</category>
+        </item>
+        <item>
+            <title><![CDATA[Marija Najdova joins MUI]]></title>
+            <link>https://stoked-ui.github.io/blog/marija-najdova-joining</link>
+            <guid>https://stoked-ui.github.io/blog/marija-najdova-joining</guid>
+            <pubDate>Tue, 15 Sep 2020 00:00:00 GMT</pubDate>
+            <description><![CDATA[We are excited to share that Marija Najdova has joined MUI. She has started this week full-time and is now part of the community team.]]></description>
+            <category>Company</category>
+        </item>
+        <item>
+            <title><![CDATA[A spotlight on Damien Tassone joining the team]]></title>
+            <link>https://stoked-ui.github.io/blog/spotlight-damien-tassone</link>
+            <guid>https://stoked-ui.github.io/blog/spotlight-damien-tassone</guid>
+            <pubDate>Tue, 15 Sep 2020 00:00:00 GMT</pubDate>
+            <description><![CDATA[Damien Tassone has joined MUI. He's the first full-time member to focus on enterprise components.]]></description>
+            <category>Company</category>
+        </item>
+        <item>
+            <title><![CDATA[Q2 2020 Update]]></title>
+            <link>https://stoked-ui.github.io/blog/2020-q2-update</link>
+            <guid>https://stoked-ui.github.io/blog/2020-q2-update</guid>
+            <pubDate>Fri, 17 Jul 2020 00:00:00 GMT</pubDate>
+            <description><![CDATA[An update on our mission for Q2 2020.]]></description>
+            <category>Company</category>
+        </item>
+        <item>
+            <title><![CDATA[Q2 2020 Update]]></title>
+            <link>https://stoked-ui.github.io/blog/2020-q2-update</link>
+            <guid>https://stoked-ui.github.io/blog/2020-q2-update</guid>
+            <pubDate>Fri, 17 Jul 2020 00:00:00 GMT</pubDate>
+            <description><![CDATA[An update on our mission for Q2 2020.]]></description>
+            <category>Company</category>
+        </item>
+        <item>
+            <title><![CDATA[The 2020 Material UI Developer Survey: here's what we discovered]]></title>
+            <link>https://stoked-ui.github.io/blog/2020-developer-survey-results</link>
+            <guid>https://stoked-ui.github.io/blog/2020-developer-survey-results</guid>
+            <pubDate>Sat, 27 Jun 2020 00:00:00 GMT</pubDate>
+            <description><![CDATA[Your feedback helps us to build better products. Here's what we learned about your needs in our annual survey.]]></description>
+            <category>Developer Survey</category>
+        </item>
+        <item>
+            <title><![CDATA[The 2020 Material UI Developer Survey: here's what we discovered]]></title>
+            <link>https://stoked-ui.github.io/blog/2020-developer-survey-results</link>
+            <guid>https://stoked-ui.github.io/blog/2020-developer-survey-results</guid>
+            <pubDate>Sat, 27 Jun 2020 00:00:00 GMT</pubDate>
+            <description><![CDATA[Your feedback helps us to build better products. Here's what we learned about your needs in our annual survey.]]></description>
+            <category>Developer Survey</category>
+        </item>
+        <item>
+            <title><![CDATA[Q1 2020 Update]]></title>
+            <link>https://stoked-ui.github.io/blog/2020-q1-update</link>
+            <guid>https://stoked-ui.github.io/blog/2020-q1-update</guid>
+            <pubDate>Tue, 14 Apr 2020 00:00:00 GMT</pubDate>
+            <description><![CDATA[An update on our mission for Q1 2020.]]></description>
+            <category>Company</category>
+        </item>
+        <item>
+            <title><![CDATA[Q1 2020 Update]]></title>
+            <link>https://stoked-ui.github.io/blog/2020-q1-update</link>
+            <guid>https://stoked-ui.github.io/blog/2020-q1-update</guid>
+            <pubDate>Tue, 14 Apr 2020 00:00:00 GMT</pubDate>
+            <description><![CDATA[An update on our mission for Q1 2020.]]></description>
+            <category>Company</category>
+        </item>
+        <item>
+            <title><![CDATA[Introducing Material UI for Sketch]]></title>
+            <link>https://stoked-ui.github.io/blog/2020-introducing-sketch</link>
+            <guid>https://stoked-ui.github.io/blog/2020-introducing-sketch</guid>
+            <pubDate>Mon, 30 Mar 2020 00:00:00 GMT</pubDate>
+            <description><![CDATA[Today, we're excited to announce the introduction of official Sketch symbols for Material UI.]]></description>
+            <category>Material UI</category>
+            <category>Product</category>
+        </item>
+        <item>
+            <title><![CDATA[Introducing Material UI for Sketch]]></title>
+            <link>https://stoked-ui.github.io/blog/2020-introducing-sketch</link>
+            <guid>https://stoked-ui.github.io/blog/2020-introducing-sketch</guid>
+            <pubDate>Mon, 30 Mar 2020 00:00:00 GMT</pubDate>
+            <description><![CDATA[Today, we're excited to announce the introduction of official Sketch symbols for Material UI.]]></description>
+            <category>Material UI</category>
+            <category>Product</category>
+        </item>
+        <item>
+            <title><![CDATA[2019 in review and beyond]]></title>
+            <link>https://stoked-ui.github.io/blog/2019</link>
+            <guid>https://stoked-ui.github.io/blog/2019</guid>
+            <pubDate>Sat, 25 Jan 2020 00:00:00 GMT</pubDate>
+            <description><![CDATA[2019 was a great year for Material UI. It puts us on an exciting path to solve even greater challenges in the coming years!]]></description>
+            <category>Company</category>
+        </item>
+        <item>
+            <title><![CDATA[2019 in review and beyond]]></title>
+            <link>https://stoked-ui.github.io/blog/2019</link>
+            <guid>https://stoked-ui.github.io/blog/2019</guid>
+            <pubDate>Sat, 25 Jan 2020 00:00:00 GMT</pubDate>
+            <description><![CDATA[2019 was a great year for Material UI. It puts us on an exciting path to solve even greater challenges in the coming years!]]></description>
+            <category>Company</category>
+        </item>
+        <item>
+            <title><![CDATA[December 2019 Update]]></title>
+            <link>https://stoked-ui.github.io/blog/december-2019-update</link>
+            <guid>https://stoked-ui.github.io/blog/december-2019-update</guid>
+            <pubDate>Tue, 07 Jan 2020 00:00:00 GMT</pubDate>
+            <description><![CDATA[Here are the most significant improvements in December.]]></description>
+            <category>Company</category>
+        </item>
+        <item>
+            <title><![CDATA[December 2019 Update]]></title>
+            <link>https://stoked-ui.github.io/blog/december-2019-update</link>
+            <guid>https://stoked-ui.github.io/blog/december-2019-update</guid>
+            <pubDate>Tue, 07 Jan 2020 00:00:00 GMT</pubDate>
+            <description><![CDATA[Here are the most significant improvements in December.]]></description>
+            <category>Company</category>
+        </item>
+        <item>
+            <title><![CDATA[November 2019 Update]]></title>
+            <link>https://stoked-ui.github.io/blog/november-2019-update</link>
+            <guid>https://stoked-ui.github.io/blog/november-2019-update</guid>
+            <pubDate>Thu, 12 Dec 2019 00:00:00 GMT</pubDate>
+            <description><![CDATA[Here are the most significant improvements in November.]]></description>
+            <category>Company</category>
+        </item>
+        <item>
+            <title><![CDATA[November 2019 Update]]></title>
+            <link>https://stoked-ui.github.io/blog/november-2019-update</link>
+            <guid>https://stoked-ui.github.io/blog/november-2019-update</guid>
+            <pubDate>Thu, 12 Dec 2019 00:00:00 GMT</pubDate>
+            <description><![CDATA[Here are the most significant improvements in November.]]></description>
+            <category>Company</category>
+        </item>
+        <item>
+            <title><![CDATA[October 2019 Update]]></title>
+            <link>https://stoked-ui.github.io/blog/october-2019-update</link>
+            <guid>https://stoked-ui.github.io/blog/october-2019-update</guid>
+            <pubDate>Fri, 08 Nov 2019 00:00:00 GMT</pubDate>
+            <description><![CDATA[Here are the most significant improvements in October.]]></description>
+            <category>Company</category>
+        </item>
+        <item>
+            <title><![CDATA[October 2019 Update]]></title>
+            <link>https://stoked-ui.github.io/blog/october-2019-update</link>
+            <guid>https://stoked-ui.github.io/blog/october-2019-update</guid>
+            <pubDate>Fri, 08 Nov 2019 00:00:00 GMT</pubDate>
+            <description><![CDATA[Here are the most significant improvements in October.]]></description>
+            <category>Company</category>
+        </item>
+        <item>
+            <title><![CDATA[September 2019 Update]]></title>
+            <link>https://stoked-ui.github.io/blog/september-2019-update</link>
+            <guid>https://stoked-ui.github.io/blog/september-2019-update</guid>
+            <pubDate>Sat, 12 Oct 2019 00:00:00 GMT</pubDate>
+            <description><![CDATA[Here are the most significant improvements in September.]]></description>
+            <category>Company</category>
+        </item>
+        <item>
+            <title><![CDATA[September 2019 Update]]></title>
+            <link>https://stoked-ui.github.io/blog/september-2019-update</link>
+            <guid>https://stoked-ui.github.io/blog/september-2019-update</guid>
+            <pubDate>Sat, 12 Oct 2019 00:00:00 GMT</pubDate>
+            <description><![CDATA[Here are the most significant improvements in September.]]></description>
+            <category>Company</category>
+        </item>
+        <item>
+            <title><![CDATA[August 2019 Update]]></title>
+            <link>https://stoked-ui.github.io/blog/august-2019-update</link>
+            <guid>https://stoked-ui.github.io/blog/august-2019-update</guid>
+            <pubDate>Sat, 07 Sep 2019 00:00:00 GMT</pubDate>
+            <description><![CDATA[Here are the most significant improvements in August.]]></description>
+            <category>Company</category>
+        </item>
+        <item>
+            <title><![CDATA[August 2019 Update]]></title>
+            <link>https://stoked-ui.github.io/blog/august-2019-update</link>
+            <guid>https://stoked-ui.github.io/blog/august-2019-update</guid>
+            <pubDate>Sat, 07 Sep 2019 00:00:00 GMT</pubDate>
+            <description><![CDATA[Here are the most significant improvements in August.]]></description>
+            <category>Company</category>
+        </item>
+        <item>
+            <title><![CDATA[July 2019 Update]]></title>
+            <link>https://stoked-ui.github.io/blog/july-2019-update</link>
+            <guid>https://stoked-ui.github.io/blog/july-2019-update</guid>
+            <pubDate>Sun, 04 Aug 2019 00:00:00 GMT</pubDate>
+            <description><![CDATA[Here are the most significant improvements in July.]]></description>
+            <category>Company</category>
+        </item>
+        <item>
+            <title><![CDATA[July 2019 Update]]></title>
+            <link>https://stoked-ui.github.io/blog/july-2019-update</link>
+            <guid>https://stoked-ui.github.io/blog/july-2019-update</guid>
+            <pubDate>Sun, 04 Aug 2019 00:00:00 GMT</pubDate>
+            <description><![CDATA[Here are the most significant improvements in July.]]></description>
+            <category>Company</category>
+        </item>
+        <item>
+            <title><![CDATA[June 2019 Update]]></title>
+            <link>https://stoked-ui.github.io/blog/june-2019-update</link>
+            <guid>https://stoked-ui.github.io/blog/june-2019-update</guid>
+            <pubDate>Mon, 08 Jul 2019 00:00:00 GMT</pubDate>
+            <description><![CDATA[Here are the most significant improvements in June.]]></description>
+            <category>Company</category>
+        </item>
+        <item>
+            <title><![CDATA[June 2019 Update]]></title>
+            <link>https://stoked-ui.github.io/blog/june-2019-update</link>
+            <guid>https://stoked-ui.github.io/blog/june-2019-update</guid>
+            <pubDate>Mon, 08 Jul 2019 00:00:00 GMT</pubDate>
+            <description><![CDATA[Here are the most significant improvements in June.]]></description>
+            <category>Company</category>
+        </item>
+        <item>
+            <title><![CDATA[May 2019 Update]]></title>
+            <link>https://stoked-ui.github.io/blog/may-2019-update</link>
+            <guid>https://stoked-ui.github.io/blog/may-2019-update</guid>
+            <pubDate>Sat, 08 Jun 2019 00:00:00 GMT</pubDate>
+            <description><![CDATA[Here are the most significant improvements in May.]]></description>
+            <category>Company</category>
+        </item>
+        <item>
+            <title><![CDATA[May 2019 Update]]></title>
+            <link>https://stoked-ui.github.io/blog/may-2019-update</link>
+            <guid>https://stoked-ui.github.io/blog/may-2019-update</guid>
+            <pubDate>Sat, 08 Jun 2019 00:00:00 GMT</pubDate>
+            <description><![CDATA[Here are the most significant improvements in May.]]></description>
+            <category>Company</category>
+        </item>
+        <item>
+            <title><![CDATA[Material UI v4 is out 🎉]]></title>
+            <link>https://stoked-ui.github.io/blog/material-ui-v4-is-out</link>
+            <guid>https://stoked-ui.github.io/blog/material-ui-v4-is-out</guid>
+            <pubDate>Thu, 23 May 2019 00:00:00 GMT</pubDate>
+            <description><![CDATA[Material UI v4 has finally arrived. We are so excited about this release, as it defines better foundations for the UI components.]]></description>
+            <category>Material UI</category>
+            <category>Product</category>
+        </item>
+        <item>
+            <title><![CDATA[Material UI v4 is out 🎉]]></title>
+            <link>https://stoked-ui.github.io/blog/material-ui-v4-is-out</link>
+            <guid>https://stoked-ui.github.io/blog/material-ui-v4-is-out</guid>
+            <pubDate>Thu, 23 May 2019 00:00:00 GMT</pubDate>
+            <description><![CDATA[Material UI v4 has finally arrived. We are so excited about this release, as it defines better foundations for the UI components.]]></description>
+            <category>Material UI</category>
+            <category>Product</category>
+        </item>
+        <item>
+            <title><![CDATA[April 2019 Update]]></title>
+            <link>https://stoked-ui.github.io/blog/april-2019-update</link>
+            <guid>https://stoked-ui.github.io/blog/april-2019-update</guid>
+            <pubDate>Tue, 07 May 2019 00:00:00 GMT</pubDate>
+            <description><![CDATA[Here are the most significant improvements in April.]]></description>
+            <category>Company</category>
+        </item>
+        <item>
+            <title><![CDATA[April 2019 Update]]></title>
+            <link>https://stoked-ui.github.io/blog/april-2019-update</link>
+            <guid>https://stoked-ui.github.io/blog/april-2019-update</guid>
+            <pubDate>Tue, 07 May 2019 00:00:00 GMT</pubDate>
+            <description><![CDATA[Here are the most significant improvements in April.]]></description>
+            <category>Company</category>
+        </item>
+        <item>
+            <title><![CDATA[March 2019 Update]]></title>
+            <link>https://stoked-ui.github.io/blog/march-2019-update</link>
+            <guid>https://stoked-ui.github.io/blog/march-2019-update</guid>
+            <pubDate>Fri, 05 Apr 2019 00:00:00 GMT</pubDate>
+            <description><![CDATA[Here are the most significant improvements in March.]]></description>
+            <category>Company</category>
+        </item>
+        <item>
+            <title><![CDATA[March 2019 Update]]></title>
+            <link>https://stoked-ui.github.io/blog/march-2019-update</link>
+            <guid>https://stoked-ui.github.io/blog/march-2019-update</guid>
+            <pubDate>Fri, 05 Apr 2019 00:00:00 GMT</pubDate>
+            <description><![CDATA[Here are the most significant improvements in March.]]></description>
+            <category>Company</category>
+        </item>
+        <item>
+            <title><![CDATA[The 2019 Material UI Developer Survey: here's what we discovered]]></title>
+            <link>https://stoked-ui.github.io/blog/2019-developer-survey-results</link>
+            <guid>https://stoked-ui.github.io/blog/2019-developer-survey-results</guid>
+            <pubDate>Sat, 16 Mar 2019 00:00:00 GMT</pubDate>
+            <description><![CDATA[Your feedback helps us to build better products. Here's what we learned about your needs in our annual survey.]]></description>
+            <category>Developer Survey</category>
+        </item>
+        <item>
+            <title><![CDATA[The 2019 Material UI Developer Survey: here's what we discovered]]></title>
+            <link>https://stoked-ui.github.io/blog/2019-developer-survey-results</link>
+            <guid>https://stoked-ui.github.io/blog/2019-developer-survey-results</guid>
+            <pubDate>Sat, 16 Mar 2019 00:00:00 GMT</pubDate>
+            <description><![CDATA[Your feedback helps us to build better products. Here's what we learned about your needs in our annual survey.]]></description>
+            <category>Developer Survey</category>
+        </item>
+        <item>
+            <title><![CDATA[Material UI v1 is out 🎉]]></title>
+            <link>https://stoked-ui.github.io/blog/material-ui-v1-is-out</link>
+            <guid>https://stoked-ui.github.io/blog/material-ui-v1-is-out</guid>
+            <pubDate>Fri, 18 May 2018 00:00:00 GMT</pubDate>
+            <description><![CDATA[It has taken us two years to do it, but Material UI v1 has finally arrived!]]></description>
+            <category>Material UI</category>
+            <category>Product</category>
+        </item>
+        <item>
+            <title><![CDATA[Material UI v1 is out 🎉]]></title>
+            <link>https://stoked-ui.github.io/blog/material-ui-v1-is-out</link>
+            <guid>https://stoked-ui.github.io/blog/material-ui-v1-is-out</guid>
+            <pubDate>Fri, 18 May 2018 00:00:00 GMT</pubDate>
+            <description><![CDATA[It has taken us two years to do it, but Material UI v1 has finally arrived!]]></description>
+            <category>Material UI</category>
+            <category>Product</category>
+        </item>
+    </channel>
+</rss>
