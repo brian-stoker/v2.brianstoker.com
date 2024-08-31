@@ -81,6 +81,7 @@
     "jss": "^10.10.0",
     "jss-plugin-template": "^10.10.0",
     "jss-rtl": "^0.3.0",
+    "lightgallery": "^2.7.2",
     "lodash": "^4.17.21",
     "lottie-web": "^5.8.1",
     "lz-string": "^1.5.0",

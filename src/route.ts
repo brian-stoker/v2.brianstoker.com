@@ -59,7 +59,7 @@ const ROUTES: Routes = {
   showcase: '/material-ui/discover-more/showcase/',
   coreRoadmap: '/material-ui/discover-more/roadmap/',
   vision: 'https://stokedconsulting.com/stoked-ui/discover-more/vision/',
-  support: 'https://stokedconsulting.com/stoked-ui/getting-started/support/#professional-support-premium',
+  support: 'https://stokedconsulting.com/stoked-ui/docs/support/#professional-support-premium',
   goldSponsor: '/material-ui/discover-more/backers/#gold-sponsors',
   // Base UI doc pages
   baseDocs: 'https://stoked-ui.github.io/base-ui/getting-started/',

@@ -7,43 +7,33 @@ import {HomeView} from "./index";
 import Card from '@mui/material/Card';
 import {CardActionArea, CardActions, CardContent, CardMedia, Typography } from '@mui/material';
 import { Button } from '@mui/base/Button';
+import VideoGallery from "./videos";
 
 export interface IMovie  { url: string, img: string, title: string }
 
-const drums: IMovie[] = [
-  {url: 'https://cenv-public.s3.amazonaws.com/golden-stream.mp4', img: 'https://cenv-public.s3.amazonaws.com/golden-stream.png', title: 'golden stream'},
-  {url: 'https://cenv-public.s3.amazonaws.com/tell-me-mister-2.mp4', img: 'https://cenv-public.s3.amazonaws.com/tell-me-mister.png', title: 'tell me mister'},
-  {url: 'https://cenv-public.s3.amazonaws.com/normal-guy.mov', img: 'https://cenv-public.s3.amazonaws.com/normal-guy.png', title: 'normal guy'}
-]
+const videos = [
+  {
+    src: 'https://cenv-public.s3.amazonaws.com/normal-guy.mov',
+    subHtml: `<h4>'Normal Guy' by Chase, Anthony, and Derp</h4>`,
+    thumb: 'https://cenv-public.s3.amazonaws.com/normal-guy.png'
+  },
+  {
+    src: 'https://cenv-public.s3.amazonaws.com/golden-stream.mp4',
+    thumb: 'https://cenv-public.s3.amazonaws.com/golden-stream.png',
+    subHtml: `<h4>'Golden Stream' by Chase, Anthony, and Derp</h4>`,
+  },
+  {
+    src: 'https://cenv-public.s3.amazonaws.com/tell-me-mister-2.mp4',
+    subHtml: `<h4>'Tell Me Mister' by Chase, Anthony, and Derp</h4>`,
+    thumb: 'https://cenv-public.s3.amazonaws.com/tell-me-mister.png',
+  },
+  // Add more video objects as needed
+];
 
 function MainView() {
 
   return (
-    <Box sx={{
-      fontSize: "1.6rem",
-      lineHeight: '2.4rem',
-      display: 'grid', justifyContent: 'center',
-      flexDirection: 'column',
-      width: '100%'
-    }}>
-      {drums.map(drum => {
-        return <Card sx={(theme) => ({ maxWidth: 350, margin: 2, background: theme.palette.action.selected })}>
-          <CardActionArea>
-            <CardMedia
-              component={'video'}
-              src={drum.url}
-              poster={drum.img}
-            />
-            <CardContent>
-              <Typography gutterBottom variant="h5" component="div">
-                {drum.title}
-              </Typography>
-            </CardContent>
-          </CardActionArea>
-        </Card>
-      })}
-
-    </Box>
+    <VideoGallery title={'drums'} videos={videos}/>
   )
 }
 
