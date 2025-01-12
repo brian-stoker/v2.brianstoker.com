@@ -10,8 +10,8 @@
     "resolveJsonModule": true,
     "skipLibCheck": true,
     "esModuleInterop": true,
-    "types": ["react"],
+    "types": ["react", "node"],
     "incremental": true,
     "target": "ES2019"
-  },
+  },"exclude":["sst.config.ts","sst.config.ts","sst.config.ts","sst.config.ts"]
 }

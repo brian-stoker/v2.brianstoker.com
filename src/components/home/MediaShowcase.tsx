@@ -1,9 +1,10 @@
 import * as React from 'react';
-import { alpha, ThemeProvider, createTheme, useTheme } from '@mui/material/styles';
+import {alpha, ThemeProvider, createTheme, useTheme, Theme} from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import PointerContainer, { Data } from 'src/components/home/ElementPointer';
 import Frame from "../action/Frame";
 import Fade from "@mui/material/Fade";
+import {SxProps} from "@mui/system";
 
 export default function MediaShowcase({ sx, showcaseContent }: { sx?: SxProps<Theme>, showcaseContent?: any }): React.JSX.Element {
   const globalTheme = useTheme();
@@ -111,7 +112,7 @@ export default function MediaShowcase({ sx, showcaseContent }: { sx?: SxProps<Th
       >
         <Frame.Demo
           sx={{
-            display: 'flex', position: 'relative', justifyContent: 'center', alignItems: 'center', minHeight: 220, p: 2,
+            display: 'flex', position: 'relative', justifyContent: 'center', alignItems: 'center', minHeight: 220, p: 0,
           }}
         >
           {showcaseContent}

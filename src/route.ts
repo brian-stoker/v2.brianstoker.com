@@ -5,10 +5,10 @@ type Routes = {
 
 const ROUTES: Routes = {
   art: '/art',
-  photography: '/photography',
-  drums: '/drums',
-  blog: '/blog',
-  resume: '/resume',
+  photography: '/photography/',
+  drums: '/drums/',
+  blog: '/blog/',
+  resume: '/resume/',
   stokedUi: '/stoked-ui/',
   fileExplorer: '/stoked-ui/file-explorer/',
   mediaSelector: '/stoked-ui/media-selector/',

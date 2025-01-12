@@ -1,15 +1,11 @@
 import React, { useState } from 'react';
-import { Document, Page } from 'react-pdf';
-import {useWindowWidth} from '../hooks/useWindowSize';
 import Box from "@mui/material/Box";
-import Divider from "@mui/material/Divider";
 import {HomeView} from "./index";
 import ImageList from '@mui/material/ImageList';
 import ImageListItem from '@mui/material/ImageListItem';
 
 const photography: string[] = [
   '/static/photography/alter.jpg',
-  '/static/photography/art.jpg',
   '/static/photography/bed-selfie.jpg',
   '/static/photography/bar.jpg',
   '/static/photography/building.jpg',

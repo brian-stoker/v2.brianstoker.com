@@ -28,7 +28,6 @@ import CustomerShowcase, { PrefetchStoreTemplateImages } from "./components/home
 import { PrefetchDesignKitImages } from "./components/home/DesignKits";
 import MaterialShowcase from "./components/home/MaterialShowcase";
 import CoreShowcase from "./components/home/CoreShowcase";
-import AdvancedShowcase from "./components/home/AdvancedShowcase";
 import BlogShowcase from "./components/home/BlogShowcase";
 import PdfShowcase from "./components/home/PdfShowcase";
 import VideoShowcase from"./components/home/VideoShowcase";
@@ -765,7 +764,7 @@ const stokedUiData: TProduct = {
     id: 'overview',
   }, {
     name: 'Timeline',
-    description: 'Timeline component used to construct tools that manipulate things over time.',
+    description: 'Timeline component is used to construct tools that manipulate things over time.',
     productId: 'timeline',
     id: 'overview',
   }, {
@@ -815,7 +814,7 @@ const coreData: TProduct = {
   url: "/media-selector",
   hideProductFeatures: true,
   live: true,
-  showcaseType: AdvancedShowcase,
+  showcaseType: CoreShowcase,
   features: [{
     name: 'Overview',
     description: 'Overview, installation, lions, tigers, and bears oh mai!',
@@ -845,7 +844,7 @@ const mediaSelectorData: TProduct = {
   url: "/media-selector",
   hideProductFeatures: true,
   live: true,
-  showcaseType: AdvancedShowcase,
+  showcaseType: CoreShowcase,
   features: [{
     name: 'Overview',
     description: 'Overview, installation, lions, tigers, and bears oh mai!',
@@ -869,7 +868,7 @@ const timelineData: TProduct = {
   id: 'timeline',
   name: "Timeline",
   fullName: "Stoked UI: Timeline",
-  description: "Timeline component used to construct tools that manipulate things over time",
+  description: "Timeline component is used to construct tools that manipulate things over time",
   icon: "product-toolpad",
   url: "/timeline",
   hideProductFeatures: true,
@@ -923,7 +922,7 @@ const artData: TProduct = {
   name: "Art",
   fullName: "BRIAN STOKER: Art",
   description: "Acrylic on Canvas and random things",
-  icon: "product-templates",
+  icon: "product-toolpad",
   url: ROUTES.art,
   preview: {
     image: '/img/brian-art.png'
@@ -940,7 +939,7 @@ const photographyData: TProduct = {
   name: "Photography",
   fullName: "BRIAN STOKER: Photography",
   description: "Them thangs",
-  icon: "product-templates",
+  icon: "product-core",
   url: ROUTES.photography,
   preview: {
     image: '/static/photography/stallion.jpg'
@@ -958,7 +957,7 @@ const drumsData: TProduct = {
   name: "Drums",
   fullName: "BRIAN STOKER: Drums",
   description: "\"I like to play\" - Garth",
-  icon: "product-templates",
+  icon: "product-designkits",
   url: ROUTES.drums,
   preview:{
     video: 'https://cenv-public.s3.amazonaws.com/normal-guy.mp4'
@@ -1016,7 +1015,7 @@ const resumeData: TProduct = {
   name: "Resume",
   fullName: "BRIAN STOKER: Resume",
   description: "Keeping my eyes open for my next big project.",
-  icon: "product-templates",
+  icon: "product-advanced",
   url: ROUTES.resume,
   preview:{
     image: 'https://cenv-public.s3.amazonaws.com/resume-preview.png'

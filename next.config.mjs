@@ -198,6 +198,7 @@ export default withDocsInfra({
       },
     };
   },
+  trailingSlash: false,
   env: {
     // docs-infra
     LIB_VERSION: pkg.version,

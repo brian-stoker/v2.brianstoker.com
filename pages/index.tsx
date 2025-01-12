@@ -1,6 +1,5 @@
 import * as React from 'react';
 import NoSsr from "@mui/material/NoSsr";
-import Box from "@mui/material/Box";
 import Divider from "@mui/material/Divider";
 import { PRODUCTS } from 'src/products';
 import BrandingCssVarsProvider from 'src/BrandingCssVarsProvider';
@@ -16,8 +15,7 @@ import { pdfjs } from 'react-pdf';
 function randomHome(homePages: string[]) {
   return homePages[Math.floor(Math.random()*homePages.length)];
 }
-export function HomeView({ HomeMain, previews = false}: { previews?: boolean, HomeMain: React.ComponentType }) {
-
+export function HomeView({ HomeMain, previews = false}: { previews?: boolean, HomeMain: React.ComponentType<any> }) {
   const homeUrl = randomHome(PRODUCTS.pages);
   const RandomHome = dynamic(() => import((`.${homeUrl}main`)), {ssr: false});
 
@@ -28,7 +26,7 @@ export function HomeView({ HomeMain, previews = false}: { previews?: boolean, Ho
     setIsClient(true)
   }, [])
 
-  return <BrandingCssVarsProvider>
+  return <React.Fragment>
     <Head
       title="brian stoker"
       description="A spot to stuff my stash"
@@ -57,16 +55,17 @@ export function HomeView({ HomeMain, previews = false}: { previews?: boolean, Ho
     <AppHeader/>
     <main id="main-content">
       {isClient ? <Main/> : ''}
-      {previews && PRODUCTS.previews()}
     </main>
+    <Divider/>
     <AppFooter/>
-  </BrandingCssVarsProvider>;
+  </React.Fragment>
+
 }
 
 function MainView() {
   return (<React.Fragment>
       <Hero/>
-      <Divider/>
+
     </React.Fragment>)
 }
 
