@@ -4,8 +4,8 @@ export default $config({
   app(input) {
     return {
       name: "brianstoker-com",
-      removal: input?.stage === "production" ? "retain" : "remove",
-      protect: ["production"].includes(input?.stage),
+      removal: input?.stage === "prod" ? "retain" : "remove",
+      protect: ["prod"].includes(input?.stage),
       home: "aws",
       providers: { aws: "6.66.2" },
     };
@@ -15,6 +15,9 @@ export default $config({
       domain: {
         name: domains.pop()!,
         aliases: domains, // Assumes the domain is in Route 53
+      },
+      environment: {
+        runtime: "nodejs20.x", // Match the Node.js runtime
       },
     });
   },

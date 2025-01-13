@@ -42,21 +42,6 @@ export default withDocsInfra({
   assetPrefix,
   basePath,
   webpack: (config, options) => {
-    const plugins = config.plugins.slice();
-
-    if (process.env.DOCS_STATS_ENABLED) {
-      plugins.push(
-        // For all options see https://github.com/th0r/webpack-bundle-analyzer#as-plugin
-        new BundleAnalyzerPlugin({
-          analyzerMode: 'server',
-          generateStatsFile: true,
-          analyzerPort: options.isServer ? 8888 : 8889,
-          reportTitle: `${options.isServer ? 'server' : 'client'} docs bundle`,
-          // Will be available at `.next/${statsFilename}`
-          statsFilename: `stats-${options.isServer ? 'server' : 'client'}.json`,
-        }),
-      );
-    }
 
     // next includes node_modules in webpack externals. Some of those have dependencies
     // on the aliases defined above. If a module is an external those aliases won't be used.
@@ -211,7 +196,6 @@ export default withDocsInfra({
       ? `Basic ${Buffer.from(process.env.GITHUB_AUTH).toString('base64')}`
       : '',
   },
-  distDir: 'export',
   // Next.js provides a `defaultPathMap` argument, we could simplify the logic.
   // However, we don't in order to prevent any regression in the `findPages()` method.
   // @ts-ignore
@@ -270,20 +254,5 @@ export default withDocsInfra({
 
     return map;
   },
-  // Used to signal we run pnpm build
-  ...(process.env.NODE_ENV === 'production'
-    ? {
-        output: 'export',
-      }
-    : {
-        // rewrites has no effect when run `next export` for production
-        rewrites: async () => {
-          return [
-            { source: `/:lang(${LANGUAGES.join('|')})?/:rest*`, destination: '/:rest*' },
-            // Make sure to include the trailing slash if `trailingSlash` option is set
-            { source: '/api/:rest*/', destination: '/api-docs/:rest*/' },
-            { source: `/static/x/:rest*`, destination: 'http://0.0.0.0:3001/static/x/:rest*' },
-          ];
-        },
-      }),
+  output: 'standalone'
 });
