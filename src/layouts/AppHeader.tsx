@@ -39,7 +39,7 @@ interface AppHeaderProps {
 }
 
 export default function AppHeader(props: AppHeaderProps) {
-  const { gitHubRepository = 'https://github.com/stoked-ui/mono' } = props;
+  const { gitHubRepository = 'https://github.com/brian-stoker' } = props;
   const t = useTranslate();
   const theme = useTheme();
   return (
@@ -60,7 +60,6 @@ export default function AppHeader(props: AppHeaderProps) {
         </Box>
         <Box sx={{ml: 'auto'}}/>
         <Stack direction="row" spacing={1}>
-          <DeferredAppSearch/>
           <Tooltip title={t('appFrame.github')} enterDelay={300}>
             <IconButton
               component="a"

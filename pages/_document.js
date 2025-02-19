@@ -1,14 +1,14 @@
 import * as React from 'react';
-import Script from 'next/script';
 import { documentGetInitialProps } from '@mui/material-nextjs/v13-pagesRouter';
 import { ServerStyleSheets as JSSServerStyleSheets } from '@mui/styles';
 import { ServerStyleSheet } from 'styled-components';
 import Document, { Html, Head, Main, NextScript } from 'next/document';
 import GlobalStyles from '@mui/material/GlobalStyles';
 import { getInitColorSchemeScript as getMuiInitColorSchemeScript } from '@mui/material/styles';
+import { getInitColorSchemeScript as getJoyInitColorSchemeScript } from '@mui/joy/styles';
+import { getMetaThemeColor } from '@stoked-ui/docs';
 import { pathnameToLanguage } from '../src/modules/utils/helpers';
 import createEmotionCache from '../src/createEmotionCache';
-import { getMetaThemeColor } from '@stoked-ui/docs';
 
 // You can find a benchmark of the available CSS minifiers under
 // https://github.com/GoalSmashers/css-minification-benchmark
@@ -30,10 +30,9 @@ if (process.env.NODE_ENV === 'production') {
   cleanCSS = new CleanCSS();
 }
 
-const PRODUCTION_GA =
-  process.env.DEPLOY_ENV === 'production' || process.env.DEPLOY_ENV === 'staging';
+// const PRODUCTION_GA = process.env.DEPLOY_ENV === 'production' || process.env.DEPLOY_ENV === 'staging';
 
-const GOOGLE_ANALYTICS_ID_V4 = PRODUCTION_GA ? 'G-5NXDQLC2ZK' : 'G-XJ83JQEK7J';
+// const GOOGLE_ANALYTICS_ID_V4 = PRODUCTION_GA ? 'G-5NXDQLC2ZK' : 'G-XJ83JQEK7J';
 
 export default class MyDocument extends Document {
   render() {
@@ -58,17 +57,24 @@ export default class MyDocument extends Document {
             content={getMetaThemeColor('dark')}
             media="(prefers-color-scheme: dark)"
           />
-          <link rel="shortcut icon" href="/static/favicon.ico"/>
+          <link
+            href="/favicon-black.png"
+            rel="icon"
+            media="(prefers-color-scheme: light)"
+          />
+          <link
+            href="/favicon.ico"
+            rel="icon"
+            media="(prefers-color-scheme: dark)"
+          />
           {/* iOS Icon */}
           <link rel="apple-touch-icon" sizes="180x180" href="/static/icons/180x180.png"/>
           {/* SEO */}
           <link
             rel="canonical"
-            href={`https://mui.com${
-              userLanguage === 'en' ? '' : `/${userLanguage}`
-            }${canonicalAsServer}`}
+            href={`https://brianstoker.com${canonicalAsServer}`}
           />
-          <link rel="alternate" href={`https://mui.com${canonicalAsServer}`} hrefLang="x-default"/>
+          <link rel="alternate" href={`https://www.brianstoker.com${canonicalAsServer}`} hrefLang="x-default"/>
           {/*
             Preconnect allows the browser to setup early connections before an HTTP request
             is actually sent to the server.
@@ -192,11 +198,13 @@ export default class MyDocument extends Document {
               '.plan-premium': {
                 backgroundImage: 'url(/static/x/premium.svg)',
               },
+              'body .DocSearch-Footer': { display: 'none'}
             }}
           />
         </Head>
         <body>
         {getMuiInitColorSchemeScript({defaultMode: 'system'})}
+        {getJoyInitColorSchemeScript({defaultMode: 'system'})}
         <Main/>
         {/*
           <script

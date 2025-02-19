@@ -26,7 +26,7 @@ export function HomeView({ HomeMain, previews = false}: { previews?: boolean, Ho
     setIsClient(true)
   }, [])
 
-  return <React.Fragment>
+  return <BrandingCssVarsProvider>
     <Head
       title="brian stoker"
       description="A spot to stuff my stash"
@@ -40,14 +40,14 @@ export function HomeView({ HomeMain, previews = false}: { previews?: boolean, Ho
             '@context': 'https://schema.org',
             '@type': 'Organization',
             name: 'Stoked UI',
-            url: 'https://stoked-ui.github.io.com/',
-            logo: 'https://stoked-ui.github.io/static/logo.png',
-            sameAs: ['https://x.com/MUI_hq', 'https://github.com/mui/', 'https://opencollective.com/mui-org',],
+            url: 'https://brianstoker.com/',
+            logo: 'https://brianstoker/static/logo.png'
           }),
         }}
       />
 
     </Head>
+
     <NoSsr>
       <NewsletterToast/>
     </NoSsr>
@@ -58,7 +58,7 @@ export function HomeView({ HomeMain, previews = false}: { previews?: boolean, Ho
     </main>
     <Divider/>
     <AppFooter/>
-  </React.Fragment>
+  </BrandingCssVarsProvider>
 
 }
 

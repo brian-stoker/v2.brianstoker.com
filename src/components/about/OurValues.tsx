@@ -1,13 +1,9 @@
 import * as React from 'react';
 import Box from '@mui/material/Box';
-import Button from '@mui/material/Button';
 import Grid from '@mui/material/Unstable_Grid2';
 import Paper from '@mui/material/Paper';
 import Typography from '@mui/material/Typography';
-import KeyboardArrowRightRounded from '@mui/icons-material/KeyboardArrowRightRounded';
-import { Link } from '@stoked-ui/docs/Link';
 import GradientText from 'src/components/typography/GradientText';
-import ROUTES from 'src/route';
 import Section from 'src/layouts/Section';
 import SectionHeadline from 'src/components/typography/SectionHeadline';
 

@@ -76,11 +76,11 @@ const DesignToolLink = React.forwardRef<
       href={
         {
           figma:
-            'https://stoked-ui.github.io/store/items/figma-react/?utm_source=marketing&utm_medium=referral&utm_campaign=home-products',
+            'https://stoked-ui.com/store/items/figma-react/?utm_source=marketing&utm_medium=referral&utm_campaign=home-products',
           sketch:
-            'https://stoked-ui.github.io/store/items/sketch-react/?utm_source=marketing&utm_medium=referral&utm_campaign=home-products',
+            'https://stoked-ui.com/store/items/sketch-react/?utm_source=marketing&utm_medium=referral&utm_campaign=home-products',
           adobexd:
-            'https://stoked-ui.github.io/store/items/adobe-xd-react/?utm_source=marketing&utm_medium=referral&utm_campaign=home-products',
+            'https://stoked-ui.com/store/items/adobe-xd-react/?utm_source=marketing&utm_medium=referral&utm_campaign=home-products',
         }[brand]
       }
       target="_blank"
@@ -122,11 +122,11 @@ export function PrefetchDesignKitImages() {
         width: 0,
         height: 0,
         position: 'fixed',
-        top: -1000,
-        zIndex: -1,
+        zIndex: -100,
         '& > img': {
           position: 'absolute',
         },
+        opacity: '0',
       }}
     >
       <img src="/static/branding/design-kits/designkits1.jpeg" alt="" loading="lazy" />

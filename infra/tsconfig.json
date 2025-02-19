@@ -1,6 +1,6 @@
 {
-  "extends": "./original.tsconfig.json",
-  "include": ["next-env.d.ts", "types", "src", "pages", "data", "next.config.mjs"],
+  "extends": "../tsconfig.json",
+  "include": ["**/*.ts"],
   "compilerOptions": {
     "allowJs": true,
     "isolatedModules": true,
@@ -10,8 +10,8 @@
     "resolveJsonModule": true,
     "skipLibCheck": true,
     "esModuleInterop": true,
-    "types": ["react", "node"],
+    "types": ["react"],
     "incremental": true,
     "target": "ES2019"
-  },"exclude":[]
+  },
 }

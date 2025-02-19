@@ -181,120 +181,28 @@ export default function HeaderNavDropdown() {
               })}
             >
               <li>
-                <Anchor
-                  as="button"
-                  onClick={() => setProductsOpen((bool) => !bool)}
-                  sx={{ justifyContent: 'space-between' }}
-                >
-                  Products
-                  <KeyboardArrowDownRounded
-                    color="primary"
-                    sx={{
-                      transition: '0.3s',
-                      transform: productsOpen ? 'rotate(-180deg)' : 'rotate(0)',
-                    }}
-                  />
-                </Anchor>
-                <Collapse in={productsOpen}>
-                  <UList>
-                    {PRODUCTS.map((item) => (
-                      <li key={item.name}>
-                        <Anchor
-                          href={item.href}
-                          as={Link}
-                          noLinkStyle
-                          sx={{ flexDirection: 'column', alignItems: 'initial' }}
-                        >
-                          <Box
-                            sx={{
-                              display: 'flex',
-                              flexDirection: 'row',
-                              justifyContent: 'space-between',
-                            }}
-                          >
-                            {item.name}
-                            {item.chip ? (
-                              <Chip
-                                size="small"
-                                label={item.chip}
-                                color="primary"
-                                variant="outlined"
-                              />
-                            ) : null}
-                          </Box>
-                          <Typography variant="body2" color="text.secondary">
-                            {item.description}
-                          </Typography>
-                        </Anchor>
-                      </li>
-                    ))}
-                  </UList>
-                </Collapse>
-              </li>
-              <li>
-                <Anchor
-                  as="button"
-                  onClick={() => setDocsOpen((bool) => !bool)}
-                  sx={{ justifyContent: 'space-between' }}
-                >
-                  Docs
-                  <KeyboardArrowDownRounded
-                    color="primary"
-                    sx={{
-                      transition: '0.3s',
-                      transform: docsOpen ? 'rotate(-180deg)' : 'rotate(0)',
-                    }}
-                  />
-                </Anchor>
-                <Collapse in={docsOpen}>
-                  <UList>
-                    {DOCS.map((item) => (
-                      <li key={item.name}>
-                        <Anchor
-                          href={item.href}
-                          as={Link}
-                          noLinkStyle
-                          sx={{ flexDirection: 'column', alignItems: 'initial' }}
-                        >
-                          <Box
-                            sx={{
-                              display: 'flex',
-                              flexDirection: 'row',
-                              justifyContent: 'space-between',
-                            }}
-                          >
-                            {item.name}
-                            {item.chip ? (
-                              <Chip
-                                size="small"
-                                label={item.chip}
-                                color="primary"
-                                variant="outlined"
-                              />
-                            ) : null}
-                          </Box>
-                          <Typography variant="body2" color="text.secondary">
-                            {item.description}
-                          </Typography>
-                        </Anchor>
-                      </li>
-                    ))}
-                  </UList>
-                </Collapse>
-              </li>
-              <li>
-                <Anchor href={ROUTES.pricing} as={Link} noLinkStyle>
-                  Pricing
+                <Anchor href={ROUTES.art} as={Link} noLinkStyle>
+                  Art
                 </Anchor>
               </li>
               <li>
-                <Anchor href={ROUTES.about} as={Link} noLinkStyle>
-                  About us
+                <Anchor href={ROUTES.photography} as={Link} noLinkStyle>
+                  Photography
+                </Anchor>
+              </li>
+              <li>
+                <Anchor href={ROUTES.drums} as={Link} noLinkStyle>
+                  Drums
                 </Anchor>
               </li>
               <li>
                 <Anchor href={ROUTES.blog} as={Link} noLinkStyle>
                   Blog
+                </Anchor>
+              </li>
+              <li>
+                <Anchor href={ROUTES.resume} as={Link} noLinkStyle>
+                  Resume
                 </Anchor>
               </li>
             </UList>

@@ -5,8 +5,28 @@
 
 declare module "sst" {
   export interface Resource {
-    "brianstoker-com": {
-      "type": "sst.aws.Nextjs"
+    "Api": {
+      "type": "sst.aws.ApiGatewayV2"
+      "url": string
+    }
+    "MONGODB_URI": {
+      "type": "sst.sst.Secret"
+      "value": string
+    }
+    "SendSms": {
+      "name": string
+      "type": "sst.aws.Function"
+    }
+    "SubscribeFunction": {
+      "name": string
+      "type": "sst.aws.Function"
+    }
+    "VerifyFunction": {
+      "name": string
+      "type": "sst.aws.Function"
+    }
+    "brianstokercomStaticSite": {
+      "type": "sst.aws.StaticSite"
       "url": string
     }
   }

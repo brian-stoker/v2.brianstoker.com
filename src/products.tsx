@@ -463,7 +463,6 @@ function SwipeableProducts(props: ProductSwipeableProps) {
       <Box sx={{
         display: { md: 'none' },
         maxWidth: 'calc(100vw - 40px)',
-        minHeight: { xs: 200, sm: 166 },
         '& > div': { pr: '32%' },
       }}
       >
@@ -597,32 +596,30 @@ function ProductsPreviews({ products }: { products: Products } ) {
   const { ref, inView } = useInView({
     triggerOnce: true,
     threshold: 0,
-    rootMargin: '0px 200px',
+    rootMargin: '0px 50px',
   });
   const Showcase = products.live[productIndex].showcaseType;
   const showcaseProps = { showcaseContent: products.products?.[productIndex]?.data?.showcaseContent};
 
   return (
     <Section bg="gradient" ref={ref}>
-      <Grid container spacing={0}>
+      <Box sx={{ textAlign: { xs: 'center', md: 'left' }, }}>
+        <Typography variant="h1" mb={1} className={'stoked-font'} sx={{ fontSize:  { xs: 30, sm: 52, md: 75, lg: 102 }, marginBottom: { xs: 2, sm: 4, md: 8, lg: 12 }}}>
+          BRIAN <br/><GradientText>STOKER</GradientText>
+        </Typography>
+      </Box>
+      <Grid container spacing={'24px'}>
         <Grid item md={6}>
-          <Box sx={{ textAlign: { xs: 'center', md: 'left' }, maxWidth: 500 }}>
-            <Typography variant="h1" mb={1} className={'stoked-font'}>
-              BRIAN <br/><GradientText>STOKER</GradientText>
-            </Typography>
-          </Box>
+
           {products.switcher({ inView, productIndex, setProductIndex })}
         </Grid>
         <Grid
           item
           xs={12}
           md={6}
-          sx={productIndex === 0 ? { minHeight: { xs: 777, sm: 757, md: 'unset' } } : {}}
         >
           {inView ? (
             <React.Fragment>
-              <PrefetchStoreTemplateImages />
-              <PrefetchDesignKitImages />
               <Showcase {...showcaseProps}/>
             </React.Fragment>
           ) : (

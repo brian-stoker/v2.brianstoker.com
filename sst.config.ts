@@ -1,24 +1,24 @@
 /// <reference path="./.sst/platform/config.d.ts" />
-const domains = ["brianstoker.com", "www.brianstoker.com"];
+
+import {getDomainInfo} from "./infra/domains";
+
+if (!process.env.ROOT_DOMAIN) {
+  throw new Error("ROOT_DOMAIN environment variable is required");
+}
+
 export default $config({
   app(input) {
     return {
-      name: "brianstoker-com",
-      removal: input?.stage === "prod" ? "retain" : "remove",
-      protect: ["prod"].includes(input?.stage),
+      name: getDomainInfo(process.env.ROOT_DOMAIN!, input.stage).appName,
+      removal: input.stage === "production" ? "retain" : "remove",
+      protect: ["production"].includes(input.stage),
       home: "aws",
-      providers: { aws: "6.66.2" },
-    };
+    }
   },
   async run() {
-    new sst.aws.Nextjs("brianstoker-com", {
-      domain: {
-        name: domains.pop()!,
-        aliases: domains, // Assumes the domain is in Route 53
-      },
-      environment: {
-        runtime: "nodejs20.x", // Match the Node.js runtime
-      },
-    });
+    const { createSite, createApi } = await import('./infra');
+    const domainInfo = getDomainInfo(process.env.ROOT_DOMAIN!, $app.stage);
+    createSite(domainInfo);
+    createApi(domainInfo);
   },
 });

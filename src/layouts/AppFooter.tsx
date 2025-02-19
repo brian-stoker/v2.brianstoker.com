@@ -33,7 +33,7 @@ export default function AppFooter(props: AppFooterProps) {
           alignItems: 'flex-start',
           justifyContent: 'space-between',
           gap: 4,
-          gridTemplateColumns: { xs: '1fr', sm: '1fr', md: '1fr 1.75fr', lg: '1fr 1fr' },
+          gridTemplateColumns: { xs: '1fr', sm: '1fr  1.75fr', md: '1.75fr 1.75fr', lg: '1.75fr 1fr' },
           gridTemplateRows: 'auto',
           '& a:not(.MuiIconButton-root)': {
             pt: 0.5,
@@ -75,15 +75,14 @@ export default function AppFooter(props: AppFooterProps) {
         <Box
           sx={{
             display: 'grid',
-            gridTemplateColumns: { xs: '1fr 1fr', md: '1fr 1fr 1fr 1fr' },
+            gridTemplateColumns: '1fr 1fr',
             gridAutoColumns: '1fr',
             gap: 2,
           }}
         >
-          <div></div>
           <Box sx={{ display: 'flex', flexDirection: 'column' }}>
             <Typography fontWeight="semiBold" variant="body2" sx={{ mb: 0.5 }}>
-              Content
+              Sections
             </Typography>
             <Link prefetch={false} href={ROUTES.art}>
               Art
@@ -118,9 +117,9 @@ export default function AppFooter(props: AppFooterProps) {
             <Link prefetch={false} href={ROUTES.privacyPolicy}>
               Privacy policy
             </Link>
-            <Link prefetch={false} target="_blank" rel="noopener" href="mailto:b@stokedconsulting.com">
+            <a target="_blank" href="mailto:b@stokedconsulting.com">
               Contact us
-            </Link>
+            </a>
           </Box>
         </Box>
       </Box>
@@ -179,7 +178,7 @@ export default function AppFooter(props: AppFooterProps) {
           <IconButton
             target="_blank"
             rel="noopener"
-            href="https://stoked-ui.github.io/r/discord/"
+            href="https://discord.gg/YHpSwttm"
             aria-label="Discord"
             title="Discord"
             size="small"

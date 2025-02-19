@@ -15,7 +15,6 @@ import Chip from '@mui/material/Chip';
 import Slack from 'src/icons/Slack';
 import GitHubIcon from '@mui/icons-material/GitHub';
 import LinkedInIcon from '@mui/icons-material/LinkedIn';
-import YouTubeIcon from '@mui/icons-material/YouTube';
 import DiscordIcon from 'src/icons/DiscordIcon';
 import Head from 'src/modules/components/Head';
 import AppHeader from 'src/layouts/AppHeader';
@@ -39,7 +38,6 @@ export const getStaticProps = () => {
 };
 
 export function PostPreview(props: BlogPost) {
-  console.log('post preview', JSON.stringify(props, null, 2))
   return (
     <React.Fragment>
       <Box sx={{ display: 'flex', gap: 0.5, mb: 1.5 }}>
@@ -413,7 +411,7 @@ export default function Blog(props: InferGetStaticPropsType<typeof getStaticProp
                   Get up to date with everything SUI-related through our social media:
                 </Typography>
                 <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 2, '* > svg': { mr: 1 } }}>
-                  <Link href="https://github.com/stoked-ui/mono" target="_blank" fontSize={14}>
+                  <Link href="https://github.com/brian-stoker" target="_blank" fontSize={14}>
                     <GitHubIcon fontSize="small" />
                     GitHub
                   </Link>

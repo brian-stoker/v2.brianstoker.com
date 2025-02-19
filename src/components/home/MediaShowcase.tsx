@@ -1,16 +1,30 @@
 import * as React from 'react';
-import {alpha, ThemeProvider, createTheme, useTheme, Theme} from '@mui/material/styles';
+import {createTheme, Theme, useTheme} from '@mui/material/styles';
 import Box from '@mui/material/Box';
-import PointerContainer, { Data } from 'src/components/home/ElementPointer';
-import Frame from "../action/Frame";
+import {Data} from 'src/components/home/ElementPointer';
 import Fade from "@mui/material/Fade";
 import {SxProps} from "@mui/system";
+import Frame from "../action/Frame";
 
 export default function MediaShowcase({ sx, showcaseContent }: { sx?: SxProps<Theme>, showcaseContent?: any }): React.JSX.Element {
   const globalTheme = useTheme();
   const mode = globalTheme.palette.mode;
   const [element, setElement] = React.useState<Data>({ id: null, name: null, target: null });
   const [customized, setCustomized] = React.useState(false);
+
+
+  const lineMapping: Record<string, number | number[]> = {
+    card: [0, 20],
+    cardmedia: [1, 5],
+    stack: [6, 19],
+    stack2: [7, 16],
+    typography: 8,
+    stack3: [9, 16],
+    chip: [10, 14],
+    rating: 15,
+    switch: 18,
+  };
+
   const theme = React.useMemo(
     () =>
       customized

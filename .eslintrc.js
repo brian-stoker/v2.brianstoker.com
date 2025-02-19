@@ -31,18 +31,10 @@ module.exports = {
     ecmaVersion: 7,
   },
   plugins: [
-    'eslint-plugin-stoked-ui',
     'eslint-plugin-react-hooks',
     '@typescript-eslint/eslint-plugin',
     'eslint-plugin-filenames',
   ],
-  settings: {
-    'import/resolver': {
-      webpack: {
-        config: path.join(__dirname, './webpackBaseConfig.js'),
-      },
-    },
-  },
   /**
    * Sorted alphanumerically within each group. built-in and each plugin form
    * their own groups.
@@ -122,12 +114,13 @@ module.exports = {
     // We are a library, we need to support it too
     'jsx-a11y/no-autofocus': 'off',
 
+    /*
     'stoked-ui/docgen-ignore-before-comment': 'error',
     'stoked-ui/rules-of-use-theme-variants': 'error',
     'stoked-ui/no-empty-box': 'error',
     'stoked-ui/no-styled-box': 'error',
     'stoked-ui/straight-quotes': 'error',
-
+    */
     'react-hooks/exhaustive-deps': ['error', { additionalHooks: 'useEnhancedEffect' }],
     'react-hooks/rules-of-hooks': 'error',
 
@@ -207,6 +200,9 @@ module.exports = {
 
     'react/jsx-no-useless-fragment': ['warn', { allowExpressions: true }],
     'lines-around-directive': 'off',
+    // Disable `import/no-unresolved`, see README.md for details
+    'import/no-unresolved': 'off',
+    '@typescript-eslint/lines-between-class-members': 'off',
   },
   overrides: [
     {
@@ -458,5 +454,11 @@ module.exports = {
         'import/extensions': ['error', 'ignorePackages'],
       },
     },
+    {
+      files: ['infra/**/*.ts', 'sst.config.ts', '.sst/**/*.ts'],
+      rules: {
+        'import/no-cycle': 'off',
+      }
+    }
   ],
 };
