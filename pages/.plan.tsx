@@ -152,7 +152,7 @@ export function PostPreview(props: BlogPost) {
         <Button
           component={Link}
           aria-describedby={`describe-${props.slug}`}
-          href={props.sui ? `/blog/${props.slug}` : `https://mui.com/blog/${props.slug}`}
+          href={props.sui ? `/blog/${props.slug}` : `https://brianstoker.com/blog/${props.slug}`}
           id={`describe-${props.slug}`}
           endIcon={<KeyboardArrowRightRoundedIcon />}
           size="small"
