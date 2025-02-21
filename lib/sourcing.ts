@@ -57,9 +57,10 @@ const ALLOWED_TAGS = [
 const SUI_TAGS = [
   'Stoked UI',
   'SUI',
+  'Common',
   'File Explorer',
   'Media Selector',
-  'Video Editor',
+  'Editor',
   'Timeline'
 ];
 

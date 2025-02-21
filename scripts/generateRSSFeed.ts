@@ -1,16 +1,16 @@
 import fs from 'fs';
 import { Feed } from 'feed';
-import { BlogPost } from 'lib/sourcing';
-import ROUTES from 'src/route';
+import { BlogPost } from '../lib/sourcing';
+import ROUTES from '../src/route';
 
 export default function generateRssFeed(allBlogPosts: Array<BlogPost>) {
   if (process.env.NODE_ENV !== 'production') {
     return;
   }
-  const siteUrl = 'https://stoked-ui.com';
+  const siteUrl = 'https://brianstoker.com';
 
   const feed = new Feed({
-    title: 'SUI - Blog',
+    title: 'brianstoker.com .blog',
     description:
       'Follow the SUI blog to learn about new product features, latest advancements in UI development, and business initiatives.',
     id: `${siteUrl}/blog`,

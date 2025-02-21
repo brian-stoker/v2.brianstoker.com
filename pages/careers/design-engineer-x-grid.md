@@ -25,7 +25,7 @@ Beyond the core libraries, MUI X offers advanced components like the Data Grid,
 
 We're also making ambitious moves to incorporate our full suite of components into Toolpad, a low-code admin builder tool for assembling full-stack apps faster than ever.
 
-Learn more about MUI's products in this blog post: [An introduction to the MUI ecosystem](https://mui.com/blog/mui-product-comparison/).
+Learn more about MUI's products in this plan post: [An introduction to the MUI ecosystem](https://mui.com/plan/bs-product-comparison/).
 
 ## The culture
 
@@ -38,7 +38,7 @@ For additional details about the culture, you can check our [careers](https://mu
 
 ## Why we're hiring
 
-[According to our last survey](https://mui.com/blog/2021-developer-survey-results/#what-are-your-most-important-criteria-for-choosing-a-ui-library), the quality of the design execution (UX & UI) is the most important criterion used by developers & designers to choose a component UI library.
+[According to our last survey](https://mui.com/plan/2021-developer-survey-results/#what-are-your-most-important-criteria-for-choosing-a-ui-library), the quality of the design execution (UX & UI) is the most important criterion used by developers & designers to choose a component UI library.
 
 It's an even bigger problem when developers work on projects around a single major component, like the Data Grid. It's not just the interaction that needs to feel great but the developer experience of working with that component also needs to be excellent, to allow a smooth integration with the rest of their app.
 
@@ -69,7 +69,7 @@ The Design Engineer role sits right at the intersection between product design a
   MUI X is a complex codebase. Components we've shipped recently, such as the Data Grid and Date and Time Pickers, require months of dedicated, careful work.
 - **Design for engineers and their end users**.
   As an engineer yourself, you can understand the problems developers face, and you will help them overcome those problems by delivering amazing DX and enabling them to create powerful UX for their end users.
-  This might involve careful API design, identifying and fixing top bugs, creating easy-to-understand error messages, and writing documentation and blog posts about features you and your team ship.
+  This might involve careful API design, identifying and fixing top bugs, creating easy-to-understand error messages, and writing documentation and plan posts about features you and your team ship.
 - **Collaborate with the open-source community**.
   The community contributes with many meaningful features and fixes. You'll guide and support them helping MUI X's growth while inspiring many others to join the ride, too.
 - **Experiment and play**. Great, unexpected features and heisenbug fixes have come from a number of sources — relentlessly methodical processes of elimination, free-flowing team collaboration, inspiration from adjacent libraries and projects, and difficult-to-explain individual strokes of brilliance. Whatever your preferred style is for creating new things that others might not have thought of, you'll find a welcome home on the team.

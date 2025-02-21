@@ -25,7 +25,7 @@ Beyond the core libraries, MUI X offers advanced components like the Data Grid,
 
 We're also making ambitious moves to incorporate our full suite of components into Toolpad, a low-code admin builder tool for assembling full-stack apps faster than ever.
 
-Learn more about MUI's products in this blog post: [An introduction to the MUI ecosystem](https://mui.com/blog/mui-product-comparison/).
+Learn more about MUI's products in this plan post: [An introduction to the MUI ecosystem](https://mui.com/plan/bs-product-comparison/).
 
 ## The culture
 
@@ -68,7 +68,7 @@ Depending on the day, you'll:
 Tasks that you might work on once you join:
 
 - Explore ways to provide a theme builder/sell themes on the platform that deeply integrate with MUI Core and the documentation.
-- Develop the SEA & SEO strategy, create new blog posts, try retargeting, Google Ads, etc.
+- Develop the SEA & SEO strategy, create new plan posts, try retargeting, Google Ads, etc.
 - Improve the fulfillment workflow of MUI X Pro & Premium.
 - Develop a Figma plugin & backend to push [MUI for Figma](https://mui.com/store/items/figma-react/) to reduce the collaboration friction between designers and developers.
 - Add a search page to scale the hosting to more items from contributors.

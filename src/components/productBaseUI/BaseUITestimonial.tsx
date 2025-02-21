@@ -54,8 +54,8 @@ export default function BaseUITestimonial() {
               /
             </Typography>
             &nbsp;&nbsp;
-            <Link href="https://nhost.io/blog/new-database-ui" target="_blank">
-              View the blog post <ChevronRightRoundedIcon fontSize="small" />
+            <Link href="https://nhost.io/plan/new-database-ui" target="_blank">
+              View the plan post <ChevronRightRoundedIcon fontSize="small" />
             </Link>
           </Typography>
         </Grid>

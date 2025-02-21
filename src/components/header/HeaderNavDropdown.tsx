@@ -196,8 +196,8 @@ export default function HeaderNavDropdown() {
                 </Anchor>
               </li>
               <li>
-                <Anchor href={ROUTES.blog} as={Link} noLinkStyle>
-                  Blog
+                <Anchor href={ROUTES.plan} as={Link} noLinkStyle>
+                  .plan
                 </Anchor>
               </li>
               <li>

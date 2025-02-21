@@ -1,23 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 <rss version="2.0">
     <channel>
-        <title>brianstoker.com .blog</title>
-        <link>https://brianstoker.com/blog</link>
+        <title>brianstoker.com .plan</title>
+        <link>https://stoked-ui.com/blog</link>
         <description>Follow the SUI blog to learn about new product features, latest advancements in UI development, and business initiatives.</description>
-        <lastBuildDate>Fri, 21 Feb 2025 19:35:55 GMT</lastBuildDate>
+        <lastBuildDate>Fri, 21 Feb 2025 18:59:33 GMT</lastBuildDate>
         <docs>https://validator.w3.org/feed/docs/rss2.html</docs>
         <generator>https://github.com/jpmonette/feed</generator>
         <language>en</language>
         <image>
-            <title>brianstoker.com .blog</title>
-            <url>https://brianstoker.com/static/logo.svg</url>
-            <link>https://brianstoker.com/blog</link>
+            <title>brianstoker.com .plan</title>
+            <url>https://stoked-ui.com/static/logo.svg</url>
+            <link>https://stoked-ui.com/blog</link>
         </image>
         <copyright>Copyright © 2025 Stoked UI</copyright>
         <item>
             <title><![CDATA[Stoked UI Releases Initial Versions of Its React Component Modules]]></title>
-            <link>https://brianstoker.com/blog/2025-02-20-initial-stoked-ui-release</link>
-            <guid>https://brianstoker.com/blog/2025-02-20-initial-stoked-ui-release</guid>
+            <link>https://stoked-ui.com/blog/2025-02-20-initial-stoked-ui-release</link>
+            <guid>https://stoked-ui.com/blog/2025-02-20-initial-stoked-ui-release</guid>
             <pubDate>Thu, 20 Feb 2025 00:00:00 GMT</pubDate>
             <description><![CDATA[Stoked UI modules are now available via pnpm, yarn, and npm.]]></description>
             <category>Stoked UI</category>
@@ -28,8 +28,8 @@
         </item>
         <item>
             <title><![CDATA[Stoked UI Releases Initial Versions of Its React Component Modules]]></title>
-            <link>https://brianstoker.com/blog/2025-02-20-initial-stoked-ui-release</link>
-            <guid>https://brianstoker.com/blog/2025-02-20-initial-stoked-ui-release</guid>
+            <link>https://stoked-ui.com/blog/2025-02-20-initial-stoked-ui-release</link>
+            <guid>https://stoked-ui.com/blog/2025-02-20-initial-stoked-ui-release</guid>
             <pubDate>Thu, 20 Feb 2025 00:00:00 GMT</pubDate>
             <description><![CDATA[Stoked UI modules are now available via pnpm, yarn, and npm.]]></description>
             <category>Stoked UI</category>
@@ -40,8 +40,8 @@
         </item>
         <item>
             <title><![CDATA[Stoked UI: Client-Side Video Editing React Components]]></title>
-            <link>https://brianstoker.com/blog/2024-08-28-introducing-stoked-ui</link>
-            <guid>https://brianstoker.com/blog/2024-08-28-introducing-stoked-ui</guid>
+            <link>https://stoked-ui.com/blog/2024-08-28-introducing-stoked-ui</link>
+            <guid>https://stoked-ui.com/blog/2024-08-28-introducing-stoked-ui</guid>
             <pubDate>Wed, 28 Aug 2024 00:00:00 GMT</pubDate>
             <description><![CDATA[Stoked UI enables fully client-side video editing in the browser, preserving privacy and efficiency.]]></description>
             <category>Stoked UI</category>
@@ -52,8 +52,8 @@
         </item>
         <item>
             <title><![CDATA[Stoked UI: Client-Side Video Editing React Components]]></title>
-            <link>https://brianstoker.com/blog/2024-08-28-introducing-stoked-ui</link>
-            <guid>https://brianstoker.com/blog/2024-08-28-introducing-stoked-ui</guid>
+            <link>https://stoked-ui.com/blog/2024-08-28-introducing-stoked-ui</link>
+            <guid>https://stoked-ui.com/blog/2024-08-28-introducing-stoked-ui</guid>
             <pubDate>Wed, 28 Aug 2024 00:00:00 GMT</pubDate>
             <description><![CDATA[Stoked UI enables fully client-side video editing in the browser, preserving privacy and efficiency.]]></description>
             <category>Stoked UI</category>

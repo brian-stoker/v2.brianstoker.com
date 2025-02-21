@@ -68,7 +68,7 @@ export default function AppFooter(props: AppFooterProps) {
             Keep up to date
           </Typography>
           <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
-            Join the newsletter for blog updates. No spam ever.
+            Join the newsletter for plan updates. No spam ever.
           </Typography>
           <EmailSubscribe />
         </Box>
@@ -93,8 +93,8 @@ export default function AppFooter(props: AppFooterProps) {
             <Link prefetch={false} href={ROUTES.drums}>
               Drums
             </Link>
-            <Link prefetch={false} href={ROUTES.blog}>
-              Blog
+            <Link prefetch={false} href={ROUTES.plan}>
+              .plan
             </Link>
             <Link prefetch={false} href={ROUTES.resume}>
               Resume

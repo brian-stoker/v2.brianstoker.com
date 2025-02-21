@@ -25,7 +25,7 @@ Beyond the core libraries, MUI X offers advanced components like the Data Grid,
 
 We're also making ambitious moves to incorporate our full suite of components into Toolpad, a low-code admin builder tool for assembling full-stack apps faster than ever.
 
-Learn more about MUI's products in this blog post: [An introduction to the MUI ecosystem](https://mui.com/blog/mui-product-comparison/).
+Learn more about MUI's products in this plan post: [An introduction to the MUI ecosystem](https://mui.com/plan/bs-product-comparison/).
 
 ## The culture
 

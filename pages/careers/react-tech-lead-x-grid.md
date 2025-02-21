@@ -25,7 +25,7 @@ Beyond the core libraries, MUI X offers advanced components like the Data Grid,
 
 We're also making ambitious moves to incorporate our full suite of components into Toolpad, a low-code admin builder tool for assembling full-stack apps faster than ever.
 
-Learn more about MUI's products in this blog post: [An introduction to the MUI ecosystem](https://mui.com/blog/mui-product-comparison/).
+Learn more about MUI's products in this plan post: [An introduction to the MUI ecosystem](https://mui.com/plan/bs-product-comparison/).
 
 ## The culture
 
@@ -46,7 +46,7 @@ We need to:
 - build advanced, in browsers, data analysis features like pivoting and charts integration.
 - build a strong integration with backend APIs, for example to handle >100M rows.
 
-We also need help to continue to make the components easier to use, make it more customizable, [improve performance](https://www.causal.app/blog/react-perf), make it more accessible, improve the health of the open-source by engaging and collaborating with the community, guide developers to answers, and just generally being a positive presence in the community.
+We also need help to continue to make the components easier to use, make it more customizable, [improve performance](https://www.causal.app/plan/react-perf), make it more accessible, improve the health of the open-source by engaging and collaborating with the community, guide developers to answers, and just generally being a positive presence in the community.
 
 Overall, both our open-source community and our premium products are growing fast (x2 YoY).
 We need talented people to keep that going!

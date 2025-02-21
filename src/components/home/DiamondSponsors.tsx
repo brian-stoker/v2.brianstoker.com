@@ -10,7 +10,7 @@ import SponsorCard from 'src/components/home/SponsorCard';
 
 const DIAMONDs = [
   {
-    src: '/static/images/bs.logo.svg',
+    src: '/static/images/mui.logo.svg',
     name: 'Stoked',
     description: 'Nothing to see here.',
     href: 'https://brianstoker.com/',

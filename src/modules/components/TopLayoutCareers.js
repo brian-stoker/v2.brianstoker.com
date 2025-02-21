@@ -6,7 +6,7 @@ import Head from 'src/modules/components/Head';
 import AppContainer from 'src/modules/components/AppContainer';
 import AppFooter from 'src/layouts/AppFooter';
 import AppHeader from 'src/layouts/AppHeader';
-import BrandingCssVarsProvider from 'src/BrandingCssVarsProvider';
+import { BrandingCssVarsProvider } from '@stoked-ui/docs';
 import MarkdownElement from 'src/modules/components/MarkdownElement';
 import { Link } from '@stoked-ui/docs/Link';
 

@@ -7,7 +7,7 @@ const ROUTES: Routes = {
   art: '/art',
   photography: '/photography/',
   drums: '/drums/',
-  blog: '/blog/',
+  plan: '/blog/',
   resume: '/resume/',
   stokedUi: '/stoked-ui/',
   fileExplorer: '/stoked-ui/file-explorer/',
@@ -24,7 +24,7 @@ const ROUTES: Routes = {
   careers: '/careers/',
   pricing: '/pricing/',
   about: 'https://stokedconsulting.com/about/',
-  blog: '/blog/',
+  plan: '/blog/',
   // Stoked Consulting
   home: '/file-explorer/',
   servicesUI: '/services/ui/',

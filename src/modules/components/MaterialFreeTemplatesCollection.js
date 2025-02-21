@@ -61,7 +61,7 @@ function layouts(t) {
       description: t('blogDescr'),
       src: '/static/images/templates/blog.png',
       href: '/material-ui/getting-started/templates/blog/',
-      source: `${sourcePrefix}/docs/data/stoked-ui/getting-started/templates/blog`,
+      source: `${sourcePrefix}/docs/data/stoked-ui/getting-started/templates/plan`,
     },
     {
       title: t('stickyFooterTitle'),

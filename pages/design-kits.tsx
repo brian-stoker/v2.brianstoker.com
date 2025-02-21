@@ -9,7 +9,7 @@ import DesignKitDemo from 'src/components/productDesignKit/DesignKitDemo';
 import DesignKitFAQ from 'src/components/productDesignKit/DesignKitFAQ';
 import SyncFeatures from 'src/components/productDesignKit/SyncFeatures';
 import MaterialEnd from 'src/components/productMaterial/MaterialEnd';
-import BrandingCssVarsProvider from 'src/BrandingCssVarsProvider';
+import BrandingCssVarsProvider from '@stoked-ui/docs';
 import References, { DESIGNKITS_CUSTOMERS } from 'src/components/home/References';
 import AppHeaderBanner from 'src/components/banner/AppHeaderBanner';
 

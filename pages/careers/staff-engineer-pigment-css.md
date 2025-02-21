@@ -25,7 +25,7 @@ Beyond the core libraries, MUI X offers advanced components like the Data Grid,
 
 We're also making ambitious moves to incorporate our full suite of components into Toolpad, a low-code admin builder tool for assembling full-stack apps faster than ever.
 
-Learn more about MUI's products in this blog post: [An introduction to the MUI ecosystem](https://mui.com/blog/mui-product-comparison/).
+Learn more about MUI's products in this plan post: [An introduction to the MUI ecosystem](https://mui.com/plan/bs-product-comparison/).
 
 ## The culture
 
@@ -42,7 +42,7 @@ We believe CSS-in-JS is the best styling API with the best developer experience 
 We've used it in Material UI since v1 (back then, with JSS, and currently with Emotion in v5).
 However, there are key challenges we need to overcome to keep using this stack: improving performance and compatibility with React 19 features, including React Server Components.
 That's why, about a year ago, we started to work on Pigment CSS!
-We recently released an early alpha version, [introduced at React Conf 2024](https://mui.com/blog/introducing-pigment-css/), for which we're seeing [early positive adoption](https://npm-stat.com/charts.html?package=@stylexjs/stylex,@pigment-css/react) and [some community validation](https://x.com/JoshWComeau/status/1767224693575053692).
+We recently released an early alpha version, [introduced at React Conf 2024](https://mui.com/plan/introducing-pigment-css/), for which we're seeing [early positive adoption](https://npm-stat.com/charts.html?package=@stylexjs/stylex,@pigment-css/react) and [some community validation](https://x.com/JoshWComeau/status/1767224693575053692).
 
 This is just the beginning, though.
 There's so much to do to make Pigment CSS a reliable and mature option for the future of Material UI and for many developers looking for a next-generation CSS-in-JS styling engine.

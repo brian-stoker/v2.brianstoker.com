@@ -126,13 +126,19 @@ Tip: you can access the documentation \`theme\` object directly in the console.
   );
 }
 function AppWrapper(props) {
-  const { children, emotionCache, pageProps } = props;
+  const { children, emotionCache, pageProps, query } = props;
 
-  const router = useRouter();
+  const router = typeof window === "undefined" ? null : useRouter();
+  let path = "";
+  if (router) {
+    path = router.asPath;
+  } else if (query) {
+    path = query.toString()
+  }
   // TODO move productId & productCategoryId resolution to page layout.
   // We should use the productId field from the markdown and fallback to getProductInfoFromUrl()
   // if not present
-  const { productId, productCategoryId } = getProductInfoFromUrl(router.asPath);
+  const { productId, productCategoryId } = getProductInfoFromUrl(path);
 
   React.useEffect(() => {
     loadDependencies();
@@ -182,7 +188,7 @@ function AppWrapper(props) {
 
   const pageContextValue = React.useMemo(() => {
     const pages = fileExplorerPages;
-    const { activePage, activePageParents } = findActivePage(pages, router.pathname);
+    const { activePage, activePageParents } = findActivePage(pages, path);
 
     return {
       activePage,
@@ -192,10 +198,10 @@ function AppWrapper(props) {
       productId,
       productCategoryId,
     };
-  }, [productId, productCategoryId, productIdentifier, router.pathname]);
+  }, [productId, productCategoryId, productIdentifier, path]);
 
   let fonts = [];
-  if (pathnameToLanguage(router.asPath).canonicalAs.match(/onepirate/)) {
+  if (pathnameToLanguage(path).canonicalAs.match(/onepirate/)) {
     fonts = [
       'https://fonts.googleapis.com/css2?family=Roboto+Condensed:wght@700&family=Work+Sans:wght@300;400&display=swap',
     ];
@@ -259,12 +265,12 @@ MyApp.propTypes = {
   pageProps: PropTypes.object.isRequired,
 };
 
-MyApp.getInitialProps = async ({ ctx, Component }) => {
+MyApp.getInitialProps = async (params) => {
+  const { ctx, Component } = params;
   let pageProps = {};
 
   const req = require.context('../translations', false, /translations.*\.json$/);
   const translations = mapTranslations(req);
-
   if (Component.getInitialProps) {
     pageProps = await Component.getInitialProps(ctx);
   }
@@ -275,6 +281,7 @@ MyApp.getInitialProps = async ({ ctx, Component }) => {
       translations,
       ...pageProps,
     },
+    query: ctx.query
   };
 };
 

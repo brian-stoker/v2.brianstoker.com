@@ -39,8 +39,8 @@ export function useCodeCopy(): any {
 }
 
 function InitCodeCopy() {
+
   const rootNode = React.useContext(CodeBlockContext);
-  const router = useRouter();
   React.useEffect(() => {
     let key = 'Ctrl + ';
     if (typeof window !== 'undefined') {
@@ -129,7 +129,7 @@ function InitCodeCopy() {
     }
 
     return undefined;
-  }, [rootNode, router.pathname]);
+  }, [rootNode]);
   return null;
 }
 

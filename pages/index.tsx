@@ -2,7 +2,7 @@ import * as React from 'react';
 import NoSsr from "@mui/material/NoSsr";
 import Divider from "@mui/material/Divider";
 import { PRODUCTS } from 'src/products';
-import BrandingCssVarsProvider from 'src/BrandingCssVarsProvider';
+import { BrandingCssVarsProvider } from '@stoked-ui/docs';
 import dynamic from 'next/dynamic';
 import AppFooter from "../src/layouts/AppFooter";
 import Head from "../src/modules/components/Head";

@@ -6,7 +6,7 @@ import AboutHero from '../src/components/about/AboutHero';
 import OurValues from '../src/components/about/OurValues';
 import Team from '../src/components/about/Team';
 import Head from '../src/modules/components/Head';
-import BrandingCssVarsProvider from '../src/BrandingCssVarsProvider';
+import BrandingCssVarsProvider from '@stoked-ui/docs';
 import AppHeaderBanner from '../src/components/banner/AppHeaderBanner';
 
 export default function About() {

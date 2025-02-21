@@ -223,7 +223,7 @@ gtag('config', '${GOOGLE_ANALYTICS_ID_V4}', {
           />
           *
            * A better alternative to <script async>, to delay its execution
-           * https://developer.chrome.com/blog/script-component/
+           * https://developer.chrome.com/plan/script-component/
 
           <Script
             strategy="afterInteractive"

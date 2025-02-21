@@ -551,9 +551,9 @@ export default function AppLayoutDocsFooter(props) {
             <Typography color="grey.500" fontSize={13} sx={{ opacity: '70%' }}>
               &bull;
             </Typography>
-            <Link href="https://stokedconsulting.com/blog/" target="_blank" rel="noopener">
+            <Link href="/pages/blog/" target="_blank" rel="noopener">
               <FooterLink>
-                Blog <ArrowOutwardRoundedIcon sx={{ fontSize: 14 }} />
+                .plan <ArrowOutwardRoundedIcon sx={{ fontSize: 14 }} />
               </FooterLink>
             </Link>
             <Typography color="grey.500" fontSize={13} sx={{ opacity: '70%' }}>

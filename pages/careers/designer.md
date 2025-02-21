@@ -18,7 +18,7 @@ Beyond the core libraries, MUI X offers advanced components like the Data Grid,
 
 We're also making ambitious moves to incorporate our full suite of components into Toolpad, a low-code admin builder tool for assembling full-stack apps faster than ever.
 
-Learn more about MUI's products in this blog post: [An introduction to the MUI ecosystem](https://mui.com/blog/mui-product-comparison/).
+Learn more about MUI's products in this plan post: [An introduction to the MUI ecosystem](https://mui.com/plan/bs-product-comparison/).
 
 ## The culture
 
@@ -33,7 +33,7 @@ For additional details about the culture, you can check our [careers](https://mu
 
 Material UI started as an open-source project.
 Over time, the audience and usage grew considerably, and some of the library's early contributors became full-time maintainers.
-A company was incorporated to support this growth, and more recently [was rebranded from Material UI to MUI](https://mui.com/blog/material-ui-is-now-mui/).
+A company was incorporated to support this growth, and more recently [was rebranded from Material UI to MUI](https://mui.com/plan/material-ui-is-now-mui/).
 The new brand was fundamental to set the stage for MUI to become larger than Material Design, which was something we were already doing.
 Currently, we have five main projects that are not at all related to MD:
 
@@ -45,7 +45,7 @@ Currently, we have five main projects that are not at all related to MD:
   Today, the flagship is the [Data Grid](https://mui.com/x/react-data-grid/), a game-changing component for presenting large amounts of data, which integrates perfectly with MUI Core.
 - Toolpad: a very recent endeavor aimed at exploring how our users can visually create apps 10x faster with the power of low-code and the flexibility of pro-code.
 
-We also know, especially due to [our annual Developer Survey](https://mui.com/blog/2021-developer-survey-results/), that design quality plays a huge part when developers are considering component library options.
+We also know, especially due to [our annual Developer Survey](https://mui.com/plan/2021-developer-survey-results/), that design quality plays a huge part when developers are considering component library options.
 Therefore, we need to grow the design team to help us push these initiatives further.
 
 ## The role

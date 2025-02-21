@@ -9,7 +9,7 @@ import Divider from '@mui/material/Divider';
 import Typography from '@mui/material/Typography';
 import Avatar from '@mui/material/Avatar';
 import Head from 'src/modules/components/Head';
-import BrandingCssVarsProvider from 'src/BrandingCssVarsProvider';
+import * as StokedDocs  from '@stoked-ui/docs';
 import AppHeader from 'src/layouts/AppHeader';
 import AppContainer from 'src/modules/components/AppContainer';
 import AppFooter from 'src/layouts/AppFooter';
@@ -20,6 +20,7 @@ import { pathnameToLanguage } from 'src/modules/utils/helpers';
 import ROUTES from 'src/route';
 import { Link } from '@stoked-ui/docs/Link';
 
+const { BrandingCssVarsProvider } = StokedDocs;
 export const authors = {
   brianstoker: {
     name: 'Brian Stoker',
@@ -237,7 +238,7 @@ const Root = styled('div')(
         textAlign: 'left',
         borderBottom: `3px solid rgba(62, 80, 96, 0.2) !important`,
       },
-      '& .blog-description': {
+      '& .plan-description': {
         fontSize: theme.typography.pxToRem(13),
         marginTop: 8,
         textAlign: 'center',
@@ -247,7 +248,7 @@ const Root = styled('div')(
           textDecoration: 'underline',
         },
       },
-      '& .MuiCode-root + .blog-description': {
+      '& .MuiCode-root + .plan-description': {
         marginTop: -20 + 8,
       },
     },
@@ -282,7 +283,7 @@ const Root = styled('div')(
             borderColor: theme.palette.primaryDark[500],
           },
         },
-        '& .blog-description': {
+        '& .plan-description': {
           color: theme.palette.grey[500],
         },
       },
@@ -299,20 +300,20 @@ export default function TopLayoutBlog(props) {
   const { canonicalAsServer } = pathnameToLanguage(router.asPath);
   const card =
     headers.manualCard === 'true'
-      ? `/static/blog/${slug}/card.png`
+      ? `/static/plan/${slug}/card.png`
       : `/edge-functions/og-image/?title=${headers.cardTitle || finalTitle}&authors=${headers.authors
           .map((author) => {
             const { github, name } = authors[author];
             return `${name} @${github}`;
           })
-          .join(',')}&product=Blog`;
+          .join(',')}&product=plan`;
 
   if (process.env.NODE_ENV !== 'production') {
     if (headers.manualCard === undefined) {
       throw new Error(
         [
-          `SUI: the "manualCard" markdown header for the blog post "${slug}" is missing.`,
-          `Set manualCard: true or manualCard: false header in docs/pages/blog/${slug}.md.`,
+          `SUI: the "manualCard" markdown header for the plan post "${slug}" is missing.`,
+          `Set manualCard: true or manualCard: false header in docs/pages/plan/${slug}.md.`,
         ].join('\n'),
       );
     }
@@ -341,7 +342,7 @@ export default function TopLayoutBlog(props) {
               publisher: {
                 '@type': 'Organization',
                 name: 'SUI blog',
-                url: 'https://stoked-ui.com/blog/',
+                url: 'https://stoked-ui.com/plan/',
                 logo: {
                   '@type': 'ImageObject',
                   url: 'https://stoked-ui.com/static/icons/512x512.png',
@@ -372,7 +373,7 @@ export default function TopLayoutBlog(props) {
               description,
               mainEntityOfPage: {
                 '@type': 'WebPage',
-                '@id': 'https://stoked-ui.com/blog/',
+                '@id': 'https://stoked-ui.com/plan/',
               },
             }),
           }}
@@ -381,8 +382,8 @@ export default function TopLayoutBlog(props) {
       <Root className={className}>
         <AppContainer component="main" className={classes.container}>
           <Link
-            href={ROUTES.blog}
-            {...(ROUTES.blog.startsWith('http') && {
+            href={ROUTES.plan}
+            {...(ROUTES.plan.startsWith('http') && {
               rel: 'nofollow',
             })}
             color="primary"

@@ -9,7 +9,7 @@ import KeyboardArrowRightRounded from '@mui/icons-material/KeyboardArrowRightRou
 import Head from 'src/modules/components/Head';
 import AppHeader from 'src/layouts/AppHeader';
 import AppFooter from 'src/layouts/AppFooter';
-import BrandingCssVarsProvider from 'src/BrandingCssVarsProvider';
+import BrandingCssVarsProvider from '@stoked-ui/docs';
 import Section from 'src/layouts/Section';
 import { pageToTitleI18n } from 'src/modules/utils/helpers';
 import { useTranslate } from '@stoked-ui/docs/i18n';
@@ -19,7 +19,6 @@ import materialPages from '../data/pages';
 import Alert from '@mui/material/Alert';
 import { redirect } from 'next/router';
 import { useSearchParams } from 'next/navigation';
-import { Stack } from '@mui/material';
 
 export default function Components() {
   const t = useTranslate();

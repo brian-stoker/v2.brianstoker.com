@@ -971,23 +971,21 @@ const drumsData: TProduct = {
 const drums = new Product(drumsData);
 
 
-const blogData: TProduct = {
-  id: 'blog',
-  name: "Blog",
-  fullName: "BRIAN STOKER: Blog",
+const planData: TProduct = {
+  id: 'plan',
+  name: ".plan",
+  fullName: "BRIAN STOKER: .blog",
   description: "Random musings probably not worth mentioning",
   icon: "product-templates",
-  url: ROUTES.blog,
+  url: ROUTES.plan,
   preview: {
     text: 'recalcitrant robot\n' + '@brianstoker\n' + '·\n' + 'Feb 15, 2021\n' + '#atx #snowboarding #merica @ Auditorium Shores https://www.instagram.com/p/CLVQg7ql34O4prJIa6hpXGg-RaupDXP0THly3A0/'
   },
   showcaseType: BlogShowcase,
   showcaseContent: {
-    "title": "Public release of @stoked-ui/media-selector, @stoked-ui/file-explorer, @stoked-ui/timeline, and @stoked-ui/editor",
-    "description": "Pleased to announce the initial release of Stoked UI. I've been wanting to contribute to the open source community for quite" +
-                   " some time. These react components are designed to support various media application development scenarios and are built on top" +
-                   " of MUI, providing a familiar development experience..",
-    "date": "2024-08-28T10:00:00.000Z",
+    "title": "Stoked UI: Client-Side Video Editing React Components",
+    "description": "Stoked UI modules are now available via pnpm, yarn, and npm.",
+    "date": "2025-02-20T00:00:00.000Z",
     "authors": [
       "brianstoker"
     ],
@@ -1000,12 +998,12 @@ const blogData: TProduct = {
     "manualCard": "true",
     "components": [],
     "hooks": [],
-    "slug": "bringing-consistency-to-material-ui-customization-apis"
+    "slug": "2025-02-20-initial-stoked-ui-release"
   },
   live: true
 }
 
-const blog = new Product(blogData);
+const plan = new Product(planData);
 
 const resumeData: TProduct = {
   id: 'resume',
@@ -1023,7 +1021,7 @@ const resumeData: TProduct = {
 
 const resume = new Product(resumeData);
 
-const PRODUCTS: Products = new Products([art, photography, drums, blog, resume]);
+const PRODUCTS: Products = new Products([art, photography, drums, plan, resume]);
 const ALL_PRODUCTS: Products = new Products([sui, stokedConsulting]);
 
 export type MenuProps = {
