@@ -10,15 +10,15 @@ export default function generateRssFeed(allBlogPosts: Array<BlogPost>) {
   const siteUrl = 'https://stoked-ui.github.io';
 
   const feed = new Feed({
-    title: 'SUI - Blog',
+    title: 'brian-stokerblog',
     description:
-      'Follow the SUI blog to learn about new product features, latest advancements in UI development, and business initiatives.',
+      'find out what i\'m working on but probably just random bs that you aren\'t interested in.',
     id: `${siteUrl}/blog`,
     link: `${siteUrl}/blog`,
     language: 'en',
     image: `${siteUrl}/static/logo.svg`,
     favicon: `${siteUrl}/favicon.ico`,
-    copyright: `Copyright © ${new Date().getFullYear()} Stoked UI`,
+    copyright: `Copyright © ${new Date().getFullYear()} brianstoker.com`,
     feedLinks: {
       rss2: `${siteUrl}/public${ROUTES.rssFeed}`,
     },

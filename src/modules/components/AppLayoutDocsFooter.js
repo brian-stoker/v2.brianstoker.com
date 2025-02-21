@@ -553,7 +553,7 @@ export default function AppLayoutDocsFooter(props) {
             </Typography>
             <Link href="https://stoked-ui.github.io/blog/" target="_blank" rel="noopener">
               <FooterLink>
-                Blog <ArrowOutwardRoundedIcon sx={{ fontSize: 14 }} />
+                blog <ArrowOutwardRoundedIcon sx={{ fontSize: 14 }} />
               </FooterLink>
             </Link>
             <Typography color="grey.500" fontSize={13} sx={{ opacity: '70%' }}>

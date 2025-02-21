@@ -294,7 +294,7 @@ export default function HeaderNavDropdown() {
               </li>
               <li>
                 <Anchor href={ROUTES.blog} as={Link} noLinkStyle>
-                  Blog
+                  blog
                 </Anchor>
               </li>
             </UList>

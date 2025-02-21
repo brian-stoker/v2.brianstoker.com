@@ -8,7 +8,7 @@ import Team from '../src/components/about/Team';
 import HowToSupport from '../src/components/about/HowToSupport';
 import AboutEnd from '../src/components/about/AboutEnd';
 import Head from '../src/modules/components/Head';
-import BrandingCssVarsProvider from '../src/BrandingCssVarsProvider';
+import BrandingCssVarsProvider from '@stoked-ui/docs';
 import AppHeaderBanner from '../src/components/banner/AppHeaderBanner';
 
 export default function About() {

@@ -10,11 +10,11 @@ manualCard: true
 There's a lot of exciting news in [MUI X v6.0.0-beta.0](https://github.com/mui/mui-x/releases/v6.0.0-beta.0), but there's hardly anything comparable to the revamp we're delivering for the Date and Time Pickers.
 
 This is the result of our ongoing efforts to improve the usability and customizability of these components.
-We kept the best aspects of the previous versions, and we're fleshing out the package with a [new documentation](https://next.mui.com/x/react-date-pickers/getting-started/), major new features and one fundamental change: a new input type to replace the masked text fields.
+We kept the best aspects of the previous versions, and we're fleshing out the package with a [new documentation](https://next.brianstoker.com/x/react-date-pickers/getting-started/), major new features and one fundamental change: a new input type to replace the masked text fields.
 
 ## The new date and time fields
 
-These new input components are called [Fields](https://next.mui.com/x/react-date-pickers/fields/), and they provide massive improvements to the experience of editing the value with a keyboard.
+These new input components are called [Fields](https://next.brianstoker.com/x/react-date-pickers/fields/), and they provide massive improvements to the experience of editing the value with a keyboard.
 
 The previous generation of pickers, whose text input is based on a [mask approach](https://www.npmjs.com/package/rifm), are often cumbersome and fall flat on edge cases as well simple cases like modifying dates.
 
@@ -106,7 +106,7 @@ We'd love to hear your [feedback](https://github.com/mui/mui-x/issues/new/choose
 
 Now that you've seen what's fundamentally changed with the Pickers, let's briefly review some other noteworthy improvements.
 
-- **[Customization of layout and internal components](https://next.mui.com/x/react-date-pickers/custom-layout/)** \
+- **[Customization of layout and internal components](https://next.brianstoker.com/x/react-date-pickers/custom-layout/)** \
   Combining the concept of slots with the grid layout, you now can rearrange, extend, and customize most of the components used internally by the Pickers' views.
 - **Default render input**\
   You don't need to provide the usual `TextField` on `renderInput` anymore unless you need it customized.
@@ -114,7 +114,7 @@ Now that you've seen what's fundamentally changed with the Pickers, let's briefl
 
   1. Customizing through props via `field` and `input` slots ([codebox example](https://codesandbox.io/p/sandbox/customizing-fields-with-props-o66r1c?file=/demo.tsx)).
   2. Build a new field component using the Field's headless API (documentation coming soon).
-  3. Use an entirely [custom text field](https://next.mui.com/x/react-date-pickers/date-picker/#custom-input-component) to suit your use case.
+  3. Use an entirely [custom text field](https://next.brianstoker.com/x/react-date-pickers/date-picker/#custom-input-component) to suit your use case.
 
 - **Drag to edit**\
   Editing a date range is even easier now with the new drag-and-drop interface. Change `start` and `end` dates at will.

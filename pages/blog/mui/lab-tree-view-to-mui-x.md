@@ -7,7 +7,7 @@ tags: ['MUI X', 'Product']
 manualCard: true
 ---
 
-After more than 4 years in the lab, the [Tree View](https://mui.com/x/react-tree-view/) components have found a new home as part of MUI X.
+After more than 4 years in the lab, the [Tree View](https://brianstoker.com/x/react-tree-view/) components have found a new home as part of MUI X.
 This means we'll be dedicating even more time and effort to these complex components, to better meet the needs of both you and your users.
 
 ## TL;DR
@@ -85,6 +85,6 @@ Our next goal is to work on the stability and API consistency of its components 
 
 Please feel free to try out the component and provide any feedback you may have.
 
-We also have a dedicated channel in our [Discord Server](https://mui.com/r/discord/) for you to provide any feedback or concerns you have with Tree View.
+We also have a dedicated channel in our [Discord Server](https://brianstoker.com/r/discord/) for you to provide any feedback or concerns you have with Tree View.
 
 Happy building!

@@ -7,7 +7,7 @@ tags: ['MUI X', 'Product']
 manualCard: true
 ---
 
-We're happy to announce that the Premium plan is [finally out](https://mui.com/pricing/)!
+We're happy to announce that the Premium plan is [finally out](https://brianstoker.com/pricing/)!
 With it, MUI X officially steps up to the next level, supporting more advanced data grid use cases.
 
 <img src="/static/blog/premium-plan-release/card.png" style="width: 796px; margin-top: 16px; margin-bottom: 16px;" alt="Promotional image of MUI X Premium plan release showcasing Data Grid's new features (such as Download data as an Excel file) and Date Range Picker" />
@@ -18,7 +18,7 @@ You can use the new Premium features to provide your end users with the most sop
 
 ### Row grouping
 
-[Row grouping](https://mui.com/x/react-data-grid/row-grouping/) lets users group data based on repeating values in the grid.
+[Row grouping](https://brianstoker.com/x/react-data-grid/row-grouping/) lets users group data based on repeating values in the grid.
 For example, users can now group orders by buyers, movies by directors, or cities by the governing parties.
 
 These kinds of use cases would usually be dealt with using a new query on the database—which might require a new service end-point, and maybe even a new front-end, along with all the UX challenges this would entail.
@@ -36,13 +36,13 @@ and are then able to export these new views to Excel, with the next Premium feat
 :::info
 With the Premium release, we have made Row grouping available for production use in the `@mui/x-data-grid-premium` package.
 
-This feature was previously available [as a preview](https://mui.com/blog/introducing-the-row-grouping-feature/#how-to-unlock-this-feature) for Pro users intending to migrate to the new plan.
+This feature was previously available [as a preview](https://brianstoker.com/blog/introducing-the-row-grouping-feature/#how-to-unlock-this-feature) for Pro users intending to migrate to the new plan.
 
 :::
 
 ### Excel export
 
-[Excel export](https://mui.com/x/react-data-grid/export/#excel-export) enables users to save the data from the grid as an Excel spreadsheet that mirrors the existing visualization in the data grid based on filters, sorting, and row grouping.
+[Excel export](https://brianstoker.com/x/react-data-grid/export/#excel-export) enables users to save the data from the grid as an Excel spreadsheet that mirrors the existing visualization in the data grid based on filters, sorting, and row grouping.
 
 This is one of the most requested features to date, so we're excited to finally deliver.
 
@@ -56,7 +56,7 @@ In the future we intend to support all of the features impacting visualization o
 
 ### Aggregation (coming in late Q2)
 
-Speaking of future releases: [aggregation functions](https://mui.com/x/react-data-grid/aggregation/) are coming next, as part of our ongoing efforts to build better tools for analyzing data.
+Speaking of future releases: [aggregation functions](https://brianstoker.com/x/react-data-grid/aggregation/) are coming next, as part of our ongoing efforts to build better tools for analyzing data.
 Combined with row grouping, aggregation functions help users dive even deeper into their data for more granular insight.
 
 Expanding on the use cases in the previous examples, users will be able to dynamically get the sum of orders for each customer, the minimum rating of each director, or the average crime rate for each governing party.
@@ -80,7 +80,7 @@ Here is a list of everything that has changed:
 
 :::warning
 The following **pricing** changes apply only to **new customers**.
-Existing customers are grandfathered, they can renew their license under the [previous terms](https://mui.com/legal/mui-x-eula-2022-05-08/) once.
+Existing customers are grandfathered, they can renew their license under the [previous terms](https://brianstoker.com/legal/mui-x-eula-2022-05-08/) once.
 Their last renewal can have a support duration of up to 5 years.
 :::
 
@@ -103,9 +103,9 @@ Their last renewal can have a support duration of up to 5 years.
 
 - **Price cap for Premium plan**
 
-  Pro is still capped at 10 seats, but Premium doesn't have a license cap. We kindly ask you to [contact sales](mailto:sales@mui.com) if you wish to purchase a license for more than 50 developers.
+  Pro is still capped at 10 seats, but Premium doesn't have a license cap. We kindly ask you to [contact sales](mailto:sales@brianstoker.com) if you wish to purchase a license for more than 50 developers.
 
-Please feel free to read the [license agreement](https://mui.com/legal/mui-x-eula/) in detail.
+Please feel free to read the [license agreement](https://brianstoker.com/legal/mui-x-eula/) in detail.
 
 ## What can you expect next?
 
@@ -137,13 +137,13 @@ yarn add @mui/x-data-grid-premium
 
 All the features from Community and Pro plan are available in the Premium package. You can remove your previous data grid package without any concern.
 
-The new package exports the component `<DataGridPremium />` which has basically the same API as `<DataGridPro />`. To use this package for development of a production product, and to remove the watermark, you must acquire a Premium license. If you wish to upgrade your existing Pro license, please [contact sales](mailto:sales@mui.com).
+The new package exports the component `<DataGridPremium />` which has basically the same API as `<DataGridPro />`. To use this package for development of a production product, and to remove the watermark, you must acquire a Premium license. If you wish to upgrade your existing Pro license, please [contact sales](mailto:sales@brianstoker.com).
 
 ### Should I update my code?
 
 You don't have to take any action here as a Community or Pro user, unless you're already using row grouping in your project.
 
-Row grouping is now officially deprecated in the Pro package and will be removed from the experimental features [as planned](https://mui.com/blog/introducing-the-row-grouping-feature/#how-to-unlock-this-feature).
+Row grouping is now officially deprecated in the Pro package and will be removed from the experimental features [as planned](https://brianstoker.com/blog/introducing-the-row-grouping-feature/#how-to-unlock-this-feature).
 
 You must upgrade to the Premium plan to continue to use the row grouping feature.
 

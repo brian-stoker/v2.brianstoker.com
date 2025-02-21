@@ -25,7 +25,7 @@ Beyond the core libraries, MUI X offers advanced components like the Data Grid,
 
 We're also making ambitious moves to incorporate our full suite of components into Toolpad, a low-code admin builder tool for assembling full-stack apps faster than ever.
 
-Learn more about MUI's products in this blog post: [An introduction to the MUI ecosystem](https://mui.com/blog/mui-product-comparison/).
+Learn more about MUI's products in this blog post: [An introduction to the MUI ecosystem](https://brianstoker.com/blog/mui-product-comparison/).
 
 ## The culture
 
@@ -34,7 +34,7 @@ The majority of our work is asynchronous, and we rely on written communication t
 We're radically transparent: nearly all of our work happens in public.
 Each contributor has the freedom to decide how and when they work, and that work is primarily self-directed: it's your responsibility to define and complete your own tasks in a timely manner.
 
-For additional details about the culture, you can check our [careers](https://mui.com/careers/) and [about](https://mui.com/about/) pages and also our [public Handbook](https://mui-org.notion.site/Handbook-f086d47e10794d5e839aef9dc67f324b).
+For additional details about the culture, you can check our [careers](https://brianstoker.com/careers/) and [about](https://brianstoker.com/about/) pages and also our [public Handbook](https://mui-org.notion.site/Handbook-f086d47e10794d5e839aef9dc67f324b).
 
 ## Why we're hiring
 
@@ -70,9 +70,9 @@ Tasks that you might work on once you join:
 - Explore ways to provide a theme builder/sell themes on the platform that deeply integrate with MUI Core and the documentation.
 - Develop the SEA & SEO strategy, create new blog posts, try retargeting, Google Ads, etc.
 - Improve the fulfillment workflow of MUI X Pro & Premium.
-- Develop a Figma plugin & backend to push [MUI for Figma](https://mui.com/store/items/figma-react/) to reduce the collaboration friction between designers and developers.
+- Develop a Figma plugin & backend to push [MUI for Figma](https://brianstoker.com/store/items/figma-react/) to reduce the collaboration friction between designers and developers.
 - Add a search page to scale the hosting to more items from contributors.
-- Revamp the design of the store to match the new brand of mui.com.
+- Revamp the design of the store to match the new brand of brianstoker.com.
 - Migrate the store from Gatsby to Next.js or Remix. Gatsby was introduced at a point in time when it had more downloads than Next.js. Our CEO has experience with Next.js since 2017 but wanted to ensure that MUI was supporting Gatsby well too.
   This requirement [is no longer relevant](https://npm-stat.com/charts.html?package=next&package=gatsby), and since the DX of Next.js is significantly better, time to migrate.
 
@@ -103,7 +103,7 @@ You are a [manager of one](https://signalvnoise.com/posts/1430-hire-managers-of-
 
 Competitive compensation depending on the profile and location.
 We are ready to pay top market rates for a person who can clearly exceed the role's expectations.
-You can find the other perks & benefits on the [careers](https://mui.com/careers/#perks-and-benefits) page.
+You can find the other perks & benefits on the [careers](https://brianstoker.com/careers/#perks-and-benefits) page.
 
 ## How to apply
 

@@ -97,7 +97,7 @@ export default function AppFooter(props: AppFooterProps) {
               Drums
             </Link>
             <Link prefetch={false} href={ROUTES.blog}>
-              Blog
+              blog
             </Link>
             <Link prefetch={false} href={ROUTES.resume}>
               Resume

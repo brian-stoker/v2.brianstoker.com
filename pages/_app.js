@@ -6,7 +6,7 @@ import NextHead from 'next/head';
 import PropTypes from 'prop-types';
 import { useRouter } from 'next/router';
 import PageContext from 'src/modules/components/PageContext';
-import GoogleAnalytics from 'src/modules/components/GoogleAnalytics';
+import App from "next/app";
 import { CodeCopyProvider } from 'src/modules/utils/CodeCopy';
 import { ThemeProvider } from 'src/modules/components/ThemeContext';
 import { CodeVariantProvider } from 'src/modules/utils/codeVariant';

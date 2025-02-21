@@ -49,20 +49,20 @@ Set the `timezone` prop to define which time zone the Date, Time, or DateTime sh
 />
 ```
 
-Check the [full instructions](https://mui.com/x/react-date-pickers/timezone/) for more information on using this feature in your application.
+Check the [full instructions](https://brianstoker.com/x/react-date-pickers/timezone/) for more information on using this feature in your application.
 
 ### Digital clock
 
-The digital clock is an alternative to the Time Pickers' [analog clock](https://mui.com/x/react-date-pickers/time-clock/).
+The digital clock is an alternative to the Time Pickers' [analog clock](https://brianstoker.com/x/react-date-pickers/time-clock/).
 The original proposal was mainly focused on mobile devices, whereas the new interface is designed for a desktop experience for better time precision.
 This new addition makes our Date Pickers even more versatile and user-friendly than before.
-It's available as the default variant for desktops on both the [Time Picker](https://mui.com/x/react-date-pickers/time-picker/) and the [Date Time Picker](https://mui.com/x/react-date-pickers/date-time-picker/).
+It's available as the default variant for desktops on both the [Time Picker](https://brianstoker.com/x/react-date-pickers/time-picker/) and the [Date Time Picker](https://brianstoker.com/x/react-date-pickers/date-time-picker/).
 
 <video preload="metadata" style="margin-bottom: 16px;" autoplay muted loop>
   <source src="/static/blog/mui-x-mid-v6-features/digital_clock.mov" type="video/mp4">
 </video>
 
-Check out all the possibilities in the [Date Pickers—Digital clock documentation](https://mui.com/x/react-date-pickers/digital-clock/), and let us know your thoughts!
+Check out all the possibilities in the [Date Pickers—Digital clock documentation](https://brianstoker.com/x/react-date-pickers/digital-clock/), and let us know your thoughts!
 
 ## Data Grid
 
@@ -78,7 +78,7 @@ If you prefer more simplicity, you can disable the default filter panel using th
   <source src="/static/blog/mui-x-mid-v6-features/header_filter.mp4" type="video/mp4">
 </video>
 
-For more details on how to use and customize the filters, check out its [documentation page](https://mui.com/x/react-data-grid/filtering/header-filters/).
+For more details on how to use and customize the filters, check out its [documentation page](https://brianstoker.com/x/react-data-grid/filtering/header-filters/).
 
 ### Copy and paste [<span class="plan-premium"></span>](/x/introduction/licensing/#premium-plan 'premium plan')
 
@@ -93,7 +93,7 @@ This new feature is extremely versatile, and you can exchange data from other fi
 This feature is integrated with the editing API, so pasted data can be persisted using the `processRowUpdate` prop to update your data source through your usual editing validation process.
 The callbacks `clipboardPasteStart` and `clipboardPasteEnd` are fired during the clipboard paste operation, which can be useful for extra customizations around the event.
 
-For more details on how to use clipboard copy and paste, check out the [Data Grid—Clipboard documentation](https://mui.com/x/react-data-grid/clipboard/).
+For more details on how to use clipboard copy and paste, check out the [Data Grid—Clipboard documentation](https://brianstoker.com/x/react-data-grid/clipboard/).
 
 ## Charts - alpha version
 
@@ -112,15 +112,15 @@ Check out the video below, highlighting some of our Charts:
 
 As we progress toward the stable version, we're committed to enhancing the overall experience for developers and users, so your feedback is fundamental!
 
-We will also steadily expand our portfolio with new chart types such as [Heatmap](https://mui.com/x/react-charts/heatmap/), [Funnel](https://mui.com/x/react-charts/funnel/), [Gantt](https://mui.com/x/react-charts/gantt/), and more.
+We will also steadily expand our portfolio with new chart types such as [Heatmap](https://brianstoker.com/x/react-charts/heatmap/), [Funnel](https://brianstoker.com/x/react-charts/funnel/), [Gantt](https://brianstoker.com/x/react-charts/gantt/), and more.
 If there's a specific chart visualization you'd like us to prioritize, we encourage you to upvote the respective [issue on GitHub](https://github.com/mui/mui-x/issues?q=is%3Aissue+is%3Aopen+label%3A%22component%3A+charts%22+label%3A%22waiting+for+%F0%9F%91%8D%22).
 Your input can directly influence our development schedule, so don't hesitate to let us know what matters most to you!
 
-[Get started with charts now!](https://mui.com/x/react-charts/)
+[Get started with charts now!](https://brianstoker.com/x/react-charts/)
 
 ## Tree View is moving to MUI X
 
-Tree View is being migrated from the [lab](https://mui.com/material-ui/about-the-lab/) to MUI X, it will soon have a first Alpha release!
+Tree View is being migrated from the [lab](https://brianstoker.com/material-ui/about-the-lab/) to MUI X, it will soon have a first Alpha release!
 
 The Tree View is a component that represents hierarchical in a tree-like format.
 Think of a file system navigator displaying folders and files or a navigation list.
@@ -138,6 +138,6 @@ Head to [MUI Core vs. MUI X](https://mui-org.notion.site/X-FAQ-c33e9a7eabba4da
 
 We are always happy to get feedback, so if you'd like to share your pain points and use cases, please leave your contact info with us through [this Google Form](https://forms.gle/vsBv6CLPz9h57xg8A).
 As usual, you're welcome to request new features, report bugs and join the discussion in MUI X [GitHub repository](https://github.com/mui/mui-x/issues).
-If you haven't yet, join our growing community in the recently launched [MUI Discord server](https://mui.com/r/discord/).
+If you haven't yet, join our growing community in the recently launched [MUI Discord server](https://brianstoker.com/r/discord/).
 
 Cheers!

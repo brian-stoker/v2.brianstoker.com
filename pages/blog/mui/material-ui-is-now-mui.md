@@ -12,7 +12,7 @@ manualCard: true
 Starting today we are evolving our brand identity to clarifying the difference between our company and our products.
 
 - Material-UI: the organization is now called **[MUI](https://github.com/mui)**.
-- Material-UI: the Material Design components developed by MUI is now called **[Material UI](https://mui.com/material-ui/getting-started/)**, we ditched the hyphen!
+- Material-UI: the Material Design components developed by MUI is now called **[Material UI](https://brianstoker.com/material-ui/getting-started/)**, we ditched the hyphen!
 - Material-UI X: the set of advanced React components is now called **[MUI X](https://github.com/mui/mui-x)**.
 - Material-UI: the set of foundational MIT React components is now called **[MUI Core](https://github.com/mui/material-ui)**.
 
@@ -61,7 +61,7 @@ More importantly, it allows for the release of products not directly coupled to 
 ### A new domain name
 
 A new name wouldn't be so official without a new domain,
-so we have moved home from https://material-ui.com/ to https://mui.com/, a very easy to type (and find) domain.
+so we have moved home from https://material-ui.com/ to https://brianstoker.com/, a very easy to type (and find) domain.
 
 ### New logos
 

@@ -7,7 +7,7 @@ tags: ['Base UI', 'Product']
 manualCard: true
 ---
 
-<a href="https://mui.com/base-ui/"><img src="/static/blog/introducing-base-ui/hero-image.png" alt="Demo components built with Base UI, a newly introduced library of unstyled components and hooks" width="1200" height="500" /></a>
+<a href="https://brianstoker.com/base-ui/"><img src="/static/blog/introducing-base-ui/hero-image.png" alt="Demo components built with Base UI, a newly introduced library of unstyled components and hooks" width="1200" height="500" /></a>
 
 While Material UI is excellent for building sleek user interfaces that adhere closely to Material Design, it can become unwieldy when your design system diverges significantly from the defaults.
 We get it.
@@ -42,7 +42,7 @@ Base UI offers two kinds of building blocks: unstyled components and hooks.
 Components are more straightforward to use of the two.
 Place a component on a page, add your own styles, and it's ready to go!
 It's important to note that you are not limited to the styling options available in Material UI.
-You can, of course, still use [MUI System](https://mui.com/system/getting-started/), but if you prefer Emotion, Tailwind CSS, plain CSS, or any other styling engine, they are available too!
+You can, of course, still use [MUI System](https://brianstoker.com/system/getting-started/), but if you prefer Emotion, Tailwind CSS, plain CSS, or any other styling engine, they are available too!
 Check out the [Working with Tailwind CSS guide](/base-ui/guides/working-with-tailwind-css/) for an example of using this library.
 
 In contrast to Material UI, Base UI's components do not have any default styles.

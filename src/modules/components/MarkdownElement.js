@@ -250,7 +250,7 @@ const Root = styled('div')(
       whiteSpace: 'pre',
       borderBottom: `1px solid var(--muidocs-palette-divider, ${lightTheme.palette.divider})`,
       paddingRight: 20,
-      paddingTop: 12,
+      paddingTop: 6,
       paddingBottom: 12,
     },
     '& blockquote': {

@@ -25,7 +25,7 @@ Beyond the core libraries, MUI X offers advanced components like the Data Grid,
 
 We're also making ambitious moves to incorporate our full suite of components into Toolpad, a low-code admin builder tool for assembling full-stack apps faster than ever.
 
-Learn more about MUI's products in this blog post: [An introduction to the MUI ecosystem](https://mui.com/blog/mui-product-comparison/).
+Learn more about MUI's products in this blog post: [An introduction to the MUI ecosystem](https://brianstoker.com/blog/mui-product-comparison/).
 
 ## The culture
 
@@ -34,12 +34,12 @@ The majority of our work is asynchronous, and we rely on written communication t
 We're radically transparent: nearly all of our work happens in public.
 Each contributor has the freedom to decide how and when they work, and that work is primarily self-directed: it's your responsibility to define and complete your own tasks in a timely manner.
 
-For additional details about the culture, you can check our [careers](https://mui.com/careers/) and [about](https://mui.com/about/) pages and also our [public Handbook](https://mui-org.notion.site/Handbook-f086d47e10794d5e839aef9dc67f324b).
+For additional details about the culture, you can check our [careers](https://brianstoker.com/careers/) and [about](https://brianstoker.com/about/) pages and also our [public Handbook](https://mui-org.notion.site/Handbook-f086d47e10794d5e839aef9dc67f324b).
 
 ## Why we're hiring
 
 We are aiming to make high-end design accessible to the many, empowering developers that lack access to a designer as well as saving time for designers with a source they can trust.
-[According to our last survey](https://mui.com/blog/2021-developer-survey-results/#what-are-your-most-important-criteria-for-choosing-a-ui-library), the quality of the design execution (UX & UI) is the most important criteria used by developers & designers to pick their next UI library.
+[According to our last survey](https://brianstoker.com/blog/2021-developer-survey-results/#what-are-your-most-important-criteria-for-choosing-a-ui-library), the quality of the design execution (UX & UI) is the most important criteria used by developers & designers to pick their next UI library.
 
 Overall, both our open-source community and our premium products are growing fast (x2 YoY).
 We need talented people to keep that going!
@@ -59,7 +59,7 @@ It's why we started Base UI, Joy UI, and Toolpad. Design is key to achieving t
 Depending on the day, you'll:
 
 - Work closely with our designers to prototype and implement new components, features, and screens.
-- Design and build entire experiences for sites like mui.com or products like Toolpad.
+- Design and build entire experiences for sites like brianstoker.com or products like Toolpad.
 - Concept and prototype UX components and motion studies for components like the date picker.
 - Extend our different design systems (Material UI, Joy UI).
 - Create appealing new demos in the docs.
@@ -80,7 +80,7 @@ Depending on the day, you'll:
 
 Competitive compensation depending on the profile and location.
 We are ready to pay top market rates for a person who can clearly exceed the role's expectations.
-You can find the other perks & benefits on the [careers](https://mui.com/careers/#perks-and-benefits) page.
+You can find the other perks & benefits on the [careers](https://brianstoker.com/careers/#perks-and-benefits) page.
 
 ## How to apply
 

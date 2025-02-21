@@ -19,7 +19,7 @@ import AppHeader from 'src/layouts/AppHeader';
 import AppFooter from 'src/layouts/AppFooter';
 import GradientText from 'src/components/typography/GradientText';
 import IconImage from 'src/components/icon/IconImage';
-import BrandingCssVarsProvider from 'src/BrandingCssVarsProvider';
+import BrandingCssVarsProvider from '@stoked-ui/docs';
 import Section from 'src/layouts/Section';
 import SectionHeadline from 'src/components/typography/SectionHeadline';
 import Head from 'src/modules/components/Head';
@@ -250,7 +250,7 @@ const companyInfo = [
     routeUrl: ROUTES.handbook,
   },
   {
-    title: 'Blog',
+    title: 'blog',
     description: 'Check behind-the-scenes and news about the company.',
     routeUrl: ROUTES.blog,
   },
@@ -577,7 +577,7 @@ export default function Careers() {
                   We&apos;re here to help you with any other question you have about our hiring
                   process.
                 </Typography>
-                <Link href="mailto:job@mui.com" variant="body2">
+                <Link href="mailto:job@brianstoker.com" variant="body2">
                   Contact us <KeyboardArrowRightRounded fontSize="small" />
                 </Link>
               </Paper>

@@ -25,7 +25,7 @@ Beyond the core libraries, MUI X offers advanced components like the Data Grid,
 
 We're also making ambitious moves to incorporate our full suite of components into Toolpad, a low-code admin builder tool for assembling full-stack apps faster than ever.
 
-Learn more about MUI's products in this blog post: [An introduction to the MUI ecosystem](https://mui.com/blog/mui-product-comparison/).
+Learn more about MUI's products in this blog post: [An introduction to the MUI ecosystem](https://brianstoker.com/blog/mui-product-comparison/).
 
 ## The culture
 
@@ -34,7 +34,7 @@ The majority of our work is asynchronous, and we rely on written communication t
 We're radically transparent: nearly all of our work happens in public.
 Each contributor has the freedom to decide how and when they work, and that work is primarily self-directed: it's your responsibility to define and complete your own tasks in a timely manner.
 
-Learn more about what we value as an organization: [Evolving MUI's core values and behaviors](https://mui.com/blog/2023-mui-values/).
+Learn more about what we value as an organization: [Evolving MUI's core values and behaviors](https://brianstoker.com/blog/2023-mui-values/).
 
 ## Why we're hiring
 
@@ -96,7 +96,7 @@ You will also play a fundamental role in defining the Docs-infra roadmap and pri
 ## Benefits and compensation
 
 We offer competitive compensation commensurate with your experience level and location and are prepared to pay top market rates for someone who can clearly exceed the role's expectations.
-You can find the other perks and benefits on the [careers](https://mui.com/careers/#perks-and-benefits) page.
+You can find the other perks and benefits on the [careers](https://brianstoker.com/careers/#perks-and-benefits) page.
 
 ## How to apply
 

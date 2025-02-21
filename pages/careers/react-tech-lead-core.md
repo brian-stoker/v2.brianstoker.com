@@ -25,7 +25,7 @@ Beyond the core libraries, MUI X offers advanced components like the Data Grid,
 
 We're also making ambitious moves to incorporate our full suite of components into Toolpad, a low-code admin builder tool for assembling full-stack apps faster than ever.
 
-Learn more about MUI's products in this blog post: [An introduction to the MUI ecosystem](https://mui.com/blog/mui-product-comparison/).
+Learn more about MUI's products in this blog post: [An introduction to the MUI ecosystem](https://brianstoker.com/blog/mui-product-comparison/).
 
 ## The culture
 
@@ -34,7 +34,7 @@ The majority of our work is asynchronous, and we rely on written communication t
 We're radically transparent: nearly all of our work happens in public.
 Each contributor has the freedom to decide how and when they work, and that work is primarily self-directed: it's your responsibility to define and complete your own tasks in a timely manner.
 
-For additional details about the culture, you can check our [careers](https://mui.com/careers/) and [about](https://mui.com/about/) pages and also our [public Handbook](https://mui-org.notion.site/Handbook-f086d47e10794d5e839aef9dc67f324b).
+For additional details about the culture, you can check our [careers](https://brianstoker.com/careers/) and [about](https://brianstoker.com/about/) pages and also our [public Handbook](https://mui-org.notion.site/Handbook-f086d47e10794d5e839aef9dc67f324b).
 
 ## Why we're hiring
 
@@ -51,7 +51,7 @@ We need talented people to keep that going!
 Our products empower React developers to build awesome applications faster – we see millions of developers on MUI's docs every year, one million a month.
 
 The core components are widely used, you will receive a lot of feedback on your work. The community has high expectations, they will push you to do better, every day.
-The [results of the latest survey](https://mui.com/blog/2021-developer-survey-results/) can give you a great sense of where we will need to push the open-source library in the coming months.
+The [results of the latest survey](https://brianstoker.com/blog/2021-developer-survey-results/) can give you a great sense of where we will need to push the open-source library in the coming months.
 
 ## The role
 
@@ -126,7 +126,7 @@ We're looking for someone with strong front-end skills. More important than spec
 
 Competitive compensation depending on the profile and location.
 We are ready to pay top market rates for a person who can clearly exceed the role's expectations.
-You can find the other perks & benefits on the [careers](https://mui.com/careers/#perks-and-benefits) page.
+You can find the other perks & benefits on the [careers](https://brianstoker.com/careers/#perks-and-benefits) page.
 
 ## How to apply
 

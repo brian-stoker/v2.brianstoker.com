@@ -4,14 +4,9 @@ description: 'Pigment CSS offers significant performance gains along with RSC a
 date: 2024-05-16T00:00:00.000Z
 authors:
   [
-    'samuelsycamore',
-    'brijeshb42',
-    'siriwatknp',
-    'mnajdova',
-    'danilo-leal',
-    'oliviertassinari',
+    'brianstoker',
   ]
-tags: ['Pigment CSS', 'Product']
+tags: ['Stoked UI', 'File Explorer', 'Timeline', 'Editor', 'Media Selector']
 manualCard: true
 ---
 

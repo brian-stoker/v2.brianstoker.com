@@ -44,15 +44,15 @@ We're establishing a one-year cycle for major versions, meaning the next major w
 During v6 pre-releases, v5 will continue to be the official current major, and it will remain supported during this time.
 However, we will only release new v5 versions as needed to patch bugs or add community contributions.
 
-All new features and enhancements will go to v6, and after its first stable release, v5 will officially transition to [long-term support](https://mui.com/x/introduction/support/#long-term-support-lts) status.
+All new features and enhancements will go to v6, and after its first stable release, v5 will officially transition to [long-term support](https://brianstoker.com/x/introduction/support/#long-term-support-lts) status.
 
 ## Where's the v6 documentation?
 
 As mentioned above, v5 is still the official version, so by default, the documentation shows v5 features and API.
 The next version's documentation is in the `next` subdomain.
 
-- [https://next.mui.com/x/react-data-grid/](https://next.mui.com/x/react-data-grid/)
-- [https://next.mui.com/x/react-date-pickers/](https://next.mui.com/x/react-date-pickers/)
+- [https://next.brianstoker.com/x/react-data-grid/](https://next.brianstoker.com/x/react-data-grid/)
+- [https://next.brianstoker.com/x/react-date-pickers/](https://next.brianstoker.com/x/react-date-pickers/)
 
 ## What's coming next?
 
@@ -87,11 +87,11 @@ It contains the highlights that will be included in the first versions.
   - [Remove the clock view on time pickers (for desktop)](https://github.com/mui/mui-x/issues/4483).
   - [Visually edit a range by dragging date markers](https://github.com/mui/mui-x/issues/5311).
   - [Range shortcuts](https://github.com/mui/mui-x/issues/4563).
-  - [A new text input for date and time values, retiring the mask solution (early preview)](https://next.mui.com/x/react-date-pickers/date-field/).
+  - [A new text input for date and time values, retiring the mask solution (early preview)](https://next.brianstoker.com/x/react-date-pickers/date-field/).
 
 - **Improved Customization**\
   v6 will be packed with new customization abilities and support for new use cases.
-  - [The new fields are based on a headless approach with custom hooks. (Documentation is coming soon)](https://next.mui.com/x/react-date-pickers/date-field/#headless-usage).
+  - [The new fields are based on a headless approach with custom hooks. (Documentation is coming soon)](https://next.brianstoker.com/x/react-date-pickers/date-field/#headless-usage).
   - [Single Input for Date Range](https://github.com/mui/mui-x/issues/5193).
   - [Enable customization through component slots on every component](https://github.com/mui/mui-x/issues/4466).
 

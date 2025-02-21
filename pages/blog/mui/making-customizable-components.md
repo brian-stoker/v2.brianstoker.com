@@ -65,7 +65,7 @@ Maybe you don't want to spend your time switching between CSS and JavaScript fil
 To avoid these problems you can integrate styles directly into your JavaScript code. 🎉
 
 Because the level of customization varies across projects, Material UI's components can be customized in several different ways.
-For more information on this topic, check out the [Material UI customization documentation](https://mui.com/material-ui/customization/how-to-customize/).
+For more information on this topic, check out the [Material UI customization documentation](https://brianstoker.com/material-ui/customization/how-to-customize/).
 
 ## Logic modification
 
@@ -84,7 +84,7 @@ This works well enough for a simple UI element, but what happens when the compon
 
 ### It's never that simple
 
-Let's play with a slightly more complex component: the [`DataGrid`](https://mui.com/x/react-data-grid/).
+Let's play with a slightly more complex component: the [`DataGrid`](https://brianstoker.com/x/react-data-grid/).
 
 This component allows you to manage data by applying sorting, filtering, editing, exporting, and many other _-ings_.
 
@@ -136,7 +136,7 @@ If your main priority is to get up and running quickly, then this may not be a v
 #### Subdivide your components
 
 Another approach I like is to provide subcomponents.
-This is what we do for Material UI components such as the [Menu](https://mui.com/material-ui/react-menu/).
+This is what we do for Material UI components such as the [Menu](https://brianstoker.com/material-ui/react-menu/).
 
 This is also the approach used by [react-admin](https://marmelab.com/react-admin/) to provide a customizable administration interface.
 Here is their quick start example:
@@ -201,7 +201,7 @@ This trade-off makes sense for react-admin, which is used for building complete 
 Their users need complete freedom when it comes to rearranging components and introducing new components anywhere.
 
 But MUI's products exist at a lower level.
-We focus on the building blocks, not the entire website—though we do have [templates](https://mui.com/templates/) for that. 😉
+We focus on the building blocks, not the entire website—though we do have [templates](https://brianstoker.com/templates/) for that. 😉
 So that's not the approach we took for the `DataGrid`.
 
 #### Keep a single component
@@ -303,10 +303,10 @@ For example, a grid can exist without its filter panel, or without its toolbar.
 
 In our last two annual [Developer Surveys](/blog/2021-developer-survey-results/), our users made it clear that customization is always a top priority when choosing a UI library.
 
-Thanks to the slot strategy and the introduction of supplementary tools like [MUI System's `sx` prop](https://mui.com/system/getting-started/the-sx-prop/), it has never been easier to customize Material UI's components to suit your specific needs.
+Thanks to the slot strategy and the introduction of supplementary tools like [MUI System's `sx` prop](https://brianstoker.com/system/getting-started/the-sx-prop/), it has never been easier to customize Material UI's components to suit your specific needs.
 
-[Material UI](https://mui.com/material-ui/getting-started/) and [Joy UI](https://mui.com/joy-ui/getting-started/) are designed to be both beautiful and flexible right out of the box, while [Base UI](https://mui.com/base-ui/getting-started/) gives you the most freedom to implement your own custom styling solution.
-[MUI X](https://mui.com/x/introduction/) is comprised of fully featured complex components like the `DataGrid` which—as we've seen—can still be customized in many ways with minimal friction.
+[Material UI](https://brianstoker.com/material-ui/getting-started/) and [Joy UI](https://brianstoker.com/joy-ui/getting-started/) are designed to be both beautiful and flexible right out of the box, while [Base UI](https://brianstoker.com/base-ui/getting-started/) gives you the most freedom to implement your own custom styling solution.
+[MUI X](https://brianstoker.com/x/introduction/) is comprised of fully featured complex components like the `DataGrid` which—as we've seen—can still be customized in many ways with minimal friction.
 
-Get started building with the MUI X Data Grid by [installing the MIT-licensed Community package](https://mui.com/x/react-data-grid/getting-started/#installation) today.
+Get started building with the MUI X Data Grid by [installing the MIT-licensed Community package](https://brianstoker.com/x/react-data-grid/getting-started/#installation) today.
 And be sure to let us know what you think about the customization experience!

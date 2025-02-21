@@ -1,7 +1,7 @@
 import * as React from 'react';
 import Divider from '@mui/material/Divider';
 import Head from 'src/modules/components/Head';
-import BrandingCssVarsProvider from 'src/BrandingCssVarsProvider';
+import BrandingCssVarsProvider from '@stoked-ui/docs';
 import AppHeader from 'src/layouts/AppHeader';
 import MaterialHero from 'src/components/productMaterial/MaterialHero';
 import MaterialComponents from 'src/components/productMaterial/MaterialComponents';

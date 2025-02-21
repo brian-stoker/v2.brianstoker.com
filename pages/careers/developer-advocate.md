@@ -25,7 +25,7 @@ Beyond the core libraries, MUI X offers advanced components like the Data Grid,
 
 We're also making ambitious moves to incorporate our full suite of components into Toolpad, a low-code admin builder tool for assembling full-stack apps faster than ever.
 
-Learn more about MUI's products in this blog post: [An introduction to the MUI ecosystem](https://mui.com/blog/mui-product-comparison/). (This is also the kind of content you might create!)
+Learn more about MUI's products in this blog post: [An introduction to the MUI ecosystem](https://brianstoker.com/blog/mui-product-comparison/). (This is also the kind of content you might create!)
 
 ## The culture
 
@@ -34,13 +34,13 @@ The majority of our work is asynchronous, and we rely on written communication t
 We're radically transparent: nearly all of our work happens in public.
 Each contributor has the freedom to decide how and when they work, and that work is primarily self-directed: it's your responsibility to define and complete your own tasks in a timely manner.
 
-Learn more about what we value as an organization: [Evolving MUI's core values and behaviors](https://mui.com/blog/2023-mui-values/).
+Learn more about what we value as an organization: [Evolving MUI's core values and behaviors](https://brianstoker.com/blog/2023-mui-values/).
 
 ## Why we're hiring
 
 MUI's DevEx program is currently maintained by a "team" of one, and that one person devotes the majority of their time to documentation and written technical content.
 
-Our users [consistently rank documentation](https://mui.com/blog/2021-developer-survey-results/#what-are-your-most-important-criteria-for-choosing-a-ui-library) as one of the most important factors in deciding whether or not to build with our products, and many users express dissatisfaction with the rather steep learning curve that they face when onboarding.
+Our users [consistently rank documentation](https://brianstoker.com/blog/2021-developer-survey-results/#what-are-your-most-important-criteria-for-choosing-a-ui-library) as one of the most important factors in deciding whether or not to build with our products, and many users express dissatisfaction with the rather steep learning curve that they face when onboarding.
 
 With that in mind, we're looking to grow the DevEx team, with a second individual who can dig deep into improving the documentation experience and expand our output of educational materials, to ease the learning curve, improve the product, and inspire users with great examples of what's possible with our libraries.
 
@@ -76,7 +76,7 @@ For the right candidate:
 - Own community GitHub issues or PRs related to developer experience
 - Build example apps with MUI products and create how-to content around them
 - Research and write case studies
-- Overhaul the [Showcase](https://mui.com/material-ui/discover-more/showcase/)
+- Overhaul the [Showcase](https://brianstoker.com/material-ui/discover-more/showcase/)
 - Revamp the company blog infrastructure to empower less technical teammates to contribute (for example HR)
 - Contribute to integrations with other popular libraries and frameworks
 - Create a learning section in the documentation for hybrid written and video tutorials
@@ -110,7 +110,7 @@ For the right candidate:
 
 Competitive compensation depending on the profile and location.
 We are ready to pay top market rates for a person who can clearly exceed the role's expectations.
-You can find the other perks & benefits on the [careers](https://mui.com/careers/#perks-and-benefits) page.
+You can find the other perks & benefits on the [careers](https://brianstoker.com/careers/#perks-and-benefits) page.
 
 ## How to apply
 

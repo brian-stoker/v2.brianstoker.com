@@ -87,10 +87,10 @@ This approach serves as a failsafe in case there's a need to change the API base
 
 We're excited to announce that the following features have been promoted to stable:
 
-- [Column groups](https://next.mui.com/x/react-data-grid/column-groups/)
-- [Header filters](https://next.mui.com/x/react-data-grid/filtering/header-filters/) [<span class="plan-pro"></span>](/x/introduction/licensing/#pro-plan 'Pro plan')
-- [Cell selection](https://next.mui.com/x/react-data-grid/cell-selection/) [<span class="plan-premium"></span>](/x/introduction/licensing/#premium-plan 'Premium plan')
-- [Clipboard paste](https://next.mui.com/x/react-data-grid/clipboard/#clipboard-paste) [<span class="plan-premium"></span>](/x/introduction/licensing/#premium-plan 'Premium plan')
+- [Column groups](https://next.brianstoker.com/x/react-data-grid/column-groups/)
+- [Header filters](https://next.brianstoker.com/x/react-data-grid/filtering/header-filters/) [<span class="plan-pro"></span>](/x/introduction/licensing/#pro-plan 'Pro plan')
+- [Cell selection](https://next.brianstoker.com/x/react-data-grid/cell-selection/) [<span class="plan-premium"></span>](/x/introduction/licensing/#premium-plan 'Premium plan')
+- [Clipboard paste](https://next.brianstoker.com/x/react-data-grid/clipboard/#clipboard-paste) [<span class="plan-premium"></span>](/x/introduction/licensing/#premium-plan 'Premium plan')
 
 ## Tree View
 
@@ -130,7 +130,7 @@ const myDataSet = [
 <RichTreeView items={myDataSet} multiSelect />
 ```
 
-Check out the [new component](https://next.mui.com/x/react-tree-view/rich-tree-view/items/)!
+Check out the [new component](https://next.brianstoker.com/x/react-tree-view/rich-tree-view/items/)!
 
 ## Charts
 
@@ -143,7 +143,7 @@ The `ChartsReferenceLine` component enhances data visualization, providing users
 
 <img alt="Charts reference line" src="/static/blog/mui-x-v7-beta/charts-reference-line.png" width="1200" height="840" loading="lazy" />
 
-You can find more details on its [documentation](https://next.mui.com/x/react-charts/axis/#reference-line).
+You can find more details on its [documentation](https://next.brianstoker.com/x/react-charts/axis/#reference-line).
 
 ## Date and Time Pickers
 
@@ -162,7 +162,7 @@ This intuitive picker simplifies the process of selecting date and time ranges, 
   <source src="/static/blog/mui-x-v7-beta/date-time-range-picker.mp4" type="video/mp4">
 </video>
 
-Learn how to use and customize the [new component](https://next.mui.com/x/react-date-pickers/date-time-range-picker/) now!
+Learn how to use and customize the [new component](https://next.brianstoker.com/x/react-date-pickers/date-time-range-picker/) now!
 
 ### Support for date-fns v3
 
@@ -184,7 +184,7 @@ As we approach the stable release of v7, our roadmap is well-defined, focusing o
 
 ### Data Grid
 
-- [Improved Server-side integration](https://next.mui.com/x/react-data-grid/server-side-data/)
+- [Improved Server-side integration](https://next.brianstoker.com/x/react-data-grid/server-side-data/)
 - [Column management panel with support for pivoting](https://github.com/mui/mui-x/issues/5700)[<span class="plan-pro"></span>](/x/introduction/licensing/#pro-plan 'Pro plan')
 - [Pivoting](https://github.com/mui/mui-x/issues/214) [<span class="plan-premium"></span>](/x/introduction/licensing/#premium-plan 'Premium plan')
 
@@ -207,10 +207,10 @@ As we approach the stable release of v7, our roadmap is well-defined, focusing o
 We fully understand that updating a dependency library can sometimes be daunting.
 To smooth the transition to the new version, we have documented all breaking changes in our migration guides:
 
-- [Data Grid](https://next.mui.com/x/migration/migration-data-grid-v6/)
-- [Date and Time Pickers](https://next.mui.com/x/migration/migration-pickers-v6/)
-- [Charts](https://next.mui.com/x/migration/migration-charts-v6/)
-- [Tree View](https://next.mui.com/x/migration/migration-tree-view-v6/)
+- [Data Grid](https://next.brianstoker.com/x/migration/migration-data-grid-v6/)
+- [Date and Time Pickers](https://next.brianstoker.com/x/migration/migration-pickers-v6/)
+- [Charts](https://next.brianstoker.com/x/migration/migration-charts-v6/)
+- [Tree View](https://next.brianstoker.com/x/migration/migration-tree-view-v6/)
 
 These component-specific guides are reference pages designed to assist you if you encounter any challenges while updating to the new major version.
 It's our way of making the upgrade process more manageable and less burdensome for you.

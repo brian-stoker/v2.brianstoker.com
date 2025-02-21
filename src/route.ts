@@ -24,7 +24,7 @@ const ROUTES: Routes = {
   careers: '/careers/',
   pricing: '/pricing/',
   about: 'https://stokedconsulting.com/about/',
-  blog: '/blog/',
+  plan: '/blog/',
   // Stoked Consulting
   home: '/file-explorer/',
   servicesUI: '/services/ui/',
@@ -88,7 +88,7 @@ const ROUTES: Routes = {
   toolpadDocs: '/toolpad/studio/getting-started/',
   toolpadStudioDocs: '/toolpad/studio/getting-started',
   // External pages
-  rssFeed: '/feed/blog/rss.xml',
+  rssFeed: '/blog/rss.xml',
   handbook: 'https://www.notion.so/Handbook-2c35da39c2b543219565401b9dd00a95',
   privacyPolicy: 'https://stokedconsulting.com/legal/privacy/',
   store: 'https://stoked-ui.github.io/store/',

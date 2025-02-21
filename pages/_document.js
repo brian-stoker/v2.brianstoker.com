@@ -176,7 +176,7 @@ export default class MyDocument extends Document {
               '[data-mui-color-scheme="dark"] .only-light-mode-v2': {
                 display: 'none',
               },
-              '.plan-pro, .plan-premium': {
+              'blog-pro, blog-premium': {
                 display: 'inline-block',
                 height: '1em',
                 width: '1em',
@@ -186,10 +186,10 @@ export default class MyDocument extends Document {
                 backgroundSize: 'contain',
                 backgroundRepeat: 'no-repeat',
               },
-              '.plan-pro': {
+              'blog-pro': {
                 backgroundImage: 'url(/static/x/pro.svg)',
               },
-              '.plan-premium': {
+              'blog-premium': {
                 backgroundImage: 'url(/static/x/premium.svg)',
               },
             }}

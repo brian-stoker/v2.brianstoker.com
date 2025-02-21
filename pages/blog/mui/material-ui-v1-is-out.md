@@ -9,7 +9,7 @@ manualCard: true
 
 > React components that implement Google's Material Design.
 
-![Our new [documentation](https://mui.com/) header & logo by @hai-cea](https://cdn-images-1.medium.com/max/2050/1*BKssrX-qEmyN6YaRNTvNlw.png)
+![Our new [documentation](https://brianstoker.com/) header & logo by @hai-cea](https://cdn-images-1.medium.com/max/2050/1*BKssrX-qEmyN6YaRNTvNlw.png)
 
 <p class="blog-description">Our new documentation header & logo by @hai-cea</p>
 
@@ -86,7 +86,7 @@ There are so many new things, we can't be exhaustive. Aside from what we have al
 - New documentation
 - Right-To-Left support
 - First class server-side support
-- [Premium themes](https://mui.com/store/)
+- [Premium themes](https://brianstoker.com/store/)
 - First class TypeScript support
 - **And much, much more**
 
@@ -105,7 +105,7 @@ There are so many new things, we can't be exhaustive. Aside from what we have al
 
 ## Premium themes
 
-We have shipped the long-awaited Material UI v1 stable release. With a new codebase designed to better support customization, it's the perfect timing to start building and promoting premium themes. We are very happy to announce [the first two](https://mui.com/store/) from [Creative Tim](https://mui.com/store/contributors/creative-tim/). More are coming.
+We have shipped the long-awaited Material UI v1 stable release. With a new codebase designed to better support customization, it's the perfect timing to start building and promoting premium themes. We are very happy to announce [the first two](https://brianstoker.com/store/) from [Creative Tim](https://brianstoker.com/store/contributors/creative-tim/). More are coming.
 
 ![Creative Tim themes](https://cdn-images-1.medium.com/v2/resize:fit:2000/1*jPOu6n1EMsqv4Gh652MtPA.png)
 

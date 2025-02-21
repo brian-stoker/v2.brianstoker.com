@@ -131,13 +131,13 @@ You can now [use a web worker](/x/react-data-grid/export/#using-a-web-worker) in
 In MUI X v5, the `<input>` behavior of the pickers components were implemented with a [mask approach](https://www.npmjs.com/package/rifm).
 This had many UX downsides. for example, watch what happens when we edit the day on this masked input, you lose the year:
 
-<a href="https://v5.mui.com/x/react-date-pickers/date-picker/#basic-usage">
+<a href="https://v5.brianstoker.com/x/react-date-pickers/date-picker/#basic-usage">
 <video style="width: 399px;" autoplay muted loop playsinline width="1268" height="540">
   <source src="/static/blog/mui-x-v6/mask.mp4" type="video/mp4" />
 </video>
 </a>
 
-<p class="blog-description">A demo of the date pickers on <a href="https://v5.mui.com/x/react-date-pickers/date-picker/#basic-usage">MUI X v5</a>.</p>
+<p class="blog-description">A demo of the date pickers on <a href="https://v5.brianstoker.com/x/react-date-pickers/date-picker/#basic-usage">MUI X v5</a>.</p>
 
 #### New "Fields"
 
@@ -160,7 +160,7 @@ Up until MUI X v5, we were recommending the use of 3 separate inputs to impleme
 Birthday pickers can now have a great UX thanks to the Fields.
 They behave almost like 3 separate inputs and support full letter month which can be used so end-users don't confuse day and month.
 
-<a href="https://mui.com/x/react-date-pickers/date-field/#customize-the-date-format">
+<a href="https://brianstoker.com/x/react-date-pickers/date-field/#customize-the-date-format">
 <img src="/static/blog/mui-x-v6/birthday.png" style="width: 446px" loading="lazy" alt="Column menu custom action" width="892" height="182" />
 </a>
 

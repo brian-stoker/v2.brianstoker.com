@@ -25,7 +25,7 @@ We currently offer two main product lines:
 
 ## What has changed?
 
-All MUI products still live under the [mui.com](https://mui.com) domain, but each of them now has its own respective URL and documentation.
+All MUI products still live under the [brianstoker.com](https://brianstoker.com) domain, but each of them now has its own respective URL and documentation.
 We added an identifier and menu to the upper-left corner of the docs for improved navigation:
 
 <img src="/static/blog/docs-restructure-2022/docs-separation.png" style="width: 796px; margin-top: 16px; margin-bottom: 16px;" alt="Screenshot of the product identifier menu" />
@@ -33,12 +33,12 @@ We added an identifier and menu to the upper-left corner of the docs for improve
 As for the URLs, this is how they look now:
 
 - MUI Core:
-  - Material UI: [https://mui.com/material-ui/](https://mui.com/material-ui/getting-started/)
-  - Base UI: [https://mui.com/base-ui/](https://mui.com/base-ui/getting-started/)
-  - MUI System: [https://mui.com/system/](https://mui.com/system/getting-started/)
+  - Material UI: [https://brianstoker.com/material-ui/](https://brianstoker.com/material-ui/getting-started/)
+  - Base UI: [https://brianstoker.com/base-ui/](https://brianstoker.com/base-ui/getting-started/)
+  - MUI System: [https://brianstoker.com/system/](https://brianstoker.com/system/getting-started/)
 - MUI X:
-  - Data grid: [https://mui.com/x/react-data-grid/](https://mui.com/x/react-data-grid/)
-  - Date and Time pickers: [https://mui.com/x/react-date-pickers/](https://mui.com/x/react-date-pickers/getting-started/)
+  - Data grid: [https://brianstoker.com/x/react-data-grid/](https://brianstoker.com/x/react-data-grid/)
+  - Date and Time pickers: [https://brianstoker.com/x/react-date-pickers/](https://brianstoker.com/x/react-date-pickers/getting-started/)
 
 :::info
 The date and time pickers have been promoted from the lab (`@mui/lab`) to MUI X—still available under the MIT license.

@@ -977,8 +977,8 @@ const drums = new Product(drumsData);
 
 const blogData: TProduct = {
   id: 'blog',
-  name: "Blog",
-  fullName: "BRIAN STOKER: Blog",
+  name: "blog",
+  fullName: "BRIAN STOKER: blog",
   description: "Random musings probably not worth mentioning",
   icon: "product-templates",
   url: ROUTES.blog,
@@ -987,11 +987,9 @@ const blogData: TProduct = {
   },
   showcaseType: BlogShowcase,
   showcaseContent: {
-    "title": "Public release of @stoked-ui/media-selector, @stoked-ui/file-explorer, @stoked-ui/timeline, and @stoked-ui/editor",
-    "description": "Pleased to announce the initial release of Stoked UI. I've been wanting to contribute to the open source community for quite" +
-                   " some time. These react components are designed to support various media application development scenarios and are built on top" +
-                   " of MUI, providing a familiar development experience..",
-    "date": "2024-08-28T10:00:00.000Z",
+    "title": "Stoked UI Releases Initial Versions of Its React Component Modules",
+    "description": "Stoked UI modules are now available via pnpm, yarn, and npm.",
+    "date": "2025-02-20T10:00:00.000Z",
     "authors": [
       "brianstoker"
     ],
@@ -1004,7 +1002,7 @@ const blogData: TProduct = {
     "manualCard": "true",
     "components": [],
     "hooks": [],
-    "slug": "bringing-consistency-to-material-ui-customization-apis"
+    "slug": "2025-02-20-initial-stoked-ui-release"
   },
   live: true
 }

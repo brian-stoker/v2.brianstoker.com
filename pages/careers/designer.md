@@ -18,7 +18,7 @@ Beyond the core libraries, MUI X offers advanced components like the Data Grid,
 
 We're also making ambitious moves to incorporate our full suite of components into Toolpad, a low-code admin builder tool for assembling full-stack apps faster than ever.
 
-Learn more about MUI's products in this blog post: [An introduction to the MUI ecosystem](https://mui.com/blog/mui-product-comparison/).
+Learn more about MUI's products in this blog post: [An introduction to the MUI ecosystem](https://brianstoker.com/blog/mui-product-comparison/).
 
 ## The culture
 
@@ -27,25 +27,25 @@ The majority of our work is asynchronous, and we rely on written communication t
 We're radically transparent: nearly all of our work happens in public.
 Each contributor has the freedom to decide how and when they work, and that work is primarily self-directed: it's your responsibility to define and complete your own tasks in a timely manner.
 
-For additional details about the culture, you can check our [careers](https://mui.com/careers/) and [about](https://mui.com/about/) pages and also our [public Handbook](https://mui-org.notion.site/Handbook-f086d47e10794d5e839aef9dc67f324b).
+For additional details about the culture, you can check our [careers](https://brianstoker.com/careers/) and [about](https://brianstoker.com/about/) pages and also our [public Handbook](https://mui-org.notion.site/Handbook-f086d47e10794d5e839aef9dc67f324b).
 
 ## Why we're hiring
 
 Material UI started as an open-source project.
 Over time, the audience and usage grew considerably, and some of the library's early contributors became full-time maintainers.
-A company was incorporated to support this growth, and more recently [was rebranded from Material UI to MUI](https://mui.com/blog/material-ui-is-now-mui/).
+A company was incorporated to support this growth, and more recently [was rebranded from Material UI to MUI](https://brianstoker.com/blog/material-ui-is-now-mui/).
 The new brand was fundamental to set the stage for MUI to become larger than Material Design, which was something we were already doing.
 Currently, we have five main projects that are not at all related to MD:
 
-- [MUI Core](https://mui.com/core/):
-  - [Base UI](https://mui.com/base-ui/getting-started/): the unstyled version of the components.
-  - [MUI System](https://mui.com/system/getting-started/): our most recent take on styling for React components.
+- [MUI Core](https://brianstoker.com/core/):
+  - [Base UI](https://brianstoker.com/base-ui/getting-started/): the unstyled version of the components.
+  - [MUI System](https://brianstoker.com/system/getting-started/): our most recent take on styling for React components.
   - [MUI Joy (working title)](https://github.com/mui/material-ui/discussions/29024): a second design system as an alternative to Material Design.
-- [MUI X](https://mui.com/x/): as mentioned, a growing set of advanced components.
-  Today, the flagship is the [Data Grid](https://mui.com/x/react-data-grid/), a game-changing component for presenting large amounts of data, which integrates perfectly with MUI Core.
+- [MUI X](https://brianstoker.com/x/): as mentioned, a growing set of advanced components.
+  Today, the flagship is the [Data Grid](https://brianstoker.com/x/react-data-grid/), a game-changing component for presenting large amounts of data, which integrates perfectly with MUI Core.
 - Toolpad: a very recent endeavor aimed at exploring how our users can visually create apps 10x faster with the power of low-code and the flexibility of pro-code.
 
-We also know, especially due to [our annual Developer Survey](https://mui.com/blog/2021-developer-survey-results/), that design quality plays a huge part when developers are considering component library options.
+We also know, especially due to [our annual Developer Survey](https://brianstoker.com/blog/2021-developer-survey-results/), that design quality plays a huge part when developers are considering component library options.
 Therefore, we need to grow the design team to help us push these initiatives further.
 
 ## The role
@@ -86,7 +86,7 @@ Previous experience with design systems would be great but is not required.
 
 We offer competitive compensation, aligned with your profile and location.
 We're ready to pay top market rates for a designer that can significantly push the mission forward.
-Other perks are described on [the careers page](https://mui.com/careers/#perks-and-benefits).
+Other perks are described on [the careers page](https://brianstoker.com/careers/#perks-and-benefits).
 
 ## How to apply
 

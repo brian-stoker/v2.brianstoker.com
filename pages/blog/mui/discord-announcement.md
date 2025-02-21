@@ -7,12 +7,12 @@ tags: ['Company']
 manualCard: true
 ---
 
-<a href="https://mui.com/r/discord/"><img src="/static/blog/discord-announcement/discord.png" width="1280" height="640" style="margin-bottom: 16px;" alt="Discord banner with link" /></a>
+<a href="https://brianstoker.com/r/discord/"><img src="/static/blog/discord-announcement/discord.png" width="1280" height="640" style="margin-bottom: 16px;" alt="Discord banner with link" /></a>
 
 This year, one of our highest priorities has been to create a central hub for the MUI community.
 Up until now, our community has been scattered across discussions and interactions on [X](https://x.com/MUI_hq), [LinkedIn](https://linkedin.com/company/mui), [GitHub](https://github.com/mui), and [Stack Overflow](https://stackoverflow.com/questions/tagged/material-ui).
 
-That's why we've officially launched our [Discord Server](https://mui.com/r/discord/)—and we'd love for you to be a part of our community!
+That's why we've officially launched our [Discord Server](https://brianstoker.com/r/discord/)—and we'd love for you to be a part of our community!
 
 Come join to engage in lively discussions, share your projects, and interact with the MUI team as well as developers just like you from all around the world.
 
@@ -53,4 +53,4 @@ Come show off your projects, introduce yourself in the **"👋 | new-members"** 
 
 As always, we would love to hear from you.
 
-**See you on our [Discord Server](https://mui.com/r/discord/)!**
+**See you on our [Discord Server](https://brianstoker.com/r/discord/)!**

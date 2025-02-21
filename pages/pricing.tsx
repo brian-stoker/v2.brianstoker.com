@@ -11,7 +11,7 @@ import PricingWhatToExpect from 'src/components/pricing/PricingWhatToExpect';
 import PricingFAQ from 'src/components/pricing/PricingFAQ';
 import HeroEnd from 'src/components/home/HeroEnd';
 import AppFooter from 'src/layouts/AppFooter';
-import BrandingCssVarsProvider from 'src/BrandingCssVarsProvider';
+import BrandingCssVarsProvider from '@stoked-ui/docs';
 import AppHeaderBanner from 'src/components/banner/AppHeaderBanner';
 import { LicensingModelProvider } from 'src/components/pricing/LicensingModelContext';
 

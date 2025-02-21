@@ -31,7 +31,7 @@ Together Week invites a new level of intentionality to go after goals while offe
 ## Destination
 
 In usual MUI fashion, deciding where to go was a team effort.
-We crowdsourced ideas, encouraging people to think about locations that would offer a high contrast to [Chamonix (where our last retreat took place)](https://mui.com/blog/2023-chamonix-retreat/).
+We crowdsourced ideas, encouraging people to think about locations that would offer a high contrast to [Chamonix (where our last retreat took place)](https://brianstoker.com/blog/2023-chamonix-retreat/).
 
 The shortlist included places like Costa Rica, Mexico, Madagascar, and Bali—but in the end, Thailand garnered the most interest and excitement.
 

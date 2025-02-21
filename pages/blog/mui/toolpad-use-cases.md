@@ -11,10 +11,10 @@ Toolpad helps full-stack engineers build internal tools quickly.
 Internal tools encompass data-intensive CRUD interfaces, analytics dashboards, or custom apps that make teams productive.
 Toolpad offers a low-code, GUI-based, code-friendly way of building apps and comes as an npm package that can be imported into an existing codebase.
 
-We've been dogfooding [Toolpad](https://mui.com/toolpad/) at MUI to build our internal tools, and it has proven beneficial for us to easily assemble well-organized, centrally located KPI dashboards and operations apps.
+We've been dogfooding [Toolpad](https://brianstoker.com/toolpad/) at MUI to build our internal tools, and it has proven beneficial for us to easily assemble well-organized, centrally located KPI dashboards and operations apps.
 In this blog post, we'll discuss four such apps, and explain how we used Toolpad to turn our ideas into reality.
 
-<a href="https://tools-public.mui.com/prod/pages/OverviewPage">
+<a href="https://tools-public.brianstoker.com/prod/pages/OverviewPage">
 <img alt="MUI public app for tracking KPIs" src="/static/blog/toolpad-use-cases/tools-public.png" width="2400" height="1394" />
 </a>
 
@@ -33,23 +33,23 @@ Let's delve into four scenarios that Toolpad has successfully addressed:
 We offer a priority support service to our MUI X Premium customers: their queries get an expedited response within 24 hours.
 They share their issue through a Priority Support template in our repository where they're directed to validate their license key, and once it's validated, the 24-hour countdown starts.
 
-<a href="https://tools-public.mui.com/prod/pages/validateSupport">
+<a href="https://tools-public.brianstoker.com/prod/pages/validateSupport">
   <img alt="Premium key validator support app" src="/static/blog/toolpad-use-cases/validate-support.png" loading="lazy" width="2400" height="1394" />
 </a>
 
 Here's how we built an app for this:
 
 The [`updateMuiPaidSupport.ts`](https://github.com/mui/mui-public/blob/master/tools-public/toolpad/resources/updateMuiPaidSupport.ts) file hosts all functions that are called from Toolpad.
-It uses the [custom function](https://mui.com/toolpad/studio/concepts/custom-functions/) feature and combines GitHub Actions, Google Sheets, and Octokit to read and verify user information.
+It uses the [custom function](https://brianstoker.com/toolpad/studio/concepts/custom-functions/) feature and combines GitHub Actions, Google Sheets, and Octokit to read and verify user information.
 The fetched data is then bound to the UI components.
-It uses Toolpad's [page parameters](https://mui.com/toolpad/studio/concepts/page-properties/#page-parameters), [secrets handling](https://mui.com/toolpad/studio/concepts/custom-functions/#secrets-handling), [shell removal](https://mui.com/toolpad/studio/concepts/page-properties/#display-mode), and custom styling features.
+It uses Toolpad's [page parameters](https://brianstoker.com/toolpad/studio/concepts/page-properties/#page-parameters), [secrets handling](https://brianstoker.com/toolpad/studio/concepts/custom-functions/#secrets-handling), [shell removal](https://brianstoker.com/toolpad/studio/concepts/page-properties/#display-mode), and custom styling features.
 This app took one developer just a few hours to build which otherwise would have taken much longer.
 
 ## 2. Customer support KPI tracker
 
-The read-only page illustrated below uses [HTTP requests](https://mui.com/toolpad/studio/concepts/http-requests/) for its data source.
+The read-only page illustrated below uses [HTTP requests](https://brianstoker.com/toolpad/studio/concepts/http-requests/) for its data source.
 Through the query builder UI we fetch the 100 latest support tickets from Zendesk to calculate the average time it takes us to respond to and resolve customer requests.
-It uses a [custom component](https://mui.com/toolpad/studio/concepts/custom-components/) which we call the "health badge."
+It uses a [custom component](https://brianstoker.com/toolpad/studio/concepts/custom-components/) which we call the "health badge."
 Based on the metric value, the component shows three color-coded states: Problem (red), Warning (yellow), and OK (green).
 Other KPI pages also use this health badge and pre-built Chart components to compare stats, observe trends, and spot anomalies.
 
@@ -104,5 +104,5 @@ Internal apps are often very specific to the needs of the organization, but hope
 - Do you wish you didn't have to do any maintenance on the front ends of your internal tools?
 
 Toolpad handles state management, data fetching, routing, and UI creation, and it can be imported directly into your code base to save you time.
-I encourage you to check out more [examples](https://mui.com/toolpad/studio/examples/) and visit our [GitHub repository](https://github.com/mui/mui-toolpad/) to evaluate the product.
-In case you need any further information, feel free to reach out to the team at toolpad@mui.com.
+I encourage you to check out more [examples](https://brianstoker.com/toolpad/studio/examples/) and visit our [GitHub repository](https://github.com/mui/mui-toolpad/) to evaluate the product.
+In case you need any further information, feel free to reach out to the team at toolpad@brianstoker.com.

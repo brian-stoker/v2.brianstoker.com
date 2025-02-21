@@ -9,7 +9,7 @@ import Divider from '@mui/material/Divider';
 import Typography from '@mui/material/Typography';
 import Avatar from '@mui/material/Avatar';
 import Head from 'src/modules/components/Head';
-import BrandingCssVarsProvider from 'src/BrandingCssVarsProvider';
+import BrandingCssVarsProvider from '@stoked-ui/docs';
 import AppHeader from 'src/layouts/AppHeader';
 import AppContainer from 'src/modules/components/AppContainer';
 import AppFooter from 'src/layouts/AppFooter';
@@ -305,7 +305,7 @@ export default function TopLayoutBlog(props) {
             const { github, name } = authors[author];
             return `${name} @${github}`;
           })
-          .join(',')}&product=Blog`;
+          .join(',')}&product=blog`;
 
   if (process.env.NODE_ENV !== 'production') {
     if (headers.manualCard === undefined) {

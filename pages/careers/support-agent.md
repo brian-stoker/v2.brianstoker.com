@@ -24,7 +24,7 @@ Beyond the core libraries, MUI X offers advanced components like the Data Grid,
 
 We're also making ambitious moves to incorporate our full suite of components into Toolpad, a low-code admin builder tool for assembling full-stack apps faster than ever.
 
-Learn more about MUI's products in this blog post: [An introduction to the MUI ecosystem](https://mui.com/blog/mui-product-comparison/).
+Learn more about MUI's products in this blog post: [An introduction to the MUI ecosystem](https://brianstoker.com/blog/mui-product-comparison/).
 
 ## The culture
 
@@ -33,7 +33,7 @@ The majority of our work is asynchronous, and we rely on written communication t
 We're radically transparent: nearly all of our work happens in public.
 Each contributor has the freedom to decide how and when they work, and that work is primarily self-directed: it's your responsibility to define and complete your own tasks in a timely manner.
 
-For additional details about the culture, you can check our [careers](https://mui.com/careers/) and [about](https://mui.com/about/) pages and also our [public Handbook](https://mui-org.notion.site/Handbook-f086d47e10794d5e839aef9dc67f324b).
+For additional details about the culture, you can check our [careers](https://brianstoker.com/careers/) and [about](https://brianstoker.com/about/) pages and also our [public Handbook](https://mui-org.notion.site/Handbook-f086d47e10794d5e839aef9dc67f324b).
 
 ## Why we're hiring
 
@@ -69,7 +69,7 @@ Depending on the day, you'll:
 - Respond to Paypal & Stripe disputes
 - Actively follow up on critical customer communications, such as overdue invoices
 - Collaborate with a Customer Success Engineer and a Product Engineer for our Store to find new solutions to recurring customer pain points (updating legal documents for clarity, creating new internal apps for frequent use cases, adding feature requests to GitHub)
-- Stay up to date on any major releases or changes to our product offerings by attending monthly company meetings and incorporating any changes to our [legal pages](https://mui.com/legal/) in your work
+- Stay up to date on any major releases or changes to our product offerings by attending monthly company meetings and incorporating any changes to our [legal pages](https://brianstoker.com/legal/) in your work
 - Create Notion pages to suggest opportunities to improve the quality and efficiency of our customer service operation overall
 
 ## Who we're looking for
@@ -91,7 +91,7 @@ Experience (1+ years) providing customer support for similar companies (develope
 ## Benefits and compensation
 
 **Compensation bands:** 20-30k USD, or equivalent in local currency, per year.
-You can find our perks & benefits on the [careers](https://mui.com/careers/#perks-and-benefits) page.
+You can find our perks & benefits on the [careers](https://brianstoker.com/careers/#perks-and-benefits) page.
 
 ## How to apply
 

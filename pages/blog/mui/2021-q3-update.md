@@ -181,7 +181,7 @@ We were already using it in the class names (`.MuiButton-root`), which embodies 
 
 This is something we have been considering for some time,
 and we did a couple of early design studies with an outside agency,
-but it was only after we secured [mui.com](https://mui.com/), the GitHub [`@mui`](https://www.npmjs.com/org/mui) org, and the npm [@mui](https://www.npmjs.com/org/mui) scope that we knew the new name would work.
+but it was only after we secured [brianstoker.com](https://brianstoker.com/), the GitHub [`@mui`](https://www.npmjs.com/org/mui) org, and the npm [@mui](https://www.npmjs.com/org/mui) scope that we knew the new name would work.
 
 ## Our roadmap intent for Q4 2021
 
@@ -194,7 +194,7 @@ We'll do our best, no guarantee!
   In the last few weeks, we have seen a strong influx of feedback from the community.
   We need to make the most of this feedback to solve regressions, improve the documentation for the new APIs, adjust the tradeoffs we took in the light of more information, and more.
   [15%](https://npm-stat.com/charts.html?package=%40material-ui%2Fcore&package=%40mui%2Fmaterial&from=2020-10-25&to=2021-10-15) of the community has migrated, so far.
-- 🦴 Migrate more components to `@mui/base`. [Michał](https://github.com/michaldudak) has recently added support for the [Button](https://mui.com/base-ui/react-button/).
+- 🦴 Migrate more components to `@mui/base`. [Michał](https://github.com/michaldudak) has recently added support for the [Button](https://brianstoker.com/base-ui/react-button/).
   You can follow our progress in the [umbrella issue](https://github.com/mui/base-ui/issues/10).
 - 🎨 We are [exploring](https://github.com/mui/material-ui/discussions/29024) the introduction of CSS variables.
   Since v5, Material UI is no longer actively supporting IE 11. Dropping this browser requirement unlocks new capabilities of the web platform.
@@ -232,6 +232,6 @@ While the visual difference between MUI Core v4 and v5 is not major, we still n
 
 We have the following objectives:
 
-- 📊 Run a new edition of the Developer Survey. The last one was done [15 months ago](https://mui.com/blog/2020-developer-survey-results/). Now that v5 is released, it's time for the 2021 edition!
+- 📊 Run a new edition of the Developer Survey. The last one was done [15 months ago](https://brianstoker.com/blog/2020-developer-survey-results/). Now that v5 is released, it's time for the 2021 edition!
 - 👪 Hire for two new roles: a Product Manager to focus on low-code and our first Developer Advocate.
 - 💫 Create a great onboarding experience for the 6-7 new hires of Q4.

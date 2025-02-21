@@ -43,3 +43,15 @@ docs/public/static/blog/feed/*
 packages-internal/x-tree-view-example
 export
 .next
+
+# sst
+.sst
+
+# open-next
+.open-next
+
+# sst
+.sst
+
+# open-next
+.open-next

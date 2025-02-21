@@ -1,6 +1,6 @@
 import * as React from 'react';
 import MediaShowcase from './MediaShowcase';
-import { PdfDoc } from '../../../pages/resume';
+import { PdfDoc } from '../../../pages/resume-new';
 
 
 export default function PdfShowcase({ showcaseContent }: { showcaseContent?: any }): React.JSX.Element {

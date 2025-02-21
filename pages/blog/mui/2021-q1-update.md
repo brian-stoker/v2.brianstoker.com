@@ -44,7 +44,7 @@ Here are the most significant improvements since December 2020.
 
   <img src="/static/blog/2021-q1-update/stack.png" alt="" style="width: 502px; margin-bottom: 16px;" />
 
-  You can find [more details](https://mui.com/material-ui/react-stack/) in the documentation.
+  You can find [more details](https://brianstoker.com/material-ui/react-stack/) in the documentation.
 
 - 🎨 We have improved the support for custom colors and variants.
   This is [one](https://github.com/mui/material-ui/issues/13875) of the most upvoted issues in the GitHub issue tracker.
@@ -121,7 +121,7 @@ We have primarily focused on the data grid components, fixing a lot of bugs, but
 The date picker is at the border between the advanced components and the design system realms.
 
 - 📚 We have fixed the generation of the API pages.
-  We now document all the props supported by the public pickers components, for example [DatePicker](https://mui.com/api/date-picker/).
+  We now document all the props supported by the public pickers components, for example [DatePicker](https://brianstoker.com/api/date-picker/).
 - ⚙️ We have mostly focused on addressing the technical debt present in the picker components (ported from `@materal-ui/pickers`).
 
 #### Data Grid

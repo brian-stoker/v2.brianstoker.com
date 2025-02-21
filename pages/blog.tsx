@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { InferGetStaticPropsType } from 'next';
 import { useRouter } from 'next/router';
 import Avatar from '@mui/material/Avatar';
 import AvatarGroup from '@mui/material/AvatarGroup';
@@ -21,7 +20,7 @@ import Head from 'src/modules/components/Head';
 import AppHeader from 'src/layouts/AppHeader';
 import AppFooter from 'src/layouts/AppFooter';
 import GradientText from 'src/components/typography/GradientText';
-import BrandingCssVarsProvider from 'src/BrandingCssVarsProvider';
+import BrandingCssVarsProvider from '@stoked-ui/docs';
 import { authors as AUTHORS } from 'src/modules/components/TopLayoutBlog';
 import HeroEnd from 'src/components/home/HeroEnd';
 import { Link } from '@stoked-ui/docs/Link';
@@ -30,13 +29,29 @@ import Section from 'src/layouts/Section';
 import SectionHeadline from 'src/components/typography/SectionHeadline';
 import { getAllBlogPosts, BlogPost } from 'lib/sourcing';
 
-export const getStaticProps = () => {
+const getTags = (query: any) => {
+  const { tags = '' } = query;
+  return (typeof tags === 'string' ? tags.split(',') : tags || [])
+  .map((str: string) => str.trim())
+  .filter((tag: string) => !!tag);
+};
+
+export async function getStaticProps() {
   const data = getAllBlogPosts();
   generateRssFeed(data.allBlogPosts);
+
+  // Default tags processing for build-time
+  const defaultTags = getTags({ tags: '' })  // Using default empty query for build-time
+  .filter((value: string) => value !== 'exampleTag')
+  .join(',');
+
   return {
-    props: data,
+    props: {
+      query: new URLSearchParams({ tags: defaultTags }).toString(),
+      ...data, // Include other static data like blog posts
+    },
   };
-};
+}
 
 export function PostPreview(props: BlogPost) {
   console.log('post preview', JSON.stringify(props, null, 2))
@@ -189,6 +204,7 @@ export function PostPreviewBox(post: BlogPost) {
       <Box
         component="img"
         src={post.image}
+        key={post.slug}
         sx={{
           aspectRatio: '16 / 9',
           width: '100%',
@@ -204,12 +220,32 @@ export function PostPreviewBox(post: BlogPost) {
 
 const PAGE_SIZE = 7;
 
-export default function Blog(props: InferGetStaticPropsType<typeof getStaticProps>) {
+interface PlanProps {
+  query:  URLSearchParams;
+  allBlogPosts: BlogPost[];
+  tagInfo: Record<string, number | undefined>;
+}
+
+
+
+const Plan = (props: PlanProps) => {
   const router = useRouter();
+
+  const { query, allBlogPosts, tagInfo: rawTagInfo } = props;
+  const [queryParams, setQueryParams] = React.useState<string>(query.toString());
+
+  React.useEffect(() => {
+    if (!router.isReady) return; // Ensures router is ready
+
+    // Update URLSearchParams on client side when query params change
+    const currentQuery = new URLSearchParams(router.query as Record<string, string>);
+    setQueryParams(currentQuery.toString());
+  }, [router.query]);
+
+
   const postListRef = React.useRef<HTMLDivElement | null>(null);
   const [page, setPage] = React.useState(0);
   const [selectedTags, setSelectedTags] = React.useState<Record<string, boolean>>({});
-  const { allBlogPosts, tagInfo: rawTagInfo } = props;
   const [firstPost, secondPost, ...otherPosts] = allBlogPosts;
   const tagInfo = { ...rawTagInfo };
   [firstPost, secondPost].forEach((post) => {
@@ -236,17 +272,12 @@ export default function Blog(props: InferGetStaticPropsType<typeof getStaticProp
   const pageStart = page * PAGE_SIZE;
   const totalPage = Math.ceil(filteredPosts.length / PAGE_SIZE);
   const displayedPosts = filteredPosts.slice(pageStart, pageStart + PAGE_SIZE);
-  const getTags = React.useCallback(() => {
-    const { tags = '' } = router.query;
-    return (typeof tags === 'string' ? tags.split(',') : tags || [])
-      .map((str) => str.trim())
-      .filter((tag) => !!tag);
-  }, [router.query]);
+
 
   React.useEffect(() => {
-    const arrayTags = getTags();
+    const arrayTags = getTags(query.entries());
     const finalTags: Record<string, boolean> = {};
-    arrayTags.forEach((tag) => {
+    arrayTags.forEach((tag: string) => {
       finalTags[tag] = true;
     });
     setSelectedTags(finalTags);
@@ -254,23 +285,22 @@ export default function Blog(props: InferGetStaticPropsType<typeof getStaticProp
   }, [getTags]);
 
   const removeTag = (tag: string) => {
-    router.push(
-      {
-        query: {
-          ...router.query,
-          tags: getTags().filter((value) => value !== tag),
-        },
-      },
-      undefined,
-      { shallow: true },
-    );
+    const updatedQuery = new URLSearchParams({
+      ...Object.fromEntries(
+        Object.entries(query).map(([key, value]) => [key, String(value)])
+      ),
+      tags: getTags(queryParams)
+      .filter((value: string) => value !== tag)
+      .join(','), // Convert the array to a comma-separated string
+    }).toString();
+    setQueryParams(updatedQuery);
   };
 
   return (
     <BrandingCssVarsProvider>
       <Head
-        title="Blog - SUI"
-        description="Follow the SUI blog to learn about new product features, latest advancements in UI development, and business initiatives."
+        title="brian-stokerblog"
+        description="Find out what i'm working on but probably just random bs that you are't interested in."
         card="/static/social-previews/blog-preview.jpg"
         disableAlternateLocale
       />
@@ -279,7 +309,7 @@ export default function Blog(props: InferGetStaticPropsType<typeof getStaticProp
         <Section cozy bg="gradient">
           <SectionHeadline
             alwaysCenter
-            overline="Blog"
+            overline="blog"
             title={
               <Typography variant="h2" component="h1">
                 Stay <GradientText>in the loop</GradientText> with
@@ -300,9 +330,7 @@ export default function Blog(props: InferGetStaticPropsType<typeof getStaticProp
               gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
             }}
           >
-            {[firstPost, secondPost].map((post) => (
-              <PostPreviewBox {...post} />
-            ))}
+
           </Box>
         </Container>
         <Container
@@ -335,6 +363,7 @@ export default function Blog(props: InferGetStaticPropsType<typeof getStaticProp
           </Typography>
           <Box sx={{ gridRow: 'span 2' }}>
             <Box
+              key={'paper'}
               sx={{
                 position: 'sticky',
                 top: 90,
@@ -345,12 +374,12 @@ export default function Blog(props: InferGetStaticPropsType<typeof getStaticProp
                 gap: 2,
                 '& .MuiPaper-root': {
                   p: 2,
-                  bgcolor: 'transparent',
+                  bgColor: 'transparent',
                   borderColor: 'divider',
                 },
               }}
             >
-              <Paper variant="outlined">
+              <Paper variant="outlined" key={'filter'}>
                 <Typography
                   color="text.primary"
                   fontWeight="semiBold"
@@ -360,11 +389,11 @@ export default function Blog(props: InferGetStaticPropsType<typeof getStaticProp
                   Filter posts by tag
                 </Typography>
                 <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>
-                  {Object.keys(tagInfo).map((tag) => {
+                  {Object.keys(tagInfo).map((tag, index) => {
                     const selected = !!selectedTags[tag];
                     return (
                       <Chip
-                        key={tag}
+                        key={index}
                         variant={selected ? 'filled' : 'outlined'}
                         color={selected ? 'primary' : undefined}
                         {...(selected
@@ -379,15 +408,11 @@ export default function Blog(props: InferGetStaticPropsType<typeof getStaticProp
                               label: tag,
                               onClick: () => {
                                 postListRef.current?.scrollIntoView();
-                                router.push(
-                                  {
-                                    query: {
-                                      ...router.query,
+                                setQueryParams(
+                                  new URLSearchParams({
+                                      queryParams,
                                       tags: tag,
-                                    },
-                                  },
-                                  undefined,
-                                  { shallow: true },
+                                    }).toString()
                                 );
                               },
                             })}
@@ -400,7 +425,7 @@ export default function Blog(props: InferGetStaticPropsType<typeof getStaticProp
                   })}
                 </Box>
               </Paper>
-              <Paper variant="outlined">
+              <Paper variant="outlined" key={'more'}>
                 <Typography
                   color="text.primary"
                   fontWeight="semiBold"
@@ -475,3 +500,5 @@ export default function Blog(props: InferGetStaticPropsType<typeof getStaticProp
     </BrandingCssVarsProvider>
   );
 }
+
+export default Plan;
