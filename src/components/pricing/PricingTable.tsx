@@ -19,17 +19,17 @@ import { useLicensingModel } from 'src/components/pricing/LicensingModelContext'
 
 const planInfo = {
   community: {
-    iconName: 'pricing/x-blog-community',
+    iconName: 'pricing/x-.plan-community',
     title: 'Community',
     description: 'Get started with the industry-standard React UI library, MIT-licensed.',
   },
   pro: {
-    iconName: 'pricing/x-blog-pro',
+    iconName: 'pricing/x-.plan-pro',
     title: 'Pro',
     description: 'Best for professional developers building enterprise or data-rich applications.',
   },
   premium: {
-    iconName: 'pricing/x-blog-premium',
+    iconName: 'pricing/x-.plan-premium',
     title: 'Premium',
     description:
       'The most advanced features for data-rich applications, as well as the highest priority for support.',
@@ -630,7 +630,7 @@ const rowHeaders: Record<string, React.ReactNode> = {
       {...{
         label: 'Technical support for SUI X',
         tooltip:
-          'You can ask for technical support, report bugs and submit unlimited feature requests to the advanced components. We take your subscription blog as one of the prioritization criteria.',
+          'You can ask for technical support, report bugs and submit unlimited feature requests to the advanced components. We take your subscription .plan as one of the prioritization criteria.',
       }}
     />
   ),

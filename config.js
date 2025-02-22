@@ -8,9 +8,9 @@ const LANGUAGES_SSR = ['en'];
 const LANGUAGES_IN_PROGRESS = LANGUAGES.slice();
 
 const LANGUAGES_IGNORE_PAGES = (pathname) => {
-  // We don't have the bandwidth like Qt to translate our blog posts
+  // We don't have the bandwidth like Qt to translate our .plan posts
   // https://www.qt.io/zh-cn/plan
-  // if (pathname === '/blog' || pathname.startsWith('/blog/')) {
+  // if (pathname === '/.plan' || pathname.startsWith('/.plan/')) {
   //  return true;
   //}
 

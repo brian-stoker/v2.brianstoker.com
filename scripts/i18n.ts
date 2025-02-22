@@ -5,7 +5,7 @@ import { pageToTitle } from 'src/modules/utils/helpers';
 import stokedUiPages from 'data/pages';
 import { MuiPage } from 'src/MuiPage';
 
-const EXCLUDES = ['/api', '/blog', '/x/react-'];
+const EXCLUDES = ['/api', '/.plan', '/x/react-'];
 
 async function run() {
   const translationsFilename = path.join(__dirname, '../translations/translations.json');

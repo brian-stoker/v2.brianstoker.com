@@ -64,10 +64,6 @@ export default function Head(props: HeadProps) {
       <meta name="docsearch:language" content={userLanguage}/>
       {/* #major-version-switch */}
       <meta name="docsearch:version" content="master"/>
-
-      <link rel="preconnect" href="https://fonts.googleapis.com"/>
-      <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin={'anonymous'}/>
-      <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&display=swap" rel="stylesheet"/>
       <style>{logoCss}</style>
       {disableAlternateLocale ? null : LANGUAGES_SSR.map((userLanguage2) => (<link
           key={userLanguage2}

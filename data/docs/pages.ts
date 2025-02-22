@@ -13,7 +13,7 @@ const pages: readonly MuiPage[] = [
       'data-ga-event-label': 'sidenav',
     },
   },
-  { pathname: '/blog', title: 'Blog', icon: standardNavIcons.BookIcon },
+  { pathname: '/bstoked.plan', title: 'bstoked.plan', icon: standardNavIcons.BookIcon },
 ];
 
 export default pages;

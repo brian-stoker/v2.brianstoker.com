@@ -5,6 +5,7 @@ import { unstable_debounce as debounce } from '@mui/utils';
 import ROUTES from 'src/route';
 import { PRODUCTS } from 'src/products';
 import { Link } from '@stoked-ui/docs/Link';
+import List from "@mui/material/List";
 
 const Navigation = styled('nav')(({ theme }) => [
   {
@@ -147,12 +148,12 @@ export default function HeaderNavBar() {
 
   return (
     <Navigation>
-      <ul ref={navRef} onKeyDown={handleKeyDown}>
+      <List sx={{}} ref={navRef} onKeyDown={handleKeyDown}>
         <li><Link href={ROUTES.art}>Art</Link></li>
         <li><Link href={ROUTES.photography}>Photography</Link></li>
         <li><Link href={ROUTES.drums}>Drums</Link></li>
-        <li><Link href={ROUTES.plan}>.plan</Link></li>
         <li><Link href={ROUTES.resume}>Resume</Link></li>
-      </ul>
+        <li><Link href={ROUTES.plan}>.plan</Link></li>
+      </List>
     </Navigation>);
 }

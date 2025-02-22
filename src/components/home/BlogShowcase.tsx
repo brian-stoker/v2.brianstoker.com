@@ -1,6 +1,6 @@
 import * as React from 'react';
 import MediaShowcase from './MediaShowcase';/*
-import  {PostPreviewBox} from '../../../pages/blog';
+import  {PostPreviewBox} from '../../../pages/.plan';
 import {BlogPost} from "../../../lib/sourcing";
 */
 

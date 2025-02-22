@@ -177,6 +177,7 @@ export default function HeaderNavDropdown() {
                   pl: 1,
                   pb: 1,
                   ml: 1,
+
                 },
               })}
             >
@@ -196,13 +197,13 @@ export default function HeaderNavDropdown() {
                 </Anchor>
               </li>
               <li>
-                <Anchor href={ROUTES.plan} as={Link} noLinkStyle>
-                  .plan
+                <Anchor href={ROUTES.resume} as={Link} noLinkStyle>
+                  Resume
                 </Anchor>
               </li>
               <li>
-                <Anchor href={ROUTES.resume} as={Link} noLinkStyle>
-                  Resume
+                <Anchor href={ROUTES.plan} as={Link} noLinkStyle>
+                  .plan
                 </Anchor>
               </li>
             </UList>

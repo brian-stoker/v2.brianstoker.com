@@ -300,7 +300,7 @@ export default function TopLayoutBlog(props) {
   const { canonicalAsServer } = pathnameToLanguage(router.asPath);
   const card =
     headers.manualCard === 'true'
-      ? `/static/plan/${slug}/card.png`
+      ? `/static/.plan/${slug}/card.png`
       : `/edge-functions/og-image/?title=${headers.cardTitle || finalTitle}&authors=${headers.authors
           .map((author) => {
             const { github, name } = authors[author];
@@ -313,7 +313,7 @@ export default function TopLayoutBlog(props) {
       throw new Error(
         [
           `SUI: the "manualCard" markdown header for the plan post "${slug}" is missing.`,
-          `Set manualCard: true or manualCard: false header in docs/pages/plan/${slug}.md.`,
+          `Set manualCard: true or manualCard: false header in docs/pages/blog/${slug}.md.`,
         ].join('\n'),
       );
     }
@@ -341,11 +341,11 @@ export default function TopLayoutBlog(props) {
               '@type': 'Article',
               publisher: {
                 '@type': 'Organization',
-                name: 'SUI blog',
-                url: 'https://stoked-ui.com/plan/',
+                name: 'bstoked.plan',
+                url: 'https://brianstoker.com/bstoked.plan/',
                 logo: {
                   '@type': 'ImageObject',
-                  url: 'https://stoked-ui.com/static/icons/512x512.png',
+                  url: 'https://brianstoker.com/static/icons/512x512.png',
                 },
               },
               author: {
@@ -373,7 +373,7 @@ export default function TopLayoutBlog(props) {
               description,
               mainEntityOfPage: {
                 '@type': 'WebPage',
-                '@id': 'https://stoked-ui.com/plan/',
+                '@id': 'https://brianstoker.com/.plan/',
               },
             }),
           }}
@@ -392,7 +392,7 @@ export default function TopLayoutBlog(props) {
           >
             <ChevronLeftRoundedIcon fontSize="small" sx={{ mr: 0.5 }} />
             {/* eslint-disable-next-line material-ui/no-hardcoded-labels */}
-            {'Back to blog'}
+            {'Back to .plan'}
           </Link>
           {headers.title ? (
             <React.Fragment>

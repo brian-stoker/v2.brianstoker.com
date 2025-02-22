@@ -61,7 +61,7 @@ export default function IconImage(props: IconImageProps) {
   if (name.startsWith('product-')) {
     defaultWidth = 36;
     defaultHeight = 36;
-  } else if (name.startsWith('pricing/x-blog-')) {
+  } else if (name.startsWith('pricing/x-.plan-')) {
     defaultWidth = 13;
     defaultHeight = 15;
   } else if (['pricing/yes', 'pricing/no', 'pricing/time'].indexOf(name) !== -1) {

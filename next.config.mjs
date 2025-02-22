@@ -219,7 +219,7 @@ export default withDocsInfra({
         ) {
           return;
         }
-        // The blog is not translated
+        // The .plan is not translated
         if (userLanguage !== 'en' && LANGUAGES_IGNORE_PAGES(page.pathname)) {
           return;
         }

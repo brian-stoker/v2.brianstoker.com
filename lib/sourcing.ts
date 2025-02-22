@@ -2,14 +2,11 @@ import fs from 'fs';
 import path from 'path';
 import { getHeaders } from '@stoked-ui/docs-markdown';
 
-const blogMuiDir = path.join(process.cwd(), 'pages/blog/mui');
-const blogDir = path.join(process.cwd(), 'pages/blog/mui');
+const blogDir = path.join(process.cwd(), 'pages/.plan');
 
 
 export const getBlogFilePaths = (ext = '.md') => {
-  const muiBlogPaths = fs.readdirSync(blogMuiDir).filter((file) => file.endsWith(ext));
-  const suiBlogPaths = fs.readdirSync(blogDir).filter((file) => file.endsWith(ext));
-  return muiBlogPaths.concat(suiBlogPaths);
+  return fs.readdirSync(blogDir).filter((file) => file.endsWith(ext));
 };
 
 export interface BlogPost {
@@ -35,7 +32,7 @@ export function getBlogPost(filePath: string): BlogPost {
   };
 }
 
-// Avoid typos in the blog markdown pages.
+// Avoid typos in the .plan markdown pages.
 // https://www.notion.so/mui-org/Blog-247ec2bff5fa46e799ef06a693c94917
 const ALLOWED_TAGS = [
   'Company',
@@ -80,6 +77,7 @@ export const getAllBlogPosts = () => {
       }
       return -1;
     });
+  console.log('rawBlogPosts', rawBlogPosts)
   const allBlogPosts = rawBlogPosts.filter((post) => !!post.title);
   const tagInfo: Record<string, number | undefined> = {};
   allBlogPosts.forEach((post) => {

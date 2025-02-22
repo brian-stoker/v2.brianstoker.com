@@ -59,8 +59,8 @@ function layouts(t) {
     {
       title: t('blogTitle'),
       description: t('blogDescr'),
-      src: '/static/images/templates/blog.png',
-      href: '/material-ui/getting-started/templates/blog/',
+      src: '/static/images/templates/.plan.png',
+      href: '/material-ui/getting-started/templates/.plan/',
       source: `${sourcePrefix}/docs/data/stoked-ui/getting-started/templates/plan`,
     },
     {

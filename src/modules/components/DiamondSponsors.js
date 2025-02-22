@@ -96,7 +96,7 @@ export default function DiamondSponsors() {
           loading="lazy"
           sx={(theme) =>
             theme.applyDarkStyles({
-              content: `url(/static/images/bs.logo.dark.svg)`,
+              content: `url(https://stoked-ui.com/static/images/bs.logo.dark.svg)`,
             })
           }
         />

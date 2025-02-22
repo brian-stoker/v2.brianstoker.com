@@ -10,11 +10,11 @@ export default function generateRssFeed(allBlogPosts: Array<BlogPost>) {
   const siteUrl = 'https://brianstoker.com';
 
   const feed = new Feed({
-    title: 'brianstoker.com .blog',
+    title: 'bstoked.plan',
     description:
-      'Follow the SUI blog to learn about new product features, latest advancements in UI development, and business initiatives.',
-    id: `${siteUrl}/blog`,
-    link: `${siteUrl}/blog`,
+      'Follow the SUI .plan to learn about new product features, latest advancements in UI development, and business initiatives.',
+    id: `${siteUrl}/bstoked.plan`,
+    link: `${siteUrl}/bstoked.plan`,
     language: 'en',
     image: `${siteUrl}/static/logo.svg`,
     favicon: `${siteUrl}/favicon.ico`,
@@ -28,7 +28,7 @@ export default function generateRssFeed(allBlogPosts: Array<BlogPost>) {
     const postAuthors = post.authors && post.authors.map((author) => ({ name: author }));
     const postDate = post.date ? new Date(post.date) : new Date();
     const postCategory = post.tags.map((tag) => ({ name: tag }));
-    const postLink = `${siteUrl}/blog/${post.slug}`;
+    const postLink = `${siteUrl}/.plan/${post.slug}`;
 
     feed.addItem({
       title: post.title,

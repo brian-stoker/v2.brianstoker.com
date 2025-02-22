@@ -11,7 +11,7 @@ export interface MuiPage {
    */
   legacy?: boolean;
   /**
-   * Indicates if the pages are only available in some blog.
+   * Indicates if the pages are only available in some .plan.
    * @default 'community'
    */
   plan?: 'community' | 'pro' | 'premium';

@@ -94,7 +94,7 @@ export default function AppFooter(props: AppFooterProps) {
               Drums
             </Link>
             <Link prefetch={false} href={ROUTES.plan}>
-              .plan
+              bstoked.plan
             </Link>
             <Link prefetch={false} href={ROUTES.resume}>
               Resume

@@ -973,8 +973,8 @@ const drums = new Product(drumsData);
 
 const planData: TProduct = {
   id: 'plan',
-  name: ".plan",
-  fullName: "BRIAN STOKER: .blog",
+  name: "bstoked.plan",
+  fullName: "bstoked.plan (brian stoker)",
   description: "Random musings probably not worth mentioning",
   icon: "product-templates",
   url: ROUTES.plan,
