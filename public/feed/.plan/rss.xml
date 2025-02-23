@@ -4,7 +4,7 @@
         <title>bstoked.plan</title>
         <link>https://brianstoker.com/bstoked.plan</link>
         <description>Follow the SUI .plan to learn about new product features, latest advancements in UI development, and business initiatives.</description>
-        <lastBuildDate>Sun, 23 Feb 2025 00:40:30 GMT</lastBuildDate>
+        <lastBuildDate>Sun, 23 Feb 2025 09:39:56 GMT</lastBuildDate>
         <docs>https://validator.w3.org/feed/docs/rss2.html</docs>
         <generator>https://github.com/jpmonette/feed</generator>
         <language>en</language>
@@ -20,11 +20,7 @@
             <guid>https://brianstoker.com/.plan/2025-02-21-launched-bstoked-plan</guid>
             <pubDate>Fri, 21 Feb 2025 00:00:00 GMT</pubDate>
             <description><![CDATA[a place to put the things i must say but no one else cares about.. as well as some work updates]]></description>
-            <category>Stoked UI</category>
-            <category>File Explorer</category>
-            <category>Timeline</category>
-            <category>Editor</category>
-            <category>Media Selector</category>
+            <category>.plan</category>
         </item>
         <item>
             <title><![CDATA[Stoked UI Releases Initial Versions of Its React Component Modules]]></title>

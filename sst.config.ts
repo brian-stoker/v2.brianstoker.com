@@ -11,7 +11,6 @@ export default $config({
     return {
       name: getDomainInfo(process.env.ROOT_DOMAIN!, input.stage).appName,
       removal: input.stage === "production" ? "retain" : "remove",
-      protect: ["production"].includes(input.stage),
       home: "aws",
     }
   },
