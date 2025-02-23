@@ -1,6 +1,5 @@
 import * as React from 'react';
 import Box from '@mui/material/Box';
-import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
 import Typography from '@mui/material/Typography';
@@ -11,14 +10,14 @@ import AppHeader from 'src/layouts/AppHeader';
 import AppFooter from 'src/layouts/AppFooter';
 import BrandingCssVarsProvider from '@stoked-ui/docs';
 import Section from 'src/layouts/Section';
-import { pageToTitleI18n } from 'src/modules/utils/helpers';
-import { useTranslate } from '@stoked-ui/docs/i18n';
-import { Link } from '@stoked-ui/docs/Link';
-import type { MuiPage } from 'src/MuiPage';
+import {pageToTitleI18n} from 'src/modules/utils/helpers';
+import {useTranslate} from '@stoked-ui/docs/i18n';
+import {Link} from '@stoked-ui/docs/Link';
+import type {MuiPage} from 'src/MuiPage';
 import materialPages from '../data/pages';
 import Alert from '@mui/material/Alert';
-import { redirect } from 'next/router';
-import { useSearchParams } from 'next/navigation';
+import {redirect} from 'next/router';
+import {useSearchParams} from 'next/navigation';
 
 export default function Components() {
   const t = useTranslate();

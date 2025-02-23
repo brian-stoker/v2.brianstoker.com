@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Document, Page } from 'react-pdf';
+import React, {useState} from 'react';
+import {Document, Page} from 'react-pdf';
 import {useWindowWidth} from '../hooks/useWindowSize';
 import Box from "@mui/material/Box";
 import Divider from "@mui/material/Divider";

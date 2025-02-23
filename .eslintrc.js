@@ -203,6 +203,7 @@ module.exports = {
     // Disable `import/no-unresolved`, see README.md for details
     'import/no-unresolved': 'off',
     '@typescript-eslint/lines-between-class-members': 'off',
+    'class-methods-use-this': 'off',
   },
   overrides: [
     {

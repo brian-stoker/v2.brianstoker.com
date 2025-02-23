@@ -2,13 +2,9 @@ import * as React from 'react';
 import dynamic from 'next/dynamic';
 import { useTheme } from '@mui/material/styles';
 import Box, { BoxProps } from '@mui/material/Box';
-import Typography from '@mui/material/Typography';
-import Stack from '@mui/material/Stack';
 import useMediaQuery from '@mui/material/useMediaQuery';
-import GradientText from 'src/components/typography/GradientText';
-import GetStartedButtons from 'src/components/home/GetStartedButtons';
-import HeroContainer from 'src/layouts/HeroContainer';
-import {ALL_PRODUCTS, PRODUCTS} from "../../products";
+import { PRODUCTS } from "../../products";
+import {BlogPost} from "../../../lib/sourcing";
 
 
 function createLoading(sx: BoxProps['sx']) {
@@ -35,10 +31,11 @@ const PlayerCard = dynamic(() => import('../showcase/PlayerCard'), {
   loading: createLoading({ width: '100%', height: 280 }),
 });
 
-export default function Hero() {
+export default function Hero({ mostRecentPosts = []}: { mostRecentPosts?: BlogPost[] }) {
   const globalTheme = useTheme();
   const isMdUp = useMediaQuery(globalTheme.breakpoints.up('md'));
+
   return (
-    PRODUCTS.previews()
+    PRODUCTS.previews({mostRecentPosts})
   );
 }

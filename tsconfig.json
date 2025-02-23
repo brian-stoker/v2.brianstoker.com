@@ -1,6 +1,13 @@
 {
   "extends": "./original.tsconfig.json",
-  "include": ["next-env.d.ts", "types", "src", "pages", "data", "next.config.mjs"],
+  "include": [
+    "next-env.d.ts",
+    "types",
+    "src",
+    "pages",
+    "data",
+    "next.config.mjs"
+  ],
   "compilerOptions": {
     "allowJs": true,
     "isolatedModules": true,
@@ -9,9 +16,14 @@
     "noUnusedLocals": true,
     "resolveJsonModule": true,
     "skipLibCheck": true,
+    "jsx": "preserve",
     "esModuleInterop": true,
-    "types": ["react", "node"],
+    "types": [
+      "react",
+      "node"
+    ],
     "incremental": true,
     "target": "ES2019"
-  },"exclude":[]
+  },
+  "exclude": []
 }

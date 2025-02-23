@@ -10,9 +10,9 @@ const LANGUAGES_IN_PROGRESS = LANGUAGES.slice();
 const LANGUAGES_IGNORE_PAGES = (pathname) => {
   // We don't have the bandwidth like Qt to translate our .plan posts
   // https://www.qt.io/zh-cn/plan
-  // if (pathname === '/.plan' || pathname.startsWith('/.plan/')) {
-  //  return true;
-  //}
+  if (pathname === '/bstoked.plan' || pathname.startsWith('/.plan/')) {
+   return true;
+  }
 
   if (pathname === '/size-snapshot/') {
     return true;

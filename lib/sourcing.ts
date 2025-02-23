@@ -58,11 +58,12 @@ const SUI_TAGS = [
   'File Explorer',
   'Media Selector',
   'Editor',
-  'Timeline'
+  'Timeline',
+  '.plan'
 ];
 
 const ALL_TAGS = SUI_TAGS.concat(ALLOWED_TAGS);
-
+export const mostRecentPosts: BlogPost[] = [];
 export const getAllBlogPosts = () => {
   const filePaths = getBlogFilePaths();
   const rawBlogPosts = filePaths
@@ -77,7 +78,6 @@ export const getAllBlogPosts = () => {
       }
       return -1;
     });
-  console.log('rawBlogPosts', rawBlogPosts)
   const allBlogPosts = rawBlogPosts.filter((post) => !!post.title);
   const tagInfo: Record<string, number | undefined> = {};
   allBlogPosts.forEach((post) => {
@@ -87,13 +87,21 @@ export const getAllBlogPosts = () => {
           `The tag "${tag}" in "${post.title}" was not whitelisted. Are you sure it's not a typo?`,
         );
       }
-
-
       tagInfo[tag] = (tagInfo[tag] || 0) + 1;
     });
   });
 
+  if (allBlogPosts.length) {
+    mostRecentPosts.push(allBlogPosts[0]);
+  }
+  if (allBlogPosts.length > 1) {
+    mostRecentPosts.push(allBlogPosts[1]);
+  }
+  if (allBlogPosts.length > 2) {
+    mostRecentPosts.push(allBlogPosts[2]);
+  }
   return {
+    mostRecentPosts,
     allBlogPosts, // posts with at least a title
     tagInfo,
   };

@@ -42,6 +42,20 @@ export default withDocsInfra({
   assetPrefix,
   basePath,
   webpack: (config, options) => {
+    const plugins = config.plugins.slice();
+    if (process.env.DOCS_STATS_ENABLED) {
+      plugins.push(
+        // For all options see https://github.com/th0r/webpack-bundle-analyzer#as-plugin
+        new BundleAnalyzerPlugin({
+          analyzerMode: 'server',
+          generateStatsFile: true,
+          analyzerPort: options.isServer ? 8888 : 8889,
+          reportTitle: `${options.isServer ? 'server' : 'client'} docs bundle`,
+          // Will be available at `.next/${statsFilename}`
+          statsFilename: `stats-${options.isServer ? 'server' : 'client'}.json`,
+        }),
+      );
+    }
 
     // next includes node_modules in webpack externals. Some of those have dependencies
     // on the aliases defined above. If a module is an external those aliases won't be used.
@@ -52,16 +66,13 @@ export default withDocsInfra({
       // We only care about Node runtime at this point.
       (options.nextRuntime === undefined || options.nextRuntime === 'nodejs')
     ) {
-      const externals = config.externals.slice(0, -1);
-      const nextExternals = config.externals.at(-1);
-      console.info('externals', externals);
+      const [nextExternals, ...externals] = config.externals;
+
       config.externals = [
         // @ts-ignore
         (ctx, callback) => {
           const { request } = ctx;
           const hasDependencyOnRepoPackages = [
-            'notistack',
-            '@mui/material',
           ].some((dep) => request.startsWith(dep));
 
           if (hasDependencyOnRepoPackages) {
@@ -184,12 +195,11 @@ export default withDocsInfra({
       },
     };
   },
-  trailingSlash: false,
   transpilePackages: ['@mui/material'],
   env: {
     // docs-infra
     LIB_VERSION: pkg.version,
-    SOURCE_CODE_REPO: 'https://github.com/stoked-ui/mono',
+    SOURCE_CODE_REPO: 'https://github.com/brian-stoker/v2.brianstoker.com',
     SOURCE_GITHUB_BRANCH: 'main', // #default-branch-switch
     GITHUB_TEMPLATE_DOCS_FEEDBACK: '4.docs-feedback.yml',
     BUILD_ONLY_ENGLISH_LOCALE: String(buildOnlyEnglishLocale),
@@ -198,7 +208,7 @@ export default withDocsInfra({
       ? `Basic ${Buffer.from(process.env.GITHUB_AUTH).toString('base64')}`
       : '',
   },
-
+  distDir: 'export',
   // Next.js provides a `defaultPathMap` argument, we could simplify the logic.
   // However, we don't in order to prevent any regression in the `findPages()` method.
   // @ts-ignore
@@ -257,10 +267,9 @@ export default withDocsInfra({
 
     return map;
   },
-  distDir: 'export',
   // Used to signal we run pnpm build
   ...(process.env.NODE_ENV === 'production'
-    ? {
+    ? { trailingSlash: true,
         output: 'export',
       }
     : {

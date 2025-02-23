@@ -1,10 +1,11 @@
 import * as React from 'react';
-import MediaShowcase from './MediaShowcase';/*
-import  {PostPreviewBox} from '../../../pages/.plan';
+import Stack from '@mui/material/Stack';
+import  {PostPreviewBox} from '../../../pages/bstoked.plan';
 import {BlogPost} from "../../../lib/sourcing";
-*/
 
 export default function BlogShowcase({ showcaseContent }: { showcaseContent?: any }): React.JSX.Element {
-  /*const preview= <PostPreviewBox {...showcaseContent as BlogPost} />*/
-  return <MediaShowcase showcaseContent={<></>} />
+
+  return <Stack gap={4} alignContent={'center'} height={'100%'}>
+    {showcaseContent.map((blog: BlogPost) => <PostPreviewBox {...blog as BlogPost} />)}
+  </Stack>
 }

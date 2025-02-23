@@ -10,7 +10,7 @@ import MaterialStyling from 'src/components/productMaterial/MaterialStyling';
 import MaterialTemplates from 'src/components/productMaterial/MaterialTemplates';
 import MaterialDesignKits from 'src/components/productMaterial/MaterialDesignKits';
 import MaterialEnd from 'src/components/productMaterial/MaterialEnd';
-import References, { CORE_CUSTOMERS } from 'src/components/home/References';
+import References, {CORE_CUSTOMERS} from 'src/components/home/References';
 import AppFooter from 'src/layouts/AppFooter';
 import AppHeaderBanner from 'src/components/banner/AppHeaderBanner';
 

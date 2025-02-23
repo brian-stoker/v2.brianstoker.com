@@ -13,7 +13,7 @@ import HeroEnd from 'src/components/home/HeroEnd';
 import AppFooter from 'src/layouts/AppFooter';
 import BrandingCssVarsProvider from '@stoked-ui/docs';
 import AppHeaderBanner from 'src/components/banner/AppHeaderBanner';
-import { LicensingModelProvider } from 'src/components/pricing/LicensingModelContext';
+import {LicensingModelProvider} from 'src/components/pricing/LicensingModelContext';
 
 export default function Pricing() {
   return (

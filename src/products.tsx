@@ -32,6 +32,7 @@ import BlogShowcase from "./components/home/BlogShowcase";
 import PdfShowcase from "./components/home/PdfShowcase";
 import VideoShowcase from"./components/home/VideoShowcase";
 import ImageShowcase from "./components/home/ImageShowcase";
+import {BlogPost, BlogPost} from "../lib/sourcing";
 
 type RouteType = 'product' | 'doc';
 const routeTypes: RouteType[] = ['product', 'doc'];
@@ -458,7 +459,10 @@ function titleCase(str: string) {
 function SwipeableProducts(props: ProductSwipeableProps) {
   const swipeableProducts = React.useMemo(() => {
     const { show, products, productIndex, setProductIndex } = props;
-
+    const switchIt = (index: number) => {
+      console.info('switchIt', index);
+      setProductIndex(index);
+    }
     return (
       <Box sx={{
         display: { md: 'none' },
@@ -470,7 +474,7 @@ function SwipeableProducts(props: ProductSwipeableProps) {
           index={productIndex}
           resistance
           enableMouseEvents
-          onChangeIndex={(index) => setProductIndex(index)}
+          onChangeIndex={(index) => switchIt(index)}
         >
           {products.live.map((product: Product, index: number) => {
             return  product.highlightedItem(productIndex, setProductIndex, index, 'product', {
@@ -591,26 +595,28 @@ function ProductsSwitcher(props: ProductSwitcherProps) {
   );
 }
 
-function ProductsPreviews({ products }: { products: Products } ) {
+function ProductsPreviews({ products, mostRecentPosts }: { products: Products, mostRecentPosts?: BlogPost[] } ) {
   const [productIndex, setProductIndex] = React.useState(0);
   const { ref, inView } = useInView({
     triggerOnce: true,
     threshold: 0,
     rootMargin: '0px 50px',
   });
+  console.info('products.live', products.live)
   const Showcase = products.live[productIndex].showcaseType;
-  const showcaseProps = { showcaseContent: products.products?.[productIndex]?.data?.showcaseContent};
+  const content = products.live[productIndex].name === '.plan' ? mostRecentPosts : products.products?.[productIndex]?.data?.showcaseContent;
+  const showcaseProps = { showcaseContent: content};
 
   return (
     <Section bg="gradient" ref={ref}>
-      <Box sx={{ textAlign: { xs: 'center', md: 'left' }, }}>
-        <Typography variant="h1" mb={1} className={'stoked-font'} sx={{ fontSize:  { xs: 30, sm: 52, md: 75, lg: 102 }, marginBottom: { xs: 2, sm: 4, md: 8, lg: 12 }}}>
-          BRIAN <br/><GradientText>STOKER</GradientText>
-        </Typography>
-      </Box>
+
       <Grid container spacing={'24px'}>
         <Grid item md={6}>
-
+          <Box sx={{ textAlign: { xs: 'center', md: 'left' }, }}>
+            <Typography variant="h1" mb={1} className={'stoked-font'} sx={{ fontSize:  { xs: 36, sm: 46, md: 56, lg: 66 }, marginBottom: { xs: 1, sm: 2, md: 3, lg: 4 }}}>
+              BRIAN <br/><GradientText>STOKER</GradientText>
+            </Typography>
+          </Box>
           {products.switcher({ inView, productIndex, setProductIndex })}
         </Grid>
         <Grid
@@ -659,15 +665,15 @@ class Products extends IndexObject<Product> {
   preview(params: { productId: string }) {
     const source = this.index[params.productId].preview;
     if (source.image) {
-      return <img src={source.image} alt={`${productId} image preview`} />
+      return <img src={source.image}  />
     }
     if (source.video) {
       return <video src={source.video}  />
     }
   }
 
-  public previews() {
-    return <ProductsPreviews products={this} />;
+  public previews({mostRecentPosts}: { mostRecentPosts?: BlogPost[]}) {
+    return <ProductsPreviews products={this} mostRecentPosts={mostRecentPosts} />;
   }
 
   public switcher(props: ProductStackProps) {
@@ -707,7 +713,7 @@ class Products extends IndexObject<Product> {
     const { productIndex, setProductIndex } = props;
     return (<Stack spacing={1} sx={{ display: { xs: 'none', md: 'flex' }, maxWidth: 500 }}>
       {this.live.map((product, index) => {
-        return product.highlightedItem(productIndex, setProductIndex, index);
+        return product.highlightedItem(productIndex, setProductIndex, index, );
       })}
     </Stack>)
   }
@@ -939,10 +945,10 @@ const photographyData: TProduct = {
   icon: "product-core",
   url: ROUTES.photography,
   preview: {
-    image: '/static/photography/stallion.jpg'
+    image: '/static/photography/bed-selfie.jpg'
   },
   showcaseType: ImageShowcase,
-  showcaseContent: '/static/photography/stallion.jpg',
+  showcaseContent: '/static/photography/bed-selfie.jpg',
   live: true
 }
 
@@ -957,13 +963,13 @@ const drumsData: TProduct = {
   icon: "product-designkits",
   url: ROUTES.drums,
   preview:{
-    video: 'https://cenv-public.s3.amazonaws.com/normal-guy.mp4'
+    video: 'https://cenv-public.s3.amazonaws.com/tell-me-mister-2.mp4'
   },
   showcaseType: VideoShowcase,
   showcaseContent: {
-    src: 'https://cenv-public.s3.amazonaws.com/normal-guy.mp4',
-    poster: '/static/photography/normal-guy.png',
-    title: 'Normal Guy'
+    src: 'https://cenv-public.s3.amazonaws.com/tell-me-mister-2.mp4',
+    poster: '/static/photography/tell-me-mister.png',
+    title: 'Tell Me Mister'
   },
   live: true
 }
@@ -973,8 +979,8 @@ const drums = new Product(drumsData);
 
 const planData: TProduct = {
   id: 'plan',
-  name: "bstoked.plan",
-  fullName: "bstoked.plan (brian stoker)",
+  name: ".plan",
+  fullName: ".plan (brian stoker)",
   description: "Random musings probably not worth mentioning",
   icon: "product-templates",
   url: ROUTES.plan,
@@ -982,24 +988,7 @@ const planData: TProduct = {
     text: 'recalcitrant robot\n' + '@brianstoker\n' + '·\n' + 'Feb 15, 2021\n' + '#atx #snowboarding #merica @ Auditorium Shores https://www.instagram.com/p/CLVQg7ql34O4prJIa6hpXGg-RaupDXP0THly3A0/'
   },
   showcaseType: BlogShowcase,
-  showcaseContent: {
-    "title": "Stoked UI: Client-Side Video Editing React Components",
-    "description": "Stoked UI modules are now available via pnpm, yarn, and npm.",
-    "date": "2025-02-20T00:00:00.000Z",
-    "authors": [
-      "brianstoker"
-    ],
-    "tags": [
-      "Stoked UI",
-      "File Explorer",
-      "Timeline",
-      "Editor"
-    ],
-    "manualCard": "true",
-    "components": [],
-    "hooks": [],
-    "slug": "2025-02-20-initial-stoked-ui-release"
-  },
+  showcaseContent: {},
   live: true
 }
 

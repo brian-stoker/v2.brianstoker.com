@@ -1,9 +1,12 @@
-import React from 'react';
+import * as React from "react";
+import {InferGetStaticPropsType} from "next";
+import KeyboardArrowRightRoundedIcon from "@mui/icons-material/KeyboardArrowRightRounded";
+import Avatar from "@mui/material/Avatar";
 import Box from "@mui/material/Box";
 import Divider from "@mui/material/Divider";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
-import { useRouter } from "next/router";
+import {useRouter} from "next/router";
 import Paper from "@mui/material/Paper";
 import Chip from "@mui/material/Chip";
 import Link from "@mui/material/Link";
@@ -11,9 +14,9 @@ import Button from "@mui/material/Button";
 import GitHubIcon from "@mui/icons-material/GitHub";
 import LinkedInIcon from "@mui/icons-material/LinkedIn";
 import DiscordIcon from 'src/icons/DiscordIcon';
-import { AvatarGroup, Pagination } from "@mui/material";
-import { BrandingCssVarsProvider } from "@stoked-ui/docs";
-import { authors as AUTHORS } from 'src/modules/components/TopLayoutBlog';
+import {AvatarGroup, Pagination} from "@mui/material";
+import {BrandingCssVarsProvider} from "@stoked-ui/docs";
+import {authors as AUTHORS} from 'src/modules/components/TopLayoutBlog';
 import Head from 'src/modules/components/Head';
 import AppHeader from 'src/layouts/AppHeader';
 import AppFooter from 'src/layouts/AppFooter';
@@ -21,11 +24,8 @@ import GradientText from "../src/components/typography/GradientText";
 import Section from "../src/layouts/Section";
 import SectionHeadline from "../src/components/typography/SectionHeadline";
 import Slack from "../src/icons/Slack";
-import { BlogPost, getAllBlogPosts } from "../lib/sourcing";
+import {BlogPost, getAllBlogPosts} from "../lib/sourcing";
 import generateRssFeed from "../scripts/generateRSSFeed";
-import { InferGetStaticPropsType } from "next";
-import KeyboardArrowRightRoundedIcon from "@mui/icons-material/KeyboardArrowRightRounded";
-import Avatar from "@mui/material/Avatar";
 import HeroEnd from "../src/components/home/HeroEnd";
 
 export const getStaticProps = () => {
@@ -37,7 +37,6 @@ export const getStaticProps = () => {
 };
 
 export function PostPreview(props: BlogPost) {
-  console.log('post preview', JSON.stringify(props, null, 2))
   return (
     <React.Fragment>
       <Box sx={{ display: 'flex', gap: 0.5, mb: 1.5 }}>
@@ -106,7 +105,7 @@ export function PostPreview(props: BlogPost) {
         >
           {(props.authors as Array<keyof typeof AUTHORS>).map((author) => (
             <Avatar
-              key={author}
+              key={author as string}
               alt=""
               src={`${AUTHORS[author].avatar}?s=${28}`}
               srcSet={`${AUTHORS[author].avatar}?s=${28 * 2} 2x, ${AUTHORS[author].avatar}?s=${

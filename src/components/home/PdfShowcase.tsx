@@ -1,6 +1,6 @@
 import * as React from 'react';
 import MediaShowcase from './MediaShowcase';
-import { PdfDoc } from '../../../pages/resume';
+import { PdfDoc } from '../../../pages/resume-new';
 
 
 export default function PdfShowcase({ showcaseContent }: { showcaseContent?: any }): React.JSX.Element {
@@ -13,7 +13,7 @@ export default function PdfShowcase({ showcaseContent }: { showcaseContent?: any
         '& .react-pdf__Page, canvas': {   width: '100%', overflow: 'hidden' },
       }}
       showcaseContent={
-      <PdfDoc pdfWidth={545} />
+      <PdfDoc pdfWidth={345} />
     } />
   )
 }

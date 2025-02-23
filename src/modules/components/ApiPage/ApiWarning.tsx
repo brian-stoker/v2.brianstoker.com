@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { alpha } from '@mui/system';
+import type {} from '@mui/material/themeCssVarsAugmentation';
 import { styled } from '@mui/material/styles';
 import Alert from '@mui/material/Alert';
 import WarningRoundedIcon from '@mui/icons-material/WarningRounded';

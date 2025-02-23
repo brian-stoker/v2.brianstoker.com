@@ -5,21 +5,19 @@ import {useResizeObserver} from '@wojtekmaj/react-hooks';
 import {Document, Page, pdfjs} from 'react-pdf';
 import Box from "@mui/material/Box";
 import Divider from "@mui/material/Divider";
-import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
-import ArrowFowardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import {styled} from "@mui/material/styles";
-import Button from '@mui/material/Button';
-import Typography from "@mui/material/Typography";
-import ButtonGroup from "@mui/material/ButtonGroup";
-import IconButton from "@mui/material/IconButton";
 import 'react-pdf/dist/esm/Page/AnnotationLayer.css';
 import 'react-pdf/dist/esm/Page/TextLayer.css';
 import {useWindowWidth} from "../hooks/useWindowSize";
+import ButtonGroup from "@mui/material/ButtonGroup";
 import Fab from '@mui/material/Fab';
+import {ArrowBackIos, ArrowForwardIos} from "@mui/icons-material";
+import Button from '@mui/material/Button';
+import Typography from '@mui/material/Typography';
 
 type PDFFile = string | File | null;
-
-pdfjs.GlobalWorkerOptions.workerSrc = new URL(`https://cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.min.mjs`).toString();
+const test = ':)';
+pdfjs.GlobalWorkerOptions.workerSrc = new URL(`https://cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.min.js`).toString();
 
 const options = {
   cMapUrl: '/cmaps/', standardFontDataUrl: '/standard_fonts/',
@@ -28,6 +26,75 @@ const options = {
 const resizeObserverOptions = {};
 
 const maxWidth = 800;
+const StyledDoc = styled(Document)(() => ({
+  "& .react-pdf__Page": {
+    aspectRatio: "1 / 1.35",
+    position: "relative",
+    width: '100%',
+    borderRadius: '12px',
+    alignContent: 'center',
+    justifyItems: 'center',
+    textAlign: 'center',
+  },
+  alignContent: 'center',
+  justifyItems: 'center',
+  textAlign: 'center',
+  borderRadius: '12px',
+  width: '100%',
+  position: "relative",
+
+  "&:hover .page-controls": {
+    opacity: 1,
+  },
+
+  "& .page-controls": {
+    position: "absolute",
+    bottom: "5%",
+    left: "50%",
+    background: "white",
+    opacity: '0',
+    transform: "translateX(-50%)",
+    transition: "opacity ease-in-out 0.2s",
+    boxShadow: "0px 4px 6px rgba(0, 0, 0, 0.1)",
+    borderRadius: "8px",
+    color: "black",
+    display: 'flex',
+    flexDirection: 'row',
+    zIndex: 4,
+    "& span": {
+      font: "inherit",
+      fontSize: ".8em",
+      padding: "0 .5em",
+      alignContent: 'center',
+    },
+
+    "& button": {
+      width: "44px",
+      height: "44px",
+      background: "white",
+      border: 0,
+      font: "inherit",
+      fontSize: ".8em",
+      color: 'black',
+      borderRadius: "8px",
+
+      "&:enabled:hover": {
+        cursor: "pointer",
+        backgroundColor: "#e6e6e6",
+      },
+
+      "&:first-child": {
+        borderTopRightRadius: 0,
+        borderBottomRightRadius: 0,
+      },
+
+      "&:last-child": {
+        borderTopLeftRadius: 0,
+        borderBottomLeftRadius: 0,
+      },
+    },
+  },
+}));
 
 export function PdfDoc ({ pdfWidth }: { pdfWidth?: number }) {
   const [numPages, setNumPages] = React.useState(null);
@@ -51,7 +118,7 @@ export function PdfDoc ({ pdfWidth }: { pdfWidth?: number }) {
   }
 
 
-  const [containerRef, setContainerRef] = React.useState<HTMLElement | null>(null);
+  const [containerRef, setContainerRef] = React.useState<Box | null>(null);
   const [containerWidth, setContainerWidth] = React.useState<number>();
 
   const onResize = React.useCallback<ResizeObserverCallback>((entries) => {
@@ -64,96 +131,32 @@ export function PdfDoc ({ pdfWidth }: { pdfWidth?: number }) {
 
   useResizeObserver(containerRef, resizeObserverOptions, onResize);
 
-  const StyledDoc = styled(Document)(({theme }) => ({
-    "& .react-pdf__Page": {
-      aspectRatio: "1 / 1.35",
-      position: "relative",
-      width: '100%',
-      borderRadius: '12px',
-      alignContent: 'center',
-      justifyItems: 'center',
-      textAlign: 'center',
-    },
-    alignContent: 'center',
-    justifyItems: 'center',
-    textAlign: 'center',
-    borderRadius: '12px',
-    width: '100%',
-    position: "relative",
 
-    "&:hover .page-controls": {
-      opacity: 1,
-    },
-
-    "& .page-controls": {
-      position: "absolute",
-      bottom: "5%",
-      left: "50%",
-      background: "white",
-      opacity: '0',
-      transform: "translateX(-50%)",
-      transition: "opacity ease-in-out 0.2s",
-      boxShadow: "0px 4px 6px rgba(0, 0, 0, 0.1)",
-      borderRadius: "8px",
-      color: "black",
-      display: 'flex',
-      flexDirection: 'row',
-      zIndex: 4,
-      "& span": {
-        font: "inherit",
-        fontSize: ".8em",
-        padding: "0 .5em",
-        alignContent: 'center',
-      },
-
-      "& button": {
-        width: "44px",
-        height: "44px",
-        background: "white",
-        border: 0,
-        font: "inherit",
-        fontSize: ".8em",
-        color: 'black',
-        borderRadius: "8px",
-
-        "&:enabled:hover": {
-          cursor: "pointer",
-          backgroundColor: "#e6e6e6",
-        },
-
-        "&:first-child": {
-          borderTopRightRadius: 0,
-          borderBottomRightRadius: 0,
-        },
-
-        "&:last-child": {
-          borderTopLeftRadius: 0,
-          borderBottomLeftRadius: 0,
-        },
-      },
-    },
-  }));
 
   React.useEffect(() => {
-    console.info('updated page number', pageNumber);
-
+    console.info('pageNumber', pageNumber);
   }, [pageNumber])
   return (
+    <Box ref={setContainerRef}
+         sx={[
+           {
+             boxShadow: 'rgba(16, 36, 94, 0.2) 0px 30px 40px 0px',
+           },
+           (theme) =>
+             theme.applyStyles('dark', {
+               boxShadow: 'rgba(255, 255, 255, 0.33) 0px 30px 40px 0px',
+           }),
+           {
+             width: '100%',
+             display:'flex'
+           }
+         ]}>
     <StyledDoc
       file={'/static/resume/brian-stoker-resume.pdf'}
       onLoadSuccess={onDocumentLoadSuccess}
       options={options}
-      sx={[
-        (theme) => ({
-          boxShadow: 'rgba(16, 36, 94, 0.2) 0px 30px 40px 0px',
-
-        }),
-        (theme) =>
-          theme.applyStyles('dark', {
-            boxShadow: 'rgba(255, 255, 255, 0.33) 0px 30px 40px 0px',
-          }),
-      ]}>
-      {/* <ButtonGroup
+      >
+    <ButtonGroup
         variant="outlined"
         aria-label="Basic button group"
         className="page-controls"
@@ -167,10 +170,10 @@ export function PdfDoc ({ pdfWidth }: { pdfWidth?: number }) {
             }),
         ]}>
         <Fab
-          disabled
-          onClick={previousPage}
+          disabled={!numPages || pageNumber === 1}
+          onClick={() => { setPageNumber(pageNumber - 1) }}
           aria-label="previous page">
-          <ArrowBackIosIcon />
+          <ArrowBackIos />
         </Fab>
         <Button disabled color={'info'} sx={{ px: 4, overflow: 'hidden', whiteSpace: 'nowrap', '& p': {color: 'black'}, background: 'white!important'}}>
           <Typography sx={{ alignContent: 'center',  }}>
@@ -183,17 +186,18 @@ export function PdfDoc ({ pdfWidth }: { pdfWidth?: number }) {
         </Button>
         <Fab
           disabled={!numPages || pageNumber >= numPages}
-          onClick={nextPage}
+          onClick={() => { setPageNumber(pageNumber + 1) }}
           aria-label="next page">
-          <ArrowFowardIosIcon />
+          <ArrowForwardIos />
         </Fab>
-      </ButtonGroup> */}
+      </ButtonGroup>
       <Page
         key={`page_${pageNumber}`}
         pageNumber={pageNumber}
-        width={pdfWidth}
+        width={containerWidth}
       />
-    </StyledDoc>);
+    </StyledDoc>
+    </Box>);
 
 
 }
@@ -204,7 +208,7 @@ export default function Resume({pdfMinWidth = 900}: { pdfMinWidth?: number }) {
   const margin = windowWidth && windowWidth < pdfMinWidth ? 48 * 2 : 48;
   const maxWidth = 1025;
   const pdfWidth = Math.min((windowWidth ? windowWidth : maxWidth) - iconWidth - margin, maxWidth);
-  const Container = styled(Box)<{ minWidth: number }>(({minWidth = 900}) => ({
+  const Container = styled(Box)<{ minWidth: number }>(({minWidth = 300}) => ({
 
 
     "& .resume-icons": {

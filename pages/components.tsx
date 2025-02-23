@@ -11,10 +11,10 @@ import AppHeader from 'src/layouts/AppHeader';
 import AppFooter from 'src/layouts/AppFooter';
 import BrandingCssVarsProvider from '@stoked-ui/docs';
 import Section from 'src/layouts/Section';
-import { pageToTitleI18n } from 'src/modules/utils/helpers';
-import { useTranslate } from '@stoked-ui/docs/i18n';
-import { Link } from '@stoked-ui/docs/Link';
-import type { MuiPage } from 'src/MuiPage';
+import {pageToTitleI18n} from 'src/modules/utils/helpers';
+import {useTranslate} from '@stoked-ui/docs/i18n';
+import {Link} from '@stoked-ui/docs/Link';
+import type {MuiPage} from 'src/MuiPage';
 import materialPages from '../data/pages';
 
 export default function Components() {

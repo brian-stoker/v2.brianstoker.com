@@ -6,7 +6,7 @@ authors:
   [
     'brianstoker',
   ]
-tags: ['Stoked UI', 'File Explorer', 'Timeline', 'Editor', 'Media Selector']
+tags: ['.plan']
 manualCard: true
 ---
 

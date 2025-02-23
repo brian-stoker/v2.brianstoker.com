@@ -1,6 +1,7 @@
 import * as React from 'react';
-import { styled, alpha } from '@mui/material/styles';
+import {alpha, styled} from '@mui/material/styles';
 import GlobalStyles from '@mui/material/GlobalStyles';
+import dynamic from "next/dynamic";
 import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
 import Container from '@mui/material/Container';
@@ -8,11 +9,9 @@ import Tooltip from '@mui/material/Tooltip';
 import IconButton from '@mui/material/IconButton';
 import GitHubIcon from '@mui/icons-material/GitHub';
 import ThemeModeToggle from 'src/components/header/ThemeModeToggle';
-import { Link } from '@stoked-ui/docs/Link';
-import { useTranslate } from '@stoked-ui/docs/i18n';
+import {Link} from '@stoked-ui/docs/Link';
+import {useTranslate} from '@stoked-ui/docs/i18n';
 import SvgBsLogomark from "../icons/SvgBsLogomark";
-import {useTheme} from '@mui/material/styles';
-import dynamic from "next/dynamic";
 
 const Header = styled('header')(({ theme }) => [
   {
@@ -47,7 +46,6 @@ const HeaderNavDropdown = dynamic(() => import('src/components/header/HeaderNavD
 export default function AppHeader(props: AppHeaderProps) {
   const { gitHubRepository = 'https://github.com/brian-stoker' } = props;
   const t = useTranslate();
-  const theme = useTheme();
   return (
     <Header>
       <GlobalStyles

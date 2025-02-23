@@ -1,25 +1,18 @@
 import * as React from 'react';
 import NoSsr from "@mui/material/NoSsr";
 import Divider from "@mui/material/Divider";
-import { PRODUCTS } from 'src/products';
-import { BrandingCssVarsProvider } from '@stoked-ui/docs';
-import dynamic from 'next/dynamic';
+import {BrandingCssVarsProvider} from '@stoked-ui/docs';
 import AppFooter from "../src/layouts/AppFooter";
 import Head from "../src/modules/components/Head";
 import NewsletterToast from "../src/components/home/NewsletterToast";
 import AppHeaderBanner from "../src/components/banner/AppHeaderBanner";
 import AppHeader from "../src/layouts/AppHeader";
 import Hero from "../src/components/home/HeroMain";
-import { pdfjs } from 'react-pdf';
+import {BlogPost, getAllBlogPosts} from "../lib/sourcing";
 
-function randomHome(homePages: string[]) {
-  return homePages[Math.floor(Math.random()*homePages.length)];
-}
-export function HomeView({ HomeMain, previews = false}: { previews?: boolean, HomeMain: React.ComponentType<any> }) {
-  const homeUrl = randomHome(PRODUCTS.pages);
-  const RandomHome = dynamic(() => import((`.${homeUrl}main`)), {ssr: false});
+export function HomeView({ HomeMain, mostRecentPosts = []}: { mostRecentPosts?: BlogPost[], HomeMain: React.ComponentType<any> }) {
 
-  const Main: React.ComponentType = HomeMain || RandomHome;
+  const Main: React.ComponentType = HomeMain;
   const [isClient, setIsClient] = React.useState(false)
 
   React.useEffect(() => {
@@ -54,7 +47,7 @@ export function HomeView({ HomeMain, previews = false}: { previews?: boolean, Ho
     <AppHeaderBanner/>
     <AppHeader/>
     <main id="main-content">
-      {isClient ? <Main/> : ''}
+      {isClient ? <Main mostRecentPosts={mostRecentPosts}/> : ''}
     </main>
     <Divider/>
     <AppFooter/>
@@ -62,14 +55,18 @@ export function HomeView({ HomeMain, previews = false}: { previews?: boolean, Ho
 
 }
 
-function MainView() {
-  return (<React.Fragment>
-      <Hero/>
-
-    </React.Fragment>)
+function MainView({ mostRecentPosts = []}: { mostRecentPosts?: BlogPost[] }) {
+  return (<Hero mostRecentPosts={mostRecentPosts}/>);
 }
 
-pdfjs.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.js`;
-export default function Home({HomeMain}: { HomeMain: React.ComponentType }) {
-  return <HomeView HomeMain={ HomeMain || MainView } />;
+
+export const getStaticProps = () => {
+  const data = getAllBlogPosts();
+  return {
+    props: data,
+  };
+};
+
+export default function Home(data: { mostRecentPosts: BlogPost[] }) {
+  return <HomeView HomeMain={ MainView } mostRecentPosts={data.mostRecentPosts}/>;
 }
