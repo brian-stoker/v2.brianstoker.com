@@ -87,7 +87,7 @@ export function useCodeStyling() {
   return React.useContext(CodeStylingContext).codeStyling;
 }
 
-export function useNoSsrCodeStyling() {
+function useNoSsrCodeStyling() {
   return React.useContext(CodeStylingContext).noSsrCodeStyling;
 }
 

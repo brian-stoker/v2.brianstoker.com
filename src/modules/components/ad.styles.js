@@ -95,4 +95,3 @@ export const adStylesObject = {
   'body-inline': adBodyInlineStyles,
 };
 
-export default adStylesObject[`body-${adShape}`];

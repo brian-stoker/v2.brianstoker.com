@@ -209,7 +209,7 @@ const StyledChip = styled(Chip)(({ theme }) => [
 ]);
 
 const themedComponents = getThemedComponents();
-export function buildTheme(): ThemeOptions {
+function buildTheme(): ThemeOptions {
   return {
     components: {
       MuiButtonBase: {
@@ -530,7 +530,7 @@ export const customTheme = extendTheme({
   ...buildTheme(),
 });
 
-export default function MaterialDesignComponents() {
+function MaterialDesignComponents() {
   const [anchor, setAnchor] = React.useState<HTMLElement | null>(null);
   const [customized, setCustomized] = React.useState(false);
   const theme = customized ? customTheme : undefined;

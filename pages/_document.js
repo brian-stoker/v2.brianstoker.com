@@ -23,21 +23,34 @@ export default class MyDocument extends Document {
       <Html lang={userLanguage} data-mui-color-scheme="light" data-joy-color-scheme="light">
         <Head>
           {/* Favicons */}
-          <link rel="icon" type="image/png" sizes="32x32" href="/static/favicon-32x32.png" />
-          <link rel="icon" type="image/png" sizes="16x16" href="/static/favicon-16x16.png" />
-          <link rel="apple-touch-icon" sizes="180x180" href="/static/apple-touch-icon.png" />
-          <link rel="manifest" href="/static/site.webmanifest" />
-          <link rel="mask-icon" href="/static/safari-pinned-tab.svg" color="#5bbad5" />
-          <meta name="msapplication-TileColor" content="#2d89ef" />
-          <meta name="theme-color" content={getMetaThemeColor('light')} media="(prefers-color-scheme: light)" />
-          <meta name="theme-color" content={getMetaThemeColor('dark')} media="(prefers-color-scheme: dark)" />
-          <link rel="canonical" href={`https://brianstoker.com${canonicalAsServer}`} />
-          <link rel="alternate" href={`https://www.brianstoker.com${canonicalAsServer}`} hrefLang="x-default" />
+          <link
+            href="/favicon-black.png"
+            rel="icon"
+            media="(prefers-color-scheme: light)"
+          />
+          <link
+            href="/favicon.ico"
+            rel="icon"
+            media="(prefers-color-scheme: dark)"
+          />
+          <link rel="apple-touch-icon" sizes="180x180" href="/static/apple-touch-icon.png"/>
+          <link rel="manifest" href="/static/site.webmanifest"/>
+          <link rel="mask-icon" href="/static/safari-pinned-tab.svg" color="#5bbad5"/>
+          <meta name="msapplication-TileColor" content="#2d89ef"/>
+          <meta name="theme-color" content={getMetaThemeColor('light')}
+                media="(prefers-color-scheme: light)"/>
+          <meta name="theme-color" content={getMetaThemeColor('dark')}
+                media="(prefers-color-scheme: dark)"/>
+          <link rel="canonical" href={`https://brianstoker.com${canonicalAsServer}`}/>
+          <link rel="alternate" href={`https://www.brianstoker.com${canonicalAsServer}`}
+                hrefLang="x-default"/>
 
           {/* Fonts */}
-          <link rel="preconnect" href="https://fonts.googleapis.com" />
-          <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-          <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Roboto:ital,wght@0,300;0,400;0,500;0,700;1,400&display=swap" rel="stylesheet" />
+          <link rel="preconnect" href="https://fonts.googleapis.com"/>
+          <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous"/>
+          <link
+            href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Roboto:ital,wght@0,300;0,400;0,500;0,700;1,400&display=swap"
+            rel="stylesheet"/>
 
           {/* Preload Fonts */}
           {this.renderFontPreloads()}
@@ -46,10 +59,9 @@ export default class MyDocument extends Document {
           {this.renderInlineFontStyles()}
         </Head>
         <body>
-        <GlobalStyles styles={{ body: { margin: 0, padding: 0 } }} />
         {getMuiInitColorSchemeScript()}
-        <Main />
-        <NextScript />
+        <Main/>
+        <NextScript/>
         </body>
       </Html>
     );
@@ -57,7 +69,7 @@ export default class MyDocument extends Document {
 
   renderFontPreloads() {
     const fonts = [
-      { href: '/static/fonts/GeneralSans-Semibold-subset.woff2', family: 'General Sans', weight: 600 },
+      {href: '/static/fonts/GeneralSans-Semibold-subset.woff2', family: 'General Sans', weight: 600 },
       { href: '/static/fonts/ArchivoBlack-Regular.woff2', family: 'Archivo Black', weight: 400 },
       { href: '/static/fonts/IBMPlexSans-Regular-subset.woff2', family: 'IBM Plex Sans', weight: 400 },
     ];

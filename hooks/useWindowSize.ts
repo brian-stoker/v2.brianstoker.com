@@ -13,7 +13,7 @@ export function useWindowWidth(): number | null {
   return windowWidth;
 }
 
-export function useWindowHeight(): number | null {
+function useWindowHeight(): number | null {
   const [windowHeight, setWindowHeight] = useState(isBrowser ? window.innerWidth : null);
 
   const getWindowHeight = useCallback(() => setWindowHeight(window.innerHeight), []);
@@ -23,6 +23,6 @@ export function useWindowHeight(): number | null {
   return windowHeight;
 }
 
-export default function useWindowSize(): { width: number | null, height: number | null} {
+function useWindowSize(): { width: number | null, height: number | null} {
   return { width: useWindowWidth(), height: useWindowHeight()};
 }

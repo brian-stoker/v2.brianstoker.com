@@ -1,7 +1,7 @@
 import type { MuiProductId } from 'src/modules/utils/getProductInfoFromUrl';
 
-export type CodeStyling = 'Tailwind' | 'SUI System';
-export type CodeVariant = 'TS' | 'JS';
+type CodeStyling = 'Tailwind' | 'SUI System';
+type CodeVariant = 'TS' | 'JS';
 export interface DemoData {
   title: string;
   language: string;

@@ -14,7 +14,7 @@ import Button from "@mui/material/Button";
 import GitHubIcon from "@mui/icons-material/GitHub";
 import LinkedInIcon from "@mui/icons-material/LinkedIn";
 import DiscordIcon from 'src/icons/DiscordIcon';
-import {AvatarGroup, Pagination} from "@mui/material";
+import {AvatarGroup, Pagination, SxProps} from "@mui/material";
 import {BrandingCssVarsProvider} from "@stoked-ui/docs";
 import {authors as AUTHORS} from 'src/modules/components/TopLayoutBlog';
 import Head from 'src/modules/components/Head';
@@ -27,7 +27,7 @@ import Slack from "../src/icons/Slack";
 import {BlogPost, getAllBlogPosts} from "../lib/sourcing";
 import generateRssFeed from "../scripts/generateRSSFeed";
 import HeroEnd from "../src/components/home/HeroEnd";
-
+  
 export const getStaticProps = () => {
   const data = getAllBlogPosts();
   generateRssFeed(data.allBlogPosts);
@@ -36,11 +36,12 @@ export const getStaticProps = () => {
   };
 };
 
-export function PostPreview(props: BlogPost) {
+export function PostPreview({post, size = 'default' }: {post: BlogPost, size?: 'default' | 'mini'}) {
+  console.log('post', post)
   return (
     <React.Fragment>
-      <Box sx={{ display: 'flex', gap: 0.5, mb: 1.5 }}>
-        {props.tags.map((tag) => (
+      <Box sx={{ display: 'flex', gap: 0.5, mb: 1.5 }} id={'chip-container'}>
+        {post.tags.map((tag) => (
           <Chip
             key={tag}
             label={tag}
@@ -63,8 +64,8 @@ export function PostPreview(props: BlogPost) {
       </Box>
       <Typography component="h2" fontWeight="bold" variant="subtitle1" gutterBottom>
         <Link
-          aria-describedby={`describe-${props.slug}`}
-          href={`/.plan/${props.slug}/`}
+          aria-describedby={`describe-${post.slug}`}
+          href={`/.plan/${post.slug}/`}
           color="text.primary"
           sx={{
             '&:hover': {
@@ -72,13 +73,13 @@ export function PostPreview(props: BlogPost) {
             },
           }}
         >
-          {props.title}
+          {post.title}
         </Link>
       </Typography>
       <Typography color="text.secondary" sx={{ mb: 'auto' }}>
-        {props.description}
+        {post.description}
       </Typography>
-      {props.authors && (
+      {post.authors && (
         <AvatarGroup
           sx={[
             (theme) => ({
@@ -103,7 +104,7 @@ export function PostPreview(props: BlogPost) {
               }),
           ]}
         >
-          {(props.authors as Array<keyof typeof AUTHORS>).map((author) => (
+          {(post.authors as Array<keyof typeof AUTHORS>).map((author) => (
             <Avatar
               key={author as string}
               alt=""
@@ -122,15 +123,15 @@ export function PostPreview(props: BlogPost) {
           alignItems: 'end',
         }}
       >
-        <Box sx={{ position: 'relative' }}>
-          {props.authors && (
-            <Typography variant="body2" fontWeight="medium">
-              {props.authors
+        <Box id={'by-line-container'} sx={{ position: 'relative' }}>
+          {post.authors && (
+            <Typography variant="body2" id={'by-line'} fontWeight="medium">
+              {post.authors
                 .slice(0, 3)
                 .map((userId) => {
                   const name = AUTHORS[userId as keyof typeof AUTHORS]?.name;
                   if (name) {
-                    if (props.authors && props.authors.length > 1) {
+                    if (post.authors && post.authors.length > 1) {
                       // display only firstName
                       return name.split(' ')[0];
                     }
@@ -139,37 +140,82 @@ export function PostPreview(props: BlogPost) {
                   return userId;
                 })
                 .join(', ')}
-              {props.authors.length > 2 && ', and more.'}
+              {post.authors.length > 2 && ', and more.'}
             </Typography>
           )}
-          {props.date && (
+          {post.date && (
             <Typography variant="caption" fontWeight="regular" color="text.tertiary">
-              {new Date(props.date).toDateString()}
+              { size === 'mini' ? new Date(post.date).toLocaleDateString('en-US', { month: 'numeric', day: 'numeric', year: '2-digit' } ) : new Date(post.date).toDateString()}
             </Typography>
           )}
         </Box>
         <Button
           component={Link}
-          aria-describedby={`describe-${props.slug}`}
-          href={`/.plan/${props.slug}`}
-          id={`describe-${props.slug}`}
+          aria-describedby={`describe-${post.slug}`}
+          href={`/.plan/${post.slug}`}
+          id={`describe-${post.slug}`}
+          className='read-more-button'
           endIcon={<KeyboardArrowRightRoundedIcon />}
           size="small"
-          sx={{ mt: { xs: 0.5, md: 0 }, p: { xs: 0, sm: '6px 8px' } }}
         >
-          Read more
+          { size === 'mini' ? 'More' : 'Read more'}
         </Button>
       </Box>
     </React.Fragment>
   );
 }
 
-export function PostPreviewBox(post: BlogPost) {
+export function PostPreviewBox({post, size = 'default' }: {post: BlogPost, size?: 'default' | 'mini'}) {
+  let sx: SxProps = {
+    '& .MuiAvatar-circular': {
+      width: '28px',
+      height: '28px',
+      border: '1px solid #FFF',
+      outline: '3px solid',
+      backgroundColor: '#FFF',
+      '&:hover': {
+        outline: '3px solid theme.palette.primary.main'
+      }
+    },
+    '& .read-more-button': {
+      mt: { xs: 0.5, md: 0 },
+      p: { xs: 0, sm: '6px 8px' }
+    }
+  }
+  if (size === 'mini') {
+    sx = {
+      width: '150px',
+      height: '150px',
+      overflow: 'hidden',
+      padding: '8px',
+      position: 'relative',
+      '& .MuiTypography-subtitle1': {
+        fontSize: '12px'
+      },
+      '& .MuiTypography-body1': {
+        fontSize: '10px'
+      },
+      '& #chip-container': {
+        display: 'none'
+      },
+      
+      '& .MuiAvatarGroup-root': {
+        display: 'none'
+      },
+      '& #by-line': {
+        display: 'none'
+      },
+      '& .read-more-button': {
+        mt: '3px',
+        p: 0
+      }
+    }
+  }
   return <Paper
     key={post.slug}
     component="li"
     variant="outlined"
-    sx={(theme) => ({
+    sx={[(theme) => ({
       p: 2,
       display: 'flex',
       flexDirection: 'column',
@@ -180,7 +226,7 @@ export function PostPreviewBox(post: BlogPost) {
         backgroundImage: theme.palette.gradients.radioSubtle,
         boxShadow: '0 4px 12px rgba(0, 0, 0, 0.4)',
       }),
-    })}
+    }), ...(Array.isArray(sx) ? sx : [sx])]}
   >
     {post.image && (
       <Box
@@ -195,7 +241,7 @@ export function PostPreviewBox(post: BlogPost) {
         }}
       />
     )}
-    <PostPreview {...post} />
+    <PostPreview post={post} size={size} />
   </Paper>
 }
 
@@ -298,7 +344,7 @@ export default function Blog(props: InferGetStaticPropsType<typeof getStaticProp
             }}
           >
             {[firstPost, secondPost].map((post, index) => (
-              <PostPreviewBox {...post} key={index}/>
+              <PostPreviewBox post={post} key={index}/>
             ))}
           </Box>
         </Container>
@@ -447,7 +493,7 @@ export default function Blog(props: InferGetStaticPropsType<typeof getStaticProp
                     },
                   })}
                 >
-                  <PostPreview {...post} />
+                  <PostPreview post={post} />
                 </Box>
               ))}
             </Box>
@@ -776,7 +822,7 @@ export default function Blog(props: InferGetStaticPropsType<typeof getStaticProp
             }}
           >
             {[firstPost, secondPost].map((post, index) => (
-              <PostPreviewBox {...post} key={index}/>
+              <PostPreviewBox post={post} key={index}/>
             ))}
           </Box>
         </Container>

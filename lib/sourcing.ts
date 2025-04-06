@@ -5,7 +5,7 @@ import { getHeaders } from '@stoked-ui/docs-markdown';
 const blogDir = path.join(process.cwd(), 'pages/.plan');
 
 
-export const getBlogFilePaths = (ext = '.md') => {
+const getBlogFilePaths = (ext = '.md') => {
   return fs.readdirSync(blogDir).filter((file) => file.endsWith(ext));
 };
 
@@ -20,7 +20,7 @@ export interface BlogPost {
   sui?: boolean;
 }
 
-export function getBlogPost(filePath: string): BlogPost {
+function getBlogPost(filePath: string): BlogPost {
   const slug = filePath.replace(/\.md$/, '');
   const content = fs.readFileSync(path.join(blogDir, filePath), 'utf-8');
 
@@ -63,7 +63,6 @@ const SUI_TAGS = [
 ];
 
 const ALL_TAGS = SUI_TAGS.concat(ALLOWED_TAGS);
-export const mostRecentPosts: BlogPost[] = [];
 export const getAllBlogPosts = () => {
   const filePaths = getBlogFilePaths();
   const rawBlogPosts = filePaths
@@ -91,15 +90,8 @@ export const getAllBlogPosts = () => {
     });
   });
 
-  if (allBlogPosts.length) {
-    mostRecentPosts.push(allBlogPosts[0]);
-  }
-  if (allBlogPosts.length > 1) {
-    mostRecentPosts.push(allBlogPosts[1]);
-  }
-  if (allBlogPosts.length > 2) {
-    mostRecentPosts.push(allBlogPosts[2]);
-  }
+  const mostRecentPosts: BlogPost[] = allBlogPosts.slice(0, 5);
+
   return {
     mostRecentPosts,
     allBlogPosts, // posts with at least a title

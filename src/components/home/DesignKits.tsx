@@ -234,7 +234,7 @@ export function DesignKitTools({ disableLink, ...props }: { disableLink?: boolea
   );
 }
 
-export default function DesignKits() {
+function DesignKits() {
   return (
     <Box
       sx={{

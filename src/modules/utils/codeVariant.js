@@ -75,7 +75,7 @@ export function useCodeVariant() {
   return React.useContext(CodeVariantContext).codeVariant;
 }
 
-export function useNoSsrCodeVariant() {
+function useNoSsrCodeVariant() {
   return React.useContext(CodeVariantContext).noSsrCodeVariant;
 }
 

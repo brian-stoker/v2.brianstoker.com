@@ -8,7 +8,6 @@ const ROUTES: Routes = {
   photography: '/photography/',
   drums: '/drums/',
   resume: '/resume/',
-  stokedUi: '/stoked-ui/',
   fileExplorer: '/stoked-ui/file-explorer/',
   mediaSelector: '/stoked-ui/media-selector/',
   suiFileExplorerOverviewDoc: '/material-ui/overview',
@@ -25,7 +24,8 @@ const ROUTES: Routes = {
   about: 'https://stokedconsulting.com/about/',
   plan: '/bstoked.plan/',
   // Stoked Consulting
-  home: '/file-explorer/',
+  home: 'https://brianstoker.com/',
+  stokedConsulting: 'https://stokedconsulting.com/',
   servicesUI: '/services/ui/',
   servicesBackend: '/services/backend/',
   servicesFullstack: '/services/fullstack/',
@@ -89,8 +89,9 @@ const ROUTES: Routes = {
   // External pages
   rssFeed: '/feed/.plan/rss.xml',
   handbook: 'https://www.notion.so/Handbook-2c35da39c2b543219565401b9dd00a95',
-  privacyPolicy: 'https://stokedconsulting.com/legal/privacy/',
+  privacyPolicy: '/legal/privacy/',
   store: 'https://stoked-ui.com/store/',
+  stokedUi: 'https://stoked-ui.com/'
 };
 
 export default ROUTES;

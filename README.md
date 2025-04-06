@@ -90,9 +90,6 @@ personal-website/
     - `video/`: Contains video-related components.
   - `icons/`: Contains icon assets.
   - `layouts/`: Contains layout-related components.
-- `.sst/`: Contains SST (Serverless Stack) configuration files.
-  - `platform/`: Platform-specific configurations.
-    - `config.d.ts`: TypeScript declaration file for SST configuration.
 - `hooks/`: Contains custom hooks for the website.
   - `useWindowSize.ts`: Contains code for handling window size changes.
 - `next.config.mjs`: Next.js configuration file.

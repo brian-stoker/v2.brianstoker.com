@@ -67,6 +67,6 @@ export interface MuiPage {
   beta?: boolean;
 }
 
-export interface OrderedMuiPage extends MuiPage {
+interface OrderedMuiPage extends MuiPage {
   ordered?: true;
 }

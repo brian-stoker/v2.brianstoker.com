@@ -10,14 +10,14 @@ function titleize(hyphenedString: string): string {
   return upperFirst(hyphenedString.split('-').join(' '));
 }
 
-export interface Page {
+interface Page {
   pathname: string;
   query?: object;
   subheader?: string;
   title?: string | false;
 }
 
-export function pageToTitle(page: Page): string | null {
+function pageToTitle(page: Page): string | null {
   if (page.title === false) {
     return null;
   }
@@ -42,7 +42,7 @@ export function pageToTitle(page: Page): string | null {
   return titleize(name);
 }
 
-export type Translate = (id: string, options?: Partial<{ ignoreWarning: boolean }>) => string;
+type Translate = (id: string, options?: Partial<{ ignoreWarning: boolean }>) => string;
 
 export function pageToTitleI18n(page: Page, t: Translate): string | null {
   const path = page.subheader || page.pathname;

@@ -81,9 +81,11 @@ export default function AppFooter(props: AppFooterProps) {
           }}
         >
           <Box sx={{ display: 'flex', flexDirection: 'column' }}>
-            <Typography fontWeight="semiBold" variant="body2" sx={{ mb: 0.5 }}>
-              Sections
-            </Typography>
+            <Link prefetch={false} href={ROUTES.home}>
+              <Typography fontWeight="semiBold" variant="body2" sx={{ mb: 0.5 }}>
+                Brian Stoker
+              </Typography>
+            </Link>
             <Link prefetch={false} href={ROUTES.art}>
               Art
             </Link>
@@ -99,12 +101,20 @@ export default function AppFooter(props: AppFooterProps) {
             <Link prefetch={false} href={ROUTES.resume}>
               Resume
             </Link>
+            <Link prefetch={false} href={ROUTES.privacyPolicy}>
+              Privacy
+            </Link>
           </Box>
 
           <Box sx={{ display: 'flex', flexDirection: 'column' }}>
-            <Typography fontWeight="semiBold" variant="body2" sx={{ mb: 0.5 }}>
-              Company
-            </Typography>
+            <Link prefetch={false} href={ROUTES.stokedConsulting}>
+              <Typography fontWeight="semiBold" variant="body2" sx={{ mb: 0.5 }}>
+                Stoked Consulting
+              </Typography>
+            </Link>
+            <Link prefetch={false} href={ROUTES.stokedUi}>
+              Stoked UI
+            </Link>
             <Link prefetch={false} href={ROUTES.about}>
               About
             </Link>
@@ -114,12 +124,9 @@ export default function AppFooter(props: AppFooterProps) {
             <Link prefetch={false} href={ROUTES.support}>
               Support
             </Link>
-            <Link prefetch={false} href={ROUTES.privacyPolicy}>
-              Privacy policy
-            </Link>
-            <a target="_blank" href="mailto:b@stokedconsulting.com">
+            <Link target="_blank" href="mailto:b@stokedconsulting.com">
               Contact us
-            </a>
+            </Link>
           </Box>
         </Box>
       </Box>

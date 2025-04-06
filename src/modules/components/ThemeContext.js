@@ -98,7 +98,7 @@ export const highDensity = {
   },
 };
 
-export const DispatchContext = React.createContext(() => {
+const DispatchContext = React.createContext(() => {
   throw new Error('Forgot to wrap component in `ThemeProvider`');
 });
 

@@ -213,7 +213,7 @@ const getChipColor = (theme, color) => {
     dark: theme.palette[color][900],
   }
 }
-export const sxChip = (color) => [
+const sxChip = (color) => [
   (theme) => ({
     ml: 1,
     fontSize: theme.typography.pxToRem(10),

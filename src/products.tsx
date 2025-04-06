@@ -68,7 +68,7 @@ type TProduct = {
 type LinkType = 'product' | 'doc';
 type SubMenuType = 'products' | 'docs' | null
 
-export type ProductMenuTitleProps = {
+type ProductMenuTitleProps = {
   icon: React.ReactElement;
   name: React.ReactNode;
   description: React.ReactNode;
@@ -84,7 +84,7 @@ function getTypeUrl(type: LinkType) {
   return type === 'doc' ? '/docs/' : '/';
 }
 
-export class Product {
+class Product {
   data: TProduct;
 
   linkType?: LinkType;
@@ -384,7 +384,7 @@ export class Product {
 }
 
 
-export type ProductSwipeableProps = ProductsComponentProps & {
+type ProductSwipeableProps = ProductsComponentProps & {
   show: boolean;
   products: Products;
 }
@@ -431,15 +431,15 @@ class IndexObject<T> {
 
 const SwipeableViews = dynamic(() => import('react-swipeable-views'), { ssr: false });
 
-export type ProductsComponentProps = {
+type ProductsComponentProps = {
   productIndex: number;
   setProductIndex: React.Dispatch<React.SetStateAction<number>>;
 }
-export type ProductStackProps = ProductsComponentProps & {
+type ProductStackProps = ProductsComponentProps & {
   inView?: boolean;
 }
 type SetSubMenuOpen = React.Dispatch<React.SetStateAction<SubMenuType>>;
-export type ProductMenuProps =  {
+type ProductMenuProps =  {
   products: Product[],
   type: SubMenuType,
   subMenuOpen?: SubMenuType,
@@ -1013,7 +1013,7 @@ const resume = new Product(resumeData);
 const PRODUCTS: Products = new Products([art, photography, drums, plan, resume]);
 const ALL_PRODUCTS: Products = new Products([sui, stokedConsulting]);
 
-export type MenuProps = {
+type MenuProps = {
   linkType: LinkType,
   sx?: SxProps<Theme>,
 };

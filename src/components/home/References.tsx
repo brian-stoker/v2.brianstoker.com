@@ -10,7 +10,7 @@ import {
   TEMPLATES_CUSTOMERS,
 } from 'src/components/home/CompaniesGrid';
 
-export { CORE_CUSTOMERS, ADVANCED_CUSTOMERS, DESIGNKITS_CUSTOMERS, TEMPLATES_CUSTOMERS };
+export { CORE_CUSTOMERS,  DESIGNKITS_CUSTOMERS, TEMPLATES_CUSTOMERS };
 
 const CompaniesGrid = dynamic(() => import('./CompaniesGrid'));
 

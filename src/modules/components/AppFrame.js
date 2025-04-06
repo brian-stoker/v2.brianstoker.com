@@ -36,7 +36,7 @@ function nProgressDone() {
   NProgress.done();
 }
 
-export function NextNProgressBar() {
+function NextNProgressBar() {
   const router = useRouter();
   React.useEffect(() => {
     const handleRouteChangeStart = (url, { shallow }) => {
@@ -68,7 +68,7 @@ const sx = { minWidth: { sm: 160 } };
 
 const AppSearch = React.lazy(() => import('src/modules/components/AppSearch'));
 
-export function DeferredAppSearch() {
+function DeferredAppSearch() {
   const [mounted, setMounted] = React.useState(false);
   React.useEffect(() => {
     setMounted(true);
@@ -156,7 +156,7 @@ const StyledAppNavDrawer = styled(AppNavDrawer)(({ disablePermanent, theme }) =>
   };
 });
 
-export const HEIGHT = 64;
+const HEIGHT = 64;
 
 export default function AppFrame(props) {
   const { children, disableDrawer = false, className, BannerComponent = AppFrameBanner } = props;

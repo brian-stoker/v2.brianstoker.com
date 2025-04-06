@@ -238,7 +238,7 @@ export default function Resume({pdfMinWidth = 900}: { pdfMinWidth?: number }) {
     <Box sx={{minWidth: `${pdfMinWidth}px`, margin: 5, maxWidth: `${maxWidth}px`,}}>
       <div className={'resume-containers'}>
         <PdfDoc pdfWidth={pdfWidth}/>
-        <div className={'resume-icons'}>
+        <div className={'resume-icons'}>sss
           <a href='/static/resume/brian-stoker-resume.pdf' download><img src='/static/icons/pdf.svg'
                                                                          alt={'download pdf'}
                                                                          style={{
@@ -254,7 +254,6 @@ export default function Resume({pdfMinWidth = 900}: { pdfMinWidth?: number }) {
         </div>
       </div>
       <Box sx={{height: '112px'}}/>
-      <Divider/>
     </Box>
   </Container>);
 }
