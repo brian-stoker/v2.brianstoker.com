@@ -44,6 +44,7 @@
     "@mui/styles": "^5.15.21",
     "@mui/system": "^5.15.20",
     "@mui/utils": "^5.15.20",
+    "@mui/x-tree-view": "^6.17.0",
     "@stoked-ui/docs": "0.1.7",
     "@stoked-ui/docs-markdown": "0.1.0",
     "@wojtekmaj/react-hooks": "^1.22.0",

@@ -5,11 +5,13 @@
 
 .activity {
   margin-top: -24px;
+  padding-top: 0px;
   transition: all 0.4s ease-out;
 }
 
 .activity:hover {
-  margin-top: 18px;
+  margin-top: 0;
+  padding-top: 18px;
   transition: all 0.3s ease-in;
 }
 

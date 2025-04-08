@@ -22,5 +22,5 @@ export default function VideoShowcase({ showcaseContent }: { showcaseContent?: a
     }, // https://github.com/sampotts/plyr#the-source-setter
   }
 
-  return <NoSsr><MediaShowcase sx={{'& .plyr--video': { borderRadius: '12px'}}}  showcaseContent={<Plyr {...plyrProps} />} /></NoSsr>
+  return <NoSsr><MediaShowcase sx={{'& .plyr--video': { borderRadius: '12px', height: '720px'}, width: 'fit-content'}}  showcaseContent={<Plyr {...plyrProps} />} /></NoSsr>
 }

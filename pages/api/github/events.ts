@@ -1,12 +1,6 @@
+import * as React from 'react';
 import type { NextApiRequest, NextApiResponse } from 'next'
-
-type GitHubEvent = {
-  id: string;
-  type: string;
-  repo: { name: string };
-  created_at: string;
-  payload: any;
-}
+import { GitHubEvent } from '../../src/types/github';
 
 type ActivityData = {
   data: { date: string, count: number, level: number }[];
@@ -40,7 +34,7 @@ export default async function handler(
   try {
     const {
       page = '1',
-      per_page = '40',
+      per_page = '100', // Changed to match GitHub's max per page
       repo = '',
       action = '',
       date = '',
@@ -53,9 +47,12 @@ export default async function handler(
     const githubUser = process.env.GITHUB_USERNAME || 'brian-stoker';
 
     if (!githubToken) {
+      console.error('GitHub token is missing');
       return res.status(500).json({ message: 'GitHub token not configured' });
     }
 
+    console.log(`Fetching events for user: ${githubUser}`);
+    
     // Fetch all available pages from GitHub API
     let allEvents: GitHubEvent[] = [];
     let hasMore = true;
@@ -63,36 +60,42 @@ export default async function handler(
     const maxPages = 30; // GitHub's maximum for events endpoint
     
     while (hasMore && githubPage <= maxPages) {
+      console.log(`Fetching page ${githubPage}...`);
       const response = await fetch(
         `https://api.github.com/users/${githubUser}/events?page=${githubPage}&per_page=100`,
         {
           headers: {
-            Authorization: `Bearer ${githubToken}`,
+            Authorization: `token ${githubToken}`,
             'User-Agent': 'brianstoker.com-website',
           },
         }
       );
       
       if (!response.ok) {
-        throw new Error(`GitHub API error: ${response.status}`);
+        const errorText = await response.text();
+        console.error(`GitHub API error: ${response.status}`, errorText);
+        throw new Error(`GitHub API error: ${response.status} - ${errorText}`);
       }
       
       const data = await response.json();
+      console.log(`Page ${githubPage}: Received ${data.length} events`);
+      
       if (data.length === 0) {
         hasMore = false;
       } else {
         allEvents = [...allEvents, ...data];
+        console.log(`Total events so far: ${allEvents.length}`);
         
         // Check Link header to see if there are more pages
         const linkHeader = response.headers.get('Link');
         const links = parseLinkHeader(linkHeader);
-        if (!links.next) {
-          hasMore = false;
-        }
+        hasMore = !!links.next; // Simplified logic
         
         githubPage++;
       }
     }
+
+    console.log(`Final total events: ${allEvents.length}`);
 
     // Apply filters
     let filteredEvents = allEvents;
@@ -165,8 +168,8 @@ export default async function handler(
     const paginatedEvents = filteredEvents.slice(startIndex, endIndex);
 
     // Extract unique values for filters (only on first page)
-    const repositories = pageNum === 1 ? [...new Set(allEvents.map(event => event.repo.name))].sort() : [];
-    const actionTypes = pageNum === 1 ? [...new Set(allEvents.map(event => event.type.replace('Event', '')))].sort() : [];
+    const repositories = [...new Set(allEvents.map(event => event.repo.name))].sort();
+    const actionTypes = [...new Set(allEvents.map(event => event.type.replace('Event', '')))].sort();
 
     // Return paginated results with metadata
     return res.status(200).json({
@@ -176,7 +179,9 @@ export default async function handler(
       actionTypes,
       page: pageNum,
       per_page: perPage,
-      total_pages: Math.ceil(filteredEvents.length / perPage)
+      total_pages: Math.ceil(filteredEvents.length / perPage),
+      total_fetched_events: allEvents.length,
+      max_pages_fetched: githubPage - 1
     });
 
   } catch (error) {

@@ -34,6 +34,7 @@ import VideoShowcase from"./components/home/VideoShowcase";
 import ImageShowcase from "./components/home/ImageShowcase";
 import {BlogPost } from "../lib/sourcing";
 import KeyIcon from "./components/icon/KeyIcon";
+import GithubEventsShowcase from "./components/home/GithubEventsShowcase";
 
 type RouteType = 'product' | 'doc';
 const routeTypes: RouteType[] = ['product', 'doc'];
@@ -971,8 +972,8 @@ const workData: TProduct = {
   preview: {
     text: 'recalcitrant robot\n' + '@brianstoker\n' + '·\n' + 'Feb 15, 2021\n' + '#atx #snowboarding #merica @ Auditorium Shores https://www.instagram.com/p/CLVQg7ql34O4prJIa6hpXGg-RaupDXP0THly3A0/'
   },
-  showcaseType: BlogShowcase,
-  showcaseContent: {},
+  showcaseType: GithubEventsShowcase,
+  showcaseContent: { eventsPerPage: 10, hideMetadata: true },
   live: true
 }
 
