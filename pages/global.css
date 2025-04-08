@@ -1,3 +1,58 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+
+.activity {
+  margin-top: -24px;
+  transition: all 0.4s ease-out;
+}
+
+.activity:hover {
+  margin-top: 18px;
+  transition: all 0.3s ease-in;
+}
+
+.activity svg {
+  transition: all .3s ease-in;
+}
+
+.react-activity-calendar__scroll-container {
+    overflow-y: scroll; /* or overflow-x: scroll; for horizontal */
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none; /* Internet Explorer 10+ */
+}
+
+.react-activity-calendar__scroll-container::-webkit-scrollbar { /* WebKit (Chrome, Safari) */
+    width: 0;
+    height: 0;
+}
+.react-activity-calendar__scroll-container {
+  scroll-behavior: smooth;
+}
+
+.react-activity-calendar__legend-month text {
+  opacity: 0;
+  transition: all 0.3s ease-in;
+}
+
+.activity.hover.labels .react-activity-calendar__legend-month text {
+  opacity: 1;
+  transition: all 0.3s ease-in;
+}
+
+
+
+.react-activity-calendar__footer {
+  opacity: 0;
+  margin-left: 1rem;
+  margin-right: 1rem;
+  transition: all 0.15s ease-out;
+
+}
+
+.react-activity-calendar:hover .react-activity-calendar__footer {
+  opacity: 1;
+  margin-bottom: 2rem;
+  transition: all 0.3s ease-in;
+}

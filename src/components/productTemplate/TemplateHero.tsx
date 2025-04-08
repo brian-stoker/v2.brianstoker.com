@@ -5,7 +5,7 @@ import Button from '@mui/material/Button';
 import KeyboardArrowRightRounded from '@mui/icons-material/KeyboardArrowRightRounded';
 import GradientText from 'src/components/typography/GradientText';
 import HeroContainer from 'src/layouts/HeroContainer';
-import IconImage from 'src/components/icon/IconImage';
+import IconImage from 'src/components/icon/KeyIcon';
 import { Link } from '@stoked-ui/docs/Link';
 import {
   StoreTemplatesSet1,

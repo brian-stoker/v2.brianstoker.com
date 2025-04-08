@@ -23,6 +23,7 @@ const ROUTES: Routes = {
   pricing: '/pricing/',
   about: 'https://stokedconsulting.com/about/',
   plan: '/bstoked.plan/',
+  work: '/work/',
   // Stoked Consulting
   home: 'https://brianstoker.com/',
   stokedConsulting: 'https://stokedconsulting.com/',

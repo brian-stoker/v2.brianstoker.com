@@ -13,7 +13,7 @@ import KeyboardArrowRightRounded from '@mui/icons-material/KeyboardArrowRightRou
 import LaunchRounded from '@mui/icons-material/LaunchRounded';
 import UnfoldMoreRounded from '@mui/icons-material/UnfoldMoreRounded';
 import { Link } from '@stoked-ui/docs/Link';
-import IconImage from 'src/components/icon/IconImage';
+import IconImage from 'src/components/icon/KeyIcon';
 import LicensingModelSwitch from 'src/components/pricing/LicensingModelSwitch';
 import { useLicensingModel } from 'src/components/pricing/LicensingModelContext';
 

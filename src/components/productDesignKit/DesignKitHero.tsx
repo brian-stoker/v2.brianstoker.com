@@ -4,7 +4,7 @@ import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import GradientText from 'src/components/typography/GradientText';
 import HeroContainer from 'src/layouts/HeroContainer';
-import IconImage from 'src/components/icon/IconImage';
+import IconImage from 'src/components/icon/KeyIcon';
 import GetStartedButtons from 'src/components/home/GetStartedButtons';
 import {
   DesignKitImagesSet1,

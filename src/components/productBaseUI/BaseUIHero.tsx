@@ -3,7 +3,7 @@ import dynamic from 'next/dynamic';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import HeroContainer from 'src/layouts/HeroContainer';
-import IconImage from 'src/components/icon/IconImage';
+import IconImage from 'src/components/icon/KeyIcon';
 import GradientText from 'src/components/typography/GradientText';
 import ROUTES from 'src/route';
 import GetStartedButtons from 'src/components/home/GetStartedButtons';

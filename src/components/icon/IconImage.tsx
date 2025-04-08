@@ -57,10 +57,11 @@ export default function IconImage(props: IconImageProps) {
   let defaultWidth;
   let defaultHeight;
   const mode = modeProp ?? (theme.palette.mode as any);
-
+    defaultWidth = 74;
+    defaultHeight = 74;
   if (name.startsWith('product-')) {
-    defaultWidth = 36;
-    defaultHeight = 36;
+    defaultWidth = 74;
+    defaultHeight = 74;
   } else if (name.startsWith('pricing/x-.plan-')) {
     defaultWidth = 13;
     defaultHeight = 15;
@@ -76,9 +77,13 @@ export default function IconImage(props: IconImageProps) {
   if (firstRender && neverHydrated && mode !== '') {
     if (other.loading === 'eager') {
       return (
-        <React.Fragment>
+        <Box sx={{ '& svg': { fill: 'pink' } }}>
+          <style >{`
+            path { fill: pink; } 
+          `}</style>
           <Img
-            className="only-light-mode-v2"
+            className="only-light-mode-v3"
+            style={{ color: 'pink' }}
             src={`/static/branding/${name}-light.svg`}
             alt=""
             width={width}
@@ -95,7 +100,7 @@ export default function IconImage(props: IconImageProps) {
             {...other}
             loading="lazy"
           />
-        </React.Fragment>
+        </Box>
       );
     }
 

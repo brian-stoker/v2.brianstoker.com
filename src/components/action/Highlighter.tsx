@@ -11,10 +11,12 @@ export default function Highlighter({
   disableBorder?: boolean;
   selectedBg?: 'white' | 'comfort';
   selected?: boolean;
+  index?: number;
 } & ButtonBaseProps) {
   const ref = React.useRef<HTMLButtonElement>(null);
   return (
     <ButtonBase
+    className={props.className}
       component="span"
       ref={ref}
       {...props}

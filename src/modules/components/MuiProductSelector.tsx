@@ -4,7 +4,7 @@ import Box, { BoxProps } from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 import Chip from '@mui/material/Chip';
-import IconImage from 'src/components/icon/IconImage';
+import IconImage from 'src/components/icon/KeyIcon';
 import ROUTES from 'src/route';
 import { Link } from '@stoked-ui/docs/Link';
 import PageContext from 'src/modules/components/PageContext';

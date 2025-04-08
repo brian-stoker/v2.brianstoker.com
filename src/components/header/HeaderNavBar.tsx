@@ -153,6 +153,7 @@ export default function HeaderNavBar() {
         <li><Link href={ROUTES.photography}>Photography</Link></li>
         <li><Link href={ROUTES.drums}>Drums</Link></li>
         <li><Link href={ROUTES.resume}>Resume</Link></li>
+        <li><Link href={ROUTES.work}>Work</Link></li>
         <li><Link href={ROUTES.plan}>.plan</Link></li>
       </List>
     </Navigation>);

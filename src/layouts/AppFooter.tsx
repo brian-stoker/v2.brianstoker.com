@@ -98,6 +98,9 @@ export default function AppFooter(props: AppFooterProps) {
             <Link prefetch={false} href={ROUTES.plan}>
               bstoked.plan
             </Link>
+            <Link prefetch={false} href={ROUTES.work}>
+              Work
+            </Link>
             <Link prefetch={false} href={ROUTES.resume}>
               Resume
             </Link>

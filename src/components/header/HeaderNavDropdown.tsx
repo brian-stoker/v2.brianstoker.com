@@ -10,7 +10,7 @@ import KeyboardArrowDownRounded from '@mui/icons-material/KeyboardArrowDownRound
 import SvgHamburgerMenu from 'src/icons/SvgHamburgerMenu';
 import { Link } from '@stoked-ui/docs/Link';
 import ROUTES from 'src/route';
-import IconImage from "../icon/IconImage";
+import IconImage from "../icon/KeyIcon";
 
 const Anchor = styled('a')<{ component?: React.ElementType; noLinkStyle?: boolean }>(
   ({ theme }) => [
@@ -199,6 +199,11 @@ export default function HeaderNavDropdown() {
               <li>
                 <Anchor href={ROUTES.resume} as={Link} noLinkStyle>
                   Resume
+                </Anchor>
+              </li>
+              <li>
+                <Anchor href={ROUTES.work} as={Link} noLinkStyle>
+                  Work
                 </Anchor>
               </li>
               <li>

@@ -46,6 +46,7 @@ const HeaderNavDropdown = dynamic(() => import('src/components/header/HeaderNavD
 export default function AppHeader(props: AppHeaderProps) {
   const { gitHubRepository = 'https://github.com/brian-stoker' } = props;
   const t = useTranslate();
+
   return (
     <Header>
       <GlobalStyles
@@ -55,6 +56,9 @@ export default function AppHeader(props: AppHeaderProps) {
           },
         }}
       />
+
+
+
       <Container sx={{ display: 'flex', alignItems: 'center', minHeight: HEIGHT }}>
         <Box component={Link} href="/" aria-label="Go to homepage" sx={{lineHeight: 0, mr: 2}}>
           <SvgBsLogomark width={30}  />

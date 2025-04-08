@@ -1,7 +1,7 @@
 import * as React from "react";
 import ButtonBase from "@mui/material/ButtonBase";
 import { Cancelable } from "@mui/utils/debounce";
-import { SxProps } from "@mui/system";
+import { height, maxHeight, SxProps } from "@mui/system";
 import { visuallyHidden } from "@mui/utils";
 import Box from "@mui/material/Box";
 import Stack from "@mui/material/Stack";
@@ -32,7 +32,8 @@ import BlogShowcase from "./components/home/BlogShowcase";
 import PdfShowcase from "./components/home/PdfShowcase";
 import VideoShowcase from"./components/home/VideoShowcase";
 import ImageShowcase from "./components/home/ImageShowcase";
-import {BlogPost, BlogPost} from "../lib/sourcing";
+import {BlogPost } from "../lib/sourcing";
+import KeyIcon from "./components/icon/KeyIcon";
 
 type RouteType = 'product' | 'doc';
 const routeTypes: RouteType[] = ['product', 'doc'];
@@ -56,7 +57,7 @@ type TProduct = {
   fullName: string;
   description: string;
   icon: string;
-  features: TFeature[];
+  features?: TFeature[];
   url: string;
   hideProductFeatures?: boolean;
   live?: boolean;
@@ -118,7 +119,7 @@ class Product {
   }
 
   get features(): FEATURE[] {
-    return this.data.features.map(f => this.getFeature(f))
+    return this.data.features?.map(f => this.getFeature(f)) || [];
   }
 
   menuItem(type: SubMenuType, props: ProductMenuItemProps) {
@@ -272,73 +273,55 @@ class Product {
     )
   }
 
-  highlightedItem(productIndex: number, setProductIndex: React.Dispatch<React.SetStateAction<number>>, index: number, linkType?: LinkType, sx?: SxProps<Theme>) {
+   highlightedItem(productIndex: number, setProductIndex: React.Dispatch<React.SetStateAction<number>>, index: number, direction: 'row' | 'column', linkType?: LinkType, sx?: SxProps<Theme>) {
     return (<Highlighter
       key={this.id}
       disableBorder
       onClick={() => setProductIndex(index)}
       selected={productIndex === index}
-      sx={sx}
+      sx={[...(Array.isArray(sx) ? sx : [sx]), {
+        maxHeight: direction === 'row' ? 75 : 88,
+      }]}
     >
-      {this.item(this.link(linkType))}
+      {this.item(this.link(linkType), direction, index, )}
     </Highlighter>);
   }
 
-  item(linkType: LinkType) {
+  item(linkType: LinkType, direction: 'row' | 'column', index?: number, height?: number) {
     return (
       <Box
-        component="span"
+        component="div"
         sx={{
           display: 'flex',
           p: 2,
-          flexDirection: { xs: 'column', md: 'row' },
+          flexDirection: 'row',
           alignItems: { md: 'center' },
           gap: 2.5,
+         
         }}
       >
-        <span>{this.icon}</span>
+        <span>{index !== undefined ? this.key(index) : this.icon}</span>
         <span>
-        <Typography
-          component="span"
-          color="text.primary"
-          variant="body2"
-          fontWeight="bold"
-          display="block"
-        >
-          {this.name}
-        </Typography>
-        <Typography
-          component="span"
-          color="text.secondary"
-          variant="body2"
-          fontWeight="regular"
-          display="block"
-          sx={{ my: 0.5 }}
-        >
-          {this.description}
-        </Typography>
-        <Link
-          href={this.route(linkType) ?? ''}
-          color="primary"
-          variant="body2"
-          fontWeight="bold"
-          sx={{
-            display: 'inline-flex',
-            alignItems: 'center',
-            '& > svg': { transition: '0.2s' },
-            '&:hover > svg': { transform: 'translateX(2px)' },
-          }}
-          onClick={(event: React.MouseEvent<HTMLAnchorElement>) => {
-            event.stopPropagation();
-          }}
-        >
-          <span>Learn more</span>{' '}
-          <Box component="span" sx={visuallyHidden}>
-            by going to the {this.name} page
-          </Box>
-          <KeyboardArrowRightRounded fontSize="small" sx={{ mt: '1px', ml: '2px' }} />
-        </Link>
-      </span>
+          <Typography
+            component="span"
+            color="text.primary"
+            variant="body2"
+            fontWeight="bold"
+            display="block"
+          >
+            {this.name}
+          </Typography>
+          <Typography
+            component="span"
+            color="text.secondary"
+            variant="body2"
+            fontWeight="regular"
+            display="block"
+            sx={{ my: 0.5 }}
+          >
+            {this.description}
+          </Typography>
+        </span>
       </Box>
     );
   }
@@ -363,7 +346,11 @@ class Product {
   }
 
   get icon() {
-    return <IconImage name={this.data.icon} />;
+    return <IconImage name={this.data.icon } />;
+  }
+
+  key(index: number) {
+    return <KeyIcon indexKey={index} />;
   }
 
   get docHref() {
@@ -460,7 +447,6 @@ function SwipeableProducts(props: ProductSwipeableProps) {
   const swipeableProducts = React.useMemo(() => {
     const { show, products, productIndex, setProductIndex } = props;
     const switchIt = (index: number) => {
-      console.info('switchIt', index);
       setProductIndex(index);
     }
     return (
@@ -474,10 +460,10 @@ function SwipeableProducts(props: ProductSwipeableProps) {
           index={productIndex}
           resistance
           enableMouseEvents
-          onChangeIndex={(index) => switchIt(index)}
+          onChangeIndex={(index) => setProductIndex(index)}
         >
           {products.live.map((product: Product, index: number) => {
-            return  product.highlightedItem(productIndex, setProductIndex, index, 'product', {
+           return  product.highlightedItem(productIndex, setProductIndex, index, 'row', 'product', {
               width: '100%',
               transition: '0.3s',
               transform: productIndex !== index ? 'scale(0.9)' : 'scale(1)',
@@ -602,7 +588,6 @@ function ProductsPreviews({ products, mostRecentPosts }: { products: Products, m
     threshold: 0,
     rootMargin: '0px 50px',
   });
-  console.info('products.live', products.live)
   const Showcase = products.live[productIndex].showcaseType;
   const content = products.live[productIndex].name === '.plan' ? mostRecentPosts : products.products?.[productIndex]?.data?.showcaseContent;
   const showcaseProps = { showcaseContent: content};
@@ -636,7 +621,6 @@ function ProductsPreviews({ products, mostRecentPosts }: { products: Products, m
     </Section>
   );
 }
-
 
 class Products extends IndexObject<Product> {
 
@@ -711,9 +695,9 @@ class Products extends IndexObject<Product> {
 
   stack(props: ProductStackProps) {
     const { productIndex, setProductIndex } = props;
-    return (<Stack spacing={1} sx={{ display: { xs: 'none', md: 'flex' }, maxWidth: 500 }}>
+    return (<Stack spacing={1} sx={{ display: { xs: 'none', md: 'flex' }, maxWidth: 500, maxHeight: 520 }}>
       {this.live.map((product, index) => {
-        return product.highlightedItem(productIndex, setProductIndex, index, );
+        return product.highlightedItem(productIndex, setProductIndex, index, 'column' );
       })}
     </Stack>)
   }
@@ -977,12 +961,29 @@ const drumsData: TProduct = {
 const drums = new Product(drumsData);
 
 
+const workData: TProduct = {
+  id: 'work',
+  name: "work",
+  fullName: "Work",
+  description: "This is where I work. Say hi to the codez.",
+  icon: "1",
+  url: ROUTES.plan,
+  preview: {
+    text: 'recalcitrant robot\n' + '@brianstoker\n' + '·\n' + 'Feb 15, 2021\n' + '#atx #snowboarding #merica @ Auditorium Shores https://www.instagram.com/p/CLVQg7ql34O4prJIa6hpXGg-RaupDXP0THly3A0/'
+  },
+  showcaseType: BlogShowcase,
+  showcaseContent: {},
+  live: true
+}
+
+const work = new Product(workData);
+
 const planData: TProduct = {
   id: 'plan',
   name: ".plan",
   fullName: ".plan (brian stoker)",
   description: "Random musings probably not worth mentioning",
-  icon: "product-templates",
+  icon: "2",
   url: ROUTES.plan,
   preview: {
     text: 'recalcitrant robot\n' + '@brianstoker\n' + '·\n' + 'Feb 15, 2021\n' + '#atx #snowboarding #merica @ Auditorium Shores https://www.instagram.com/p/CLVQg7ql34O4prJIa6hpXGg-RaupDXP0THly3A0/'
@@ -999,7 +1000,7 @@ const resumeData: TProduct = {
   name: "Resume",
   fullName: "BRIAN STOKER: Resume",
   description: "Keeping my eyes open for my next big project.",
-  icon: "product-advanced",
+  icon: "3",
   url: ROUTES.resume,
   preview:{
     image: 'https://cenv-public.s3.amazonaws.com/resume-preview.png'
@@ -1010,7 +1011,7 @@ const resumeData: TProduct = {
 
 const resume = new Product(resumeData);
 
-const PRODUCTS: Products = new Products([art, photography, drums, plan, resume]);
+const PRODUCTS: Products = new Products([art, photography, drums, resume, work, plan]);
 const ALL_PRODUCTS: Products = new Products([sui, stokedConsulting]);
 
 type MenuProps = {

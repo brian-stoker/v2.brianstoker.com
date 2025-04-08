@@ -118,6 +118,9 @@ export default function AppLayoutDocs(props) {
           ':root': {
             '--MuiDocs-navDrawer-width': '300px',
           },
+          body: {
+            backgroundColor: 'hsl(0, 0%, 92%)',
+          }
         }}
       />
         <Main disableToc={disableToc}>
