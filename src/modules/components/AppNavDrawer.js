@@ -265,12 +265,12 @@ function reduceChildRoutes(context) {
         }}
         legacy={page.legacy}
         newFeature={page.newFeature}
-        planned={page.planned}
+        planned={pageblogned}
         unstable={page.unstable}
         beta={page.beta}
         alpha={page.alpha}
         dev={page.dev}
-        plan={page.plan}
+        plan={pageblog}
         icon={page.icon}
         subheader={subheader}
         topLevel={topLevel && !page.subheader}
@@ -301,10 +301,10 @@ function reduceChildRoutes(context) {
         }}
         legacy={page.legacy}
         newFeature={page.newFeature}
-        planned={page.planned}
+        planned={pageblogned}
         unstable={page.unstable}
         beta={page.beta}
-        plan={page.plan}
+        plan={pageblog}
         icon={page.icon}
         subheader={Boolean(page.subheader)}
         onClick={onClose}

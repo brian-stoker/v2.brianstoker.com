@@ -18,7 +18,7 @@ export default function generateRssFeed(allBlogPosts: Array<BlogPost>) {
     language: 'en',
     image: `${siteUrl}/static/logo.svg`,
     favicon: `${siteUrl}/favicon.ico`,
-    copyright: `Copyright © ${new Date().getFullYear()} Stoked UI`,
+    copyright: `Copyright © ${new Date().getFullYear()} brianstoker.com`,
     feedLinks: {
       rss2: `${siteUrl}/public${ROUTES.rssFeed}`,
     },

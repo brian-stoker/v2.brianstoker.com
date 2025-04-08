@@ -57,7 +57,7 @@ const Section = React.forwardRef<HTMLDivElement, SelectionProps>(function Sectio
                   bgcolor: map[bg].dark,
                 }),
               }),
-          py: cozy ? { xs: 6, sm: 10, md: 12 } : { xs: 4, sm: 12, md: 14 },
+          py: cozy ? { xs: 6, sm: 5, md: 6 } : { xs: 4, sm: 7, md: 8 },
           pb: noPaddingBottom ? '0 !important' : undefined,
           overflow: 'hidden',
         }),

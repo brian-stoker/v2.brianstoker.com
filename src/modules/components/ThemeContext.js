@@ -233,6 +233,11 @@ export function ThemeProvider(props) {
       {
         components: {
           MuiCssBaseline: {
+            styleOverrides: {
+              body: {
+                backgroundColor: calculatedMode === 'dark' ? '#333' : '#fff',
+              }
+            },
             defaultProps: {
               // TODO: Stoked UI v6, makes this the default
               enableColorScheme: true,

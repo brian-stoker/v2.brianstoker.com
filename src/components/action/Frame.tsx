@@ -4,6 +4,7 @@ import Box, { BoxProps } from '@mui/material/Box';
 const FrameDemo = React.forwardRef<HTMLDivElement, BoxProps>(function FrameDemo(props, ref) {
   return (
     <Box
+      id={'frame-demo'}
       ref={ref}
       {...props}
       sx={[
@@ -18,6 +19,7 @@ const FrameDemo = React.forwardRef<HTMLDivElement, BoxProps>(function FrameDemo(
           }),
         }),
         ...(Array.isArray(props.sx) ? props.sx : [props.sx]),
+        { overflow: 'initial'}
       ]}
     />
   );
