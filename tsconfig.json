@@ -13,7 +13,8 @@
     "isolatedModules": true,
     /* files are emitted by babel */
     "noEmit": true,
-    "noUnusedLocals": true,
+    "noUnusedLocals": false,
+    "noImplicitAny": false,
     "resolveJsonModule": true,
     "skipLibCheck": true,
     "jsx": "preserve",

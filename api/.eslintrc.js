@@ -9,6 +9,5 @@ module.exports = {
     'import/order': 'error',
     '@typescript-eslint/no-unused-vars': 'off',
     'no-new': 'off',
-    'no-console': 'off'
   },
 };

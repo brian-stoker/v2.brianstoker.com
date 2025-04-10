@@ -412,20 +412,18 @@ export default function AppNavDrawer(props) {
     return (
       <React.Fragment>
         <ToolbarDiv>
-          <NextLink href="/" passHref legacyBehavior>
-            <Box
-              component="a"
-              onClick={onClose}
-              aria-label={t('goToHome')}
-              sx={{
-                pr: '12px',
-                mr: '8px',
-                borderRight: '1px solid',
-                borderColor: 'divider',
-              }}
-            >
-              <SvgBsLogomark width={30} />
-            </Box>
+          <NextLink 
+            href="/" 
+            onClick={onClose}
+            aria-label={t('goToHome')}
+            style={{
+              paddingRight: '12px',
+              marginRight: '8px',
+              borderRight: '1px solid',
+              borderColor: 'divider',
+            }}
+          >
+            <SvgBsLogomark width={30} />
           </NextLink>
           <ProductIdentifier
             name={productIdentifier.name}

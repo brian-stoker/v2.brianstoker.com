@@ -4,7 +4,7 @@
         <title>bstoked.plan</title>
         <link>https://brianstoker.com/bstoked.plan</link>
         <description>Follow the SUI .plan to learn about new product features, latest advancements in UI development, and business initiatives.</description>
-        <lastBuildDate>Tue, 25 Feb 2025 07:10:49 GMT</lastBuildDate>
+        <lastBuildDate>Thu, 10 Apr 2025 19:17:54 GMT</lastBuildDate>
         <docs>https://validator.w3.org/feed/docs/rss2.html</docs>
         <generator>https://github.com/jpmonette/feed</generator>
         <language>en</language>
@@ -13,38 +13,6 @@
             <url>https://brianstoker.com/static/logo.svg</url>
             <link>https://brianstoker.com/bstoked.plan</link>
         </image>
-        <copyright>Copyright © 2025 Stoked UI</copyright>
-        <item>
-            <title><![CDATA[launched bstoked.plan (it's what you are looking at right meow)]]></title>
-            <link>https://brianstoker.com/.plan/2025-02-21-launched-bstoked-plan</link>
-            <guid>https://brianstoker.com/.plan/2025-02-21-launched-bstoked-plan</guid>
-            <pubDate>Fri, 21 Feb 2025 00:00:00 GMT</pubDate>
-            <description><![CDATA[a place to put the things i must say but no one else cares about.. as well as some work updates]]></description>
-            <category>.plan</category>
-        </item>
-        <item>
-            <title><![CDATA[Stoked UI Releases Initial Versions of Its React Component Modules]]></title>
-            <link>https://brianstoker.com/.plan/2025-02-20-initial-stoked-ui-release</link>
-            <guid>https://brianstoker.com/.plan/2025-02-20-initial-stoked-ui-release</guid>
-            <pubDate>Thu, 20 Feb 2025 00:00:00 GMT</pubDate>
-            <description><![CDATA[Stoked UI modules are now available via pnpm, yarn, and npm.]]></description>
-            <category>Stoked UI</category>
-            <category>File Explorer</category>
-            <category>Timeline</category>
-            <category>Editor</category>
-            <category>Media Selector</category>
-        </item>
-        <item>
-            <title><![CDATA[Stoked UI: Client-Side Video Editing React Components]]></title>
-            <link>https://brianstoker.com/.plan/2024-08-28-introducing-stoked-ui</link>
-            <guid>https://brianstoker.com/.plan/2024-08-28-introducing-stoked-ui</guid>
-            <pubDate>Wed, 28 Aug 2024 00:00:00 GMT</pubDate>
-            <description><![CDATA[Stoked UI enables fully client-side video editing in the browser, preserving privacy and efficiency.]]></description>
-            <category>Stoked UI</category>
-            <category>File Explorer</category>
-            <category>Timeline</category>
-            <category>Editor</category>
-            <category>Media Selector</category>
-        </item>
+        <copyright>Copyright © 2025 brianstoker.com</copyright>
     </channel>
 </rss>

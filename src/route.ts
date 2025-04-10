@@ -8,17 +8,8 @@ const ROUTES: Routes = {
   photography: '/photography/',
   drums: '/drums/',
   resume: '/resume/',
-  fileExplorer: '/stoked-ui/file-explorer/',
-  mediaSelector: '/stoked-ui/media-selector/',
-  suiFileExplorerOverviewDoc: '/material-ui/overview',
   // Marketing pagesHeaderNavBar
   productCore: '/core/',
-  productMaterial: '/material-ui/',
-  productBase: '/base-ui/',
-  productAdvanced: '/x/',
-  productToolpad: '/toolpad/',
-  productTemplates: '/templates/',
-  productDesignKits: '/design-kits/',
   careers: '/careers/',
   pricing: '/pricing/',
   about: 'https://stokedconsulting.com/about/',
@@ -81,8 +72,6 @@ const ROUTES: Routes = {
   // Date and Time Pickers doc pages
   datePickersOverview: '/x/react-date-pickers/',
   // Charts doc pages
-  chartsOverview: '/x/react-charts/',
-  // File Explorer doc pages
   treeViewOverview: '/x/react-tree-view/',
   // Toolpad pages
   toolpadDocs: '/toolpad/studio/getting-started/',

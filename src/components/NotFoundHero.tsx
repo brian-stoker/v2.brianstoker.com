@@ -99,10 +99,10 @@ export default function NotFoundHero() {
         alwaysCenter
         title={
           <Typography component="h1" variant="h4" fontWeight="semiBold">
-            Page not found
+            Derpy derp.. derp derpy.. derp derppp purp
           </Typography>
         }
-        description="Apologies, but the page you were looking for wasn't found. Try reaching for the search button on the nav bar above to look for another one."
+        description="Apologies, but our princess is in another castle."
       />
     </Section>
   );

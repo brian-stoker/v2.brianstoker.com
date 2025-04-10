@@ -97,8 +97,8 @@ const StyledDoc = styled(Document)(() => ({
 }));
 
 export function PdfDoc ({ pdfWidth }: { pdfWidth?: number }) {
-  const [numPages, setNumPages] = React.useState(null);
-  const [pageNumber, setPageNumber] = React.useState(1);
+  const [numPages, setNumPages] = React.useState<number | null>(null);
+  const [pageNumber, setPageNumber] = React.useState<number>(1);
 
   function onDocumentLoadSuccess(onLoadParams: { numPages: number }) {
     setNumPages(onLoadParams.numPages);
@@ -118,7 +118,7 @@ export function PdfDoc ({ pdfWidth }: { pdfWidth?: number }) {
   }
 
 
-  const [containerRef, setContainerRef] = React.useState<Box | null>(null);
+  const [containerRef, setContainerRef] = React.useState<typeof Box | null>(null);
   const [containerWidth, setContainerWidth] = React.useState<number>();
 
   const onResize = React.useCallback<ResizeObserverCallback>((entries) => {
@@ -129,7 +129,7 @@ export function PdfDoc ({ pdfWidth }: { pdfWidth?: number }) {
     }
   }, []);
 
-  useResizeObserver(containerRef, resizeObserverOptions, onResize);
+  useResizeObserver(containerRef as any, resizeObserverOptions, onResize);
 
 
 

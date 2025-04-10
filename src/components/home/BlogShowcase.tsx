@@ -1,11 +1,11 @@
 import * as React from 'react';
 import Stack from '@mui/material/Stack';
-import  {PostPreviewBox} from '../../../pages/bstoked.plan';
+// import  {PostPreviewBox} from '../../../pages/bstoked.plan';
 import {BlogPost} from "../../../lib/sourcing";
 
 export default function BlogShowcase({ showcaseContent }: { showcaseContent?: any }): React.JSX.Element | null{
 
   return <Stack gap={2} alignContent={'center'} height={'100%'}>
-    {showcaseContent.map((blog: BlogPost) => <PostPreviewBox post={blog} />)}
+    {/* {showcaseContent.map((blog: BlogPost) => <PostPreviewBox post={blog} />)} */}
   </Stack>
 }

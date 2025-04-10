@@ -15,7 +15,7 @@ let DEPLOY_ENV = 'development';
 if (process.env.CONTEXT === 'deploy-preview') {
   DEPLOY_ENV = 'pull-request';
 }
-
+alert('hi')
 if (process.env.CONTEXT === 'production' || process.env.CONTEXT === 'branch-deploy') {
   DEPLOY_ENV = 'production';
 }

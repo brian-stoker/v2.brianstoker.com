@@ -12,7 +12,7 @@ import {BlogPost, getAllBlogPosts} from "../lib/sourcing";
 
 export function HomeView({ HomeMain, mostRecentPosts = []}: { mostRecentPosts?: BlogPost[], HomeMain: React.ComponentType<any> }) {
 
-  const Main: React.ComponentType = HomeMain;
+  const Main: React.ComponentType<{mostRecentPosts?: BlogPost[]}> = HomeMain;
   const [isClient, setIsClient] = React.useState(false)
 
   React.useEffect(() => {

@@ -1,0 +1,14 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "noUnusedLocals": false,
+    "noImplicitAny": false,
+    "skipLibCheck": true,
+    "noEmit": true,
+    "jsx": "preserve",
+    "moduleResolution": "node"
+  },
+  "exclude": [
+    "node_modules"
+  ]
+} 

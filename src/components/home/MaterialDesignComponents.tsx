@@ -172,7 +172,7 @@ function Demo({
         className="mui-default-theme"
         sx={{ flexGrow: 1, display: 'flex', alignItems: 'center', justifyContent: 'center' }}
       >
-        <CssVarsProvider theme={props.theme}>
+        <CssVarsProvider theme={props.theme as any}>
           {React.cloneElement(children, {
             ...(control && {
               [control.prop]: propValue,

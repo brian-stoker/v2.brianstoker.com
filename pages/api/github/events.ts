@@ -1,6 +1,6 @@
 import * as React from 'react';
 import type { NextApiRequest, NextApiResponse } from 'next'
-import { GitHubEvent } from '../../src/types/github';
+import { GitHubEvent } from '../../../src/types/github';
 
 type ActivityData = {
   data: { date: string, count: number, level: number }[];

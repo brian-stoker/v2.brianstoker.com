@@ -17,11 +17,11 @@ declare module "sst" {
       "name": string
       "type": "sst.aws.Function"
     }
-    "Subscribe": {
+    "SubscribeFunction": {
       "name": string
       "type": "sst.aws.Function"
     }
-    "Verify": {
+    "VerifyFunction": {
       "name": string
       "type": "sst.aws.Function"
     }

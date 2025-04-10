@@ -16,10 +16,10 @@ import {Link} from '@stoked-ui/docs/Link';
 import type {MuiPage} from 'src/MuiPage';
 import materialPages from '../data/pages';
 import Alert from '@mui/material/Alert';
-import {redirect} from 'next/router';
+import {useRouter} from 'next/router';
 import {useSearchParams} from 'next/navigation';
 
-export default function Components() {
+export default function SubscriptionPage() {
   const t = useTranslate();
   const pages = materialPages;
   const componentPageData = pages.find(({ title }) => title === 'Components');
@@ -53,10 +53,11 @@ export default function Components() {
   }
   const [alert, setAlert] = React.useState<React.JSX.Element | null>(null);
 
-  const query = useSearchParams()
+  const router = useRouter();
+  const query = useSearchParams();
   const code = query.get('code');
   const token = query.get('token');
-  const email = decodeURIComponent(query.get('email'));
+  const email = query.get('email') || '';
 
   React.useEffect(() => {
 
@@ -166,12 +167,16 @@ export default function Components() {
       }
     }
     if (!code) {
-      redirect('/404');
+      router.push('/404');
       return;
     }
     setAlert(getCodeStatus(code));
-  }, [])
+  }, [router]);
 
+  const handleSubscribe = async () => {
+    // ... existing code logic ...
+    router.push('/'); // Instead of redirect
+  };
 
   return (
     <BrandingCssVarsProvider>
