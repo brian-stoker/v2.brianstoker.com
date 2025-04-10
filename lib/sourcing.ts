@@ -1,6 +1,6 @@
 import fs from 'fs';
 import path from 'path';
-import { getHeaders } from '@stoked-ui/docs-markdown';
+import {getHeaders} from '@stoked-ui/docs-markdown';
 
 const blogDir = path.join(process.cwd(), 'pages/.plan');
 

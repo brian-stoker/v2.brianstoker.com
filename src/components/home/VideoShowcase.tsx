@@ -1,4 +1,3 @@
-
 import * as React from 'react';
 import NoSsr from "@mui/material/NoSsr";
 import dynamic from 'next/dynamic'

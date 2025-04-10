@@ -1,6 +1,6 @@
 import * as React from 'react';
 import Grid from '@mui/material/Unstable_Grid2';
-import IconImage, { IconImageProps } from 'src/components/icon/IconImage';
+import IconImage, {IconImageProps} from 'src/components/icon/IconImage';
 
 export const CORE_CUSTOMERS: Array<IconImageProps> = [
   {

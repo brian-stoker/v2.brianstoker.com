@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useRunner } from 'react-runner';
+import {useRunner} from 'react-runner';
 
 interface ReactRunnerProps {
   code: string;

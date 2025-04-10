@@ -34,7 +34,7 @@ export default class MyDocument extends Document {
             media="(prefers-color-scheme: dark)"
           />
           <link rel="apple-touch-icon" sizes="180x180" href="/static/apple-touch-icon.png"/>
-          <link rel="manifest" href="/static/site.webmanifest"/>
+          <link rel="manifest" href="/static/site.webmanifest.json"/>
           <link rel="mask-icon" href="/static/safari-pinned-tab.svg" color="#5bbad5"/>
           <meta name="msapplication-TileColor" content="#2d89ef"/>
           <meta name="theme-color" content={getMetaThemeColor('light')}
@@ -51,7 +51,8 @@ export default class MyDocument extends Document {
           <link
             href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Roboto:ital,wght@0,300;0,400;0,500;0,700;1,400&family=Archivo+Black&display=swap"
             rel="stylesheet"/>
-
+          <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&display=swap" rel="stylesheet"/>
+    
           {/* Preload Fonts */}
           {this.renderFontPreloads()}
 

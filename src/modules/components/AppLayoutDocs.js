@@ -1,23 +1,15 @@
 import * as React from 'react';
 import PropTypes from 'prop-types';
-import { useRouter } from 'next/router';
-import { styled } from '@mui/material/styles';
-import { exactProp } from '@mui/utils';
+import {useRouter} from 'next/router';
+import {styled} from '@mui/material/styles';
+import {exactProp} from '@mui/utils';
 import GlobalStyles from '@mui/material/GlobalStyles';
-import { pathnameToLanguage } from 'src/modules/utils/helpers';
-import Head from 'src/modules/components/Head';
+import {pathnameToLanguage} from 'src/modules/utils/helpers';
 import AppFrame from 'src/modules/components/AppFrame';
 import AppContainer from 'src/modules/components/AppContainer';
 import AppTableOfContents from 'src/modules/components/AppTableOfContents';
-import AdManager from 'src/modules/components/AdManager';
 import AppLayoutDocsFooter from 'src/modules/components/AppLayoutDocsFooter';
 import BackToTop from 'src/modules/components/BackToTop';
-import {
-  AD_MARGIN_TOP,
-  AD_HEIGHT,
-  AD_HEIGHT_MOBILE,
-  AD_MARGIN_BOTTOM,
-} from 'src/modules/components/Ad';
 
 const TOC_WIDTH = 242;
 

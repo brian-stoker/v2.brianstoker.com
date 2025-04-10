@@ -1,14 +1,9 @@
 import * as React from 'react';
-import { alpha } from '@mui/material/styles';
-import Box, { BoxProps } from '@mui/material/Box';
-import Stack from '@mui/material/Stack';
+import Box, {BoxProps} from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
-import Chip from '@mui/material/Chip';
-import IconImage from 'src/components/icon/KeyIcon';
 import ROUTES from 'src/route';
-import { Link } from '@stoked-ui/docs/Link';
 import PageContext from 'src/modules/components/PageContext';
-import { ALL_PRODUCTS } from 'src/products';
+import {PRODUCTS} from 'src/products';
 
 interface ProductSubMenuProp extends BoxProps {
   icon: React.ReactNode;
@@ -97,5 +92,5 @@ const advancedProducts = [
 export default function MuiProductSelector() {
   const pageContext = React.useContext(PageContext);
 
-  return ALL_PRODUCTS.productSelector(pageContext);
+  return PRODUCTS.productSelector(pageContext as any);
 }

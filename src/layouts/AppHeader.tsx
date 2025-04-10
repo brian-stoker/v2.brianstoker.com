@@ -70,7 +70,7 @@ export default function AppHeader(props: AppHeaderProps) {
         <Stack direction="row" spacing={1}>
           <Tooltip title={t('appFrame.github')} enterDelay={300}>
             <IconButton
-              component="a"
+              component={Link}
               color="primary"
               href={gitHubRepository}
               target="_blank"

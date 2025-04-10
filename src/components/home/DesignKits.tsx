@@ -1,7 +1,7 @@
 import * as React from 'react';
-import { styled, alpha } from '@mui/material/styles';
-import { AvatarProps } from '@mui/material/Avatar';
-import Box, { BoxProps } from '@mui/material/Box';
+import {alpha, styled} from '@mui/material/styles';
+import {AvatarProps} from '@mui/material/Avatar';
+import Box, {BoxProps} from '@mui/material/Box';
 import Slide from 'src/components/animation/Slide';
 import FadeDelay from 'src/components/animation/FadeDelay';
 

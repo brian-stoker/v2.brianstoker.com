@@ -1,9 +1,9 @@
 import * as React from 'react';
-import { useRouter } from 'next/router';
+import {useRouter} from 'next/router';
 import Link from '@mui/material/Link';
 import Typography from '@mui/material/Typography';
-import { styled } from '@mui/material/styles';
-import { renderMarkdown } from '@stoked-ui/docs-markdown';
+import {styled} from '@mui/material/styles';
+import {renderMarkdown} from '@stoked-ui/docs-markdown';
 import MarkdownElement from 'src/modules/components/MarkdownElement';
 
 const ErrorMessageSection = styled('div')({

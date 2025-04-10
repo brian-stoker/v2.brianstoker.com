@@ -18,7 +18,7 @@ import getProductInfoFromUrl from 'src/modules/utils/getProductInfoFromUrl';
 import {DocsProvider, mapTranslations} from '@stoked-ui/docs';
 import fileExplorerPages from '../data/pages';
 import 'react-multi-carousel/lib/styles.css';
-import './global.css';
+import '../styles/globals.css';
 import '../public/static/components-gallery/base-theme.css';
 import config from '../config';
 

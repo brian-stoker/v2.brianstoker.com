@@ -1,6 +1,6 @@
 import * as React from 'react';
 import PropTypes from 'prop-types';
-import { styled, useTheme } from '@mui/material/styles';
+import {styled, useTheme} from '@mui/material/styles';
 import Drawer from '@mui/material/Drawer';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
@@ -15,8 +15,8 @@ import DarkModeOutlinedIcon from '@mui/icons-material/DarkModeOutlined';
 import SettingsBrightnessIcon from '@mui/icons-material/SettingsBrightness';
 import FormatTextdirectionLToRIcon from '@mui/icons-material/FormatTextdirectionLToR';
 import FormatTextdirectionRToLIcon from '@mui/icons-material/FormatTextdirectionRToL';
-import { useColorSchemeShim, useChangeTheme } from 'src/modules/components/ThemeContext';
-import { useTranslate } from '@stoked-ui/docs/i18n';
+import {useChangeTheme, useColorSchemeShim} from 'src/modules/components/ThemeContext';
+import {useTranslate} from '@stoked-ui/docs/i18n';
 
 const Heading = styled(Typography)(({ theme }) => ({
   margin: '16px 0 8px',

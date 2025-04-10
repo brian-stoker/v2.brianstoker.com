@@ -1,12 +1,12 @@
 import * as React from 'react';
 import MuiChip from '@mui/material/Chip';
 import MuiCardMedia from '@mui/material/CardMedia';
-import MuiCard, { CardProps } from '@mui/material/Card';
+import MuiCard, {CardProps} from '@mui/material/Card';
 import MuiSwitch from '@mui/material/Switch';
 import MuiTypography from '@mui/material/Typography';
 import MuiStack from '@mui/material/Stack';
 import MuiRating from '@mui/material/Rating';
-import { withPointer } from 'src/components/home/ElementPointer';
+import {withPointer} from 'src/components/home/ElementPointer';
 
 export const componentCode = `
 <Card>

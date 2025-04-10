@@ -1,7 +1,6 @@
 import * as React from 'react';
-import { useTheme, styled, Theme } from '@mui/material/styles';
-import Box from '@mui/material/Box';
-import { SxProps } from '@mui/system';
+import {Theme, useTheme} from '@mui/material/styles';
+import {SxProps} from '@mui/system';
 import Key from './Key';
 
 export type KeyIconProps = {

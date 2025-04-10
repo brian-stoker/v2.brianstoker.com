@@ -1,14 +1,14 @@
 import * as React from 'react';
 import SimpleCodeEditor from 'react-simple-code-editor';
 import Box from '@mui/material/Box';
-import { NoSsr } from '@mui/base/NoSsr';
-import { styled, alpha, useTheme } from '@mui/material/styles';
+import {NoSsr} from '@mui/base/NoSsr';
+import {alpha, styled, useTheme} from '@mui/material/styles';
 import prism from '@stoked-ui/docs-markdown/prism';
 import MarkdownElement from 'src/modules/components/MarkdownElement';
 import CodeCopyButton from 'src/modules/components/CodeCopyButton';
-import { useTranslate } from '@stoked-ui/docs/i18n';
-import { useCodeCopy } from 'src/modules/utils/CodeCopy';
-import { blueDark } from '@stoked-ui/docs/branding';
+import {useTranslate} from '@stoked-ui/docs/i18n';
+import {useCodeCopy} from 'src/modules/utils/CodeCopy';
+import {blueDark} from '@stoked-ui/docs/branding';
 
 const StyledMarkdownElement = styled(MarkdownElement)(({ theme }) => [
   {

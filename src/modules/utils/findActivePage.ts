@@ -1,4 +1,4 @@
-import type { MuiPage } from 'src/MuiPage';
+import type {MuiPage} from 'src/MuiPage';
 
 export default function findActivePage(
   currentPages: MuiPage[],
@@ -37,12 +37,12 @@ export default function findActivePage(
 
   traverse({ pathname: '/', children: currentPages });
 
-  const activePage = map[pathname] || null;
+  const activePage: MuiPage | null = map[pathname] || null;
 
-  const activePageParents = [];
-  let traversePage = activePage;
+  const activePageParents: MuiPage[] = [];
+  let traversePage: MuiPage | null = activePage;
   while (traversePage && traversePage.pathname !== '/') {
-    const parent = mapParent[traversePage.pathname];
+    const parent: MuiPage | undefined = mapParent[traversePage.pathname];
     activePageParents.push(parent);
     traversePage = parent;
   }

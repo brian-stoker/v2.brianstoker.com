@@ -12,7 +12,7 @@ import SvgBsLogotype from 'src/icons/SvgBsLogotype';
 import EmailSubscribe from 'src/components/footer/EmailSubscribe';
 import ROUTES from 'src/route';
 import DiscordIcon from 'src/icons/DiscordIcon';
-import { Link } from '@stoked-ui/docs/Link';
+import {Link} from '@stoked-ui/docs/Link';
 import SvgStackOverflow from 'src/icons/SvgStackOverflow';
 import Slack from '../icons/Slack';
 

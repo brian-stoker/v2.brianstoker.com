@@ -1,10 +1,10 @@
 import * as React from 'react';
-import { styled, alpha } from '@mui/material/styles';
+import {alpha, styled} from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
-import { Link } from '@stoked-ui/docs/Link';
-import { useTranslate } from 'src/modules/utils/i18n';
+import {Link} from '@stoked-ui/docs/Link';
+import {useTranslate} from 'src/modules/utils/i18n';
 
 const NativeLink = styled('a')(({ theme }) => ({
   boxSizing: 'border-box', // TODO have CssBaseline in the Next.js layout

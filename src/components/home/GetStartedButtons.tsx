@@ -1,11 +1,11 @@
 import * as React from 'react';
 import copy from 'clipboard-copy';
-import Box, { BoxProps } from '@mui/material/Box';
+import Box, {BoxProps} from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import KeyboardArrowRightRounded from '@mui/icons-material/KeyboardArrowRightRounded';
 import ContentCopyRounded from '@mui/icons-material/ContentCopyRounded';
 import CheckRounded from '@mui/icons-material/CheckRounded';
-import { Link } from '@stoked-ui/docs/Link';
+import {Link} from '@stoked-ui/docs/Link';
 import NpmCopyButton from 'src/components/action/NpmCopyButton';
 
 interface GetStartedButtonsProps extends BoxProps {

@@ -1,24 +1,24 @@
 import * as React from 'react';
 import PropTypes from 'prop-types';
-import { styled, alpha } from '@mui/material/styles';
-import { useTheme } from '@mui/system';
-import { useRouter } from 'next/router';
-import { exactProp } from '@mui/utils';
+import {alpha, styled} from '@mui/material/styles';
+import {useTheme} from '@mui/system';
+import {useRouter} from 'next/router';
+import {exactProp} from '@mui/utils';
 import ChevronLeftRoundedIcon from '@mui/icons-material/ChevronLeftRounded';
 import Divider from '@mui/material/Divider';
 import Typography from '@mui/material/Typography';
 import Avatar from '@mui/material/Avatar';
 import Head from 'src/modules/components/Head';
-import * as StokedDocs  from '@stoked-ui/docs';
+import * as StokedDocs from '@stoked-ui/docs';
 import AppHeader from 'src/layouts/AppHeader';
 import AppContainer from 'src/modules/components/AppContainer';
 import AppFooter from 'src/layouts/AppFooter';
 import HeroEnd from 'src/components/home/HeroEnd';
 import MarkdownElement from 'src/modules/components/MarkdownElement';
 import RichMarkdownElement from 'src/modules/components/RichMarkdownElement';
-import { pathnameToLanguage } from 'src/modules/utils/helpers';
+import {pathnameToLanguage} from 'src/modules/utils/helpers';
 import ROUTES from 'src/route';
-import { Link } from '@stoked-ui/docs/Link';
+import {Link} from '@stoked-ui/docs/Link';
 
 const { BrandingCssVarsProvider } = StokedDocs;
 export const authors = {
@@ -360,7 +360,7 @@ export default function TopLayoutBlog(props) {
                 sameAs: [`https://github.com/${authors[headers.authors[0]].github}`],
               },
               headline: finalTitle,
-              url: `https://mui.com${canonicalAsServer}`,
+              url: `https://brianstoker.com${canonicalAsServer}`,
               datePublished: headers.date,
               dateModified: headers.date,
               image: {

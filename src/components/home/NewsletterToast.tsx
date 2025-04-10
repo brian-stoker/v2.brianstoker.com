@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useRouter } from 'next/router';
+import {useRouter} from 'next/router';
 import Slide from '@mui/material/Slide';
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';

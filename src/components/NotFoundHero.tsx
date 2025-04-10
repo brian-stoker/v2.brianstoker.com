@@ -1,9 +1,7 @@
 import * as React from 'react';
 import { alpha } from '@mui/material/styles';
 import Box from '@mui/material/Box';
-import Typography from '@mui/material/Typography';
 import Section from 'src/layouts/Section';
-import SectionHeadline from 'src/components/typography/SectionHeadline';
 import SearchOffRoundedIcon from '@mui/icons-material/SearchOffRounded';
 
 function NotFoundIllustration() {
@@ -95,7 +93,7 @@ export default function NotFoundHero() {
       }}
     >
       <NotFoundIllustration />
-      <SectionHeadline
+      {/* <SectionHeadline
         alwaysCenter
         title={
           <Typography component="h1" variant="h4" fontWeight="semiBold">
@@ -103,7 +101,7 @@ export default function NotFoundHero() {
           </Typography>
         }
         description="Apologies, but our princess is in another castle."
-      />
+      /> */}
     </Section>
   );
 }

@@ -1,7 +1,6 @@
-import { APIGatewayProxyEvent, APIGatewayProxyResult } from "aws-lambda";
-import { SES } from "aws-sdk";
-import { Resource } from "sst";
-import { v4 as uuidv4 } from "uuid";
+import {APIGatewayProxyEvent, APIGatewayProxyResult} from "aws-lambda";
+import {SES} from "aws-sdk";
+import {v4 as uuidv4} from "uuid";
 import dbClient from "./lib/mongodb";
 import {MongoClient} from "mongodb";
 

@@ -1,14 +1,14 @@
 import * as React from 'react';
 import PropTypes from 'prop-types';
-import { styled } from '@mui/material/styles';
+import {styled} from '@mui/material/styles';
 import Divider from '@mui/material/Divider';
 import Head from 'src/modules/components/Head';
 import AppContainer from 'src/modules/components/AppContainer';
 import AppFooter from 'src/layouts/AppFooter';
 import AppHeader from 'src/layouts/AppHeader';
-import { BrandingCssVarsProvider } from '@stoked-ui/docs';
+import {BrandingCssVarsProvider} from '@stoked-ui/docs';
 import MarkdownElement from 'src/modules/components/MarkdownElement';
-import { Link } from '@stoked-ui/docs/Link';
+import {Link} from '@stoked-ui/docs/Link';
 
 const StyledDiv = styled('div')({
   flex: '1 0 100%',

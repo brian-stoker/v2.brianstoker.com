@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { loadCSS } from 'fg-loadcss/src/loadCSS';
+import {loadCSS} from 'fg-loadcss/src/loadCSS';
 
 /**
  * Convenience wrapper around fgLoadCSS for hooks usage

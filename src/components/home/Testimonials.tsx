@@ -1,11 +1,8 @@
 import * as React from 'react';
 import dynamic from 'next/dynamic';
-import { alpha } from '@mui/material/styles';
+import {alpha} from '@mui/material/styles';
 import Box from '@mui/material/Box';
-import Typography from '@mui/material/Typography';
 import Section from 'src/layouts/Section';
-import SectionHeadline from 'src/components/typography/SectionHeadline';
-import GradientText from 'src/components/typography/GradientText';
 
 const UserFeedbacks = dynamic(() => import('./UserFeedbacks'));
 
@@ -20,14 +17,14 @@ export default function Testimonials() {
       })}
     >
       <Section bg="transparent" cozy>
-        <SectionHeadline
+        {/* <SectionHeadline
           overline="Join the community"
           title={
             <Typography variant="h2" component="h2">
               Supported by thousands of <GradientText>developers and designers</GradientText>
             </Typography>
           }
-        />
+        /> */}
         <UserFeedbacks />
       </Section>
     </Box>

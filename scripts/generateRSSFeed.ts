@@ -1,6 +1,6 @@
 import fs from 'fs';
-import { Feed } from 'feed';
-import { BlogPost } from '../lib/sourcing';
+import {Feed} from 'feed';
+import {BlogPost} from '../lib/sourcing';
 import ROUTES from '../src/route';
 
 export default function generateRssFeed(allBlogPosts: Array<BlogPost>) {
@@ -14,7 +14,7 @@ export default function generateRssFeed(allBlogPosts: Array<BlogPost>) {
     description:
       'Follow the SUI .plan to learn about new product features, latest advancements in UI development, and business initiatives.',
     id: `${siteUrl}/bstoked.plan`,
-    link: `mui.com/blog`,
+    link: `brianstoker.com/blog`,
     language: 'en',
     image: `${siteUrl}/static/logo.svg`,
     favicon: `${siteUrl}/favicon.ico`,

@@ -5,8 +5,8 @@ import Box from '@mui/material/Box';
 import Tooltip from '@mui/material/Tooltip';
 import KeyboardArrowUpRoundedIcon from '@mui/icons-material/KeyboardArrowUpRounded';
 import Fade from '@mui/material/Fade';
-import { Theme } from '@mui/material/styles';
-import { useTranslate } from '@stoked-ui/docs/i18n';
+import {Theme} from '@mui/material/styles';
+import {useTranslate} from '@stoked-ui/docs/i18n';
 
 export default function BackToTop() {
   const t = useTranslate();

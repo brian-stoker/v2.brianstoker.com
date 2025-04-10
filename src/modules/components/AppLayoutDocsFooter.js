@@ -1,7 +1,7 @@
 /* eslint-disable no-restricted-globals */
 import * as React from 'react';
 import PropTypes from 'prop-types';
-import { styled, useTheme } from '@mui/material/styles';
+import {styled, useTheme} from '@mui/material/styles';
 // Components
 import DialogActions from '@mui/material/DialogActions';
 import TextField from '@mui/material/TextField';
@@ -24,13 +24,12 @@ import ArrowOutwardRoundedIcon from '@mui/icons-material/ArrowOutwardRounded';
 import DiscordIcon from 'src/icons/DiscordIcon';
 import Slack from "src/icons/Slack";
 // Other imports
-import { Link } from '@stoked-ui/docs/Link';
+import {Link} from '@stoked-ui/docs/Link';
 import PageContext from 'src/modules/components/PageContext';
 import EditPage from 'src/modules/components/EditPage';
 import SvgSuiLogotype from 'src/icons/SvgSuiLogotype';
-import { useUserLanguage, useTranslate } from '@stoked-ui/docs/i18n';
-import { getCookie, pageToTitleI18n } from 'src/modules/utils/helpers';
-import GitHubIcon from "@mui/icons-material/GitHub";
+import {useTranslate, useUserLanguage} from '@stoked-ui/docs/i18n';
+import {getCookie, pageToTitleI18n} from 'src/modules/utils/helpers';
 import LinkedInIcon from "@mui/icons-material/LinkedIn";
 
 const FooterLink = styled(Typography)(({ theme }) => {
@@ -79,7 +78,7 @@ function orderedPages(pages, current = []) {
 }
 
 async function postFeedback(data) {
-  const env = window.location.host.indexOf('mui.com') !== -1 ? 'prod' : 'dev';
+  const env = window.location.host.indexOf('brianstoker.com') !== -1 ? 'prod' : 'dev';
   try {
     const response = await fetch(`${process.env.FEEDBACK_URL}/${env}/feedback`, {
       method: 'POST',

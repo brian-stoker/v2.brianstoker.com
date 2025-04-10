@@ -1,8 +1,7 @@
 import * as React from 'react';
-import { styled } from '@mui/material/styles';
+import {styled} from '@mui/material/styles';
 import loadScript from 'src/modules/utils/loadScript';
-import AdDisplay from 'src/modules/components/AdDisplay';
-import { adStylesObject } from 'src/modules/components/ad.styles';
+import {adStylesObject} from 'src/modules/components/ad.styles';
 
 const CarbonRoot = styled('span')(({ theme }) => {
   const styles = adStylesObject['body-image'](theme);

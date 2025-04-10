@@ -1,16 +1,16 @@
 import * as React from 'react';
 import PropTypes from 'prop-types';
 import {
-  ThemeProvider as MdThemeProvider,
   createTheme as createMdTheme,
+  ThemeProvider as MdThemeProvider,
 } from '@mui/material/styles';
-import { deepmerge } from '@mui/utils';
-import { enUS, zhCN, ptBR } from '@mui/material/locale';
-import { unstable_useEnhancedEffect as useEnhancedEffect } from '@mui/material/utils';
-import { getCookie } from 'src/modules/utils/helpers';
+import {deepmerge} from '@mui/utils';
+import {enUS, ptBR, zhCN} from '@mui/material/locale';
+import {unstable_useEnhancedEffect as useEnhancedEffect} from '@mui/material/utils';
+import {getCookie} from 'src/modules/utils/helpers';
 import useLazyCSS from 'src/modules/utils/useLazyCSS';
-import { useUserLanguage } from '@stoked-ui/docs/i18n';
-import { getDesignTokens, getThemedComponents, getMetaThemeColor } from '@stoked-ui/docs/branding';
+import {useUserLanguage} from '@stoked-ui/docs/i18n';
+import {getDesignTokens, getMetaThemeColor, getThemedComponents} from '@stoked-ui/docs/branding';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import useLocalStorageState from '@mui/utils/useLocalStorageState';
 

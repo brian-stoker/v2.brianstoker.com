@@ -1,14 +1,11 @@
 import * as React from 'react';
-import Typography from '@mui/material/Typography';
 import Grid from '@mui/material/Unstable_Grid2';
 import InvertColorsRoundedIcon from '@mui/icons-material/InvertColorsRounded';
 import HandymanRoundedIcon from '@mui/icons-material/HandymanRounded';
 import ArticleRoundedIcon from '@mui/icons-material/ArticleRounded';
 import AccessibilityNewRounded from '@mui/icons-material/AccessibilityNewRounded';
-import GradientText from 'src/components/typography/GradientText';
 import Section from 'src/layouts/Section';
-import SectionHeadline from 'src/components/typography/SectionHeadline';
-import { InfoCard } from '@stoked-ui/docs/InfoCard';
+import {InfoCard} from '@stoked-ui/docs/InfoCard';
 
 const content = [
   {
@@ -40,7 +37,7 @@ const content = [
 export default function ValueProposition() {
   return (
     <Section>
-      <SectionHeadline
+      {/* <SectionHeadline
         overline="Why build with SUI?"
         title={
           <Typography variant="h2" sx={{ mt: 1, mb: { xs: 2, sm: 4 } }}>
@@ -48,7 +45,7 @@ export default function ValueProposition() {
             for you and your users
           </Typography>
         }
-      />
+      /> */}
       <Grid container spacing={3}>
         {content.map(({ icon, title, description }) => (
           <Grid key={title} xs={12} sm={6} lg={3}>

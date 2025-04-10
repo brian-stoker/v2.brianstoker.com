@@ -1,7 +1,7 @@
 import * as React from 'react';
 import PropTypes from 'prop-types';
 import Portal from '@mui/material/Portal';
-import { AdContext } from 'src/modules/components/AdManager';
+import {AdContext} from 'src/modules/components/AdManager';
 
 export default function AdGuest(props) {
   const { classSelector = '.description', children } = props;

@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import NextLink from 'next/link';
 import Button from '@mui/material/Button';
 import Divider from '@mui/material/Divider';
-import { styled, ThemeProvider } from '@mui/material/styles';
+import {styled, ThemeProvider} from '@mui/material/styles';
 import List from '@mui/material/List';
 import Drawer from '@mui/material/Drawer';
 import Menu from '@mui/material/Menu';
@@ -12,14 +12,14 @@ import Typography from '@mui/material/Typography';
 import SwipeableDrawer from '@mui/material/SwipeableDrawer';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import Box from '@mui/material/Box';
-import { unstable_useEnhancedEffect as useEnhancedEffect } from '@mui/utils';
+import {unstable_useEnhancedEffect as useEnhancedEffect} from '@mui/utils';
 import ArrowDropDownRoundedIcon from '@mui/icons-material/ArrowDropDownRounded';
 import DoneRounded from '@mui/icons-material/DoneRounded';
 import SvgBsLogomark from 'src/icons/SvgBsLogomark';
 import AppNavDrawerItem from 'src/modules/components/AppNavDrawerItem';
-import { pageToTitleI18n } from 'src/modules/utils/helpers';
+import {pageToTitleI18n} from 'src/modules/utils/helpers';
 import PageContext from 'src/modules/components/PageContext';
-import { useTranslate } from '@stoked-ui/docs/i18n';
+import {useTranslate} from '@stoked-ui/docs/i18n';
 import MuiProductSelector from 'src/modules/components/MuiProductSelector';
 
 // TODO: Collapse should expose an API to customize the duration based on the height.
@@ -412,8 +412,8 @@ export default function AppNavDrawer(props) {
     return (
       <React.Fragment>
         <ToolbarDiv>
-          <NextLink 
-            href="/" 
+          <NextLink
+            href="/"
             onClick={onClose}
             aria-label={t('goToHome')}
             style={{

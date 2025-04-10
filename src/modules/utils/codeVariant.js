@@ -1,7 +1,7 @@
 import * as React from 'react';
 import PropTypes from 'prop-types';
-import { getCookie } from 'src/modules/utils/helpers';
-import { CODE_VARIANTS } from 'src/modules/constants';
+import {getCookie} from 'src/modules/utils/helpers';
+import {CODE_VARIANTS} from 'src/modules/constants';
 
 const CodeVariantContext = React.createContext({
   codeVariant: CODE_VARIANTS.TS,

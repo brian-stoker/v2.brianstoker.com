@@ -3,11 +3,9 @@ import PropTypes from 'prop-types';
 import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
 import Paper from '@mui/material/Paper';
-import AdCarbon from 'src/modules/components/AdCarbon';
-import AdInHouse from 'src/modules/components/AdInHouse';
-import { GA_ADS_DISPLAY_RATIO } from 'src/modules/constants';
-import { AdContext, adShape } from 'src/modules/components/AdManager';
-import { useTranslate } from '@stoked-ui/docs/i18n';
+import {GA_ADS_DISPLAY_RATIO} from 'src/modules/constants';
+import {AdContext, adShape} from 'src/modules/components/AdManager';
+import {useTranslate} from '@stoked-ui/docs/i18n';
 
 function PleaseDisableAdblock(props) {
   const t = useTranslate();

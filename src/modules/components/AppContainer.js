@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { styled } from '@mui/material/styles';
+import {styled} from '@mui/material/styles';
 import Container from '@mui/material/Container';
 
 const StyledAppContainer = styled(Container)(({ theme }) => {

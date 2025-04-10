@@ -1,5 +1,5 @@
-import { styled, Theme } from '@mui/material/styles';
-import { SxProps } from '@mui/system';
+import {styled, Theme} from '@mui/material/styles';
+import {SxProps} from '@mui/system';
 
 export type RootSvgProps<P = unknown> = Omit<React.SVGProps<SVGSVGElement>, 'ref'> & {
   sx?: SxProps<Theme>;

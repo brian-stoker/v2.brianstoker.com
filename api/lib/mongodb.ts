@@ -1,5 +1,5 @@
-import { MongoClient } from "mongodb";
-import { Resource } from "sst";
+import {MongoClient} from "mongodb";
+import {Resource} from "sst";
 
 const uri = Resource.MONGODB_URI.value;
 if (!uri) throw new Error("MONGODB_URI is not defined");

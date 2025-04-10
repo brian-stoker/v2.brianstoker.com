@@ -1,5 +1,5 @@
 import * as React from 'react';
-import RootSvg, { RootSvgProps } from 'src/icons/RootSvg';
+import RootSvg, {RootSvgProps} from 'src/icons/RootSvg';
 
 export default function SvgHamburgerMenu(props: RootSvgProps) {
   return (

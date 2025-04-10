@@ -1,13 +1,13 @@
 import * as React from 'react';
 import {
+  alpha,
+  Experimental_CssVarsProvider as CssVarsProvider,
+  experimental_extendTheme as extendTheme,
   styled,
   Theme,
   ThemeOptions,
-  alpha,
-  experimental_extendTheme as extendTheme,
-  Experimental_CssVarsProvider as CssVarsProvider,
 } from '@mui/material/styles';
-import { capitalize } from '@mui/material/utils';
+import {capitalize} from '@mui/material/utils';
 import Alert from '@mui/material/Alert';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
@@ -33,8 +33,8 @@ import MailRounded from '@mui/icons-material/MailRounded';
 import VerifiedUserRounded from '@mui/icons-material/VerifiedUserRounded';
 import HelpCenterRounded from '@mui/icons-material/HelpCenterRounded';
 import ROUTES from 'src/route';
-import { Link } from '@stoked-ui/docs/Link';
-import { getDesignTokens, getThemedComponents } from '@stoked-ui/docs/branding';
+import {Link} from '@stoked-ui/docs/Link';
+import {getDesignTokens, getThemedComponents} from '@stoked-ui/docs/branding';
 
 const Grid = styled('div')(({ theme }) => [
   {

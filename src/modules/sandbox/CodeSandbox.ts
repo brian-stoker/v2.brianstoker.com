@@ -4,7 +4,7 @@ import addHiddenInput from 'src/modules/utils/addHiddenInput';
 import SandboxDependencies from 'src/modules/sandbox/Dependencies';
 import * as CRA from 'src/modules/sandbox/CreateReactApp';
 import getFileExtension from 'src/modules/sandbox/FileExtension';
-import { DemoData } from 'src/modules/sandbox/types';
+import {DemoData} from 'src/modules/sandbox/types';
 
 function compress(object: any) {
   return LZString.compressToBase64(JSON.stringify(object))
@@ -83,8 +83,8 @@ function createReactApp(demoData: DemoData) {
     devDependencies,
     /**
      * @param {string} initialFile
-     * @description should start with `/`, for example `/Demo.tsx`. If the extension is not provided,
-     * it will be appended based on the code variant.
+     * @description should start with `/`, for example `/Demo.tsx`. If the extension is not
+     *   provided, it will be appended based on the code variant.
      */
     openSandbox: (initialFile: string = `/src/Demo.${ext}`) =>
       openSandbox({ files, codeVariant: demoData.codeVariant, initialFile }),

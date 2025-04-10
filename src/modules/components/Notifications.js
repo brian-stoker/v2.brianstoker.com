@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { styled } from '@mui/material/styles';
+import {styled} from '@mui/material/styles';
 import NotificationsNoneRoundedIcon from '@mui/icons-material/NotificationsNoneRounded';
 import Tooltip from '@mui/material/Tooltip';
 import CircularProgress from '@mui/material/CircularProgress';
@@ -9,12 +9,12 @@ import Typography from '@mui/material/Typography';
 import Popper from '@mui/material/Popper';
 import Grow from '@mui/material/Grow';
 import MuiPaper from '@mui/material/Paper';
-import { ClickAwayListener } from '@mui/base/ClickAwayListener';
+import {ClickAwayListener} from '@mui/base/ClickAwayListener';
 import MuiList from '@mui/material/List';
 import MuiListItem from '@mui/material/ListItem';
 import MuiDivider from '@mui/material/Divider';
-import { getCookie } from 'src/modules/utils/helpers';
-import { useUserLanguage, useTranslate } from '@stoked-ui/docs/i18n';
+import {getCookie} from 'src/modules/utils/helpers';
+import {useTranslate, useUserLanguage} from '@stoked-ui/docs/i18n';
 
 async function fetchNotifications() {
   if (process.env.NODE_ENV === 'development') {

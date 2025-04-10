@@ -211,8 +211,8 @@ if (require.main === module) {
     .filter((link) => UNSUPPORTED_PATHS.every((unsupportedPath) => !link.includes(unsupportedPath)))
     .sort()
     .forEach((linkKey) => {
-      write(`- https://mui.com${linkKey}`);
-      console.log(`https://mui.com${linkKey}`);
+      write(`- https://brianstoker.com${linkKey}`);
+      console.log(`https://brianstoker.com${linkKey}`);
       console.log(`used in`);
       usedLinks[linkKey].forEach((f) => console.log(`- ${path.relative(docsSpaceRoot, f)}`));
       console.log('available anchors on the same page:');

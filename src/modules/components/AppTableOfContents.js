@@ -2,12 +2,12 @@
 import * as React from 'react';
 import PropTypes from 'prop-types';
 import throttle from 'lodash/throttle';
-import { styled, alpha } from '@mui/material/styles';
+import {alpha, styled} from '@mui/material/styles';
 import Typography from '@mui/material/Typography';
 import NoSsr from '@mui/material/NoSsr';
-import { Link } from '@stoked-ui/docs/Link';
-import { useTranslate } from '@stoked-ui/docs/i18n';
-import { samePageLinkNavigation } from 'src/modules/components/MarkdownLinks';
+import {Link} from '@stoked-ui/docs/Link';
+import {useTranslate} from '@stoked-ui/docs/i18n';
+import {samePageLinkNavigation} from 'src/modules/components/MarkdownLinks';
 import TableOfContentsBanner from 'src/components/banner/TableOfContentsBanner';
 import featureToggle from 'src/featureToggle';
 import DiamondSponsors from 'src/modules/components/DiamondSponsors';

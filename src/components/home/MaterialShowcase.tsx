@@ -1,12 +1,12 @@
 import * as React from 'react';
-import { alpha, ThemeProvider, createTheme, useTheme } from '@mui/material/styles';
+import {alpha, createTheme, ThemeProvider, useTheme} from '@mui/material/styles';
 import Box from '@mui/material/Box';
-import Button, { buttonClasses } from '@mui/material/Button';
+import Button, {buttonClasses} from '@mui/material/Button';
 import HighlightedCode from 'src/modules/components/HighlightedCode';
 import MarkdownElement from 'src/components/markdown/MarkdownElement';
-import MaterialDesignDemo, { componentCode } from 'src/components/home/MaterialDesignDemo';
+import MaterialDesignDemo, {componentCode} from 'src/components/home/MaterialDesignDemo';
 import ShowcaseContainer from 'src/components/home/ShowcaseContainer';
-import PointerContainer, { Data } from 'src/components/home/ElementPointer';
+import PointerContainer, {Data} from 'src/components/home/ElementPointer';
 import StylingInfo from 'src/components/action/StylingInfo';
 import FlashCode from 'src/components/animation/FlashCode';
 

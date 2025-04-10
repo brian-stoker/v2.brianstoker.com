@@ -1,8 +1,8 @@
 import * as React from 'react';
 import PropTypes from 'prop-types';
-import { useRouter } from 'next/router';
+import {useRouter} from 'next/router';
 import GlobalStyles from '@mui/material/GlobalStyles';
-import { styled, alpha } from '@mui/material/styles';
+import {alpha, styled} from '@mui/material/styles';
 import NProgress from 'nprogress';
 import CssBaseline from '@mui/material/CssBaseline';
 import AppBar from '@mui/material/AppBar';
@@ -14,17 +14,14 @@ import Box from '@mui/material/Box';
 import SettingsIcon from '@mui/icons-material/SettingsOutlined';
 import GitHubIcon from '@mui/icons-material/GitHub';
 import NProgressBar from '@stoked-ui/docs/NProgressBar';
-import { debounce } from '@mui/material/utils';
-import NextLink from 'next/link';
-import SvgHamburgerMenu from 'src/icons/SvgHamburgerMenu';
+import {debounce} from '@mui/material/utils';
 import AppNavDrawer from 'src/modules/components/AppNavDrawer';
 import AppSettingsDrawer from 'src/modules/components/AppSettingsDrawer';
 import Notifications from 'src/modules/components/Notifications';
 import MarkdownLinks from 'src/modules/components/MarkdownLinks';
 import SkipLink from 'src/modules/components/SkipLink';
 import PageContext from 'src/modules/components/PageContext';
-import { useTranslate } from '@stoked-ui/docs/i18n';
-import SvgBsLogomark from 'src/icons/SvgBsLogomark';
+import {useTranslate} from '@stoked-ui/docs/i18n';
 import AppFrameBanner from 'src/components/banner/AppFrameBanner';
 
 const nProgressStart = debounce(() => {

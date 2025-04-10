@@ -22,10 +22,8 @@ import IconImage from "./components/icon/IconImage";
 import ROUTES from './route';
 import Highlighter from "./components/action/Highlighter";
 import Section from "./layouts/Section";
-import SectionHeadline from "./components/typography/SectionHeadline";
 import GradientText from "./components/typography/GradientText";
 import CustomerShowcase, { PrefetchStoreTemplateImages } from "./components/home/CustomerShowcase";
-import { PrefetchDesignKitImages } from "./components/home/DesignKits";
 import MaterialShowcase from "./components/home/MaterialShowcase";
 import CoreShowcase from "./components/home/CoreShowcase";
 import BlogShowcase from "./components/home/BlogShowcase";
@@ -1013,12 +1011,11 @@ const resumeData: TProduct = {
 const resume = new Product(resumeData);
 
 const PRODUCTS: Products = new Products([art, photography, drums, resume, work, plan]);
-const ALL_PRODUCTS: Products = new Products([sui, stokedConsulting]);
 
 type MenuProps = {
   linkType: LinkType,
   sx?: SxProps<Theme>,
 };
 
-export { PRODUCTS, ALL_PRODUCTS }
+export { PRODUCTS }
 

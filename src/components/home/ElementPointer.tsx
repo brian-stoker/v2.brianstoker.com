@@ -1,7 +1,7 @@
 import * as React from 'react';
-import Box, { BoxProps } from '@mui/material/Box';
+import Box, {BoxProps} from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
-import { debounce } from '@mui/material/utils';
+import {debounce} from '@mui/material/utils';
 
 const PointerContext = React.createContext<undefined | ((data: Data) => void)>(undefined);
 

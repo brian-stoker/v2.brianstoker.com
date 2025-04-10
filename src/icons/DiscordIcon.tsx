@@ -1,5 +1,5 @@
 import * as React from 'react';
-import SvgIcon, { SvgIconProps } from '@mui/material/SvgIcon';
+import SvgIcon, {SvgIconProps} from '@mui/material/SvgIcon';
 
 export default function SvgDiscord(props: SvgIconProps) {
   return (

@@ -5,8 +5,8 @@ import {alpha, emphasize, styled, useTheme} from '@mui/material/styles';
 import Collapse from '@mui/material/Collapse';
 import Box from '@mui/material/Box';
 import Chip from '@mui/material/Chip';
-import { samePageLinkNavigation } from 'src/modules/components/MarkdownLinks';
-import { Link } from '@stoked-ui/docs/Link';
+import {samePageLinkNavigation} from 'src/modules/components/MarkdownLinks';
+import {Link} from '@stoked-ui/docs/Link';
 import standardNavIcons from './AppNavIcons';
 
 const Item = styled(

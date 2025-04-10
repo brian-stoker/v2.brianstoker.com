@@ -1,4 +1,4 @@
-import { SNSClient, PublishCommand } from "@aws-sdk/client-sns";
+import {PublishCommand, SNSClient} from "@aws-sdk/client-sns";
 
 const snsClient = new SNSClient({ region: "us-east-1" }); // ✅ Change to your AWS region
 

@@ -1,5 +1,5 @@
-import { pickProperties } from "../utils/types";
-import { DomainInfo } from "./domains";
+import {pickProperties} from "../utils/types";
+import {DomainInfo} from "./domains";
 
 export const createApi = (domainInfo: DomainInfo) => {
   const envVarKeys = [

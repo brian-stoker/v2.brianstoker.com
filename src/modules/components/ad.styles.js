@@ -1,5 +1,4 @@
-import { alpha } from '@mui/material/styles';
-import { adShape } from 'src/modules/components/AdManager';
+import {alpha} from '@mui/material/styles';
 
 const adBodyImageStyles = (theme) => ({
   root: {

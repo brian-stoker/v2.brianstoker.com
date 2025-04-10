@@ -1,10 +1,10 @@
 import * as React from 'react';
 import PropTypes from 'prop-types';
 import prism from '@stoked-ui/docs-markdown/prism';
-import { NoSsr } from '@mui/base/NoSsr';
+import {NoSsr} from '@mui/base/NoSsr';
 import MarkdownElement from 'src/modules/components/MarkdownElement';
 import CodeCopyButton from 'src/modules/components/CodeCopyButton';
-import { useCodeCopy } from 'src/modules/utils/CodeCopy';
+import {useCodeCopy} from 'src/modules/utils/CodeCopy';
 
 const HighlightedCode = React.forwardRef(function HighlightedCode(props, ref) {
   const {

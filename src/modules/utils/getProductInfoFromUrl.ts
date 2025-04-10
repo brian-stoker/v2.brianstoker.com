@@ -1,4 +1,4 @@
-import { pathnameToLanguage } from 'src/modules/utils/helpers';
+import {pathnameToLanguage} from 'src/modules/utils/helpers';
 
 export type MuiProductId =
   | 'null'

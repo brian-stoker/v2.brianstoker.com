@@ -1,6 +1,6 @@
 // Script to populate GitHub activity data with years of history
 import fetch from 'node-fetch';
-import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3';
+import {PutObjectCommand, S3Client} from '@aws-sdk/client-s3';
 import dotenv from 'dotenv';
 
 // Load environment variables
@@ -31,7 +31,7 @@ const formatDateForGraphQL = (date) => {
 // Helper function to fetch contribution data for a specific year
 const fetchYearContributionData = async (startDate, endDate, githubToken, githubUser) => {
   console.log(`Fetching data from ${startDate.toISOString()} to ${endDate.toISOString()}`);
-  
+
   const query = `
     query($username: String!, $fromDate: DateTime!, $toDate: DateTime!) {
       user(login: $username) {
@@ -49,7 +49,7 @@ const fetchYearContributionData = async (startDate, endDate, githubToken, github
       }
     }
   `;
-  
+
   const response = await fetch('https://api.github.com/graphql', {
     method: 'POST',
     headers: {
@@ -58,30 +58,30 @@ const fetchYearContributionData = async (startDate, endDate, githubToken, github
     },
     body: JSON.stringify({
       query,
-      variables: { 
+      variables: {
         username: githubUser,
         fromDate: formatDateForGraphQL(startDate),
         toDate: formatDateForGraphQL(endDate)
       },
     }),
   });
-  
+
   if (!response.ok) {
     throw new Error(`GitHub API error: ${response.status}`);
   }
-  
+
   const result = await response.json();
-  
+
   if (result.errors) {
     throw new Error(`GraphQL errors: ${JSON.stringify(result.errors)}`);
   }
-  
+
   const contributionData = result.data.user.contributionsCollection.contributionCalendar;
   console.log(`Total contributions for this period: ${contributionData.totalContributions}`);
-  
+
   // Process the contribution data
   const activityData = [];
-  
+
   contributionData.weeks.forEach(week => {
     week.contributionDays.forEach(day => {
       if (day.contributionCount > 0) {
@@ -93,7 +93,7 @@ const fetchYearContributionData = async (startDate, endDate, githubToken, github
       }
     });
   });
-  
+
   return activityData;
 };
 
@@ -107,31 +107,31 @@ const fetchContributionData = async () => {
   }
 
   console.log(`Fetching contribution data for user: ${githubUser}`);
-  
+
   // Calculate date ranges for the past 5 years
   const endDate = new Date();
   let allActivityData = [];
-  
+
   // Fetch data year by year
   for (let i = 0; i < 5; i++) {
     const yearEndDate = new Date(endDate);
     yearEndDate.setFullYear(endDate.getFullYear() - i);
-    
+
     const yearStartDate = new Date(yearEndDate);
     yearStartDate.setFullYear(yearEndDate.getFullYear() - 1);
-    
+
     // Add a small delay between requests to avoid rate limiting
     if (i > 0) {
       await new Promise(resolve => setTimeout(resolve, 1000));
     }
-    
+
     const yearData = await fetchYearContributionData(yearStartDate, yearEndDate, githubToken, githubUser);
     allActivityData = [...allActivityData, ...yearData];
   }
-  
+
   // Sort the data by date
   allActivityData.sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
-  
+
   console.log(`Processed ${allActivityData.length} total days of activity data`);
   return allActivityData;
 };
@@ -145,7 +145,7 @@ const writeToS3 = async (data) => {
       Body: JSON.stringify(data),
       ContentType: 'application/json',
     });
-    
+
     await s3Client.send(command);
     console.log('Successfully wrote data to S3');
   } catch (error) {
@@ -158,19 +158,19 @@ const writeToS3 = async (data) => {
 const populateGitHubActivityHistory = async () => {
   try {
     console.log('Starting GitHub activity history population...');
-    
+
     // Fetch contribution data
     const activityData = await fetchContributionData();
-    
+
     // Create response with current timestamp
     const response = {
       data: activityData,
       lastUpdated: new Date().toISOString()
     };
-    
+
     // Write to S3
     await writeToS3(response);
-    
+
     console.log(`Successfully populated GitHub activity data with ${activityData.length} days of activity`);
   } catch (error) {
     console.error('Error populating GitHub activity history:', error);
@@ -178,4 +178,4 @@ const populateGitHubActivityHistory = async () => {
 };
 
 // Run the script
-populateGitHubActivityHistory(); 
+populateGitHubActivityHistory();

@@ -1,9 +1,9 @@
 import * as React from 'react';
 import PropTypes from 'prop-types';
-import { useRouter } from 'next/router';
-import { debounce } from '@mui/material/utils';
-import { alpha, styled } from '@mui/material/styles';
-import { unstable_useId as useId } from '@mui/utils';
+import {useRouter} from 'next/router';
+import {debounce} from '@mui/material/utils';
+import {alpha, styled} from '@mui/material/styles';
+import {unstable_useId as useId} from '@mui/utils';
 import IconButton from '@mui/material/IconButton';
 import Box from '@mui/material/Box';
 import Collapse from '@mui/material/Collapse';
@@ -13,14 +13,13 @@ import DemoSandbox from 'src/modules/components/DemoSandbox';
 import ReactRunner from 'src/modules/components/ReactRunner';
 import DemoEditor from 'src/modules/components/DemoEditor';
 import DemoEditorError from 'src/modules/components/DemoEditorError';
-import { AdCarbonInline } from 'src/modules/components/AdCarbon';
-import { pathnameToLanguage } from 'src/modules/utils/helpers';
-import { useCodeVariant } from 'src/modules/utils/codeVariant';
-import { useCodeStyling } from 'src/modules/utils/codeStylingSolution';
-import { CODE_VARIANTS, CODE_STYLING } from 'src/modules/constants';
-import { useUserLanguage, useTranslate } from '@stoked-ui/docs/i18n';
+import {pathnameToLanguage} from 'src/modules/utils/helpers';
+import {useCodeVariant} from 'src/modules/utils/codeVariant';
+import {useCodeStyling} from 'src/modules/utils/codeStylingSolution';
+import {CODE_STYLING, CODE_VARIANTS} from 'src/modules/constants';
+import {useTranslate, useUserLanguage} from '@stoked-ui/docs/i18n';
 import stylingSolutionMapping from 'src/modules/utils/stylingSolutionMapping';
-import { BrandingProvider, blue, blueDark, grey } from '@stoked-ui/docs/branding';
+import {BrandingProvider} from '@stoked-ui/docs/branding';
 import DemoToolbarRoot from 'src/modules/components/DemoToolbarRoot';
 
 /**

@@ -1,5 +1,5 @@
-import { CODE_VARIANTS } from 'src/modules/constants';
-import type { MuiProductId } from 'src/modules/utils/getProductInfoFromUrl';
+import {CODE_VARIANTS} from 'src/modules/constants';
+import type {MuiProductId} from 'src/modules/utils/getProductInfoFromUrl';
 
 const packagesWithBundledTypes = ['date-fns', '@emotion/react', '@emotion/styled', 'dayjs'];
 

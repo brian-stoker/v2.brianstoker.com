@@ -4,9 +4,6 @@ const nextConfig = {
   images: {
     unoptimized: true,
   },
-  ental: {
-    turbo: false, // Disable for OpenNext compatibility
-  },
   eslint: {
     ignoreDuringBuilds: true,
   },

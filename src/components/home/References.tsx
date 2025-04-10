@@ -4,10 +4,7 @@ import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Section from 'src/layouts/Section';
 import {
-  CORE_CUSTOMERS,
-  ADVANCED_CUSTOMERS,
-  DESIGNKITS_CUSTOMERS,
-  TEMPLATES_CUSTOMERS,
+  ADVANCED_CUSTOMERS, CORE_CUSTOMERS, DESIGNKITS_CUSTOMERS, TEMPLATES_CUSTOMERS,
 } from 'src/components/home/CompaniesGrid';
 
 export { CORE_CUSTOMERS,  DESIGNKITS_CUSTOMERS, TEMPLATES_CUSTOMERS };

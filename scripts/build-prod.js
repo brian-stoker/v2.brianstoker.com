@@ -2,29 +2,29 @@
 
 /**
  * This script ensures production builds have the correct environment setup.
- * It sets the NODE_ENV to production and runs the OpenNext build command with 
+ * It sets the NODE_ENV to production and runs the OpenNext build command with
  * the appropriate environment variables.
  *
  * @module build-script
  */
 
-import { spawnSync } from 'child_process';
+import {spawnSync} from 'child_process';
 import path from 'path';
-import { fileURLToPath } from 'url';
+import {fileURLToPath} from 'url';
 
 // Get directory name in ES modules
 const __filename = fileURLToPath(import.meta.url);
 /**
  * The directory name of the current module.
- * 
+ *
  * @constant {string}
  */
 const __dirname = path.dirname(__filename);
 
 /**
- * Sets the NODE_ENV environment variable to 'production' to ensure that 
+ * Sets the NODE_ENV environment variable to 'production' to ensure that
  * the application is built with production settings.
- * 
+ *
  * @function setProductionEnv
  * @returns {void}
  */
@@ -34,7 +34,7 @@ function setProductionEnv() {
 
 /**
  * Logs the current NODE_ENV setting to the console.
- * 
+ *
  * @function logEnv
  * @returns {void}
  */
@@ -45,7 +45,7 @@ function logEnv() {
 
 /**
  * Runs the OpenNext build process with the production settings.
- * 
+ *
  * @function runBuild
  * @returns {void}
  */

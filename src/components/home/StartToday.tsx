@@ -1,9 +1,6 @@
 import * as React from 'react';
 import Box from '@mui/material/Box';
-import Typography from '@mui/material/Typography';
-import GradientText from 'src/components/typography/GradientText';
 import GetStartedButtons from 'src/components/home/GetStartedButtons';
-import SectionHeadline from 'src/components/typography/SectionHeadline';
 
 export default function StartToday() {
   return (
@@ -14,7 +11,7 @@ export default function StartToday() {
         alignItems: { xs: 'auto', sm: 'center' },
       }}
     >
-      <SectionHeadline
+      {/* <SectionHeadline
         alwaysCenter
         overline="Start now"
         title={
@@ -23,7 +20,7 @@ export default function StartToday() {
           </Typography>
         }
         description="Find out why SUI's tools are trusted by thousands of open-source developers and teams around the world."
-      />
+      /> */}
       <GetStartedButtons primaryLabel="Discover the Core libraries" primaryUrl="/core/" />
     </Box>
   );

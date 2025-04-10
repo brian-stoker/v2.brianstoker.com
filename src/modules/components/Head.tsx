@@ -1,11 +1,10 @@
 import * as React from 'react';
 import NextHead from 'next/head';
-import { useRouter } from 'next/router';
-import { LANGUAGES_SSR } from 'config';
-import { useUserLanguage, useTranslate } from '@stoked-ui/docs/i18n';
-import { pathnameToLanguage } from 'src/modules/utils/helpers';
+import {useRouter} from 'next/router';
+import {LANGUAGES_SSR} from 'config';
+import {useTranslate, useUserLanguage} from '@stoked-ui/docs/i18n';
+import {pathnameToLanguage} from 'src/modules/utils/helpers';
 import localFont from 'next/font/local'
-
 
 // #major-version-switch
 const HOST = process.env.PULL_REQUEST_ID
@@ -69,14 +68,6 @@ export default function Head(props: HeadProps) {
     {/* #major-version-switch */}
     <meta name="docsearch:version" content="master"/>
     <style>{logoCss}</style>
-    <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&display=swap"
-          rel="stylesheet"/>
-    {disableAlternateLocale ? null : LANGUAGES_SSR.map((userLanguage2) => (<link
-      key={userLanguage2}
-      rel="alternate"
-      href={`https://mui.com${userLanguage2 === 'en' ? '' : `/${userLanguage2}`}${canonicalAs}`}
-      hrefLang={userLanguage2}
-    />))}
     {children}
   </NextHead>);
 }

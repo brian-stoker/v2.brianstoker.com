@@ -1,11 +1,10 @@
 import * as React from 'react';
 import dynamic from 'next/dynamic';
-import { useTheme } from '@mui/material/styles';
-import Box, { BoxProps } from '@mui/material/Box';
+import {useTheme} from '@mui/material/styles';
+import Box, {BoxProps} from '@mui/material/Box';
 import useMediaQuery from '@mui/material/useMediaQuery';
-import { PRODUCTS } from "../../products";
+import {PRODUCTS} from "../../products";
 import {BlogPost} from "../../../lib/sourcing";
-
 
 function createLoading(sx: BoxProps['sx']) {
   return function Loading() {

@@ -1,16 +1,13 @@
 import * as React from 'react';
 import PropTypes from 'prop-types';
-import { useRouter } from 'next/router';
-import { useTheme } from '@mui/system';
-import { exactProp } from '@mui/utils';
+import {useRouter} from 'next/router';
+import {useTheme} from '@mui/system';
+import {exactProp} from '@mui/utils';
 //import { CssVarsProvider as JoyCssVarsProvider, useColorScheme } from '@mui/joy/styles';
 import RichMarkdownElement from 'src/modules/components/RichMarkdownElement';
-import { pathnameToLanguage } from 'src/modules/utils/helpers';
+import {pathnameToLanguage} from 'src/modules/utils/helpers';
 import AppLayoutDocs from 'src/modules/components/AppLayoutDocs';
-import { useUserLanguage } from '@stoked-ui/docs/i18n';
-import { BrandingProvider } from '@stoked-ui/docs/branding';
-import Ad from 'src/modules/components/Ad';
-import AdGuest from 'src/modules/components/AdGuest';
+import {useUserLanguage} from '@stoked-ui/docs/i18n';
 
 export default function MarkdownDocs(props) {
   const theme = useTheme();

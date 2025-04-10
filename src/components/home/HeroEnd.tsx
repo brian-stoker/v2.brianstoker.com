@@ -1,8 +1,8 @@
 import * as React from 'react';
 import dynamic from 'next/dynamic';
-import { useInView } from 'react-intersection-observer';
+import {useInView} from 'react-intersection-observer';
 import Box from '@mui/material/Box';
-import { alpha } from '@mui/material/styles';
+import {alpha} from '@mui/material/styles';
 import Section from 'src/layouts/Section';
 
 function Placeholder() {

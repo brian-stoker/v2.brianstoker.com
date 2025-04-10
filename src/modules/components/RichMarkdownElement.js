@@ -1,6 +1,6 @@
 import * as React from 'react';
 import PropTypes from 'prop-types';
-import { useTranslate, useUserLanguage } from '@stoked-ui/docs/i18n';
+import {useTranslate, useUserLanguage} from '@stoked-ui/docs/i18n';
 import MarkdownElement from 'src/modules/components/MarkdownElement';
 import HighlightedCodeWithTabs from 'src/modules/components/HighlightedCodeWithTabs';
 import Demo from 'src/modules/components/Demo';
