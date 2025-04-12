@@ -51,7 +51,11 @@ export default function SubscriptionPage() {
       </ListItem>
     );
   }
-  const [alert, setAlert] = React.useState<React.JSX.Element | null>(null);
+  // Store status code and message in state, not React elements
+  const [alertStatus, setAlertStatus] = React.useState<{
+    severity: 'error' | 'success';
+    message: string;
+  } | null>(null);
 
   const router = useRouter();
   const query = useSearchParams();
@@ -60,9 +64,6 @@ export default function SubscriptionPage() {
   const email = query.get('email') || '';
 
   React.useEffect(() => {
-
-
-
     // 402: 'DB_NAME not available'
     // 401: 'Invalid token or Email'
     // 404: 'Email not found'
@@ -71,107 +72,49 @@ export default function SubscriptionPage() {
     // 401: 'Invalid token'
     // 500: 'Error'
 
-    const getCodeStatus = (statusCode: string) => {
+    const getStatusInfo = (statusCode: string) => {
       switch (statusCode) {
         case '402':
-          return (<Alert
-              severity="error"
-              sx={{
-                fontWeight: 'medium',
-                bgcolor: 'error.50',
-                border: '1px solid',
-                borderColor: 'error.200',
-                color: 'error.900',
-                display: 'flex',
-                width: '100%'
-              }}
-            >
-              System error occurred staff has been notified.
-            </Alert>);
+          return {
+            severity: 'error' as const,
+            message: 'System error occurred staff has been notified.'
+          };
         case '401':
-          return (<Alert
-              severity="error"
-              sx={{
-                fontWeight: 'medium',
-                bgcolor: 'error.50',
-                border: '1px solid',
-                borderColor: 'error.200',
-                color: 'error.900',
-                display: 'flex',
-                width: '100%'
-              }}
-            >
-              Invalid token or Email
-            </Alert>);
+          return {
+            severity: 'error' as const,
+            message: 'Invalid token or Email'
+          };
         case '404':
-          return (<Alert
-              severity="error"
-              sx={{
-                fontWeight: 'medium',
-                bgcolor: 'error.50',
-                border: '1px solid',
-                borderColor: 'error.200',
-                color: 'error.900',
-                display: 'flex',
-                width: '100%'
-              }}
-            >
-              Email not found: {email}
-            </Alert>);
+          return {
+            severity: 'error' as const,
+            message: `Email not found: ${email}`
+          };
         case '201':
-          return (<Alert
-              severity="success"
-              sx={{
-                fontWeight: 'medium',
-                bgcolor: 'success.50',
-                border: '1px solid',
-                borderColor: 'success.200',
-                color: 'success.900',
-                display: 'flex',
-                width: '100%'
-              }}
-            >
-              Email already verified: {email}
-            </Alert>);
+          return {
+            severity: 'success' as const,
+            message: `Email already verified: ${email}`
+          };
         case '200':
-          return (<Alert
-              severity="success"
-              sx={{
-                fontWeight: 'medium',
-                bgcolor: 'success.50',
-                border: '1px solid',
-                borderColor: 'success.200',
-                color: 'success.900',
-                display: 'flex',
-                width: '100%'
-              }}
-            >
-              Email verified: {email}
-            </Alert>);
+          return {
+            severity: 'success' as const,
+            message: `Email verified: ${email}`
+          };
         case '500':
         default:
-          return (<Alert
-              severity="error"
-              sx={{
-                fontWeight: 'medium',
-                bgcolor: 'error.50',
-                border: '1px solid',
-                borderColor: 'error.200',
-                color: 'error.900',
-                display: 'flex',
-                width: '100%'
-              }}
-            >
-            System error occurred staff has been notified.
-          </Alert>);
+          return {
+            severity: 'error' as const,
+            message: 'System error occurred staff has been notified.'
+          };
       }
     }
+    
     if (!code) {
       router.push('/404');
       return;
     }
-    setAlert(getCodeStatus(code));
-  }, [router]);
+    
+    setAlertStatus(getStatusInfo(code));
+  }, [code, email, router]);
 
   const handleSubscribe = async () => {
     // ... existing code logic ...
@@ -196,7 +139,22 @@ export default function SubscriptionPage() {
               gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))',
             }}
           >
-            {alert}
+            {alertStatus && (
+              <Alert
+                severity={alertStatus.severity}
+                sx={{
+                  fontWeight: 'medium',
+                  bgcolor: `${alertStatus.severity}.50`,
+                  border: '1px solid',
+                  borderColor: `${alertStatus.severity}.200`,
+                  color: `${alertStatus.severity}.900`,
+                  display: 'flex',
+                  width: '100%'
+                }}
+              >
+                {alertStatus.message}
+              </Alert>
+            )}
           </Box>
         </Section>
       </main>

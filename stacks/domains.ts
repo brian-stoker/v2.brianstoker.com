@@ -15,6 +15,7 @@ export const getDomainInfo = (rootDomains: string, stage: string): DomainInfo =>
   parts.pop();
   parts.push(stage);
   const dbName = parts.join('-');
+  const subDomain = process.env.SUB_DOMAIN ? `${process.env.SUB_DOMAIN}.${domains[0]}` : domains[0];
   const apiDomain = `api.${domains[0]}`;
   const chatDomain = `chat.${domains[0]}`;
   const resourceName = `${domains[0].replace(/\./g, '')}NextjsSite`;

@@ -63,6 +63,7 @@ type TProduct = {
   preview?: any;
   showcaseType: React.ComponentType<{ showcaseContent?: any }>;
   showcaseContent?: any;
+  cursor?: string;
 }
 
 type LinkType = 'product' | 'doc';
@@ -105,7 +106,9 @@ class Product {
     });
     return routes;
   }
-
+  get cursor(): string {
+    return this.data.cursor ?? 'default';
+  }
   get showcaseType(): React.ComponentType<{showcaseContent?: any}> {
     return this.data.showcaseType;
   }
@@ -282,11 +285,11 @@ class Product {
         maxHeight: direction === 'row' ? 75 : 88,
       }]}
     >
-      {this.item(this.link(linkType), direction, index, )}
+      {this.item(this.link(linkType), direction, index, productIndex)}
     </Highlighter>);
   }
 
-  item(linkType: LinkType, direction: 'row' | 'column', index?: number, height?: number) {
+  item(linkType: LinkType, direction: 'row' | 'column', index: number, selected: number) {
     return (
       <Box
         component="div"
@@ -299,7 +302,7 @@ class Product {
          
         }}
       >
-        <span>{index !== undefined ? this.key(index) : this.icon}</span>
+        <span>{index !== undefined ? this.key(index, selected) : this.icon}</span>
         <span>
           <Typography
             component="span"
@@ -348,8 +351,8 @@ class Product {
     return <IconImage name={this.data.icon } />;
   }
 
-  key(index: number) {
-    return <KeyIcon indexKey={index} />;
+  key(index: number, selected: number) {
+    return <KeyIcon indexKey={index} selected={selected} />;
   }
 
   get docHref() {
@@ -609,9 +612,15 @@ function ProductsPreviews({ products, mostRecentPosts }: { products: Products, m
           md={6}
         >
           {inView ? (
-            <React.Fragment>
+            <Box 
+              component={Link}
+              href={products.live[productIndex].url('product')}
+              sx={{
+                cursor: `${products.live[productIndex].cursor}!important`,
+              }}
+            >
               <Showcase {...showcaseProps}/>
-            </React.Fragment>
+            </Box>
           ) : (
             <Box sx={{ height: { xs: 0, md: 803 } }} />
           )}
@@ -915,7 +924,8 @@ const artData: TProduct = {
   },
   showcaseType: ImageShowcase,
   showcaseContent: '/static/art/wild-eyes.jpg',
-  live: true
+  live: true,
+  cursor: 'pointer'
 }
 
 const art = new Product(artData);
@@ -932,7 +942,8 @@ const photographyData: TProduct = {
   },
   showcaseType: ImageShowcase,
   showcaseContent: '/static/photography/bed-selfie.jpg',
-  live: true
+  live: true,
+  cursor: 'grab'
 }
 
 const photography = new Product(photographyData);
@@ -954,7 +965,8 @@ const drumsData: TProduct = {
     poster: '/static/photography/tell-me-mister.png',
     title: 'Tell Me Mister'
   },
-  live: true
+  live: true,
+  cursor: 'help'
 }
 
 const drums = new Product(drumsData);
@@ -962,17 +974,18 @@ const drums = new Product(drumsData);
 
 const workData: TProduct = {
   id: 'work',
-  name: "work",
+  name: "Work",
   fullName: "Work",
   description: "This is where I work. Say hi to the codez.",
   icon: "1",
-  url: ROUTES.plan,
+  url: ROUTES.work,
   preview: {
     text: 'recalcitrant robot\n' + '@brianstoker\n' + '·\n' + 'Feb 15, 2021\n' + '#atx #snowboarding #merica @ Auditorium Shores https://www.instagram.com/p/CLVQg7ql34O4prJIa6hpXGg-RaupDXP0THly3A0/'
   },
   showcaseType: GithubEventsShowcase,
-  showcaseContent: { eventsPerPage: 10, hideMetadata: true },
-  live: true
+  showcaseContent: { eventsPerPage: 8, hideMetadata: true },
+  live: true,
+  cursor: 'wait'
 }
 
 const work = new Product(workData);
@@ -989,7 +1002,8 @@ const planData: TProduct = {
   },
   showcaseType: BlogShowcase,
   showcaseContent: {},
-  live: true
+  live: true,
+  cursor: 'crosshair'
 }
 
 const plan = new Product(planData);
@@ -1005,12 +1019,13 @@ const resumeData: TProduct = {
     image: 'https://cenv-public.s3.amazonaws.com/resume-preview.png'
   },
   showcaseType: PdfShowcase,
-  live: true
+  live: true,
+  cursor: 'zoom-in'
 }
 
 const resume = new Product(resumeData);
 
-const PRODUCTS: Products = new Products([art, photography, drums, resume, work, plan]);
+const PRODUCTS: Products = new Products([work, art, photography, drums, resume, plan]);
 
 type MenuProps = {
   linkType: LinkType,

@@ -21,6 +21,8 @@ import 'react-multi-carousel/lib/styles.css';
 import '../styles/globals.css';
 import '../public/static/components-gallery/base-theme.css';
 import config from '../config';
+// Import MUI icons resolver to ensure they are included in the bundle
+import 'src/utils/import-mui-icons';
 
 // Client-side cache, shared for the whole session of the user in the browser.
 const clientSideEmotionCache = createEmotionCache();

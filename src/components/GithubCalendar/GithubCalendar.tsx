@@ -15,11 +15,18 @@ interface ActivityData {
    countLabel?: string,
    blockSize?: number,
    totalWeeks?: number
+   fx?: 'punch' | 'highlight'
 }
 
 const defaultActivityData = { total: {}, contributions: [], countLabel: 'Loading...' };  
-
-export default function GithubCalendar({ windowMode = false, containerMode = false, blockSize: inputBlockSize = 12 }: { windowMode?: boolean, containerMode?: boolean, blockSize?: number }) {
+function sleep(duration) {
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      resolve();
+    }, duration);
+  });
+}
+export default function GithubCalendar({ windowMode = false, containerMode = false, blockSize: inputBlockSize = 12, fx = undefined }: { windowMode?: boolean, containerMode?: boolean, blockSize?: number, fx?: 'punch' | 'highlight' }) {
   const [activityTheme, setActivityTheme] = React.useState<'light' | 'dark'>('light');
   const [activityData, setActivityData] = React.useState<ActivityData>(defaultActivityData);
   const [activityLoading, setActivityLoading] = React.useState<boolean>(true);
@@ -28,7 +35,7 @@ export default function GithubCalendar({ windowMode = false, containerMode = fal
   const [activityClass, setActivityClass] = React.useState<string>('activity');
   const [labelsTimer, setLabelsTimer] = React.useState<NodeJS.Timeout | null>(null);
   const theme = useTheme();
-  const elementRef = React.useRef(null);
+  const elementRef = React.useRef<HTMLDivElement>(null);
   const [windowWidth, _] = useResizeWindow();
   const elemSize= useResize(elementRef);
 
@@ -113,8 +120,153 @@ export default function GithubCalendar({ windowMode = false, containerMode = fal
   
   // Initial load
   React.useEffect(() => {
-    fetchActivityData();
+
+    async function setup() {
+      await fetchActivityData();
+      await sleep(800);
+      setupRectAnimations();
+      window.addEventListener('resize', handleResize);
+    }
+
+    if (!fx) {
+      fetchActivityData().catch(() => console.error('Error fetching activity data'));
+    } else {
+      setup().catch(() => console.error('Error fetching activity data'));
+    }
+
+    return () => {
+      if (fx) {
+        window.removeEventListener('resize', handleResize);
+        
+        // Clean up any active timeouts
+        const svg = elementRef.current?.querySelector('svg');
+        if (svg) {
+          const rects = svg.querySelectorAll('rect');
+          rects.forEach(rect => {
+            if (rect.dataset.timeoutId) {
+              clearTimeout(parseInt(rect.dataset.timeoutId));
+            }
+          });
+        }
+      }
+    }
   },[]);
+
+  const handleResize = () => {
+    // Clear all animations first
+    const svg = elementRef.current?.querySelector('svg');
+    if (svg) {
+      const rects = svg.querySelectorAll('rect');
+      rects.forEach(rect => {
+        rect.classList.remove('rect-animated');
+        if (rect.dataset.timeoutId) {
+          clearTimeout(parseInt(rect.dataset.timeoutId));
+          delete rect.dataset.timeoutId;
+        }
+      });
+    }
+    
+    // Recalculate positions
+    setupRectAnimations();
+  };
+  
+
+  function setupRectAnimations() {
+    // Get the SVG container
+    const svg = elementRef.current?.querySelector('svg');
+    if (!svg) return;
+    
+    // Calculate center of the SVG
+    const svgRect = svg.getBoundingClientRect();
+    const centerX = svgRect.width / 2;
+    const centerY = svgRect.height / 2;
+    
+    // Get all rect elements
+    const rects = svg.querySelectorAll('rect');
+    
+    rects.forEach(rect => {
+      if (fx === 'punch') {
+      // Calculate the translate value
+        const rectRect = rect.getBoundingClientRect();
+        const rectCenterY = rectRect.top + rectRect.height / 2 - svgRect.top;
+        const rectCenterX = rectRect.left + rectRect.width / 2 - svgRect.left;
+        
+        // Calculate distance from center
+        const distanceFromCenterX = (svgRect.width / 2) / (rectCenterX - centerX);
+        const distanceFromCenterY = (svgRect.height / 2) / (rectCenterY - centerY);
+        const translateFactorX = 6;
+        const translateFactorY = 0.02;
+
+        const randomX = Math.random() * 10 - 5;
+        const randomY = Math.random() * 10 - 5;
+        const translateX = distanceFromCenterX * translateFactorX + randomX;
+        const translateY = distanceFromCenterY * translateFactorY + randomY;
+        // Set the custom property
+        rect.style.setProperty('--translate-x', `${translateX}px`);
+        rect.style.setProperty('--translate-y', `${translateY - 200}px`);
+        console.log('translateY', translateY);
+        // Remove existing event listeners (if possible)
+        const oldRect = rect.cloneNode(true);
+        rect.parentNode?.replaceChild(oldRect, rect);
+        
+        // Add mouseenter event
+        oldRect.addEventListener('mouseenter', () => {
+          // Clear any existing timeout
+          if (oldRect?.dataset.timeoutId) {
+            clearTimeout(parseInt(oldRect?.dataset.timeoutId));
+          }
+          oldRect.style.position = 'relative';
+          // Add the animated class
+          oldRect?.classList.add('rect-animated');
+          
+          // Set a timeout to return after random delay
+          const minDelay = 100;
+          const randomDelay = Math.random() * 1000 + minDelay;
+          
+          const timeoutId = setTimeout(() => {
+            oldRect?.classList.remove('rect-animated');
+            delete oldRect?.dataset.timeoutId;
+          }, randomDelay);
+          
+          // Store the timeout ID
+          if (oldRect?.dataset) {
+            oldRect.dataset.timeoutId = timeoutId.toString();
+          }
+        });
+      } else {
+        const oldRect = rect.cloneNode(true);
+        rect.parentNode?.replaceChild(oldRect, rect);
+         // Add mouseenter event
+        oldRect.addEventListener('mouseenter', () => {
+          console.log('mouseenter');
+          // Clear any existing timeout
+          if (rect?.dataset.timeoutId) {
+            clearTimeout(parseInt(rect?.dataset.timeoutId));
+          }
+           oldRect.style.position = 'relative';
+          // Add the animated class
+          oldRect?.classList.add('rect-highlight');
+          // Add the animated class
+          //oldRect?.classList.add('rect-animated');
+          
+          // Set a timeout to return after random delay
+          const minDelay = 100;
+          const randomDelay = Math.random() * 1000 + minDelay;
+          
+          const timeoutId = setTimeout(() => {
+            oldRect?.classList.remove('rect-highlight');
+            delete oldRect?.dataset.timeoutId;
+          }, randomDelay);
+          
+          // Store the timeout ID
+          if (rect?.dataset) {
+            rect.dataset.timeoutId = timeoutId.toString();
+          }
+        });
+      }
+    });
+  }
+
 
   React.useEffect(() => {
     setActivityTheme(theme.palette.mode === 'dark' ? 'dark' : 'light');
@@ -128,7 +280,7 @@ export default function GithubCalendar({ windowMode = false, containerMode = fal
           setActivityHover(false);
           setActivityLabels(false);
         }}
-        className={activityClass}
+        className={`${activityClass} ${activityLoading ? 'loading' : ''}`}
         sx={{
           '& .activity > *': {
             transition: '1s ease-in-out',
@@ -145,7 +297,7 @@ export default function GithubCalendar({ windowMode = false, containerMode = fal
           loading={activityLoading}
           blockMargin={0.5}
           blockRadius={0}
-          blockSize={activityData.blockSize || 25}
+          blockSize={activityData.blockSize || 12}
           style={{
             backgroundColor: theme.palette.background.paper,
           }}

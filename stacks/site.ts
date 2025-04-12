@@ -23,7 +23,7 @@ export const createSite = (domainInfo: DomainInfo) => {
   }
   const nextJsSite = new sst.aws.Nextjs(domainInfo.resourceName, {
     path: ".",
-    buildCommand: "pnpm build:static",
+    buildCommand: "pnpx @opennextjs/aws@latest build",
     domain: !$dev
       ? {
           name: domainInfo.domains[0],

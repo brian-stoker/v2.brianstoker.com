@@ -250,7 +250,11 @@ function NewStartScreen() {
         <div key={category.name} className="DocSearch-NewStartScreenCategory">
           <div className="DocSearch-NewStartScreenTitle">{category.name}</div>
           {items.map(({ name, icon, href }) => (
-            <NextLink key={name} href={href} className="DocSearch-NewStartScreenItem">
+            <NextLink
+              key={name}
+              href={href}
+              className="DocSearch-NewStartScreenItem"
+              legacyBehavior>
               {icon}
               {name}
             </NextLink>

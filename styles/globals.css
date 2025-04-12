@@ -6,6 +6,7 @@
 .activity {
   margin-top: -24px;
   padding-top: 0px;
+  opacity: 1;
   transition: all 0.4s ease-out;
 }
 
@@ -13,6 +14,11 @@
   margin-top: 0;
   padding-top: 18px;
   transition: all 0.3s ease-in;
+}
+
+.activity.loading {
+  opacity: 0;
+  transition: all 0.4s ease-out;
 }
 
 .activity svg {
@@ -43,7 +49,28 @@
   transition: all 0.3s ease-in;
 }
 
+.react-activity-calendar__calendar rect {
+  transition: transform 0.6s ease-out , all 3s ease-in;
+  transform-origin: 6px 6px;
+  transform: scale(1) translate(0px, 0px);
+  position: relative;
+  border: 'unset';
+  z-index: 0;
+}
 
+.react-activity-calendar__calendar rect.rect-animated {
+  transform: scale(15) translateX(var(--translate-x, 0px)) translateY(var(--translate-y, 0px));
+  z-index: 1000;
+
+}
+
+.react-activity-calendar__calendar rect.rect-hightlight {
+  stroke: 1px solid white;
+
+}
+.react-activity-calendar__scroll-container {
+  overflow: visible!important;
+}
 
 .react-activity-calendar__footer {
   opacity: 0;

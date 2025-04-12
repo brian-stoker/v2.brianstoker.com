@@ -5,8 +5,8 @@ import React from "react";
 
 export default function GithubEventsShowcase({ showcaseContent }: { showcaseContent?: any }): React.JSX.Element | null{
   console.log('showcaseContent', showcaseContent);
-  return <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, width: '450px' }}>
-      <GithubCalendar blockSize={10} />
+  return <Box sx={{ display: 'flex', flexDirection: 'column', width: '450px', overflow: 'hidden' }}>
+      <GithubCalendar blockSize={10} fx='highlight'/>
       <GithubEvents {...showcaseContent} />
     </Box>
 }

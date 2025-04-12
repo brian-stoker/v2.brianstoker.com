@@ -27,7 +27,7 @@ import CreateEvent from './CreateEvent';
 import IssuesEvent from './IssuesEvent';
 import IssueCommentEvent from './IssueCommentEvent';
 import { EventDetails, GitHubEvent, CachedData } from '../../types/github';
-
+import { oklab } from 'culori';
 // Extend the EventDetails interface for internal component use
 interface DisplayEventDetails extends EventDetails {
   dateOnly: string;
@@ -41,12 +41,15 @@ const ReactJson = dynamic(() => import('react-json-view'), {
 
 const MetadataDisplay = styled(Box)(({ theme }) => {
   return {
-    backgroundColor: theme.palette.background.paper,
+    backgroundColor: 'rgba(255, 255, 255, 0.06)',
     borderRadius: theme.shape.borderRadius,
     boxShadow: theme.shadows[2],
     padding: theme.spacing(2),
     marginTop: theme.spacing(1),
-    position: 'relative'
+    position: 'sticky',
+    maxWidth: '702px',
+    minWidth: '300px',
+    top: '84px'
   };
 });
 
@@ -69,6 +72,31 @@ export default function GithubEvents({ eventsPerPage = 40, hideMetadata = false 
   const [selectedEvent, selectEvent] = React.useState<DisplayEventDetails>({ id: '' } as DisplayEventDetails);
   const theme = useTheme();
   
+  const scrollRef = React.useRef<HTMLDivElement>(null);
+  const [showAttached, setShowAttached] = React.useState(false);
+  const [scrollTop, setScrollTop] =React. useState(0);
+
+  React.useEffect(() => {
+    const el = scrollRef.current;
+    if (!el) return;
+
+    const onScroll = () => {
+      setScrollTop(el.scrollTop);
+      setShowAttached(true);
+      console.log(el.scrollTop);
+
+      // Hide after 1s of inactivity
+      clearTimeout((onScroll as any).hideTimeout);
+      (onScroll as any).hideTimeout = setTimeout(() => {
+        setShowAttached(false);
+      }, 1000);
+    };
+
+    el.addEventListener('scroll', onScroll);
+    return () => el.removeEventListener('scroll', onScroll);
+  }, []);
+
+
   // Load cached data on mount
   React.useEffect(() => {
     const cached = localStorage.getItem('github_events');
@@ -408,15 +436,16 @@ export default function GithubEvents({ eventsPerPage = 40, hideMetadata = false 
   
   let latestDateDisplayed: string | null = null;
   return (
+    <React.Fragment>
     <Box
       sx={{
         position: 'relative',
         display: 'grid',
-        gridTemplateColumns: 'calc((100% - 1152px) / 2) 1fr',
+        gridTemplateColumns: '450px ',
         width: '100%',
-        maxWidth: '100%',
+        maxWidth: '450px',
         overflowX: 'hidden',
-        gap: 2
+        gap: 2,
       }}
     >
       <Box></Box>
@@ -427,9 +456,15 @@ export default function GithubEvents({ eventsPerPage = 40, hideMetadata = false 
         display: 'flex', 
         flexDirection: 'row',
         position: 'relative',
-        height: '100%'
       }}>
-        <Box sx={{ width: '450px', flexShrink: 0 }} className="master-container">
+        <Box 
+          sx={{ 
+            width: '450px', 
+            flexShrink: 0,
+            display: 'block',
+            position: 'relative'
+          }} 
+          className="master-container">
           <Box sx={{ mb: 1, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
             <Box sx={{ display: 'flex', gap: .5, flexDirection: 'column' }}>
               <Typography variant="subtitle1" fontWeight="semiBold">Work</Typography>
@@ -583,7 +618,11 @@ export default function GithubEvents({ eventsPerPage = 40, hideMetadata = false 
 
                     return (
                       <React.Fragment key={index}>
-                      {showDateRow && <TableRow style={{ backgroundColor: theme.palette.action.disabled }}>
+                      {showDateRow && <TableRow style={{ 
+                        backgroundColor: theme.palette.mode === 'light' ?
+                         'color-mix(in oklab, rgba(0, 97, 194, 0.5) 25%, rgba(235, 235, 235, 0.5))' : 
+                         'color-mix(in oklab, rgba(102, 179, 255, 0.5) 25%, rgba(31, 31, 31, 0.5))'
+                        }}>
                         <TableCell colSpan={4} >
                           <Typography variant="subtitle2" fontWeight="semiBold">{event.dateOnly}</Typography>
                           </TableCell>
@@ -678,53 +717,54 @@ export default function GithubEvents({ eventsPerPage = 40, hideMetadata = false 
             </Table>
           </TableContainer>
         </Box>
-        {!hideMetadata && selectedEvent.id && (
-          <Box sx={{ 
-            position: 'relative', 
-            marginRight: 3, 
-            width: '702px', 
-            flexShrink: 0,
-            height: 'fit-content'
-          }}>
-            <Box sx={{ height: 54, left: 0, width: '100%' }} />
-            <MetadataDisplay>
-              {selectedEvent.actionType === 'PullRequestEvent' ? (
-                <PullRequestEvent event={selectedEvent} />
-              ) : selectedEvent.actionType === 'PushEvent' ? (
-                <PushEvent event={selectedEvent} />
-              ) : selectedEvent.actionType === 'DeleteEvent' ? (
-                <DeleteEvent event={selectedEvent} />
-              ) : selectedEvent.actionType === 'CreateEvent' ? (
-                <CreateEvent event={selectedEvent} />
-              ) : selectedEvent.actionType === 'IssuesEvent' ? (
-                <IssuesEvent event={selectedEvent} />
-              ) : selectedEvent.actionType === 'IssueCommentEvent' ? (
-                <IssueCommentEvent event={selectedEvent} />
-              ) : (
-                <ReactJson
-                  src={selectedEvent}
-                  name={false}
-                  theme="monokai"
-                  displayDataTypes={false}
-                  enableClipboard={false}
-                  displayObjectSize={false}
-                  collapsed={1}
-                  collapseStringsAfterLength={50}
-                  style={{
-                    backgroundColor: 'transparent',
-                    fontSize: '0.875rem',
-                    fontFamily: 'monospace',
-                    padding: '8px',
-                    borderRadius: '4px',
-                    overflow: 'auto',
-                    maxHeight: 'calc(100vh - 200px)'
-                  }}
-                />
-              )}
-            </MetadataDisplay>
-          </Box>
-        )}
+        
       </Box>
+      
     </Box>
+    {!hideMetadata && selectedEvent.id && (
+      <Box
+      sx={{
+        display: 'flex',
+        flexDirection: 'column',
+      }}>
+        <Box sx={{height: '100px'}}/>
+        <MetadataDisplay>
+            {selectedEvent.actionType === 'PullRequestEvent' ? (
+              <PullRequestEvent event={selectedEvent} />
+            ) : selectedEvent.actionType === 'PushEvent' ? (
+              <PushEvent event={selectedEvent} />
+            ) : selectedEvent.actionType === 'DeleteEvent' ? (
+              <DeleteEvent event={selectedEvent} />
+            ) : selectedEvent.actionType === 'CreateEvent' ? (
+              <CreateEvent event={selectedEvent} />
+            ) : selectedEvent.actionType === 'IssuesEvent' ? (
+              <IssuesEvent event={selectedEvent} />
+            ) : selectedEvent.actionType === 'IssueCommentEvent' ? (
+              <IssueCommentEvent event={selectedEvent} />
+            ) : (
+              <ReactJson
+                src={selectedEvent}
+                name={false}
+                theme="monokai"
+                displayDataTypes={false}
+                enableClipboard={false}
+                displayObjectSize={false}
+                collapsed={1}
+                collapseStringsAfterLength={50}
+                style={{
+                  backgroundColor: 'transparent',
+                  fontSize: '0.875rem',
+                  fontFamily: 'monospace',
+                  padding: '8px',
+                  borderRadius: '4px',
+                  overflow: 'auto',
+                  maxHeight: 'calc(100vh - 200px)'
+                }}
+              />
+            )}
+          </MetadataDisplay>
+        </Box>
+      )}
+    </React.Fragment>
   );
 }

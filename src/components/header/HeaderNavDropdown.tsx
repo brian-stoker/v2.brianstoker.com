@@ -182,6 +182,11 @@ export default function HeaderNavDropdown() {
               })}
             >
               <li>
+                <Anchor href={ROUTES.work} as={Link} noLinkStyle>
+                  Work
+                </Anchor>
+              </li>
+              <li>
                 <Anchor href={ROUTES.art} as={Link} noLinkStyle>
                   Art
                 </Anchor>
@@ -201,11 +206,7 @@ export default function HeaderNavDropdown() {
                   Resume
                 </Anchor>
               </li>
-              <li>
-                <Anchor href={ROUTES.work} as={Link} noLinkStyle>
-                  Work
-                </Anchor>
-              </li>
+              
               <li>
                 <Anchor href={ROUTES.plan} as={Link} noLinkStyle>
                   .plan

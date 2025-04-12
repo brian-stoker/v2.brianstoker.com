@@ -1,17 +1,10 @@
 import * as React from 'react';
-import { jsxDEV } from 'react/jsx-dev-runtime';
 import Document, { Html, Head, Main, NextScript } from 'next/document';
-import { ServerStyleSheets as JSSServerStyleSheets } from '@mui/styles';
-import { ServerStyleSheet } from 'styled-components';
-import GlobalStyles from '@mui/material/GlobalStyles';
 import { getInitColorSchemeScript as getMuiInitColorSchemeScript } from '@mui/material/styles';
 import { getMetaThemeColor } from '@stoked-ui/docs/branding';
-import createEmotionCache from '../src/createEmotionCache';
 
-const prefixer =
-  process.env.NODE_ENV === 'production'
-    ? require('postcss')([require('autoprefixer')])
-    : null;
+// Removed autoprefixer dependency
+const prefixer = null;
 const cleanCSS =
   process.env.NODE_ENV === 'production' ? new (require('clean-css'))() : null;
 
