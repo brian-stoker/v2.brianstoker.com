@@ -95,6 +95,22 @@ export default function GithubCalendar({ windowMode = false, containerMode = fal
       }
       
       const data: ActivityData = await response.json();
+      function compare( a, b ) {
+        if ( a.date < b.date ){
+          return -1;
+        }
+        if ( a.date > b.date ){
+          return 1;
+        }
+        return 0;
+      }
+      const today = new Date();
+      const year = today.getFullYear();
+      const month = String(today.getMonth() + 1).padStart(2, '0'); // Month is 0-indexed
+      const day = String(today.getDate()).padStart(2, '0');
+      const formattedDate = `${year}-${month}-${day}`;
+      const contribs = data.contributions.filter(contrib => contrib.date < formattedDate);
+      data.contributions = contribs.sort(compare);
       const all = (Object.values(data.total) as number[]).reduce((acc, curr) => acc + curr, 0);
       const totalKeys = Object.keys(data.total);
       data.countLabel = `${all} contributions from ${totalKeys[0]} to ${totalKeys[totalKeys.length - 1]}`;
@@ -134,6 +150,23 @@ export default function GithubCalendar({ windowMode = false, containerMode = fal
       setup().catch(() => console.error('Error fetching activity data'));
     }
 
+    const hackedContainer = document.querySelector('.react-activity-calendar__scroll-container');
+    if (hackedContainer) {
+      const hacked = document.createElement('img');
+      hacked.src = '/static/images/hbngha.png';
+      hacked.alt = 'hbngha';
+      hacked.style.position = 'absolute';
+      hacked.style.top = '0';
+      hacked.style.left = '0';
+      hacked.style.marginTop = '15px';
+      hacked.style.width = `${(activityData.blockSize || 12 * 7)}px`;
+      hacked.style.height = `${(activityData.blockSize || 12 * 7)}px`;
+      const div = document.createElement('div');
+      div.style.position = 'relative';
+      div.appendChild(hacked);
+      hackedContainer.insertBefore(div, hackedContainer.firstChild);
+
+    }
     return () => {
       if (fx) {
         window.removeEventListener('resize', handleResize);

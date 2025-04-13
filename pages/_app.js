@@ -16,7 +16,7 @@ import findActivePage from 'src/modules/utils/findActivePage';
 import {pathnameToLanguage} from 'src/modules/utils/helpers';
 import getProductInfoFromUrl from 'src/modules/utils/getProductInfoFromUrl';
 import {DocsProvider, mapTranslations} from '@stoked-ui/docs';
-import fileExplorerPages from '../data/pages';
+import blogPages from '../data/pages';
 import 'react-multi-carousel/lib/styles.css';
 import '../styles/globals.css';
 import '../public/static/components-gallery/base-theme.css';
@@ -187,7 +187,7 @@ function AppWrapper(props) {
 
 
   const pageContextValue = React.useMemo(() => {
-    const pages = fileExplorerPages;
+    const pages = blogPages;
     const { activePage, activePageParents } = findActivePage(pages, path);
 
     return {
