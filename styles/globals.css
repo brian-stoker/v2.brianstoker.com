@@ -65,11 +65,10 @@
 }
 
 .react-activity-calendar__calendar rect.rect-hightlight {
-  stroke: 1px solid white;
-
-}
-.react-activity-calendar__scroll-container {
-  overflow: visible!important;
+  stroke: 4px solid white;
+  fill: white;
+  opacity: 0;
+  transition: all .2s ease-out;
 }
 
 .react-activity-calendar__footer {
@@ -84,4 +83,14 @@
   opacity: 1;
   margin-bottom: 2rem;
   transition: all 0.3s ease-in;
+}
+
+/* Add hover effect for MDX post links */
+.post-link:hover {
+  text-decoration: underline;
+}
+
+/* Add hover effect for MDX links */
+.mdx-link:hover {
+  text-decoration: underline;
 }

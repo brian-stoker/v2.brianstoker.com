@@ -60,10 +60,12 @@ function MainView({ mostRecentPosts = []}: { mostRecentPosts?: BlogPost[] }) {
 }
 
 
-export const getStaticProps = () => {
-  const data = getAllBlogPosts();
+export const getStaticProps = async () => {
+  const {allBlogPosts} = await getAllBlogPosts();
   return {
-    props: data,
+    props: {
+      mostRecentPosts: allBlogPosts.slice(0, 5),
+    },
   };
 };
 

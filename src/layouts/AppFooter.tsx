@@ -144,7 +144,12 @@ export default function AppFooter(props: AppFooterProps) {
         <Typography color="text.tertiary" variant="caption" fontWeight={400}>
           Copyright © {new Date().getFullYear()} BRIAN STOKER
         </Typography>
-        <Stack spacing={1} direction="row" flexWrap="wrap" useFlexGap>
+        <Stack spacing={1} direction="row" flexWrap="wrap" useFlexGap sx={{
+          '& svg': {
+            width: '20px',
+            height: '20px'
+          }
+        }}>
           <IconButton
             target="_blank"
             rel="noopener"

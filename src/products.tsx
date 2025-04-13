@@ -136,11 +136,11 @@ class Product {
         sx={(theme) => ({
           p: 2, pr: 3,
           '&:hover': {
-            backgroundColor: 'grey.50',
+            backgroundColor: 'red',
           },
           ...theme.applyDarkStyles({
             '&:hover': {
-              backgroundColor: alpha(theme.palette.primaryDark[700], 0.4),
+              backgroundColor: alpha('pink', 0.4),
             },
           }),
         })}
@@ -617,6 +617,7 @@ function ProductsPreviews({ products, mostRecentPosts }: { products: Products, m
               href={products.live[productIndex].url('product')}
               sx={{
                 cursor: `${products.live[productIndex].cursor}!important`,
+                 display: 'flex'
               }}
             >
               <Showcase {...showcaseProps}/>
@@ -983,7 +984,7 @@ const workData: TProduct = {
     text: 'recalcitrant robot\n' + '@brianstoker\n' + '·\n' + 'Feb 15, 2021\n' + '#atx #snowboarding #merica @ Auditorium Shores https://www.instagram.com/p/CLVQg7ql34O4prJIa6hpXGg-RaupDXP0THly3A0/'
   },
   showcaseType: GithubEventsShowcase,
-  showcaseContent: { eventsPerPage: 8, hideMetadata: true },
+  showcaseContent: { eventsPerPage: 10, hideMetadata: true },
   live: true,
   cursor: 'wait'
 }

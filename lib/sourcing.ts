@@ -1,17 +1,25 @@
-import fs from 'fs';
 import path from 'path';
 import {getHeaders} from '@stoked-ui/docs-markdown';
+import matter from 'gray-matter';
+import { serialize } from 'next-mdx-remote/serialize';
+import { MDXRemoteSerializeResult } from 'next-mdx-remote';
 
-const blogDir = path.join(process.cwd(), 'pages/.plan');
+// Only import fs on the server side
+let fs: any;
+if (typeof window === 'undefined') {
+  fs = require('fs');
+}
 
+const blogDir = path.join(process.cwd(), 'data/.plan');
 
-const getBlogFilePaths = (ext = '.md') => {
-  return fs.readdirSync(blogDir).filter((file) => file.endsWith(ext));
+const getBlogFilePaths = (ext = '.mdx') => {
+  return fs.readdirSync(blogDir).filter((file) => {
+    return file.endsWith(ext)
+  });
 };
 
-export interface BlogPost {
-  slug: string;
-  title: string;
+export interface BlogPostMeta {
+   title: string;
   description: string;
   image?: string;
   tags: Array<string>;
@@ -19,15 +27,28 @@ export interface BlogPost {
   date?: string;
   sui?: boolean;
 }
+export interface BlogPost extends BlogPostMeta {
+  slug: string;
+  source?: MDXRemoteSerializeResult;
+}
 
-function getBlogPost(filePath: string): BlogPost {
-  const slug = filePath.replace(/\.md$/, '');
-  const content = fs.readFileSync(path.join(blogDir, filePath), 'utf-8');
+async function getBlogPost(filePath: string): Promise<BlogPost> {
+  
+  const slug = filePath.replace(/\.mdx$/, '');
+  const raw = fs.readFileSync(path.join(blogDir, filePath), 'utf-8');
+  const { content, data: frontMatter } = matter(raw);
+  // Use next-mdx-remote to serialize the content
+  const source = await serialize(content, {
+    mdxOptions: {
+      remarkPlugins: [],
+      rehypePlugins: [],
+    },
+    scope: frontMatter,
+  });
 
-  const headers = getHeaders(content) as unknown as BlogPost;
-
-  return {
-    ...headers,
+return {
+    source,
+    ...frontMatter as BlogPostMeta,
     slug,
   };
 }
@@ -63,12 +84,15 @@ const SUI_TAGS = [
 ];
 
 const ALL_TAGS = SUI_TAGS.concat(ALLOWED_TAGS);
-export const getAllBlogPosts = () => {
+export const getAllBlogPosts = async () => {
+  // Ensure this only runs on the server
+  if (typeof window !== 'undefined') {
+    throw new Error('getAllBlogPosts can only be called on the server side');
+  }
+  
   const filePaths = getBlogFilePaths();
-  const rawBlogPosts = filePaths
-    .map((name) => getBlogPost(name))
-    // sort allBlogPosts by date in descending order
-    .sort((post1, post2) => {
+  const blogPosts = await Promise.all(filePaths.map(async (name) => await getBlogPost(name)));
+  const rawBlogPosts = blogPosts.sort((post1, post2) => {
       if (post1.date && post2.date) {
         return new Date(post1.date) > new Date(post2.date) ? -1 : 1;
       }
@@ -77,6 +101,7 @@ export const getAllBlogPosts = () => {
       }
       return -1;
     });
+
   const allBlogPosts = rawBlogPosts.filter((post) => !!post.title);
   const tagInfo: Record<string, number | undefined> = {};
   allBlogPosts.forEach((post) => {

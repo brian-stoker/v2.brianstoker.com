@@ -45,9 +45,9 @@ const MetadataDisplay = styled(Box)(({ theme }) => {
     borderRadius: theme.shape.borderRadius,
     boxShadow: theme.shadows[2],
     padding: theme.spacing(2),
-    marginTop: theme.spacing(1),
     position: 'sticky',
-    maxWidth: '702px',
+    width: '672px',
+    maxWidth: '692px',
     minWidth: '300px',
     top: '84px'
   };
@@ -425,7 +425,7 @@ export default function GithubEvents({ eventsPerPage = 40, hideMetadata = false 
   // Initial load
   React.useEffect(() => {
     if (cachedEvents.length === 0) {
-      fetchGitHubEvents(1);
+      fetchGitHubEvents(1);   
     }
   }, [cachedEvents.length]);
 
@@ -436,64 +436,43 @@ export default function GithubEvents({ eventsPerPage = 40, hideMetadata = false 
   
   let latestDateDisplayed: string | null = null;
   return (
-    <React.Fragment>
-    <Box
-      sx={{
-        position: 'relative',
-        display: 'grid',
-        gridTemplateColumns: '450px ',
-        width: '100%',
-        maxWidth: '450px',
-        overflowX: 'hidden',
-        gap: 2,
-      }}
-    >
-      <Box></Box>
-      <Box sx={{ 
-        width: '100%', 
-        margin: '0 auto', 
-        gap: 2, 
-        display: 'flex', 
-        flexDirection: 'row',
-        position: 'relative',
-      }}>
+    <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
+      <Box sx={{ mb: 1, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Box sx={{ display: 'flex', gap: .5, flexDirection: 'column' }}>
+          <Typography variant="subtitle1" fontWeight="semiBold">Work</Typography>
+          {lastUpdated && (
+            <Typography variant="caption" color="text.secondary">
+              Last updated: {lastUpdated}
+            </Typography>
+          )}
+        </Box>
+        {totalCount > eventsPerPage && (
+          <Pagination 
+            count={totalPages}
+            page={page}
+            onChange={(_, value) => setPage(value)}
+            size="small"
+            sx={{
+              '& .MuiPaginationItem-root': {
+                color: theme.palette.text.secondary,
+                borderColor: theme.palette.divider,
+              }
+            }}
+          />
+        )}
+      </Box>
+      <Box sx={{ display: 'flex', flexDirection: 'row', gap: '20px' }}>
         <Box 
           sx={{ 
-            width: '450px', 
+            width: '440px', 
             flexShrink: 0,
             display: 'block',
             position: 'relative'
           }} 
           className="master-container">
-          <Box sx={{ mb: 1, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <Box sx={{ display: 'flex', gap: .5, flexDirection: 'column' }}>
-              <Typography variant="subtitle1" fontWeight="semiBold">Work</Typography>
-              {lastUpdated && (
-                <Typography variant="caption" color="text.secondary">
-                  Last updated: {lastUpdated}
-                </Typography>
-              )}
-            </Box>
-            {totalCount > eventsPerPage && (
-              <Pagination 
-                count={totalPages}
-                page={page}
-                onChange={(_, value) => setPage(value)}
-                size="small"
-                sx={{
-                  '& .MuiPaginationItem-root': {
-                    color: theme.palette.text.secondary,
-                    borderColor: theme.palette.divider,
-                  }
-                }}
-              />
-            )}
-          </Box>
-          
           {error && (
             <Typography color="error" sx={{ mb: 2 }}>{error}</Typography>
           )}
-          
           <TableContainer component={Paper} sx={{ mb: 4, borderRadius: 0, position: 'relative' }} className="overflow-visible">
             
             <Table size="small">
@@ -620,8 +599,8 @@ export default function GithubEvents({ eventsPerPage = 40, hideMetadata = false 
                       <React.Fragment key={index}>
                       {showDateRow && <TableRow style={{ 
                         backgroundColor: theme.palette.mode === 'light' ?
-                         'color-mix(in oklab, rgba(0, 97, 194, 0.5) 25%, rgba(235, 235, 235, 0.5))' : 
-                         'color-mix(in oklab, rgba(102, 179, 255, 0.5) 25%, rgba(31, 31, 31, 0.5))'
+                          'color-mix(in oklab, rgba(0, 97, 194, 0.5) 25%, rgba(235, 235, 235, 0.5))' : 
+                          'color-mix(in oklab, rgba(102, 179, 255, 0.5) 25%, rgba(31, 31, 31, 0.5))'
                         }}>
                         <TableCell colSpan={4} >
                           <Typography variant="subtitle2" fontWeight="semiBold">{event.dateOnly}</Typography>
@@ -717,31 +696,26 @@ export default function GithubEvents({ eventsPerPage = 40, hideMetadata = false 
             </Table>
           </TableContainer>
         </Box>
-        
-      </Box>
-      
-    </Box>
-    {!hideMetadata && selectedEvent.id && (
-      <Box
-      sx={{
-        display: 'flex',
-        flexDirection: 'column',
-      }}>
-        <Box sx={{height: '100px'}}/>
-        <MetadataDisplay>
-            {selectedEvent.actionType === 'PullRequestEvent' ? (
-              <PullRequestEvent event={selectedEvent} />
-            ) : selectedEvent.actionType === 'PushEvent' ? (
-              <PushEvent event={selectedEvent} />
-            ) : selectedEvent.actionType === 'DeleteEvent' ? (
-              <DeleteEvent event={selectedEvent} />
-            ) : selectedEvent.actionType === 'CreateEvent' ? (
-              <CreateEvent event={selectedEvent} />
-            ) : selectedEvent.actionType === 'IssuesEvent' ? (
-              <IssuesEvent event={selectedEvent} />
-            ) : selectedEvent.actionType === 'IssueCommentEvent' ? (
-              <IssueCommentEvent event={selectedEvent} />
-            ) : (
+        {!hideMetadata && selectedEvent.id && (
+          <Box
+            sx={{
+              display: 'flex',
+              flexDirection: 'column',
+            }}>
+            <MetadataDisplay>
+              {selectedEvent.actionType === 'PullRequestEvent' ? (
+                <PullRequestEvent event={selectedEvent} />
+              ) : selectedEvent.actionType === 'PushEvent' ? (
+                <PushEvent event={selectedEvent} />
+              ) : selectedEvent.actionType === 'DeleteEvent' ? (
+                <DeleteEvent event={selectedEvent} />
+              ) : selectedEvent.actionType === 'CreateEvent' ? (
+                <CreateEvent event={selectedEvent} />
+              ) : selectedEvent.actionType === 'IssuesEvent' ? (
+                <IssuesEvent event={selectedEvent} />
+              ) : selectedEvent.actionType === 'IssueCommentEvent' ? (
+                <IssueCommentEvent event={selectedEvent} />
+              ) : (
               <ReactJson
                 src={selectedEvent}
                 name={false}
@@ -760,11 +734,11 @@ export default function GithubEvents({ eventsPerPage = 40, hideMetadata = false 
                   overflow: 'auto',
                   maxHeight: 'calc(100vh - 200px)'
                 }}
-              />
-            )}
-          </MetadataDisplay>
-        </Box>
-      )}
-    </React.Fragment>
+              />)}
+            </MetadataDisplay>
+          </Box>
+        )}
+      </Box>
+    </Box>
   );
 }

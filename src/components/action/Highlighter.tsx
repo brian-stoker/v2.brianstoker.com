@@ -60,9 +60,11 @@ export default function Highlighter({
             color: 'primary.500',
           }),
           ...(!selected && {
+            transition: 'all .8s ease-out',
             '&:hover': {
               bgcolor: 'primary.50',
               borderColor: 'primary.100',
+              transition: 'all .2s ease-in',
               '@media (hover: none)': {
                 bgcolor: 'transparent',
               },

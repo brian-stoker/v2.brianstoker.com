@@ -22,7 +22,7 @@ const defaultActivityData = { total: {}, contributions: [], countLabel: 'Loading
 function sleep(duration) {
   return new Promise((resolve) => {
     setTimeout(() => {
-      resolve();
+      resolve(void 0);
     }, duration);
   });
 }
@@ -204,9 +204,8 @@ export default function GithubCalendar({ windowMode = false, containerMode = fal
         // Set the custom property
         rect.style.setProperty('--translate-x', `${translateX}px`);
         rect.style.setProperty('--translate-y', `${translateY - 200}px`);
-        console.log('translateY', translateY);
         // Remove existing event listeners (if possible)
-        const oldRect = rect.cloneNode(true);
+        const oldRect: any = rect.cloneNode(true);
         rect.parentNode?.replaceChild(oldRect, rect);
         
         // Add mouseenter event
@@ -234,18 +233,17 @@ export default function GithubCalendar({ windowMode = false, containerMode = fal
           }
         });
       } else {
-        const oldRect = rect.cloneNode(true);
+        const oldRect: any = rect.cloneNode(true);
         rect.parentNode?.replaceChild(oldRect, rect);
          // Add mouseenter event
-        oldRect.addEventListener('mouseenter', () => {
-          console.log('mouseenter');
+        rect.addEventListener('mouseenter', () => {
           // Clear any existing timeout
           if (rect?.dataset.timeoutId) {
             clearTimeout(parseInt(rect?.dataset.timeoutId));
           }
-           oldRect.style.position = 'relative';
+           rect.style.position = 'relative';
           // Add the animated class
-          oldRect?.classList.add('rect-highlight');
+          rect?.classList.add('rect-highlight');
           // Add the animated class
           //oldRect?.classList.add('rect-animated');
           
@@ -254,8 +252,8 @@ export default function GithubCalendar({ windowMode = false, containerMode = fal
           const randomDelay = Math.random() * 1000 + minDelay;
           
           const timeoutId = setTimeout(() => {
-            oldRect?.classList.remove('rect-highlight');
-            delete oldRect?.dataset.timeoutId;
+            rect?.classList.remove('rect-highlight');
+            delete rect?.dataset.timeoutId;
           }, randomDelay);
           
           // Store the timeout ID

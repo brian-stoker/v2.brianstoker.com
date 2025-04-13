@@ -126,7 +126,6 @@ export default function PullRequestEvent({ event }: PullRequestEventProps): Reac
 
   const handleCheckout = (hash?: string) => {
     // TODO: Implement checkout functionality
-    console.log('Checking out', hash || `PR #${pullRequest.number}`);
   };
 
   // PR Header component with context info

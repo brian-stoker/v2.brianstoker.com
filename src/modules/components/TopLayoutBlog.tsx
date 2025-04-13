@@ -1,5 +1,5 @@
 import * as React from 'react';
-import PropTypes from 'prop-types';
+
 import {alpha, styled} from '@mui/material/styles';
 import {useTheme} from '@mui/system';
 import {useRouter} from 'next/router';
@@ -15,122 +15,34 @@ import AppContainer from 'src/modules/components/AppContainer';
 import AppFooter from 'src/layouts/AppFooter';
 import HeroEnd from 'src/components/home/HeroEnd';
 import MarkdownElement from 'src/modules/components/MarkdownElement';
-import RichMarkdownElement from 'src/modules/components/RichMarkdownElement';
+//import MdxElement  from 'src/modules/components/RichMarkdownElement';
 import {pathnameToLanguage} from 'src/modules/utils/helpers';
 import ROUTES from 'src/route';
 import {Link} from '@stoked-ui/docs/Link';
+import {Theme} from '@mui/material/styles';
+import { MDXRemote } from 'next-mdx-remote';
+
+// Use RichMarkdownElement instead of MdxElement since it was commented out
+// and RichMarkdownElement was referenced in the original code
 
 const { BrandingCssVarsProvider } = StokedDocs;
-export const authors = {
-  brianstoker: {
-    name: 'Brian Stoker',
-    avatar: 'https://avatars.githubusercontent.com/u/91224556',
-    github: 'brian-stoker',
-  },
+
+interface Author {
+  name: string;
+  avatar: string;
+  github: string;
+}
+
+export const authors: Record<string, Author> = {
   oliviertassinari: {
     name: 'Olivier Tassinari',
     avatar: 'https://avatars.githubusercontent.com/u/3165635',
     github: 'oliviertassinari',
   },
-  mbrookes: {
-    name: 'Matt Brookes',
-    avatar: 'https://avatars.githubusercontent.com/u/357702',
-    github: 'mbrookes',
-  },
-  eps1lon: {
-    name: 'Sebastian Silbermann',
-    avatar: 'https://avatars.githubusercontent.com/u/12292047',
-    github: 'eps1lon',
-  },
-  mnajdova: {
-    name: 'Marija Najdova',
-    avatar: 'https://avatars.githubusercontent.com/u/4512430',
-    github: 'mnajdova',
-  },
-  michaldudak: {
-    name: 'Michał Dudak',
-    avatar: 'https://avatars.githubusercontent.com/u/4696105',
-    github: 'michaldudak',
-  },
-  siriwatknp: {
-    name: 'Siriwat Kunaporn',
-    avatar: 'https://avatars.githubusercontent.com/u/18292247',
-    github: 'siriwatknp',
-  },
-  'danilo-leal': {
-    name: 'Danilo Leal',
-    avatar: 'https://avatars.githubusercontent.com/u/67129314',
-    github: 'danilo-leal',
-  },
-  m4theushw: {
-    name: 'Matheus Wichman',
-    avatar: 'https://avatars.githubusercontent.com/u/42154031',
-    github: 'm4theushw',
-  },
-  flaviendelangle: {
-    name: 'Flavien Delangle',
-    avatar: 'https://avatars.githubusercontent.com/u/3309670',
-    github: 'flaviendelangle',
-  },
-  DanailH: {
-    name: 'Danail Hadjiatanasov',
-    avatar: 'https://avatars.githubusercontent.com/u/5858539',
-    github: 'DanailH',
-  },
-  alexfauquette: {
-    name: 'Alexandre Fauquette',
-    avatar: 'https://avatars.githubusercontent.com/u/45398769',
-    github: 'alexfauquette',
-  },
-  samuelsycamore: {
-    name: 'Sam Sycamore',
-    avatar: 'https://avatars.githubusercontent.com/u/71297412',
-    github: 'samuelsycamore',
-  },
-  josefreitas: {
-    name: 'José Freitas',
-    avatar: 'https://avatars.githubusercontent.com/u/550141',
-    github: 'joserodolfofreitas',
-  },
-  cherniavskii: {
-    name: 'Andrew Cherniavskyi',
-    avatar: 'https://avatars.githubusercontent.com/u/13808724',
-    github: 'cherniavskii',
-  },
-  mikailaread: {
-    name: 'Mikaila Read',
-    avatar: 'https://avatars.githubusercontent.com/u/76401606',
-    github: 'mikailaread',
-  },
-  prakhargupta: {
-    name: 'Prakhar Gupta',
-    avatar: 'https://avatars.githubusercontent.com/u/92228082',
-    github: 'prakhargupta1',
-  },
-  richbustos: {
-    name: 'Rich Bustos',
-    avatar: 'https://avatars.githubusercontent.com/u/92274722',
-    github: 'richbustos',
-  },
-  colmtuite: {
-    name: 'Colm Tuite',
-    avatar: 'https://avatars.githubusercontent.com/u/805073',
-    github: 'colmtuite',
-  },
-  diegoandai: {
-    name: 'Diego Andai',
-    avatar: 'https://avatars.githubusercontent.com/u/16889233',
-    github: 'DiegoAndai',
-  },
-  DavidCnoops: {
-    name: 'David Cnoops',
-    avatar: 'https://avatars.githubusercontent.com/u/28001064',
-    github: 'DavidCnoops',
-  },
-  brijeshb42: {
-    name: 'Brijesh Bittu',
-    avatar: 'https://avatars.githubusercontent.com/u/717550?',
-    github: 'brijeshb42',
+  brianstoker: {
+    name: 'Brian Stoker',
+    avatar: 'https://avatars.githubusercontent.com/u/91224556',
+    github: 'brian-stoker',
   },
 };
 
@@ -290,8 +202,36 @@ const Root = styled('div')(
     }),
 );
 
-export default function TopLayoutBlog(props) {
-  const theme = useTheme();
+interface DocsHeader {
+  title: string;
+  manualCard: string;
+  cardTitle?: string;
+  authors: string[];
+  tags: string[];
+  date: string;
+}
+
+interface LocalizedDoc {
+  description: string;
+  rendered: React.ReactNode[];
+  title?: string;
+  headers: DocsHeader;
+}
+
+interface Docs {
+  en: LocalizedDoc;
+}
+
+interface TopLayoutBlogProps {
+  className?: string;
+  demoComponents?: Record<string, React.ComponentType<any>>;
+  demos?: Record<string, any>;
+  docs: Docs;
+  srcComponents?: Record<string, React.ComponentType<any>>;
+}
+
+export default function TopLayoutBlog(props: TopLayoutBlogProps): React.ReactElement {
+  const theme = useTheme<Theme>();
   const { className, docs, demos, demoComponents, srcComponents } = props;
   const { description, rendered, title, headers } = docs.en;
   const finalTitle = title || headers.title;
@@ -409,9 +349,7 @@ export default function TopLayoutBlog(props) {
                   day: 'numeric',
                 }).format(new Date(headers.date))}
               </time>
-              <MarkdownElement>
                 <h1>{headers.title}</h1>
-              </MarkdownElement>
               <AuthorsContainer>
                 {headers.authors.map((author) => (
                   <div key={author} className="author">
@@ -443,22 +381,7 @@ export default function TopLayoutBlog(props) {
               </AuthorsContainer>
             </React.Fragment>
           ) : null}
-          {rendered.map((chunk, index) => {
-            return (
-              <RichMarkdownElement
-                key={index}
-                demos={demos}
-                demoComponents={demoComponents}
-                srcComponents={srcComponents}
-                renderedMarkdown={chunk}
-                disableAd
-                localizedDoc={docs.en}
-                renderedMarkdownOrDemo={chunk}
-                theme={theme}
-                WrapperComponent={React.Fragment}
-              />
-            );
-          })}
+          {...rendered}
         </AppContainer>
         <Divider />
         <HeroEnd />
@@ -467,16 +390,4 @@ export default function TopLayoutBlog(props) {
       </Root>
     </BrandingCssVarsProvider>
   );
-}
-
-TopLayoutBlog.propTypes = {
-  className: PropTypes.string,
-  demoComponents: PropTypes.object,
-  demos: PropTypes.object,
-  docs: PropTypes.object.isRequired,
-  srcComponents: PropTypes.object,
-};
-
-if (process.env.NODE_ENV !== 'production') {
-  TopLayoutBlog.propTypes = exactProp(TopLayoutBlog.propTypes);
-}
+} 

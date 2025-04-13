@@ -72,7 +72,6 @@ const VideoGallery = ({videos}: { videos: any[] }) => {
   }
 
   const handleThumbnailClick = (index: number) => {
-    console.log('index', index, carouselRef.current, carouselRef.current?.context);
 
     if (carouselRef.current) {
       const previousSlide = carouselRef.current.state.currentSlide;

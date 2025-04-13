@@ -9,12 +9,13 @@ export type KeyIconProps = {
   mode?: '' | 'light' | 'dark';
   sx?: SxProps<Theme>;
   width?: number;
+  selected: number;
 };
 
 
 
 export default function KeyIcon(props: KeyIconProps) {
-  const { height: heightProp, indexKey, width: widthProp, mode: modeProp, ...other } = props;
+  const { height: heightProp, indexKey, width: widthProp, mode: modeProp, selected, ...other } = props;
   const theme = useTheme();
   return (
     <Key
@@ -22,6 +23,7 @@ export default function KeyIcon(props: KeyIconProps) {
       height={74}
       width={74}
       indexKey={indexKey}
+      selected={selected}
       {...other}
     />
   );
