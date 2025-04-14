@@ -39,19 +39,7 @@ const ReactJson = dynamic(() => import('react-json-view'), {
   loading: () => <div>Loading JSON viewer...</div>
 });
 
-const MetadataDisplay = styled(Box)(({ theme }) => {
-  return {
-    backgroundColor: 'rgba(255, 255, 255, 0.06)',
-    borderRadius: theme.shape.borderRadius,
-    boxShadow: theme.shadows[2],
-    padding: theme.spacing(2),
-    position: 'sticky',
-    width: '672px',
-    maxWidth: '692px',
-    minWidth: '300px',
-    top: '84px'
-  };
-});
+const MetadataDisplay = styled(Box);
 
 export default function GithubEvents({ eventsPerPage = 40, hideMetadata = false }: { eventsPerPage?: number, hideMetadata?: boolean }) {
 
@@ -436,43 +424,45 @@ export default function GithubEvents({ eventsPerPage = 40, hideMetadata = false 
   
   let latestDateDisplayed: string | null = null;
   return (
-    <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
-      <Box sx={{ mb: 1, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <Box sx={{ display: 'flex', gap: .5, flexDirection: 'column' }}>
-          <Typography variant="subtitle1" fontWeight="semiBold">Work</Typography>
-          {lastUpdated && (
-            <Typography variant="caption" color="text.secondary">
-              Last updated: {lastUpdated}
-            </Typography>
-          )}
-        </Box>
-        {totalCount > eventsPerPage && (
-          <Pagination 
-            count={totalPages}
-            page={page}
-            onChange={(_, value) => setPage(value)}
-            size="small"
-            sx={{
-              '& .MuiPaginationItem-root': {
-                color: theme.palette.text.secondary,
-                borderColor: theme.palette.divider,
-              }
-            }}
-          />
-        )}
-      </Box>
-      <Box sx={{ display: 'flex', flexDirection: 'row', gap: '20px' }}>
+      
+      <Box sx={{ display: 'flex', flexDirection: 'row', gap: '16px' }}>
         <Box 
           sx={{ 
             width: '440px', 
             flexShrink: 0,
             display: 'block',
-            position: 'relative'
+            position: 'relative',
+            overflowY: 'auto',
           }} 
           className="master-container">
+            <Box sx={{ mb: 1, display: 'flex', justifyContent: 'space-between', alignItems: 'end' }}>
+            <Box sx={{ display: 'flex', gap: .5, flexDirection: 'column' }}>
+              <Typography variant="subtitle1" fontWeight="semiBold">Work</Typography>
+              {lastUpdated && (
+                <Typography variant="caption" color="text.secondary" fontWeight="100">
+                  Last updated: {lastUpdated}
+                </Typography>
+              )}
+            </Box>
+            {totalCount > eventsPerPage && (
+              <Pagination 
+                count={totalPages}
+                page={page}
+                onChange={(_, value) => setPage(value)}
+                size="small"
+                sx={{
+                  '& .MuiPaginationItem-root': {
+                    color: theme.palette.text.secondary,
+                    borderColor: theme.palette.divider,
+                  }
+                }}
+              />
+            )}
+          </Box>
           {error && (
             <Typography color="error" sx={{ mb: 2 }}>{error}</Typography>
           )}
+          
           <TableContainer component={Paper} sx={{ mb: 4, borderRadius: 0, position: 'relative' }} className="overflow-visible">
             
             <Table size="small">
@@ -701,8 +691,27 @@ export default function GithubEvents({ eventsPerPage = 40, hideMetadata = false 
             sx={{
               display: 'flex',
               flexDirection: 'column',
+
+              maxHeight: '300px'
             }}>
-            <MetadataDisplay>
+            <Box
+              className="eventDetails"
+              sx={{
+                backgroundColor: 'rgba(255, 255, 255, 0.06)',
+                boxShadow: theme.shadows[2],
+                padding: '10px',
+                position: 'sticky',
+                width: '672px',
+                maxWidth: '692px',
+                minWidth: '300px',
+                top: '84px',
+                borderRadiusTopLeft: '0px',
+                borderRadiusTopRight: '0px',
+                borderRadiusBottomLeft: '16px',
+                borderRadiusBottomRight: '16px',
+                maxHeight: 'calc(100vh - 320px)',
+                overflowY: 'hidden',
+              }}>
               {selectedEvent.actionType === 'PullRequestEvent' ? (
                 <PullRequestEvent event={selectedEvent} />
               ) : selectedEvent.actionType === 'PushEvent' ? (
@@ -735,10 +744,18 @@ export default function GithubEvents({ eventsPerPage = 40, hideMetadata = false 
                   maxHeight: 'calc(100vh - 200px)'
                 }}
               />)}
-            </MetadataDisplay>
+            </Box>
           </Box>
         )}
+        {!hideMetadata && !selectedEvent.id && (
+          <Box
+            sx={{
+              display: 'flex',
+              width: '672px',
+              maxWidth: '692px',
+              minWidth: '300px',
+            }}/>
+        )}
       </Box>
-    </Box>
   );
 }

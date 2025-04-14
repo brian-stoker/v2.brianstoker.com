@@ -51,7 +51,7 @@ export default function CommitsList({ commits, onCheckout }: CommitsListProps): 
   };
 
   return (
-    <Box>
+    <Box className="commitsList"sx={{ overflowY: 'scroll' }}>
       {commits.map((commit) => (
         <CommitItem key={commit.id}>
           <Box sx={{ display: 'flex', width: '100%' }}>

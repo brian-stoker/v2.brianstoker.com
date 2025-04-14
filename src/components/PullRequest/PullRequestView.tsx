@@ -96,7 +96,7 @@ export default function PullRequestView({
   const totalDeletions = files.reduce((sum, file) => sum + file.deletions, 0);
 
   return (
-    <Box sx={{ width: '100%' }}>
+    <Box className="pullRequestView" sx={{ width: '100%' }}>
       {/* Only render title if it's not empty (means we're not using PrHeader) */}
       {title && (
         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
@@ -113,7 +113,7 @@ export default function PullRequestView({
         </StyledTabs>
       </Box>
 
-      <TabPanel value={tabValue} index={0}>
+      <TabPanel value={tabValue} index={0} >
         <CommitsList commits={commits} onCheckout={onCheckout} />
       </TabPanel>
 
