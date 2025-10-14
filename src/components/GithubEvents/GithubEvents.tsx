@@ -49,7 +49,9 @@ const MetadataDisplay = styled(Box)(({ theme }) => {
     width: '672px',
     maxWidth: '692px',
     minWidth: '300px',
-    top: '84px'
+    top: '84px',
+    maxHeight: 'calc(100vh - 100px)',
+    overflow: 'auto'
   };
 });
 
@@ -274,9 +276,6 @@ export default function GithubEvents({ eventsPerPage = 40, hideMetadata = false 
         commitsList: [],
         payload: event.payload
       };
-      if (!selectedEvent.id) {
-        selectEvent(eventDetails);
-      }
       return eventDetails;
     });
   };
@@ -327,6 +326,18 @@ export default function GithubEvents({ eventsPerPage = 40, hideMetadata = false 
       const processedEvents = processEvents(paginatedEvents);
       setEvents(processedEvents);
       setTotalCount(filteredCachedEvents.length);
+      
+      // Select the most recent event by default
+      if (processedEvents.length > 0 && !selectedEvent.id) {
+        selectEvent(processedEvents[0]);
+        // Use setTimeout to ensure DOM is updated before we try to find the element
+        setTimeout(() => {
+          const firstRow = document.getElementById(processedEvents[0].id);
+          if (firstRow) {
+            firstRow.classList.add('selected');
+          }
+        }, 0);
+      }
       return;
     }
 
@@ -374,6 +385,18 @@ export default function GithubEvents({ eventsPerPage = 40, hideMetadata = false 
       const processedEvents = processEvents(data.events);
       setEvents(processedEvents);
       setTotalCount(data.total || 0);
+      
+      // Select the most recent event by default
+      if (processedEvents.length > 0 && !selectedEvent.id) {
+        selectEvent(processedEvents[0]);
+        // Use setTimeout to ensure DOM is updated before we try to find the element
+        setTimeout(() => {
+          const firstRow = document.getElementById(processedEvents[0].id);
+          if (firstRow) {
+            firstRow.classList.add('selected');
+          }
+        }, 0);
+      }
     } catch (err) {
       setError(err instanceof Error ? err.message : 'An error occurred');
       setEvents([]);
@@ -701,6 +724,8 @@ export default function GithubEvents({ eventsPerPage = 40, hideMetadata = false 
             sx={{
               display: 'flex',
               flexDirection: 'column',
+              height: 'calc(100vh - 16px)',
+              position: 'relative'
             }}>
             <MetadataDisplay>
               {selectedEvent.actionType === 'PullRequestEvent' ? (

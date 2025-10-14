@@ -28,6 +28,10 @@ export default function PullRequestEvent({ event }: PullRequestEventProps): Reac
   const handleLinkClick = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
+    
+    // Optional: Open the link in a new tab if needed
+    // const href = (e.currentTarget as HTMLAnchorElement).href;
+    // window.open(href, '_blank', 'noopener,noreferrer');
   };
 
   // Check if event is valid
@@ -91,27 +95,53 @@ export default function PullRequestEvent({ event }: PullRequestEventProps): Reac
           setError(null);
         }
 
-        // Extract owner and repo from the repository URL
-        const repoUrl = new URL(pullRequest.html_url);
-        const [, owner, repo] = repoUrl.pathname.split('/');
-        
-        const response = await fetch(`/api/github/pull-request?owner=${owner}&repo=${repo}&pull_number=${pullRequest.number}`);
-        if (!response.ok) {
-          throw new Error('Failed to fetch PR details');
-        }
-        
-        const data = await response.json();
-        if (isMounted) {
-          setPrDetails(data);
+        try {
+          // Extract owner and repo from the repository URL
+          let owner, repo;
+          try {
+            const repoUrl = new URL(pullRequest.html_url);
+            const pathParts = repoUrl.pathname.split('/').filter(Boolean);
+            if (pathParts.length >= 2) {
+              owner = pathParts[0];
+              repo = pathParts[1];
+            } else {
+              throw new Error('Invalid repository URL');
+            }
+          } catch (urlError) {
+            // Fallback to the repo name if URL parsing fails
+            const [fallbackOwner, fallbackRepo] = repoFullName.split('/');
+            owner = fallbackOwner;
+            repo = fallbackRepo;
+          }
+          
+          if (!owner || !repo || !pullRequest.number) {
+            throw new Error('Missing required information to fetch PR details');
+          }
+          
+          const response = await fetch(`/api/github/pull-request?owner=${owner}&repo=${repo}&pull_number=${pullRequest.number}`);
+          if (!response.ok) {
+            throw new Error('Failed to fetch PR details');
+          }
+          
+          const data = await response.json();
+          if (isMounted) {
+            setPrDetails(data);
+          }
+        } catch (err) {
+          console.error('Error fetching PR details:', err);
+          if (isMounted) {
+            setError(err instanceof Error ? err.message : 'Failed to load PR details');
+          }
+        } finally {
+          if (isMounted) {
+            setLoading(false);
+          }
         }
       } catch (err) {
-        console.error('Error fetching PR details:', err);
-        if (isMounted) {
-          setError(err instanceof Error ? err.message : 'Failed to load PR details');
-        }
-      } finally {
+        console.error('Error in PR details flow:', err);
         if (isMounted) {
           setLoading(false);
+          setError('An unexpected error occurred');
         }
       }
     };

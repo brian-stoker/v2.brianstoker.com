@@ -15,7 +15,10 @@ export function useMDXComponents(components: MDXComponents): MDXComponents {
     h6: ({ children }) => <Typography variant="h6" sx={{ mt: 2, mb: 1 }}>{children}</Typography>,
     p: ({ children }) => <Typography variant="body1" paragraph sx={{ my: 2 }}>{children}</Typography>,
     a: ({ href, children }) => (
-      <Link href={href as string} style={{ color: '#0072E5', textDecoration: 'none' }} className="mdx-link">
+      <Link
+        href={href as string}
+        style={{ color: '#0072E5', textDecoration: 'none' }}
+        className="mdx-link">
         {children}
       </Link>
     ),

@@ -750,8 +750,8 @@ const stokedUiData: TProduct = {
   hideProductFeatures: true,
   live: true,
   features: [{
-    name: 'Introduction',
-    description: 'Overview, installation, lions, tigers, and bears oh mai!',
+    name: 'Github',
+    description: 'Github data components',
     id: 'overview',
   }, {
     name: 'File Explorer',
