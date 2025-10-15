@@ -26,5 +26,5 @@
     "incremental": true,
     "target": "ES2019"
   },
-  "exclude": []
+  "exclude": ["./history", "./node_modules"]
 }
