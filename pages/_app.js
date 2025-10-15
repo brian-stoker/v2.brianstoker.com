@@ -122,7 +122,7 @@ if (typeof window !== 'undefined' && process.env.NODE_ENV === 'production') {
 ╚══════╝  ╚═════╝  ╚═════╝
 
 `,
-    'color: #000; background: #fff; padding: 10px; border-radius: 5px;',
+    'color:#000; background:#fff; padding:10px; border-radius:5px; font-family:monospace; line-height:1.2;'
   );
 }
 function AppWrapper(props) {

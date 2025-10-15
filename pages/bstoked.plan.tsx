@@ -63,7 +63,7 @@ export function PostPreview({post, size = 'default' }: {post: BlogPost, size?: '
         ))}
       </Box>
       <Typography component="h2" fontWeight="bold" variant="subtitle1" gutterBottom>
-        <NextLink href={`/.plan/${post?.slug}/`} passHref legacyBehavior>
+        <NextLink href={`/.plan/${post?.slug}/`} passHref>
           <MuiLink
             aria-describedby={`describe-${post?.slug}`}
             color="text.primary"
@@ -150,7 +150,7 @@ export function PostPreview({post, size = 'default' }: {post: BlogPost, size?: '
             </Typography>
           )}
         </Box>
-        <NextLink href={`/.plan/${post?.slug}`} passHref legacyBehavior>
+        <NextLink href={`/.plan/${post?.slug}`} passHref>
           <Button
             component="a"
             aria-describedby={`describe-${post?.slug}`}
