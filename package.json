@@ -29,6 +29,7 @@
     "deploy:stage": "cross-env ROOT_DOMAIN=brianstoker.com sst deploy --stage ",
     "deploy:sync": "aws s3 sync ./export s3://prod-brianstoker-spa-9713095/v2",
     "dev": "next dev",
+    "kill-port": "lsof -ti:${PORT:-3000} | xargs kill -9 2>/dev/null || echo 'No process found on port'",
     "icons": "rimraf --glob public/static/icons/* && node ./scripts/buildIcons.js",
     "link-check": "node ./scripts/reportBrokenLinks.js",
     "serve": "serve ../../stoked-ui.com/ -l 3010",
