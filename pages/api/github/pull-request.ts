@@ -114,7 +114,15 @@ export default async function handler(
           const resetDate = new Date(Number(rateLimit.reset) * 1000);
           throw new Error(`Rate limit exceeded. Resets at ${resetDate.toLocaleString()}`);
         }
-        throw new Error(`GitHub API error: ${response.status} - ${await response.text()}`);
+        if (response.status === 404) {
+          throw new Error(`Resource not found (404) - PR may be deleted or you don't have access`);
+        }
+        if (response.status === 403) {
+          throw new Error(`Access forbidden (403) - You may not have permission to access this private repository`);
+        }
+        const errorText = await response.text();
+        console.error(`GitHub API error for ${url}:`, response.status, errorText);
+        throw new Error(`GitHub API error: ${response.status}`);
       }
 
       return { data: await response.json(), rateLimit };

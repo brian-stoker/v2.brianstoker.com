@@ -1,15 +1,118 @@
 import * as React from 'react';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
-import Link from '@mui/material/Link';
+import Link from 'next/link';
 import Chip from '@mui/material/Chip';
 import CircularProgress from '@mui/material/CircularProgress';
 import Avatar from '@mui/material/Avatar';
-import Stack from '@mui/material/Stack';
 import Button from '@mui/material/Button';
 import CheckoutIcon from '@mui/icons-material/CallMade';
 import { EventDetails } from '../../types/github';
-import PullRequestView from '../PullRequest/PullRequestView';
+import { useTheme } from '@mui/material/styles';
+import Tabs from '@mui/material/Tabs';
+import Tab from '@mui/material/Tab';
+import Accordion from '@mui/material/Accordion';
+import AccordionSummary from '@mui/material/AccordionSummary';
+import AccordionDetails from '@mui/material/AccordionDetails';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import FileChanges from '../PullRequest/FileChanges';
+
+// Commit component copied from PushEvent.tsx
+interface File {
+  filename: string;
+  status: string;
+  additions: number;
+  deletions: number;
+  changes: number;
+}
+
+interface CommitProps {
+  commit: any;
+  repo: string;
+}
+
+function Commit({ commit, repo }: CommitProps) {
+  const [files, setFiles] = React.useState<File[]>([]);
+  const [loading, setLoading] = React.useState(false);
+  const [error, setError] = React.useState<string | null>(null);
+  const [expanded, setExpanded] = React.useState(false);
+  const theme = useTheme();
+
+  const fetchFiles = async () => {
+    if (files.length > 0) return; // Don't refetch if already loaded
+
+    setLoading(true);
+    setError(null);
+    try {
+      const [owner, repoName] = repo.split('/');
+      const response = await fetch(`/api/github/commit-files?owner=${owner}&repo=${repoName}&sha=${commit.sha}`);
+      if (!response.ok) {
+        throw new Error('Failed to fetch commit files');
+      }
+      const data = await response.json();
+      setFiles(data.files);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'An unknown error occurred');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleAccordionChange = (event: React.SyntheticEvent, isExpanded: boolean) => {
+    setExpanded(isExpanded);
+    if (isExpanded) {
+      fetchFiles();
+    }
+  };
+
+  return (
+    <Accordion
+      sx={{ mt: 1, backgroundColor: 'transparent', border: `1px solid ${theme.palette.divider}` }}
+      onChange={handleAccordionChange}
+      expanded={expanded}
+    >
+      <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+        <Box>
+          <Typography variant="body2" sx={{ fontWeight: 600 }}>
+            <Link href={commit.html_url} passHref legacyBehavior>
+              <a target="_blank" rel="noopener noreferrer" style={{ textDecoration: 'none', color: 'inherit' }}>
+                {commit.commit.message.split('\n')[0]}
+              </a>
+            </Link>
+          </Typography>
+          <Typography variant="caption" color="text.secondary">
+            {commit.sha.substring(0, 7)} by {commit.commit.author.name}
+          </Typography>
+        </Box>
+      </AccordionSummary>
+      <AccordionDetails>
+        {loading && <CircularProgress size={24} />}
+        {error && <Typography color="error">{error}</Typography>}
+        {files.length > 0 && (
+          <Box component="ul" sx={{ listStyle: 'none', p: 0, m: 0, display: 'flex', flexDirection: 'column', gap: 0.5 }}>
+            {files.map((file: File) => (
+              <Typography
+                key={file.filename}
+                component="li"
+                variant="body2"
+                sx={{
+                  fontFamily: 'monospace',
+                  color: file.status === 'added' ? 'success.main' : file.status === 'modified' ? 'info.main' : file.status === 'removed' ? 'error.main' : 'text.primary'
+                }}
+              >
+                {file.status === 'added' && '+ '}
+                {file.status === 'modified' && '~ '}
+                {file.status === 'removed' && '- '}
+                {file.filename}
+              </Typography>
+            ))}
+          </Box>
+        )}
+      </AccordionDetails>
+    </Accordion>
+  );
+}
+
 
 interface PullRequestEventProps {
   event: EventDetails;
@@ -19,22 +122,11 @@ export default function PullRequestEvent({ event }: PullRequestEventProps): Reac
   const [loading, setLoading] = React.useState(true);
   const [prDetails, setPrDetails] = React.useState<any>(null);
   const [error, setError] = React.useState<string | null>(null);
-  
-  // Use a ref to track if we've already loaded data for this PR
+  const [tabValue, setTabValue] = React.useState(0);
+
   const requestIdRef = React.useRef<string | null>(null);
   const currentRequestId = `${event.repo}-${event.payload?.pull_request?.number}`;
-  
-  // Prevent navigation only from anchors in the title and buttons
-  const handleLinkClick = (e: React.MouseEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    
-    // Optional: Open the link in a new tab if needed
-    // const href = (e.currentTarget as HTMLAnchorElement).href;
-    // window.open(href, '_blank', 'noopener,noreferrer');
-  };
 
-  // Check if event is valid
   if (!event?.date) {
     return null;
   }
@@ -44,7 +136,6 @@ export default function PullRequestEvent({ event }: PullRequestEventProps): Reac
     return null;
   }
 
-  // Extract repo, branches and user info
   const repoFullName = event.repo;
   const [repoOwner, repoName] = repoFullName.split('/');
   const baseBranch = pullRequest.base?.ref || 'unknown';
@@ -52,37 +143,34 @@ export default function PullRequestEvent({ event }: PullRequestEventProps): Reac
   const authorLogin = pullRequest.user?.login || event.user;
   const authorAvatar = pullRequest.user?.avatar_url || event.avatarUrl;
 
-  // Check if PR is deleted or closed before making API call
-  const isPRDeleted = event.payload.action === 'deleted' || 
-                      pullRequest.state === 'closed' || 
+  const isPRDeleted = event.payload.action === 'deleted' ||
+                      pullRequest.state === 'closed' ||
                       pullRequest.state === 'merged';
 
   React.useEffect(() => {
-    // Skip if this is the same PR we've already loaded
     if (requestIdRef.current === currentRequestId && prDetails !== null) {
+      setLoading(false);
       return;
     }
-    
-    // Track the current request
+
     requestIdRef.current = currentRequestId;
-    
+
     let isMounted = true;
     const fetchPRDetails = async () => {
+      setLoading(true);
+      setError(null);
       try {
-        // If PR is deleted, don't make the API call
+        if (pullRequest._enriched) {
+          if (isMounted) {
+            setPrDetails(pullRequest);
+          }
+          return;
+        }
+
         if (isPRDeleted) {
           if (isMounted) {
-            setLoading(false);
             setPrDetails({
-              title: pullRequest.title,
-              number: pullRequest.number,
-              state: pullRequest.state,
-              merged: pullRequest.merged,
-              user: pullRequest.user,
-              created_at: pullRequest.created_at,
-              updated_at: pullRequest.updated_at,
-              closed_at: pullRequest.closed_at,
-              merged_at: pullRequest.merged_at,
+              ...pullRequest,
               commits_list: [],
               files: []
             });
@@ -90,75 +178,48 @@ export default function PullRequestEvent({ event }: PullRequestEventProps): Reac
           return;
         }
 
-        if (isMounted) {
-          setLoading(true);
-          setError(null);
+        const response = await fetch(`/api/github/pull-request?owner=${repoOwner}&repo=${repoName}&pull_number=${pullRequest.number}`);
+        if (!response.ok) {
+          throw new Error('Failed to fetch PR details');
         }
 
-        try {
-          // Extract owner and repo from the repository URL
-          let owner, repo;
-          try {
-            const repoUrl = new URL(pullRequest.html_url);
-            const pathParts = repoUrl.pathname.split('/').filter(Boolean);
-            if (pathParts.length >= 2) {
-              owner = pathParts[0];
-              repo = pathParts[1];
-            } else {
-              throw new Error('Invalid repository URL');
-            }
-          } catch (urlError) {
-            // Fallback to the repo name if URL parsing fails
-            const [fallbackOwner, fallbackRepo] = repoFullName.split('/');
-            owner = fallbackOwner;
-            repo = fallbackRepo;
-          }
-          
-          if (!owner || !repo || !pullRequest.number) {
-            throw new Error('Missing required information to fetch PR details');
-          }
-          
-          const response = await fetch(`/api/github/pull-request?owner=${owner}&repo=${repo}&pull_number=${pullRequest.number}`);
-          if (!response.ok) {
-            throw new Error('Failed to fetch PR details');
-          }
-          
-          const data = await response.json();
-          if (isMounted) {
-            setPrDetails(data);
-          }
-        } catch (err) {
-          console.error('Error fetching PR details:', err);
-          if (isMounted) {
-            setError(err instanceof Error ? err.message : 'Failed to load PR details');
-          }
-        } finally {
-          if (isMounted) {
-            setLoading(false);
-          }
+        const data = await response.json();
+        if (isMounted) {
+          setPrDetails(data);
         }
       } catch (err) {
-        console.error('Error in PR details flow:', err);
+        console.error('Error fetching PR details:', err);
+        if (isMounted) {
+          setError(err instanceof Error ? err.message : 'An unknown error occurred');
+          setPrDetails({
+            ...pullRequest,
+            body: pullRequest.body || 'This pull request is no longer accessible (may be deleted or from a private repository).'
+          });
+        }
+      } finally {
         if (isMounted) {
           setLoading(false);
-          setError('An unexpected error occurred');
         }
       }
     };
 
     fetchPRDetails();
-    
-    // Cleanup function to prevent state updates if component unmounts
+
     return () => {
       isMounted = false;
     };
-  }, [currentRequestId, isPRDeleted]); // Only depend on the request ID, not the entire object
+  }, [currentRequestId, isPRDeleted, pullRequest, repoOwner, repoName]);
 
-  const handleCheckout = (hash?: string) => {
-    // TODO: Implement checkout functionality
+  const handleCheckout = () => {
+    const command = `git fetch origin pull/${pullRequest.number}/head:${headBranch} && git checkout ${headBranch}`;
+    navigator.clipboard.writeText(command);
+    // Optionally, provide user feedback that the command has been copied.
   };
 
-  // PR Header component with context info
+  const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
+    setTabValue(newValue);
+  };
+
   const PrHeader = () => (
     <Box sx={{ mb: 2 }}>
       <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 1 }}>
@@ -166,20 +227,20 @@ export default function PullRequestEvent({ event }: PullRequestEventProps): Reac
           <Typography variant="caption" color="text.secondary">
             {event.date}
           </Typography>
-          <Chip 
+          <Chip
             label={`${repoOwner}/${repoName}`}
             size="small"
             color="primary"
             variant="outlined"
           />
-          <Chip 
-            label={`#${pullRequest.number}`} 
-            size="small" 
+          <Chip
+            label={`#${pullRequest.number}`}
+            size="small"
             color="default"
           />
-          <Chip 
-            label={pullRequest.state} 
-            size="small" 
+          <Chip
+            label={pullRequest.state}
+            size="small"
             color={pullRequest.state === 'open' ? 'success' : 'error'}
           />
         </Box>
@@ -187,10 +248,7 @@ export default function PullRequestEvent({ event }: PullRequestEventProps): Reac
           variant="outlined"
           size="small"
           startIcon={<CheckoutIcon />}
-          onClick={(e) => {
-            e.preventDefault();
-            handleCheckout();
-          }}
+          onClick={handleCheckout}
           sx={{ textTransform: 'none' }}
         >
           Checkout
@@ -198,20 +256,19 @@ export default function PullRequestEvent({ event }: PullRequestEventProps): Reac
       </Box>
 
       <Typography variant="h6" component="h3" sx={{ mb: 1 }}>
-        <Link 
-          href={pullRequest.html_url} 
-          target="_blank" 
-          rel="noopener noreferrer"
-          sx={{ textDecoration: 'none' }}
-          onClick={handleLinkClick}
-        >
-          {pullRequest.title}
+        <Link
+          href={pullRequest.html_url}
+          passHref
+          legacyBehavior>
+          <a target="_blank" rel="noopener noreferrer" style={{ textDecoration: 'none' }}>
+            {pullRequest.title}
+          </a>
         </Link>
       </Typography>
 
       <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
         <Avatar 
-          src={authorAvatar} 
+          src={authorAvatar}
           alt={authorLogin}
           sx={{ width: 24, height: 24 }}
         />
@@ -222,8 +279,8 @@ export default function PullRequestEvent({ event }: PullRequestEventProps): Reac
           wants to merge from
         </Typography>
         <Chip 
-          label={headBranch} 
-          size="small" 
+          label={headBranch}
+          size="small"
           color="default"
           variant="outlined"
         />
@@ -231,8 +288,8 @@ export default function PullRequestEvent({ event }: PullRequestEventProps): Reac
           into
         </Typography>
         <Chip 
-          label={baseBranch} 
-          size="small" 
+          label={baseBranch}
+          size="small"
           color="default"
           variant="outlined"
         />
@@ -258,14 +315,6 @@ export default function PullRequestEvent({ event }: PullRequestEventProps): Reac
         <Typography color="error">
           {error}
         </Typography>
-        {isPRDeleted && (
-          <Typography color="text.secondary" sx={{ mt: 1 }}>
-            This pull request is no longer available.
-            {pullRequest.state === 'merged' && ' It has been merged.'}
-            {pullRequest.state === 'closed' && ' It has been closed.'}
-            {event.payload.action === 'deleted' && ' It has been deleted.'}
-          </Typography>
-        )}
       </Box>
     );
   }
@@ -273,64 +322,51 @@ export default function PullRequestEvent({ event }: PullRequestEventProps): Reac
   if (!prDetails) {
     return null;
   }
-
-  // Transform the PR details into the format expected by PullRequestView
-  const transformedCommits = (prDetails.commits_list || []).map((commit: any) => ({
-    id: commit.sha,
-    message: commit.commit.message,
-    author: {
-      name: commit.commit.author.name,
-      avatar: commit.author?.avatar_url || '',
-    },
-    date: commit.commit.author.date,
-    hash: commit.sha,
-  }));
-
+  
   const transformedFiles = (prDetails.files || []).map((file: any) => ({
-    path: file.path,
-    type: file.type,
+    path: file.filename,
+    type: file.status,
     additions: file.additions,
     deletions: file.deletions,
-    diff: file.diff,
+    diff: file.patch, // Assuming patch contains the diff
   }));
 
   return (
     <Box sx={{ p: 2 }}>
       <PrHeader />
-      <PullRequestView
-        title=""  // Set to empty to avoid duplicate title
-        number={prDetails.number}
-        commits={transformedCommits}
-        files={transformedFiles}
-        onCheckout={handleCheckout}
-      />
+      
+      {prDetails.body && (
+        <Accordion sx={{ mt: 2, backgroundColor: 'transparent', border: (theme) => `1px solid ${theme.palette.divider}` }}>
+          <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+            <Typography variant="subtitle2">Description</Typography>
+          </AccordionSummary>
+          <AccordionDetails>
+            <Typography variant="body2" sx={{ whiteSpace: 'pre-wrap' }}>
+              {prDetails.body}
+            </Typography>
+          </AccordionDetails>
+        </Accordion>
+      )}
+
+      <Box sx={{ borderBottom: 1, borderColor: 'divider', mt: 2 }}>
+        <Tabs value={tabValue} onChange={handleTabChange}>
+          <Tab label={`Commits (${(prDetails.commits_list || []).length})`} />
+          <Tab label={`Files changed (${(prDetails.files || []).length})`} />
+        </Tabs>
+      </Box>
+
+      {tabValue === 0 && (
+        <Box sx={{ mt: 2 }}>
+          {(prDetails.commits_list || []).map((commit: any) => (
+            <Commit key={commit.sha} commit={commit} repo={repoFullName} />
+          ))}
+        </Box>
+      )}
+      {tabValue === 1 && (
+        <Box sx={{ mt: 2 }}>
+          <FileChanges files={transformedFiles} />
+        </Box>
+      )}
     </Box>
   );
 }
-
-// Helper function to parse diff content into line objects
-function parseDiff(patch: string): Array<{ type: 'addition' | 'deletion' | 'context'; content: string; lineNumber: number }> {
-  if (!patch) return [];
-  
-  return patch.split('\n').map((line, index) => {
-    if (line.startsWith('+')) {
-      return {
-        type: 'addition',
-        content: line,
-        lineNumber: index + 1,
-      };
-    } else if (line.startsWith('-')) {
-      return {
-        type: 'deletion',
-        content: line,
-        lineNumber: index + 1,
-      };
-    } else {
-      return {
-        type: 'context',
-        content: line,
-        lineNumber: index + 1,
-      };
-    }
-  });
-} 

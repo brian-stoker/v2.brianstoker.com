@@ -422,7 +422,7 @@ export default function AppNavDrawer(props) {
               borderRight: '1px solid',
               borderColor: 'divider',
             }}
-          >
+            legacyBehavior>
             <SvgBsLogomark width={30} />
           </NextLink>
           <ProductIdentifier

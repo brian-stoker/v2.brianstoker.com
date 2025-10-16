@@ -40,6 +40,8 @@ public/static/blog/feed/*
 .github/styles/
 .nx/cache
 **.env
+**.env.*
+
 packages-internal/x-tree-view-example
 export
 .next

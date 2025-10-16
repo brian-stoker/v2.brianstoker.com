@@ -1,25 +1,13 @@
-import * as React from 'react';
 import type { NextApiRequest, NextApiResponse } from 'next'
 import { GitHubEvent } from '../../../src/types/github';
+import { getDatabase } from '../lib/mongodb';
 
-type ActivityData = {
-  data: { date: string, count: number, level: number }[];
-  lastUpdated: string | null;
-}
-
-function parseLinkHeader(header: string | null): { next?: string; last?: string } {
-  if (!header) return {};
-  
-  return header.split(',').reduce((links: { next?: string; last?: string }, part) => {
-    const match = part.match(/<(.+)>;\s*rel="([\w]+)"/);
-    if (match) {
-      const [, url, rel] = match;
-      if (rel === 'next' || rel === 'last') {
-        links[rel] = url;
-      }
-    }
-    return links;
-  }, {});
+interface SyncMetadata {
+  _id: string;
+  lastSync: Date;
+  eventCount: number;
+  success: boolean;
+  error?: string;
 }
 
 export default async function handler(
@@ -34,68 +22,40 @@ export default async function handler(
   try {
     const {
       page = '1',
-      per_page = '100', // Changed to match GitHub's max per page
+      per_page = '100',
       repo = '',
       action = '',
       date = '',
       description = ''
     } = req.query;
 
-    // Get GitHub token from environment variables
-    const githubToken = process.env.GITHUB_TOKEN;
-    // Get GitHub username from environment variables or use a default
-    const githubUser = process.env.GITHUB_USERNAME || 'brian-stoker';
-
-    if (!githubToken) {
-      console.error('GitHub token is missing');
-      return res.status(500).json({ message: 'GitHub token not configured' });
+    const db = await getDatabase();
+    if (!db) {
+      return res.status(500).json({ message: 'Database not available' });
     }
 
-    console.log(`Fetching events for user: ${githubUser}`);
-    
-    // Fetch all available pages from GitHub API
-    let allEvents: GitHubEvent[] = [];
-    let hasMore = true;
-    let githubPage = 1;
-    const maxPages = 30; // GitHub's maximum for events endpoint
-    
-    while (hasMore && githubPage <= maxPages) {
-      console.log(`Fetching page ${githubPage}...`);
-      const response = await fetch(
-        `https://api.github.com/users/${githubUser}/events?page=${githubPage}&per_page=100`,
-        {
-          headers: {
-            Authorization: `token ${githubToken}`,
-            'User-Agent': 'brianstoker.com-website',
-          },
-        }
-      );
-      
-      if (!response.ok) {
-        const errorText = await response.text();
-        console.error(`GitHub API error: ${response.status}`, errorText);
-        throw new Error(`GitHub API error: ${response.status} - ${errorText}`);
-      }
-      
-      const data = await response.json();
-      console.log(`Page ${githubPage}: Received ${data.length} events`);
-      
-      if (data.length === 0) {
-        hasMore = false;
-      } else {
-        allEvents = [...allEvents, ...data];
-        console.log(`Total events so far: ${allEvents.length}`);
-        
-        // Check Link header to see if there are more pages
-        const linkHeader = response.headers.get('Link');
-        const links = parseLinkHeader(linkHeader);
-        hasMore = !!links.next; // Simplified logic
-        
-        githubPage++;
-      }
-    }
+    // Get sync metadata
+    const metadataCollection = db.collection('sync_metadata');
+    const syncMetadata = await metadataCollection.findOne({ _id: 'github_events_sync' } as any) as SyncMetadata | null;
 
-    console.log(`Final total events: ${allEvents.length}`);
+    // Get all events from MongoDB
+    const eventsCollection = db.collection('github_events');
+    const allEvents = await eventsCollection.find({}).sort({ created_at: -1 }).toArray() as any as GitHubEvent[];
+
+    console.log(`Retrieved ${allEvents.length} events from MongoDB`);
+
+    if (allEvents.length === 0) {
+      return res.status(200).json({
+        events: [],
+        total: 0,
+        repositories: [],
+        actionTypes: [],
+        page: 1,
+        per_page: parseInt(per_page as string),
+        total_pages: 0,
+        syncMetadata: syncMetadata || null
+      });
+    }
 
     // Apply filters
     let filteredEvents = allEvents;
@@ -147,8 +107,9 @@ export default async function handler(
     if (description) {
       filteredEvents = filteredEvents.filter(event => {
         let eventDescription = '';
-        if (event.type === 'PushEvent' && event.payload.commits?.length) {
-          eventDescription = `Pushed ${event.payload.commits.length} commits`;
+        if (event.type === 'PushEvent') {
+          const commitCount = event.payload?.commits ? event.payload.commits.length : (event.payload?.size || 0);
+          eventDescription = `Pushed ${commitCount} commit${commitCount !== 1 ? 's' : ''}`;
         } else if (event.type === 'PullRequestEvent' && event.payload.pull_request?.title) {
           eventDescription = event.payload.pull_request.title;
         } else if (event.type === 'IssuesEvent' && event.payload.issue?.title) {
@@ -167,7 +128,7 @@ export default async function handler(
     const endIndex = startIndex + perPage;
     const paginatedEvents = filteredEvents.slice(startIndex, endIndex);
 
-    // Extract unique values for filters (only on first page)
+    // Extract unique values for filters
     const repositories = [...new Set(allEvents.map(event => event.repo.name))].sort();
     const actionTypes = [...new Set(allEvents.map(event => event.type.replace('Event', '')))].sort();
 
@@ -180,13 +141,12 @@ export default async function handler(
       page: pageNum,
       per_page: perPage,
       total_pages: Math.ceil(filteredEvents.length / perPage),
-      total_fetched_events: allEvents.length,
-      max_pages_fetched: githubPage - 1
+      syncMetadata: syncMetadata || null
     });
 
   } catch (error) {
-    console.error('Error fetching GitHub events:', error);
-    return res.status(500).json({ 
+    console.error('Error fetching GitHub events from MongoDB:', error);
+    return res.status(500).json({
       message: 'Error fetching GitHub events',
       error: error instanceof Error ? error.message : String(error)
     });

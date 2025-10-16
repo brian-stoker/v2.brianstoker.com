@@ -4,6 +4,8 @@ import {DomainInfo} from "./domains";
 export const createApi = (domainInfo: DomainInfo) => {
   const envVarKeys = [
     "GITHUB_TOKEN",
+    "GITHUB_USERNAME",
+    "SYNC_SECRET",
     "MONGODB_NAME",
     "MONGODB_QUERY_PARAMS",
     "NEXT_PUBLIC_NEXT_API",

@@ -12,6 +12,7 @@ import ThemeModeToggle from 'src/components/header/ThemeModeToggle';
 import {Link} from '@stoked-ui/docs/Link';
 import {useTranslate} from '@stoked-ui/docs/i18n';
 import SvgBsLogomark from "../icons/SvgBsLogomark";
+import NoSsr from '@mui/material/NoSsr';
 
 const Header = styled('header')(({ theme }) => [
   {
@@ -68,19 +69,21 @@ export default function AppHeader(props: AppHeaderProps) {
         </Box>
         <Box sx={{ml: 'auto'}}/>
         <Stack direction="row" spacing={1}>
-          <Tooltip title={t('appFrame.github')} enterDelay={300}>
-            <IconButton
-              component={Link}
-              color="primary"
-              href={gitHubRepository}
-              target="_blank"
-              rel="noopener"
-              data-ga-event-category="header"
-              data-ga-event-action="github"
-            >
-              <GitHubIcon fontSize="small"/>
-            </IconButton>
-          </Tooltip>
+          <NoSsr>
+            <Tooltip title={t('appFrame.github')} enterDelay={300}>
+              <IconButton
+                component={Link}
+                color="primary"
+                href={gitHubRepository}
+                target="_blank"
+                rel="noopener"
+                data-ga-event-category="header"
+                data-ga-event-action="github"
+              >
+                <GitHubIcon fontSize="small"/>
+              </IconButton>
+            </Tooltip>
+          </NoSsr>
           <ThemeModeToggle/>
         </Stack>
         <Box sx={{display: {md: 'none'}, ml: 1}}>

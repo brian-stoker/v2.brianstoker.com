@@ -1,5 +1,4 @@
 import path from 'path';
-import {getHeaders} from '@stoked-ui/docs-markdown';
 import matter from 'gray-matter';
 import { serialize } from 'next-mdx-remote/serialize';
 import { MDXRemoteSerializeResult } from 'next-mdx-remote';

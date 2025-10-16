@@ -330,9 +330,11 @@ class Product {
 
   url(type: LinkType, suffix: string = '', productId?: string) {
     if (productId) {
-      return `/${productId}${getTypeUrl(type)}${suffix}`
+      return `/${productId}${getTypeUrl(type)}${suffix}`;
     }
-    return `${this.data.url}${getTypeUrl(type)}${suffix}`;
+    const baseUrl = this.data.url.endsWith('/') ? this.data.url.slice(0, -1) : this.data.url;
+    const typeUrl = getTypeUrl(type);
+    return `${baseUrl}${typeUrl}${suffix}`;
   }
 
   get id() {

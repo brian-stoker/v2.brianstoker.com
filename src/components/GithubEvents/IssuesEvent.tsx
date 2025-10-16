@@ -3,6 +3,10 @@ import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Link from '@mui/material/Link';
 import Chip from '@mui/material/Chip';
+import Accordion from '@mui/material/Accordion';
+import AccordionSummary from '@mui/material/AccordionSummary';
+import AccordionDetails from '@mui/material/AccordionDetails';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { EventDetails } from '../../types/github';
 
 interface IssuesEventProps {
@@ -27,6 +31,7 @@ export default function IssuesEvent({ event }: IssuesEventProps): React.JSX.Elem
   const issueUser = issue.user?.login || event.user;
   const issueComments = issue.comments || event.comments;
   const issueLabels = issue.labels || [];
+  const issueBody = issue.body;
 
   return (
     <Box sx={{ p: 2 }}>
@@ -69,7 +74,7 @@ export default function IssuesEvent({ event }: IssuesEventProps): React.JSX.Elem
       </Box>
 
       {issueLabels.length > 0 && (
-        <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
+        <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1, mb: 2 }}>
           {issueLabels.map((label: any) => (
             <Chip
               key={label.name}
@@ -82,6 +87,19 @@ export default function IssuesEvent({ event }: IssuesEventProps): React.JSX.Elem
             />
           ))}
         </Box>
+      )}
+
+      {issueBody && (
+        <Accordion sx={{ backgroundColor: 'transparent', border: (theme) => `1px solid ${theme.palette.divider}` }}>
+          <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+            <Typography variant="subtitle2">Description</Typography>
+          </AccordionSummary>
+          <AccordionDetails>
+            <Typography variant="body2" sx={{ whiteSpace: 'pre-wrap' }}>
+              {issueBody}
+            </Typography>
+          </AccordionDetails>
+        </Accordion>
       )}
     </Box>
   );

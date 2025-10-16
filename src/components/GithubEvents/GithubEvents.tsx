@@ -105,14 +105,24 @@ export default function GithubEvents({ eventsPerPage = 40, hideMetadata = false 
     if (cached) {
       try {
         const parsedCache: CachedData = JSON.parse(cached);
+
+        // Check if cache version is outdated - force refresh if structure changed
+        const cacheVersion = (parsedCache as any).version;
+        if (cacheVersion !== '4.0') {
+          console.log('Cache version outdated, clearing and fetching fresh data');
+          localStorage.removeItem('github_events');
+          fetchGitHubEvents(1);
+          return;
+        }
+
         setCachedEvents(parsedCache.events);
         setTotalCount(parsedCache.totalCount);
         buildFilterOptionsFromEvents(parsedCache.events);
-        
+
         // Format last updated time
         const lastFetchDate = new Date(parsedCache.lastFetched);
         setLastUpdated(format(lastFetchDate, 'MMM d, yyyy h:mm a'));
-        
+
         // Check if we should fetch new events (if it's been more than 8 hours)
         const hoursSinceLastFetch = (Date.now() - parsedCache.lastFetched) / (1000 * 60 * 60);
         if (hoursSinceLastFetch >= 8) {
@@ -120,6 +130,7 @@ export default function GithubEvents({ eventsPerPage = 40, hideMetadata = false 
         }
       } catch (err) {
         console.error('Failed to parse cached events:', err);
+        localStorage.removeItem('github_events');
         fetchGitHubEvents(1);
       }
     } else {
@@ -160,6 +171,7 @@ export default function GithubEvents({ eventsPerPage = 40, hideMetadata = false 
         // Update cache with new events
         setCachedEvents(newEvents);
         localStorage.setItem('github_events', JSON.stringify({
+          version: '4.0',
           events: newEvents,
           lastFetched: Date.now(),
           totalCount: newEvents.length
@@ -181,6 +193,7 @@ export default function GithubEvents({ eventsPerPage = 40, hideMetadata = false 
         const currentCache = JSON.parse(localStorage.getItem('github_events') || '{}');
         localStorage.setItem('github_events', JSON.stringify({
           ...currentCache,
+          version: '4.0',
           lastFetched: Date.now()
         }));
         setLastUpdated(format(new Date(), 'MMM d, yyyy h:mm a'));
@@ -201,8 +214,9 @@ export default function GithubEvents({ eventsPerPage = 40, hideMetadata = false 
       uniqueActions.add(event.type.replace('Event', ''));
       
       if (event.payload) {
-        if (event.type === 'PushEvent' && event.payload.commits?.length) {
-          uniqueDescriptions.add(`Pushed ${event.payload.commits.length} commits`);
+        if (event.type === 'PushEvent') {
+          const commitCount = event.payload.commits ? event.payload.commits.length : (event.payload.size || 0);
+          uniqueDescriptions.add(`Pushed ${commitCount} commit${commitCount !== 1 ? 's' : ''}`);
         } else if (event.type === 'PullRequestEvent' && event.payload.pull_request?.title) {
           uniqueDescriptions.add(event.payload.pull_request.title);
         } else if (event.type === 'IssuesEvent' && event.payload.issue?.title) {
@@ -225,15 +239,48 @@ export default function GithubEvents({ eventsPerPage = 40, hideMetadata = false 
       
       const formattedDate = format(dateTime, 'MMM d, yyyy h:mm a');
       
+      const eventDetails: DisplayEventDetails = {
+        id: event.id,
+        date: formattedDate,
+        dateOnly: date,
+        repo: event.repo.name,
+        action: '',
+        actionType: event.type,
+        description: '',
+        url: '',
+        state: 'open',
+        user: '',
+        avatarUrl: '',
+        number: 0,
+        merged: false,
+        comments: 0,
+        commits: 0,
+        ref: '',
+        commitsList: [],
+        payload: event.payload
+      };
+
       let action = '';
       let description = '';
       let link = '';
-      let id = event.id;
+
       switch (event.type) {
         case 'PushEvent':
           action = 'Push';
-          description = `Pushed ${event.payload.commits?.length || 0} commits`;
-          link = `https://github.com/${event.repo.name}/commit/${event.payload.head}`;
+          const commitCount = event.payload?.commits ? event.payload.commits.length : (event.payload?.size || 0);
+          description = `Pushed ${commitCount} commit${commitCount !== 1 ? 's' : ''}`;
+          if (commitCount > 1) {
+            link = `https://github.com/${event.repo.name}/compare/${event.payload.before}...${event.payload.head}`;
+          } else {
+            link = `https://github.com/${event.repo.name}/commit/${event.payload.head}`;
+          }
+          eventDetails.commitsList = event.payload.commits ? event.payload.commits.map((commit: any) => ({
+            message: commit.message,
+            sha: commit.sha,
+            author: commit.author,
+            html_url: `https://github.com/${event.repo.name}/commit/${commit.sha}`
+          })) : [];
+          eventDetails.ref = event.payload.ref;
           break;
         case 'PullRequestEvent':
           action = 'Pull Request';
@@ -255,27 +302,11 @@ export default function GithubEvents({ eventsPerPage = 40, hideMetadata = false 
           description = '';
           link = `https://github.com/${event.repo.name}`;
       }
+      
+      eventDetails.action = action;
+      eventDetails.description = description;
+      eventDetails.url = link;
 
-      const eventDetails: DisplayEventDetails = {
-        id,
-        date: formattedDate,
-        dateOnly: date,
-        repo: event.repo.name,
-        action,
-        actionType: event.type,
-        description,
-        url: link,
-        state: 'open',
-        user: '',
-        avatarUrl: '',
-        number: 0,
-        merged: false,
-        comments: 0,
-        commits: 0,
-        ref: '',
-        commitsList: [],
-        payload: event.payload
-      };
       return eventDetails;
     });
   };
@@ -305,7 +336,8 @@ export default function GithubEvents({ eventsPerPage = 40, hideMetadata = false 
 
   const getEventDescription = (event: GitHubEvent): string => {
     if (event.type === 'PushEvent') {
-      return `Pushed ${event.payload.commits?.length || 0} commits`;
+      const commitCount = event.payload?.commits ? event.payload.commits.length : (event.payload?.size || 0);
+      return `Pushed ${commitCount} commit${commitCount !== 1 ? 's' : ''}`;
     } else if (event.type === 'PullRequestEvent') {
       return event.payload.pull_request.title;
     } else if (event.type === 'IssuesEvent') {
@@ -372,6 +404,7 @@ export default function GithubEvents({ eventsPerPage = 40, hideMetadata = false 
         // Update cache
         setCachedEvents(newEvents);
         localStorage.setItem('github_events', JSON.stringify({
+          version: '4.0',
           events: newEvents,
           lastFetched: Date.now(),
           totalCount: data.total
@@ -398,7 +431,12 @@ export default function GithubEvents({ eventsPerPage = 40, hideMetadata = false 
         }, 0);
       }
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'An error occurred');
+      const errorMessage = err instanceof Error ? err.message : 'An error occurred';
+      if (errorMessage.includes('rate limit') || errorMessage.includes('403')) {
+        setError('GitHub API rate limit exceeded. The data will refresh automatically when the limit resets. Using cached data if available.');
+      } else {
+        setError(errorMessage);
+      }
       setEvents([]);
       setTotalCount(0);
     } finally {
@@ -629,7 +667,7 @@ export default function GithubEvents({ eventsPerPage = 40, hideMetadata = false 
                           <Typography variant="subtitle2" fontWeight="semiBold">{event.dateOnly}</Typography>
                           </TableCell>
                         </TableRow>}
-                      <TableRow 
+                      <TableRow
                         key={index}
                         id={event.id}
                         sx={{
@@ -652,6 +690,7 @@ export default function GithubEvents({ eventsPerPage = 40, hideMetadata = false 
                         }}
                         onClick={(e) => {
                           e.preventDefault();
+                          e.stopPropagation();
                           const newSelectedRow = e.currentTarget;
                           if (newSelectedRow) {
                             if (selectedEvent.id) {
@@ -667,35 +706,25 @@ export default function GithubEvents({ eventsPerPage = 40, hideMetadata = false 
                         onMouseEnter={(e) => {
                           const closestRow = e.currentTarget;
                           if (closestRow) {
-                            
+
                             closestRow.classList.add('hover');
                           }
-                          
+
                         }}
                         onMouseLeave={(e) => {
                           const closestRow = e.currentTarget;
                           if (closestRow) {
                             closestRow.classList.remove('hover');
                           }
-                          
+
                         }}
                       >
                         <TableCell>{getTimeOnly(event.date)}</TableCell>
                         <TableCell>
-                          <span
-                            onClick={(e) => e.stopPropagation()}
-                            style={{ textDecoration: 'none', color: theme.palette.primary.main, cursor: 'pointer' }}
-                          >
-                            {event.repo.split('/')[1]}
-                          </span>
+                          {event.repo.split('/')[1]}
                         </TableCell>
                         <TableCell>
-                          <span
-                            onClick={(e) => e.stopPropagation()}
-                            style={{ textDecoration: 'none', color: theme.palette.primary.main, cursor: 'pointer' }}
-                          >
-                            {event.action}
-                          </span>
+                          {event.action}
                         </TableCell>
                       </TableRow>
                     </React.Fragment>

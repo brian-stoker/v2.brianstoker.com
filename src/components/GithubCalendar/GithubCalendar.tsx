@@ -88,7 +88,7 @@ export default function GithubCalendar({ windowMode = false, containerMode = fal
     setActivityLoading(true);
     
     try {
-      const response = await fetch('https://github-contributions-api.jogruber.de/v4/brian-stoker?y=last');
+      const response = await fetch('https://github-contributions-api.jogruber.de/v4/brian-stoker?y=2022&y=2023&y=2024&y=2025');
       
       if (!response.ok) {
         throw new Error(`API error: ${response.status}`);

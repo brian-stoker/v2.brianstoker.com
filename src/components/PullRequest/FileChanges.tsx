@@ -58,39 +58,27 @@ interface FileChange {
   type: 'added' | 'modified' | 'deleted';
   additions: number;
   deletions: number;
-  diff: Array<{
-    type: 'addition' | 'deletion' | 'context';
-    content: string;
-    lineNumber: number;
-  }>;
+  diff: string;
 }
 
 interface FileChangesProps {
   files: FileChange[];
 }
 
-interface TreeNode {
-  id: string;
-  name: string;
-  type: FileChange['type'];
-  additions: number;
-  deletions: number;
-  diff: FileChange['diff'];
-  children?: TreeNode[];
+function parseDiff(patch: string | undefined): Array<{ type: 'addition' | 'deletion' | 'context'; content: string }> {
+  if (!patch) return [];
+  return patch.split('\n').map(line => {
+    if (line.startsWith('+')) {
+      return { type: 'addition', content: line };
+    }
+    if (line.startsWith('-')) {
+      return { type: 'deletion', content: line };
+    }
+    return { type: 'context', content: line };
+  });
 }
 
 export default function FileChanges({ files }: FileChangesProps): React.JSX.Element {
-  const [expanded, setExpanded] = React.useState<string[]>([]);
-  const [selected, setSelected] = React.useState<string[]>([]);
-
-  const handleToggle = (_event: React.SyntheticEvent, nodeIds: string[]) => {
-    setExpanded(nodeIds);
-  };
-
-  const handleSelect = (_event: React.SyntheticEvent, nodeIds: string[]) => {
-    setSelected(nodeIds);
-  };
-
   const getFileIcon = (type: FileChange['type']) => {
     switch (type) {
       case 'added':
@@ -104,78 +92,32 @@ export default function FileChanges({ files }: FileChangesProps): React.JSX.Elem
     }
   };
 
-  // Transform files into tree nodes
-  const items: TreeNode[] = files.map((file, index) => ({
-    id: `file-${index}-${file.path.replace(/[^a-zA-Z0-9]/g, '-')}`,
-    name: file.path,
-    type: file.type,
-    additions: file.additions,
-    deletions: file.deletions,
-    diff: file.diff
-  }));
-
-  const renderLabel = (node: TreeNode) => (
-    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-      {getFileIcon(node.type)}
-      <Typography variant="body2">{node.name}</Typography>
-      <Typography variant="caption" color="text.secondary">
-        +{node.additions} -{node.deletions}
-      </Typography>
-    </Box>
-  );
-
-  const renderContent = (node: TreeNode) => (
-    <Box sx={{ p: 2 }}>
-      <DiffView>
-        {node.diff.map((line, index) => (
-          <DiffLine key={`${node.id}-line-${index}`} type={line.type}>
-            {line.content}
-          </DiffLine>
-        ))}
-      </DiffView>
-    </Box>
-  );
-
   return (
     <Box>
-      <TreeView
-        defaultCollapseIcon={<ExpandMoreIcon />}
-        defaultExpandIcon={<ChevronRightIcon />}
-        expanded={expanded}
-        selected={selected}
-        onNodeToggle={handleToggle}
-        onNodeSelect={handleSelect}
-        multiSelect
-      >
-        {files.map((file, index) => {
-          const nodeId = `file-${index}-${file.path.replace(/[^a-zA-Z0-9]/g, '-')}`;
-          return (
-            <TreeItem
-              key={nodeId}
-              nodeId={nodeId}
-              label={
-                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                  {getFileIcon(file.type)}
-                  <Typography variant="body2">{file.path}</Typography>
-                  <Typography variant="caption" color="text.secondary">
-                    +{file.additions} -{file.deletions}
-                  </Typography>
-                </Box>
-              }
-            >
-              <Box sx={{ p: 2 }}>
-                <DiffView>
-                  {file.diff.map((line, index) => (
-                    <DiffLine key={`${nodeId}-line-${index}`} type={line.type}>
-                      {line.content}
-                    </DiffLine>
-                  ))}
-                </DiffView>
-              </Box>
-            </TreeItem>
-          );
-        })}
-      </TreeView>
+      {files.map((file, index) => {
+        const nodeId = `file-${index}-${file.path.replace(/[^a-zA-Z0-9]/g, '-')}`;
+        const diffLines = parseDiff(file.diff);
+        return (
+          <Box key={nodeId} sx={{ mb: 2 }}>
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+              {getFileIcon(file.type)}
+              <Typography variant="body2">{file.path}</Typography>
+              <Typography variant="caption" color="text.secondary">
+                +{file.additions} -{file.deletions}
+              </Typography>
+            </Box>
+            <Box sx={{ p: 2 }}>
+              <DiffView>
+                {diffLines.map((line, lineIndex) => (
+                  <DiffLine key={`${nodeId}-line-${lineIndex}`} type={line.type}>
+                    {line.content}
+                  </DiffLine>
+                ))}
+              </DiffView>
+            </Box>
+          </Box>
+        );
+      })}
     </Box>
   );
-} 
+}

@@ -181,6 +181,8 @@ If you'd like to contribute to this project, please follow these guidelines:
 2. Make your changes and test thoroughly.
 3. Submit a pull request, describing the changes you've made.
 
+Refer to the [Repository Guidelines](AGENTS.md) for detailed contributor expectations, build commands, and review checklists.
+
 ## License
 
 This project is open-source and available under the [MIT License](LICENSE). Feel free to use, modify, and distribute the code as per the terms of the license.
