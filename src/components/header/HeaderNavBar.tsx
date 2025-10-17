@@ -17,6 +17,9 @@ const Navigation = styled('nav')(({ theme }) => [
       margin: 0,
       listStyle: 'none',
       display: 'flex',
+      flexWrap: 'wrap',
+      columnGap: theme.spacing(1),
+      rowGap: theme.spacing(0.5),
     },
     '& li': {
       ...theme.typography.body2,
@@ -42,6 +45,20 @@ const Navigation = styled('nav')(({ theme }) => [
         '&:focus-visible': {
           outline: `3px solid ${alpha(theme.palette.primary[500], 0.5)}`,
           outlineOffset: '2px',
+        },
+      },
+    },
+  },
+  {
+    '& ul': {
+      [theme.breakpoints.down('lg')]: {
+        columnGap: theme.spacing(0.5),
+      },
+    },
+    '& li': {
+      [theme.breakpoints.down('lg')]: {
+        '& > a, & > button': {
+          padding: theme.spacing('6px', '6px'),
         },
       },
     },

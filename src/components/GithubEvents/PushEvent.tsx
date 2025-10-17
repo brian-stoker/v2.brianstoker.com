@@ -78,7 +78,7 @@ function Commit({ commit, repo }: CommitProps) {
             </Link>
           </Typography>
           <Typography variant="caption" color="text.secondary">
-            {commit.sha.substring(0, 7)} by {commit.author.name}
+            {commit.sha.substring(0, 7)} by {commit.author?.name || 'Unknown author'}
           </Typography>
         </Box>
       </AccordionSummary>

@@ -21,6 +21,7 @@ import ROUTES from 'src/route';
 import {Link} from '@stoked-ui/docs/Link';
 import {Theme} from '@mui/material/styles';
 import { MDXRemote } from 'next-mdx-remote';
+import type { MDXRemoteSerializeResult } from 'next-mdx-remote';
 
 // Use RichMarkdownElement instead of MdxElement since it was commented out
 // and RichMarkdownElement was referenced in the original code
@@ -213,7 +214,8 @@ interface DocsHeader {
 
 interface LocalizedDoc {
   description: string;
-  rendered: React.ReactNode[];
+  rendered?: React.ReactNode | React.ReactNode[];
+  mdxSource?: MDXRemoteSerializeResult;
   title?: string;
   headers: DocsHeader;
 }
@@ -233,7 +235,7 @@ interface TopLayoutBlogProps {
 export default function TopLayoutBlog(props: TopLayoutBlogProps): React.ReactElement {
   const theme = useTheme<Theme>();
   const { className, docs, demos, demoComponents, srcComponents } = props;
-  const { description, rendered, title, headers } = docs.en;
+  const { description, rendered, mdxSource, title, headers } = docs.en;
   const finalTitle = title || headers.title;
   const router = useRouter();
   const slug = router.pathname.replace(/(.*)\/(.*)/, '$2');
@@ -381,7 +383,9 @@ export default function TopLayoutBlog(props: TopLayoutBlogProps): React.ReactEle
               </AuthorsContainer>
             </React.Fragment>
           ) : null}
-          {...rendered}
+          {contentNodes.map((node, index) => (
+            <React.Fragment key={index}>{node}</React.Fragment>
+          ))}
         </AppContainer>
         <Divider />
         <HeroEnd />
@@ -391,3 +395,30 @@ export default function TopLayoutBlog(props: TopLayoutBlogProps): React.ReactEle
     </BrandingCssVarsProvider>
   );
 } 
+  const contentNodes = React.useMemo<React.ReactNode[]>(() => {
+    const nodes: React.ReactNode[] = [];
+
+    if (rendered) {
+      if (Array.isArray(rendered)) {
+        nodes.push(...rendered);
+      } else {
+        nodes.push(rendered);
+      }
+    }
+
+    if (!nodes.length && mdxSource) {
+      nodes.push(
+        <MarkdownElement key="mdx-content">
+          <MDXRemote
+            {...mdxSource}
+            components={{
+              ...(demoComponents || {}),
+              ...(srcComponents || {}),
+            }}
+          />
+        </MarkdownElement>,
+      );
+    }
+
+    return nodes;
+  }, [rendered, mdxSource, demoComponents, srcComponents]);

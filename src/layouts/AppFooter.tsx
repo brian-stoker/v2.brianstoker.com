@@ -46,22 +46,31 @@ export default function AppFooter(props: AppFooterProps) {
           },
         }}
       >
-        <Box>
-          <Link prefetch={false} href="/" aria-label="Go to homepage" sx={{
-            mb: 2,
-            textDecoration: 'none',
-            '&:hover': {
+        <Box sx={{ textAlign: { xs: 'center', sm: 'left' } }}>
+          <Link
+            prefetch={false}
+            href="/"
+            aria-label="Go to homepage"
+            sx={{
+              mb: 2,
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: 1,
+              justifyContent: { xs: 'center', sm: 'flex-start' },
               textDecoration: 'none',
-            },
-            '& span': {
-              color: 'text.secondary',
-              textDecoration: 'none'
-            },
-            '&:hover span': {
-              color: 'text.secondary',
-              textDecoration: 'none'
-            }
-          }}>
+              '&:hover': {
+                textDecoration: 'none',
+              },
+              '& span': {
+                color: 'text.secondary',
+                textDecoration: 'none',
+              },
+              '&:hover span': {
+                color: 'text.secondary',
+                textDecoration: 'none',
+              },
+            }}
+          >
             <SvgBsLogotype height={28} /><span className={'stoked-font'} style={{ fontSize: '24px' }}>BRIAN STOKER</span>
           </Link>
           <Typography variant="body2" fontWeight="semiBold" gutterBottom>
@@ -70,17 +79,25 @@ export default function AppFooter(props: AppFooterProps) {
           <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
             Join the newsletter for plan updates. No spam ever.
           </Typography>
-          <EmailSubscribe />
+          <EmailSubscribe sx={{ mt: 2, mx: { xs: 'auto', sm: 0 }, maxWidth: 360 }} />
         </Box>
         <Box
           sx={{
             display: 'grid',
-            gridTemplateColumns: '1fr 1fr',
+            gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr' },
             gridAutoColumns: '1fr',
             gap: 2,
+            textAlign: { xs: 'center', sm: 'left' },
           }}
         >
-          <Box sx={{ display: 'flex', flexDirection: 'column' }}>
+          <Box
+            sx={{
+              display: 'flex',
+              flexDirection: 'column',
+              gap: 0.5,
+              alignItems: { xs: 'center', sm: 'flex-start' },
+            }}
+          >
             <Link prefetch={false} href={ROUTES.home}>
               <Typography fontWeight="semiBold" variant="body2" sx={{ mb: 0.5 }}>
                 Brian Stoker
@@ -109,7 +126,14 @@ export default function AppFooter(props: AppFooterProps) {
             </Link>
           </Box>
 
-          <Box sx={{ display: 'flex', flexDirection: 'column' }}>
+          <Box
+            sx={{
+              display: 'flex',
+              flexDirection: 'column',
+              gap: 0.5,
+              alignItems: { xs: 'center', sm: 'flex-start' },
+            }}
+          >
             <Link prefetch={false} href={ROUTES.stokedConsulting}>
               <Typography fontWeight="semiBold" variant="body2" sx={{ mb: 0.5 }}>
                 Stoked Consulting
@@ -141,7 +165,7 @@ export default function AppFooter(props: AppFooterProps) {
         gap={{ xs: 2, sm: 1 }}
         sx={{ my: 4 }}
       >
-        <Typography color="text.tertiary" variant="caption" fontWeight={400}>
+        <Typography color="text.tertiary" variant="caption" fontWeight={400} sx={{ textAlign: { xs: 'center', sm: 'left' } }}>
           Copyright © {new Date().getFullYear()} BRIAN STOKER
         </Typography>
         <Stack spacing={1} direction="row" flexWrap="wrap" useFlexGap sx={{

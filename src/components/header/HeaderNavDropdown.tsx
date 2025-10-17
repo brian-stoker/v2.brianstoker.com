@@ -1,16 +1,18 @@
 import * as React from 'react';
 import { alpha, styled } from '@mui/material/styles';
 import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
 import Collapse from '@mui/material/Collapse';
-import Chip from '@mui/material/Chip';
+import Divider from '@mui/material/Divider';
+import Stack from '@mui/material/Stack';
 import { ClickAwayListener } from '@mui/base/ClickAwayListener';
 import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
-import KeyboardArrowDownRounded from '@mui/icons-material/KeyboardArrowDownRounded';
+import GitHubIcon from '@mui/icons-material/GitHub';
 import SvgHamburgerMenu from 'src/icons/SvgHamburgerMenu';
 import { Link } from '@stoked-ui/docs/Link';
 import ROUTES from 'src/route';
-import IconImage from "../icon/KeyIcon";
+import ThemeModeToggle from './ThemeModeToggle';
 
 const Anchor = styled('a')<{ component?: React.ElementType; noLinkStyle?: boolean }>(
   ({ theme }) => [
@@ -55,63 +57,10 @@ const UList = styled('ul')({
   margin: 0,
 });
 
-const PRODUCTS = [
-  {
-    name: 'Stoked UI Core',
-    description: 'Ready-to-use foundational React components, free forever.',
-    href: ROUTES.productCore,
-  },
-  {
-    name: 'Stoked UI X',
-    description: 'Advanced and powerful components for complex use cases.',
-    href: ROUTES.productAdvanced,
-  },
-  {
-    name: 'Stoked Consulting Services',
-    description: 'Full stack consulting services.',
-    href: ROUTES.productTemplates,
-  }
-];
-
-const DOCS = [
-  {
-    name: 'Material UI',
-    description: "Component library that implements Google's Material Design.",
-    href: ROUTES.materialDocs,
-  },
-  {
-    name: 'Joy UI',
-    description: "Component library that implements SUI's own in-house design principles.",
-    href: ROUTES.joyDocs,
-  },
-  {
-    name: 'Base UI',
-    description: 'Unstyled React components and low-level hooks.',
-    href: ROUTES.baseDocs,
-  },
-  {
-    name: 'SUI System',
-    description: 'CSS utilities for rapidly laying out custom designs.',
-    href: ROUTES.systemDocs,
-  },
-  {
-    name: 'SUI X',
-    description: 'Advanced components for complex use cases.',
-    href: ROUTES.xIntro,
-  },
-  {
-    name: 'Toolpad',
-    description: 'Low-code admin builder',
-    href: ROUTES.toolpadStudioDocs,
-    chip: 'Beta',
-  },
-];
-
 export default function HeaderNavDropdown() {
   const [open, setOpen] = React.useState(false);
-  const [productsOpen, setProductsOpen] = React.useState(true);
-  const [docsOpen, setDocsOpen] = React.useState(false);
   const hambugerRef = React.useRef<HTMLButtonElement>(null);
+  const menuId = React.useId();
   return (
     <React.Fragment>
       <IconButton
@@ -120,6 +69,9 @@ export default function HeaderNavDropdown() {
         ref={hambugerRef}
         disableRipple
         onClick={() => setOpen((value) => !value)}
+        aria-expanded={open ? 'true' : 'false'}
+        aria-haspopup="true"
+        aria-controls={open ? menuId : undefined}
         sx={{
           position: 'relative',
           '& rect': {
@@ -149,7 +101,7 @@ export default function HeaderNavDropdown() {
           in={open}
           sx={(theme) => ({
             position: 'fixed',
-            top: 56,
+            top: 'var(--MuiDocs-header-height)',
             left: 0,
             right: 0,
             boxShadow: `0px 16px 20px rgba(170, 180, 190, 0.3)`,
@@ -157,6 +109,8 @@ export default function HeaderNavDropdown() {
               boxShadow: '0px 16px 20px rgba(0, 0, 0, 0.8)',
             }),
           })}
+          aria-labelledby={menuId}
+          id={menuId}
         >
           <Box
             sx={{
@@ -168,19 +122,62 @@ export default function HeaderNavDropdown() {
           >
             <UList
               sx={(theme) => ({
-                '& ul': {
-                  borderLeft: '1px solid',
-                  borderColor: 'grey.100',
-                  ...theme.applyDarkStyles({
-                    borderColor: 'primaryDark.700',
-                  }),
-                  pl: 1,
-                  pb: 1,
-                  ml: 1,
+              '& ul': {
+                borderLeft: '1px solid',
+                borderColor: 'grey.100',
+                ...theme.applyDarkStyles({
+                  borderColor: 'primaryDark.700',
+                }),
+                pl: 1,
+                pb: 1,
+                ml: 1,
 
                 },
               })}
             >
+              <Box
+                sx={(theme) => ({
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  mb: 2,
+                  gap: 1,
+                  '& .MuiButton-root': {
+                    flexGrow: 1,
+                  },
+                  ...theme.applyDarkStyles({
+                    '& .MuiButton-root': {
+                      borderColor: 'primaryDark.600',
+                    },
+                  }),
+                })}
+              >
+                <Typography
+                  variant="body2"
+                  color="text.secondary"
+                  sx={{ fontWeight: theme => theme.typography.fontWeightSemiBold }}
+                >
+                  Quick actions
+                </Typography>
+                <Stack direction="row" spacing={1} alignItems="center">
+                  <ThemeModeToggle />
+                  <Button
+                    component={Link}
+                    href="https://github.com/brian-stoker"
+                    target="_blank"
+                    rel="noopener"
+                    noLinkStyle
+                    prefetch={false}
+                    variant="outlined"
+                    size="small"
+                    startIcon={<GitHubIcon fontSize="small" />}
+                    sx={{ whiteSpace: 'nowrap' }}
+                  >
+                    GitHub
+                  </Button>
+                </Stack>
+              </Box>
+              <Divider sx={{ mb: 2 }} />
               <li>
                 <Anchor href={ROUTES.work} as={Link} noLinkStyle>
                   Work
