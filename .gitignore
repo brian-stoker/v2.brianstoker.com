@@ -58,3 +58,9 @@ export
 # open-next
 .open-next
 .history
+
+# Playwright test results
+/test-results/
+/playwright-report/
+/playwright/.cache/
+*.trace.zip

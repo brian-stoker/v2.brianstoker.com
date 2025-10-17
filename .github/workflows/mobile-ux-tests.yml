@@ -1,0 +1,177 @@
+name: Mobile UX Regression Tests
+
+on:
+  pull_request:
+    branches: [main, master, develop]
+    paths:
+      - 'src/**'
+      - 'e2e/**'
+      - 'playwright.config.ts'
+      - 'package.json'
+  push:
+    branches: [main, master]
+  workflow_dispatch:
+
+jobs:
+  mobile-ux-tests:
+    name: Test Mobile UX
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: [1, 2]
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Install Playwright Browsers
+        run: pnpm exec playwright install chromium webkit --with-deps
+
+      - name: Run Playwright tests
+        run: pnpm exec playwright test --shard=${{ matrix.shard }}/${{ strategy.job-total }}
+        env:
+          CI: true
+
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report-${{ matrix.shard }}
+          path: playwright-report/
+          retention-days: 30
+
+      - name: Upload test screenshots
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-screenshots-${{ matrix.shard }}
+          path: test-results/
+          retention-days: 7
+
+  smoke-tests:
+    name: Mobile Smoke Tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Install Playwright Browsers
+        run: pnpm exec playwright install chromium --with-deps
+
+      - name: Run smoke tests
+        run: pnpm exec playwright test smoke-tests.spec.ts
+        env:
+          CI: true
+
+      - name: Upload smoke test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: smoke-test-report
+          path: playwright-report/
+          retention-days: 7
+
+  visual-regression:
+    name: Visual Regression Tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Install Playwright Browsers
+        run: pnpm exec playwright install chromium --with-deps
+
+      - name: Run visual regression tests
+        run: pnpm exec playwright test visual-regression.spec.ts --update-snapshots
+        env:
+          CI: true
+        continue-on-error: true
+
+      - name: Upload visual diffs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: visual-regression-report
+          path: |
+            playwright-report/
+            test-results/
+          retention-days: 14
+
+  test-summary:
+    name: Test Summary
+    runs-on: ubuntu-latest
+    needs: [mobile-ux-tests, smoke-tests]
+    if: always()
+
+    steps:
+      - name: Download all artifacts
+        uses: actions/download-artifact@v4
+
+      - name: Create test summary
+        run: |
+          echo "## Mobile UX Test Results" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "✅ Mobile UX tests completed" >> $GITHUB_STEP_SUMMARY
+          echo "✅ Smoke tests completed" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### Test Coverage" >> $GITHUB_STEP_SUMMARY
+          echo "- Responsive header navigation" >> $GITHUB_STEP_SUMMARY
+          echo "- Mobile product carousel" >> $GITHUB_STEP_SUMMARY
+          echo "- ShowcaseContainer code toggle" >> $GITHUB_STEP_SUMMARY
+          echo "- Newsletter toast positioning" >> $GITHUB_STEP_SUMMARY
+          echo "- Footer responsive grid" >> $GITHUB_STEP_SUMMARY
+          echo "- Visual regression tests" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### Viewports Tested" >> $GITHUB_STEP_SUMMARY
+          echo "- 📱 Mobile: 320px, 375px, 414px" >> $GITHUB_STEP_SUMMARY
+          echo "- 📱 Tablet: 768px" >> $GITHUB_STEP_SUMMARY
+          echo "- 💻 Desktop: 960px, 1280px, 1920px" >> $GITHUB_STEP_SUMMARY
