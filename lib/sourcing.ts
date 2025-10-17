@@ -10,11 +10,14 @@ if (typeof window === 'undefined') {
 }
 
 const blogDir = path.join(process.cwd(), 'data/.plan');
+const SUPPORTED_EXTENSIONS = ['.mdx', '.md'];
 
-const getBlogFilePaths = (ext = '.mdx') => {
-  return fs.readdirSync(blogDir).filter((file) => {
-    return file.endsWith(ext)
-  });
+const getBlogFilePaths = () => {
+  return fs
+    .readdirSync(blogDir)
+    .filter((file: string) =>
+      SUPPORTED_EXTENSIONS.some((ext) => file.toLowerCase().endsWith(ext)),
+    );
 };
 
 export interface BlogPostMeta {
@@ -33,7 +36,7 @@ export interface BlogPost extends BlogPostMeta {
 
 async function getBlogPost(filePath: string): Promise<BlogPost> {
   
-  const slug = filePath.replace(/\.mdx$/, '');
+  const slug = filePath.replace(/\.(mdx?|md)$/, '');
   const raw = fs.readFileSync(path.join(blogDir, filePath), 'utf-8');
   const { content, data: frontMatter } = matter(raw);
   // Use next-mdx-remote to serialize the content
@@ -45,10 +48,23 @@ async function getBlogPost(filePath: string): Promise<BlogPost> {
     scope: frontMatter,
   });
 
-return {
+  const meta = frontMatter as Partial<BlogPostMeta>;
+  const tags = Array.isArray(meta.tags)
+    ? meta.tags
+    : meta.tags
+    ? [meta.tags]
+    : [];
+
+  return {
     source,
-    ...frontMatter as BlogPostMeta,
     slug,
+    title: meta.title || slug,
+    description: meta.description || '',
+    image: meta.image,
+    tags,
+    authors: Array.isArray(meta.authors) ? meta.authors : meta.authors ? [meta.authors] : [],
+    date: meta.date,
+    sui: meta.sui,
   };
 }
 

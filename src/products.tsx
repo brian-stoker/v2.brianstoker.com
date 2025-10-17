@@ -9,12 +9,14 @@ import Chip from "@mui/material/Chip";
 import Fade from "@mui/material/Fade";
 import Paper from "@mui/material/Paper";
 import Popper from "@mui/material/Popper";
-import KeyboardArrowRightRounded from "@mui/material/SvgIcon/SvgIcon";
+import SwipeableViews from "react-swipeable-views";
+import MobileStepper from "@mui/material/MobileStepper";
+import IconButton from "@mui/material/IconButton";
+import KeyboardArrowLeftRounded from "@mui/icons-material/KeyboardArrowLeftRounded";
+import KeyboardArrowRightRounded from "@mui/icons-material/KeyboardArrowRightRounded";
 import { Link } from "@stoked-ui/docs/Link";
-import { alpha, Theme } from "@mui/material/styles";
+import { alpha, Theme, useTheme } from "@mui/material/styles";
 import Typography from "@mui/material/Typography";
-import dynamic from "next/dynamic";
-import useMediaQuery from "@mui/material/useMediaQuery";
 import { useInView } from "react-intersection-observer";
 import Grid from "@mui/material/Grid";
 import PageContext from "./modules/components/PageContext";
@@ -374,12 +376,6 @@ class Product {
   }
 }
 
-
-type ProductSwipeableProps = ProductsComponentProps & {
-  show: boolean;
-  products: Products;
-}
-
 class IndexObject<T> {
   index: { [key: string]: T } = {};
 
@@ -420,8 +416,6 @@ class IndexObject<T> {
   }
 }
 
-const SwipeableViews = dynamic(() => import('react-swipeable-views'), { ssr: false });
-
 type ProductsComponentProps = {
   productIndex: number;
   setProductIndex: React.Dispatch<React.SetStateAction<number>>;
@@ -445,40 +439,6 @@ function titleCase(str: string) {
   str = str.replace(/-/g, ' ');
   const result = str.replace(/([A-Z])/g, ' $1');
   return result.charAt(0).toUpperCase() + result.slice(1);
-}
-
-function SwipeableProducts(props: ProductSwipeableProps) {
-  const swipeableProducts = React.useMemo(() => {
-    const { show, products, productIndex, setProductIndex } = props;
-    const switchIt = (index: number) => {
-      setProductIndex(index);
-    }
-    return (
-      <Box sx={{
-        display: { md: 'none' },
-        maxWidth: 'calc(100vw - 40px)',
-        '& > div': { pr: '32%' },
-      }}
-      >
-        {show && (<SwipeableViews
-          index={productIndex}
-          resistance
-          enableMouseEvents
-          onChangeIndex={(index) => setProductIndex(index)}
-        >
-          {products.live.map((product: Product, index: number) => {
-           return  product.highlightedItem(productIndex, setProductIndex, index, 'row', 'product', {
-              width: '100%',
-              transition: '0.3s',
-              transform: productIndex !== index ? 'scale(0.9)' : 'scale(1)',
-            });
-          })}
-        </SwipeableViews>)}
-      </Box>
-    )
-  }, [props]);
-
-  return swipeableProducts;
 }
 
 function ProductMenu(props: ProductMenuProps) {
@@ -573,14 +533,165 @@ type ProductSwitcherProps = ProductStackProps & {
   products: Products;
 }
 
-function ProductsSwitcher(props: ProductSwitcherProps) {
-  const { inView = false, productIndex, setProductIndex, products } = props;
-  const isBelowMd = useMediaQuery((theme: Theme) => theme.breakpoints.down('md'));
+function MobileProductCarousel(props: ProductSwitcherProps) {
+  const { inView = false, products, productIndex, setProductIndex } = props;
+  const theme = useTheme();
+  const liveProducts = products.live;
+
+  const handleChangeIndex = React.useCallback(
+    (index: number) => {
+      setProductIndex(index);
+    },
+    [setProductIndex],
+  );
+
+  const handleNext = React.useCallback(() => {
+    setProductIndex((prev) => Math.min(prev + 1, liveProducts.length - 1));
+  }, [liveProducts.length, setProductIndex]);
+
+  const handleBack = React.useCallback(() => {
+    setProductIndex((prev) => Math.max(prev - 1, 0));
+  }, [setProductIndex]);
 
   return (
+    <Box sx={{ display: { xs: 'block', md: 'none' }, mb: 3 }}>
+      {inView ? (
+        <React.Fragment>
+          <SwipeableViews
+            axis={theme.direction === 'rtl' ? 'x-reverse' : 'x'}
+            index={productIndex}
+            onChangeIndex={handleChangeIndex}
+            enableMouseEvents
+            resistance
+            containerStyle={{ paddingBottom: 12 }}
+          >
+            {liveProducts.map((product, index) => (
+              <Box key={product.id} sx={{ px: 1 }}>
+                <ButtonBase
+                  focusRipple
+                  type="button"
+                  onClick={() => setProductIndex(index)}
+                  aria-label={`Preview ${product.name}`}
+                  aria-pressed={productIndex === index}
+                  sx={[
+                    (themeArg) => ({
+                      width: '100%',
+                      textAlign: 'left',
+                      borderRadius: 2,
+                      display: 'flex',
+                      flexDirection: 'column',
+                      alignItems: 'flex-start',
+                      gap: themeArg.spacing(1.5),
+                      padding: themeArg.spacing(2.5, 2),
+                      border: '1px solid',
+                      borderColor: themeArg.palette.divider,
+                      backgroundColor: themeArg.palette.background.paper,
+                      transition: themeArg.transitions.create([
+                        'transform',
+                        'border-color',
+                        'background-color',
+                      ]),
+                      '&:hover, &.Mui-focusVisible': {
+                        transform: 'translateY(-2px)',
+                      },
+                      ...themeArg.applyDarkStyles({
+                        borderColor: themeArg.palette.primaryDark[700],
+                        backgroundColor: themeArg.palette.primaryDark[900],
+                      }),
+                    }),
+                    productIndex === index
+                      ? (themeArg: Theme) => ({
+                          borderColor: themeArg.palette.primary.main,
+                          backgroundColor: alpha(themeArg.palette.primary.main, 0.08),
+                          ...themeArg.applyDarkStyles({
+                            borderColor: themeArg.palette.primary[300],
+                            backgroundColor: alpha(themeArg.palette.primary[700], 0.25),
+                          }),
+                        })
+                      : null,
+                  ]}
+                >
+                  <Stack direction="row" spacing={2} alignItems="center" sx={{ width: '100%' }}>
+                    {product.icon}
+                    <Box sx={{ flexGrow: 1 }}>
+                      <Typography
+                        component="span"
+                        variant="subtitle1"
+                        fontWeight={600}
+                        display="block"
+                      >
+                        {product.name}
+                      </Typography>
+                      <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>
+                        {product.description}
+                      </Typography>
+                    </Box>
+                  </Stack>
+                  {product.features.length ? (
+                    <Stack direction="row" spacing={1} flexWrap="wrap" useFlexGap>
+                      {product.features.slice(0, 3).map((feature) => (
+                        <Chip key={feature.id} size="small" label={feature.name} />
+                      ))}
+                    </Stack>
+                  ) : null}
+                </ButtonBase>
+              </Box>
+            ))}
+          </SwipeableViews>
+          {liveProducts.length > 1 ? (
+            <MobileStepper
+              variant="dots"
+              steps={liveProducts.length}
+              position="static"
+              activeStep={productIndex}
+              nextButton={
+                <IconButton
+                  size="small"
+                  onClick={handleNext}
+                  aria-label="Next showcase"
+                  disabled={productIndex === liveProducts.length - 1}
+                >
+                  <KeyboardArrowRightRounded fontSize="small" />
+                </IconButton>
+              }
+              backButton={
+                <IconButton
+                  size="small"
+                  onClick={handleBack}
+                  aria-label="Previous showcase"
+                  disabled={productIndex === 0}
+                >
+                  <KeyboardArrowLeftRounded fontSize="small" />
+                </IconButton>
+              }
+              sx={(themeArg) => ({
+                mt: 1.5,
+                px: 0,
+                justifyContent: 'space-between',
+                backgroundColor: 'transparent',
+                '& .MuiMobileStepper-dots': {
+                  flexGrow: 1,
+                  justifyContent: 'center',
+                },
+                ...themeArg.applyDarkStyles({
+                  '& .MuiMobileStepper-dotActive': {
+                    backgroundColor: themeArg.palette.primary[300],
+                  },
+                }),
+              })}
+            />
+          ) : null}
+        </React.Fragment>
+      ) : null}
+    </Box>
+  );
+}
+
+function ProductsSwitcher(props: ProductSwitcherProps) {
+  return (
     <React.Fragment>
-      {products.swipeable({ show: isBelowMd && inView, productIndex, setProductIndex } as ProductSwipeableProps)}
-      {products.stack(props)}
+      <MobileProductCarousel {...props} />
+      {props.products.stack(props)}
     </React.Fragment>
   );
 }
@@ -601,8 +712,29 @@ function ProductsPreviews({ products, mostRecentPosts }: { products: Products, m
 
       <Grid container spacing={'24px'}>
         <Grid item md={6}>
-          <Box sx={{ textAlign: { xs: 'center', md: 'left' }, }}>
-            <Typography variant="h1" mb={1} className={'stoked-font'} sx={{ fontSize:  { xs: 36, sm: 46, md: 56, lg: 66 }, marginBottom: { xs: 1, sm: 2, md: 3, lg: 4 }}}>
+          <Box
+            sx={{
+              textAlign: { xs: 'center', md: 'left' },
+              maxWidth: { xs: 340, sm: '100%' },
+              mx: { xs: 'auto', md: 0 },
+            }}
+          >
+            <Typography
+              variant="h1"
+              className={'stoked-font'}
+              sx={{
+                fontSize: {
+                  xs: 'clamp(1.75rem, 6vw + 0.5rem, 2.625rem)',
+                  sm: 42,
+                  md: 56,
+                  lg: 66,
+                },
+                lineHeight: { xs: 1.05, sm: 1.08, md: 1.05, lg: 1.05 },
+                letterSpacing: { xs: '-0.01em', md: 0 },
+                mb: { xs: 1.75, sm: 2.5, md: 3, lg: 4 },
+                wordBreak: 'break-word',
+              }}
+            >
               BRIAN <br/><GradientText>STOKER</GradientText>
             </Typography>
           </Box>
@@ -673,10 +805,6 @@ class Products extends IndexObject<Product> {
 
   public switcher(props: ProductStackProps) {
     return <ProductsSwitcher {...props} products={this} />;
-  }
-
-  public swipeable(props: ProductSwipeableProps) {
-    return <SwipeableProducts {...props} products={this} />
   }
 
   getFeatureUrl(productId: string, featureId: string, type: LinkType = 'doc') {
@@ -1036,4 +1164,3 @@ type MenuProps = {
 };
 
 export { PRODUCTS }
-

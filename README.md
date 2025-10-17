@@ -159,6 +159,23 @@ To get a local copy of the project up and running, follow these steps:
 
 6. Open your browser and visit `http://localhost:3000` to see the website.
 
+## Mobile/Desktop QA Checklist
+
+### Mobile
+- Open the header menu and confirm the theme toggle and GitHub action appear inside the drawer.
+- Verify navigation chips wrap without overflow and the hero typography fits within a 320 px viewport.
+- Scroll through the product previews and use the selector to change products; ensure the showcase preview updates.
+- Expand and collapse showcase code sections to confirm the toggle preserves rounded corners.
+- Trigger the newsletter toast (append `?newsletter=subscribed`) and confirm it anchors above the bottom safe area.
+- Scroll to the footer and check that link columns stack cleanly with centered alignment.
+
+### Desktop
+- Confirm the header navigation stays on a single row at ≥960 px widths.
+- Switch products using the desktop selector and ensure the mobile select control stays hidden.
+- Validate showcase code blocks remain expanded by default.
+- Check the newsletter toast appears below the header and that dismissing it works.
+- Inspect the footer layout at 1280 px to ensure the two link columns remain side by side.
+
 ## Customization
 
 To customize the website for your own personal use, follow these steps:

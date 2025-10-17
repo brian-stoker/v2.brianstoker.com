@@ -274,12 +274,31 @@ export default function GithubEvents({ eventsPerPage = 40, hideMetadata = false 
           } else {
             link = `https://github.com/${event.repo.name}/commit/${event.payload.head}`;
           }
-          eventDetails.commitsList = event.payload.commits ? event.payload.commits.map((commit: any) => ({
-            message: commit.message,
-            sha: commit.sha,
-            author: commit.author,
-            html_url: `https://github.com/${event.repo.name}/commit/${commit.sha}`
-          })) : [];
+          eventDetails.commitsList = event.payload.commits
+            ? event.payload.commits.map((commit: any) => {
+                const normalizedMessage =
+                  commit.message ||
+                  commit.commit?.message ||
+                  commit.payload?.commit?.message ||
+                  '';
+                const message = normalizedMessage || 'No commit message provided';
+                const authorName =
+                  commit.author?.name ||
+                  commit.commit?.author?.name ||
+                  commit.commit?.author?.email ||
+                  commit.commit?.committer?.name ||
+                  'Unknown author';
+
+                return {
+                  message,
+                  sha: commit.sha,
+                  author: {
+                    name: authorName,
+                  },
+                  html_url: commit.html_url || `https://github.com/${event.repo.name}/commit/${commit.sha}`,
+                };
+              })
+            : [];
           eventDetails.ref = event.payload.ref;
           break;
         case 'PullRequestEvent':

@@ -68,7 +68,7 @@ export default function AppHeader(props: AppHeaderProps) {
           <HeaderNavBar/>
         </Box>
         <Box sx={{ml: 'auto'}}/>
-        <Stack direction="row" spacing={1}>
+        <Stack direction="row" spacing={1} sx={{ display: { xs: 'none', md: 'flex' } }}>
           <NoSsr>
             <Tooltip title={t('appFrame.github')} enterDelay={300}>
               <IconButton
