@@ -6,7 +6,6 @@ export const createApi = (domainInfo: DomainInfo) => {
     "GITHUB_TOKEN",
     "GITHUB_USERNAME",
     "SYNC_SECRET",
-    "MONGODB_NAME",
     "MONGODB_QUERY_PARAMS",
     "NEXT_PUBLIC_NEXT_API",
     "NEXT_PUBLIC_WEB_URL",

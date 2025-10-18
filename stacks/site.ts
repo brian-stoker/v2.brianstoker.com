@@ -6,7 +6,6 @@ export const createSite = (domainInfo: DomainInfo) => {
   const envVarKeys = [
     "NEXT_PUBLIC_WEB_URL",
     "MONGODB_URI",
-    "MONGODB_NAME",
     "MONGODB_USER",
     "MONGODB_PASS",
     "SST_STAGE",
@@ -32,6 +31,7 @@ export const createSite = (domainInfo: DomainInfo) => {
       : undefined,
     environment: {
       ...(envVars as Record<string, string>),
+      MONGODB_NAME: domainInfo.dbName,
     },
     permissions: [
       {

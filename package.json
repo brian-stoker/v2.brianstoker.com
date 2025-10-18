@@ -23,7 +23,7 @@
     "deploy:build:prod": "dotenvx run -- pnpm deploy:prod",
     "deploy:build:stage": "dotenvx run -- pnpm deploy:stage",
     "deploy:build": "dotenvx run -- pnpm deploy",
-    "deploy:prod": "dotenvx run --  sst deploy --stage production",
+    "deploy:prod": "senvn -f production sst deploy --stage production",
     "deploy:stage": "dotenvx run -- sst deploy --stage ",
     "deploy:sync": "aws s3 sync ./export s3://prod-brianstoker-spa-9713095/v2",
     "dev": "dotenvx run -- concurrently \"pnpm kill-port && next dev --port 5040\" \"sleep 5 && pnpm run sync-cron\"",
