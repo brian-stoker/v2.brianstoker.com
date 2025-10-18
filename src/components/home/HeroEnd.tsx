@@ -17,10 +17,12 @@ export default function HeroEnd() {
     rootMargin: '500px',
   });
   return (
-    <Box
+    <Section
       ref={ref}
+      bg="gradient"
+      cozy
       sx={(theme) => ({
-        background: `linear-gradient(180deg, #FFF 50%, 
+        background: `linear-gradient(180deg, #FFF 50%,
           ${theme.palette.primary[50]} 100%)
         `,
         ...theme.applyDarkStyles({
@@ -32,9 +34,9 @@ export default function HeroEnd() {
         }),
       })}
     >
-      <Section bg="transparent" cozy>
-        {inView ? <StartToday /> : <Placeholder />}
-      </Section>
-    </Box>
+      {
+      // inView ? <StartToday /> :
+      <Placeholder />}
+    </Section>
   );
 }

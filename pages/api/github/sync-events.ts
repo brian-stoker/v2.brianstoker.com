@@ -43,6 +43,12 @@ export default async function handler(
 
     const eventsCollection = db.collection('github_events');
 
+    // Ensure indexes exist for performance
+    await eventsCollection.createIndex({ created_at: -1 });
+    await eventsCollection.createIndex({ id: 1 }, { unique: true });
+    await eventsCollection.createIndex({ 'repo.name': 1 });
+    await eventsCollection.createIndex({ type: 1 });
+
     // Get the most recent event from the database (unless doing full refresh)
     let mostRecentEvent: GitHubEvent | null = null;
     if (!fullRefresh) {
@@ -118,7 +124,7 @@ export default async function handler(
           return res.status(429).json({
             message: 'Rate limit exceeded during sync',
             rateLimit,
-            eventsSynced: allEvents.length
+            eventsSynced: newEvents.length
           });
         }
 

@@ -38,37 +38,17 @@ export default async function handler(
     const metadataCollection = db.collection('sync_metadata');
     const syncMetadata = await metadataCollection.findOne({ _id: 'github_events_sync' } as any) as SyncMetadata | null;
 
-    // Get all events from MongoDB
     const eventsCollection = db.collection('github_events');
-    const allEvents = await eventsCollection.find({}).sort({ created_at: -1 }).toArray() as any as GitHubEvent[];
 
-    console.log(`Retrieved ${allEvents.length} events from MongoDB`);
-
-    if (allEvents.length === 0) {
-      return res.status(200).json({
-        events: [],
-        total: 0,
-        repositories: [],
-        actionTypes: [],
-        page: 1,
-        per_page: parseInt(per_page as string),
-        total_pages: 0,
-        syncMetadata: syncMetadata || null
-      });
-    }
-
-    // Apply filters
-    let filteredEvents = allEvents;
+    // Build MongoDB filter query
+    const query: any = {};
 
     if (repo) {
-      filteredEvents = filteredEvents.filter(event => event.repo.name === repo);
+      query['repo.name'] = repo;
     }
 
     if (action) {
-      filteredEvents = filteredEvents.filter(event => {
-        const eventAction = event.type.replace('Event', '');
-        return eventAction === action;
-      });
+      query.type = `${action}Event`;
     }
 
     if (date) {
@@ -98,14 +78,42 @@ export default async function handler(
           cutoffDate = new Date(0);
       }
 
-      filteredEvents = filteredEvents.filter(event => {
-        const eventDate = new Date(event.created_at);
-        return eventDate >= cutoffDate;
+      query.created_at = { $gte: cutoffDate.toISOString() };
+    }
+
+    // For description filtering, we need to fetch and filter in memory since it requires payload inspection
+    // Get total count with filters
+    const totalCount = await eventsCollection.countDocuments(query);
+
+    if (totalCount === 0) {
+      return res.status(200).json({
+        events: [],
+        total: 0,
+        repositories: [],
+        actionTypes: [],
+        page: 1,
+        per_page: parseInt(per_page as string),
+        total_pages: 0,
+        syncMetadata: syncMetadata || null
       });
     }
 
+    // Calculate pagination
+    const pageNum = parseInt(page as string);
+    const perPage = parseInt(per_page as string);
+    const skip = (pageNum - 1) * perPage;
+
+    // Get paginated events using MongoDB skip/limit for efficiency
+    let paginatedEvents = await eventsCollection
+      .find(query)
+      .sort({ created_at: -1 })
+      .skip(skip)
+      .limit(perPage)
+      .toArray() as any as GitHubEvent[];
+
+    // Apply description filter in memory if needed
     if (description) {
-      filteredEvents = filteredEvents.filter(event => {
+      paginatedEvents = paginatedEvents.filter(event => {
         let eventDescription = '';
         if (event.type === 'PushEvent') {
           const commitCount = event.payload?.commits ? event.payload.commits.length : (event.payload?.size || 0);
@@ -121,26 +129,17 @@ export default async function handler(
       });
     }
 
-    // Calculate pagination
-    const pageNum = parseInt(page as string);
-    const perPage = parseInt(per_page as string);
-    const startIndex = (pageNum - 1) * perPage;
-    const endIndex = startIndex + perPage;
-    const paginatedEvents = filteredEvents.slice(startIndex, endIndex);
-
-    // Extract unique values for filters
-    const repositories = [...new Set(allEvents.map(event => event.repo.name))].sort();
-    const actionTypes = [...new Set(allEvents.map(event => event.type.replace('Event', '')))].sort();
+    console.log(`[API] Retrieved ${paginatedEvents.length} events from MongoDB (page ${pageNum}, total: ${totalCount}, totalPages: ${Math.ceil(totalCount / perPage)})`);
 
     // Return paginated results with metadata
+    // Note: repositories and actionTypes removed to improve performance
+    // The frontend can build these from cached events instead
     return res.status(200).json({
       events: paginatedEvents,
-      total: filteredEvents.length,
-      repositories,
-      actionTypes,
+      total: totalCount,
       page: pageNum,
       per_page: perPage,
-      total_pages: Math.ceil(filteredEvents.length / perPage),
+      total_pages: Math.ceil(totalCount / perPage),
       syncMetadata: syncMetadata || null
     });
 

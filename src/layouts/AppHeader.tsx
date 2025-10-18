@@ -9,7 +9,7 @@ import Tooltip from '@mui/material/Tooltip';
 import IconButton from '@mui/material/IconButton';
 import GitHubIcon from '@mui/icons-material/GitHub';
 import ThemeModeToggle from 'src/components/header/ThemeModeToggle';
-import {Link} from '@stoked-ui/docs/Link';
+import NextLink from 'next/link';
 import {useTranslate} from '@stoked-ui/docs/i18n';
 import SvgBsLogomark from "../icons/SvgBsLogomark";
 import NoSsr from '@mui/material/NoSsr';
@@ -61,7 +61,7 @@ export default function AppHeader(props: AppHeaderProps) {
 
 
       <Container sx={{ display: 'flex', alignItems: 'center', minHeight: HEIGHT }}>
-        <Box component={Link} href="/" aria-label="Go to homepage" sx={{lineHeight: 0, mr: 2}}>
+        <Box component={NextLink} href="/" aria-label="Go to homepage" sx={{lineHeight: 0, mr: 2}}>
           <SvgBsLogomark width={30}  />
         </Box>
         <Box sx={{display: {xs: 'none', md: 'initial'}}}>
@@ -72,7 +72,7 @@ export default function AppHeader(props: AppHeaderProps) {
           <NoSsr>
             <Tooltip title={t('appFrame.github')} enterDelay={300}>
               <IconButton
-                component={Link}
+                component={NextLink}
                 color="primary"
                 href={gitHubRepository}
                 target="_blank"
@@ -83,8 +83,8 @@ export default function AppHeader(props: AppHeaderProps) {
                 <GitHubIcon fontSize="small"/>
               </IconButton>
             </Tooltip>
+            <ThemeModeToggle/>
           </NoSsr>
-          <ThemeModeToggle/>
         </Stack>
         <Box sx={{display: {md: 'none'}, ml: 1}}>
           <HeaderNavDropdown/>

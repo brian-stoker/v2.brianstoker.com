@@ -8,7 +8,7 @@ export function WorkView({ pdfMinWidth = 900}: { pdfMinWidth?: number }) {
   const theme = useTheme();
   return (
     <React.Fragment>
-      <GithubCalendar />
+      <GithubCalendar fx='punch' />
       <Box sx={{ 
         backgroundColor: theme.palette.background.paper,
         display: 'flex',

@@ -254,7 +254,7 @@ function NewStartScreen() {
               key={name}
               href={href}
               className="DocSearch-NewStartScreenItem"
-              legacyBehavior>
+            >
               {icon}
               {name}
             </NextLink>

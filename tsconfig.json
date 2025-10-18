@@ -7,7 +7,7 @@
     "pages",
     "data",
     "next.config.mjs"
-  ],
+, "src/components/plan/.md.js"  ],
   "compilerOptions": {
     "allowJs": true,
     "isolatedModules": true,

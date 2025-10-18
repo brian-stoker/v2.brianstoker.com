@@ -12,9 +12,10 @@ import SvgBsLogotype from 'src/icons/SvgBsLogotype';
 import EmailSubscribe from 'src/components/footer/EmailSubscribe';
 import ROUTES from 'src/route';
 import DiscordIcon from 'src/icons/DiscordIcon';
-import {Link} from '@stoked-ui/docs/Link';
+import NextLink from 'next/link';
 import SvgStackOverflow from 'src/icons/SvgStackOverflow';
 import Slack from '../icons/Slack';
+import { NoSsr } from '@mui/material';
 
 interface AppFooterProps {
   stackOverflowUrl?: string;
@@ -43,43 +44,47 @@ export default function AppFooter(props: AppFooterProps) {
             '&:hover': {
               color: 'primary.main',
             },
+            '&:visited': {
+              color: 'text.secondary',
+            },
+            '&:visited:hover': {
+              color: 'primary.main',
+            },
           },
         }}
       >
-        <Box sx={{ textAlign: { xs: 'center', sm: 'left' } }}>
-          <Link
+        <Box>
+          <Box
+            component={NextLink}
             prefetch={false}
             href="/"
             aria-label="Go to homepage"
             sx={{
-              mb: 2,
               display: 'inline-flex',
               alignItems: 'center',
-              gap: 1,
-              justifyContent: { xs: 'center', sm: 'flex-start' },
+              gap: '4px',
               textDecoration: 'none',
-              '&:hover': {
-                textDecoration: 'none',
-              },
+              mb: { xs: 2, sm: 4, md: 6 },
               '& span': {
-                color: 'text.secondary',
-                textDecoration: 'none',
+                transition: 'color 0.3s ease',
               },
               '&:hover span': {
-                color: 'text.secondary',
-                textDecoration: 'none',
-              },
+                color: '#fff',
+              }
             }}
           >
-            <SvgBsLogotype height={28} /><span className={'stoked-font'} style={{ fontSize: '24px' }}>BRIAN STOKER</span>
-          </Link>
-          <Typography variant="body2" fontWeight="semiBold" gutterBottom>
-            Keep up to date
-          </Typography>
-          <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
-            Join the newsletter for plan updates. No spam ever.
-          </Typography>
-          <EmailSubscribe sx={{ mt: 2, mx: { xs: 'auto', sm: 0 }, maxWidth: 360 }} />
+            <SvgBsLogotype height={28} />
+            <span className={'stoked-font'} style={{ fontSize: '24px' }}>BRIAN STOKER</span>
+          </Box>
+          <Box sx={{ ml: 1 }}>
+            <Typography variant="body2" fontWeight="semiBold" gutterBottom>
+              Keep up to date
+            </Typography>
+            <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
+              Join the newsletter for plan updates. No spam ever.
+            </Typography>
+            <EmailSubscribe sx={{ mt: 2, mx: { xs: 'auto', sm: 0 }, maxWidth: 360 }} />
+          </Box>
         </Box>
         <Box
           sx={{
@@ -90,70 +95,56 @@ export default function AppFooter(props: AppFooterProps) {
             textAlign: { xs: 'center', sm: 'left' },
           }}
         >
-          <Box
-            sx={{
-              display: 'flex',
-              flexDirection: 'column',
-              gap: 0.5,
-              alignItems: { xs: 'center', sm: 'flex-start' },
-            }}
-          >
-            <Link prefetch={false} href={ROUTES.home}>
+          <Box sx={{ display: 'flex', flexDirection: 'column' }}>
+            <NextLink prefetch={false} href={ROUTES.home}>
               <Typography fontWeight="semiBold" variant="body2" sx={{ mb: 0.5 }}>
                 Brian Stoker
               </Typography>
-            </Link>
-            <Link prefetch={false} href={ROUTES.art}>
+            </NextLink>
+            <NextLink prefetch={false} href={ROUTES.art}>
               Art
-            </Link>
-            <Link prefetch={false} href={ROUTES.photography}>
+            </NextLink>
+            <NextLink prefetch={false} href={ROUTES.photography}>
               Photography
-            </Link>
-            <Link prefetch={false} href={ROUTES.drums}>
+            </NextLink>
+            <NextLink prefetch={false} href={ROUTES.drums}>
               Drums
-            </Link>
-            <Link prefetch={false} href={ROUTES.plan}>
+            </NextLink>
+            <NextLink prefetch={false} href={ROUTES.plan}>
               bstoked.plan
-            </Link>
-            <Link prefetch={false} href={ROUTES.work}>
+            </NextLink>
+            <NextLink prefetch={false} href={ROUTES.work}>
               Work
-            </Link>
-            <Link prefetch={false} href={ROUTES.resume}>
+            </NextLink>
+            <NextLink prefetch={false} href={ROUTES.resume}>
               Resume
-            </Link>
-            <Link prefetch={false} href={ROUTES.privacyPolicy}>
+            </NextLink>
+            <NextLink prefetch={false} href={ROUTES.privacyPolicy}>
               Privacy
-            </Link>
+            </NextLink>
           </Box>
 
-          <Box
-            sx={{
-              display: 'flex',
-              flexDirection: 'column',
-              gap: 0.5,
-              alignItems: { xs: 'center', sm: 'flex-start' },
-            }}
-          >
-            <Link prefetch={false} href={ROUTES.stokedConsulting}>
+          <Box sx={{ display: 'flex', flexDirection: 'column' }}>
+            <NextLink prefetch={false} href={ROUTES.stokedConsulting}>
               <Typography fontWeight="semiBold" variant="body2" sx={{ mb: 0.5 }}>
                 Stoked Consulting
               </Typography>
-            </Link>
-            <Link prefetch={false} href={ROUTES.stokedUi}>
+            </NextLink>
+            <NextLink prefetch={false} href={ROUTES.stokedUi}>
               Stoked UI
-            </Link>
-            <Link prefetch={false} href={ROUTES.about}>
+            </NextLink>
+            <NextLink prefetch={false} href={ROUTES.about}>
               About
-            </Link>
-            <Link prefetch={false} href={ROUTES.vision}>
+            </NextLink>
+            <NextLink prefetch={false} href={ROUTES.vision}>
               Vision
-            </Link>
-            <Link prefetch={false} href={ROUTES.support}>
+            </NextLink>
+            <NextLink prefetch={false} href={ROUTES.support}>
               Support
-            </Link>
-            <Link target="_blank" href="mailto:b@stokedconsulting.com">
+            </NextLink>
+            <NextLink target="_blank" href="mailto:b@stokedconsulting.com">
               Contact us
-            </Link>
+            </NextLink>
           </Box>
         </Box>
       </Box>
@@ -202,7 +193,7 @@ export default function AppFooter(props: AppFooterProps) {
             title="Slack"
             size="small"
           >
-            <Slack sx={(theme) => ({ color: theme.palette.mode === 'light' ? 'grey' : '#FFF' ,...theme.applyDarkStyles({color: '#FFF'}) })} variant={'hover-color'} fontSize="small" />
+            <NoSsr><Slack sx={(theme) => ({ color: theme.palette.mode === 'light' ? 'grey' : '#FFF' ,...theme.applyDarkStyles({color: '#FFF'}) })} variant={'hover-color'} fontSize="small" /></NoSsr>
           </IconButton>
           <IconButton
             target="_blank"
@@ -229,8 +220,8 @@ export default function AppFooter(props: AppFooterProps) {
               target="_blank"
               rel="noopener"
               href={stackOverflowUrl}
-              aria-label="Stack Overflow"
-              title="Stack Overflow"
+              aria-label="Stack Overflow"
+              title="Stack Overflow"
               size="small"
             >
               <SvgStackOverflow fontSize="small" />

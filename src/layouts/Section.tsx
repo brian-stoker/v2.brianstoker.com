@@ -60,6 +60,7 @@ const Section = React.forwardRef<HTMLDivElement, SelectionProps>(function Sectio
           py: cozy ? { xs: 6, sm: 5, md: 6 } : { xs: 4, sm: 7, md: 8 },
           pb: noPaddingBottom ? '0 !important' : undefined,
           overflow: 'hidden',
+          minHeight: bg === 'gradient' ? '100vh' : undefined,
         }),
         ...(Array.isArray(sx) ? sx : [sx]),
       ]}

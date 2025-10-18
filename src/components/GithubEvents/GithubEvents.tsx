@@ -20,6 +20,7 @@ import { styled, useTheme } from '@mui/material/styles';
 import Autocomplete from '@mui/material/Autocomplete';
 import Pagination from '@mui/material/Pagination';
 import dynamic from 'next/dynamic';
+import { useRouter } from 'next/router';
 import PullRequestEvent from './PullRequestEvent';
 import PushEvent from './PushEvent';
 import DeleteEvent from './DeleteEvent';
@@ -42,7 +43,8 @@ const ReactJson = dynamic(() => import('react-json-view'), {
 const MetadataDisplay = styled(Box)(({ theme }) => {
   return {
     backgroundColor: 'rgba(255, 255, 255, 0.06)',
-    borderRadius: theme.shape.borderRadius,
+    borderTopRightRadius: theme.shape.borderRadius,
+    borderBottomRightRadius: theme.shape.borderRadius,
     boxShadow: theme.shadows[2],
     padding: theme.spacing(2),
     position: 'sticky',
@@ -50,13 +52,40 @@ const MetadataDisplay = styled(Box)(({ theme }) => {
     maxWidth: '692px',
     minWidth: '300px',
     top: '84px',
-    maxHeight: 'calc(100vh - 100px)',
-    overflow: 'auto'
+    maxHeight: 'calc(100vh - 236px - 75px)',
+    display: 'flex',
+    flexDirection: 'column'
   };
 });
 
-export default function GithubEvents({ eventsPerPage = 40, hideMetadata = false }: { eventsPerPage?: number, hideMetadata?: boolean }) {
+// Keep only the most recent events in localStorage to prevent quota exceeded errors
+// Reduced to 50 events to avoid localStorage quota issues with large event payloads
+const MAX_CACHED_EVENTS = 50;
 
+// Helper function to safely set localStorage with error handling
+const safeSetLocalStorage = (key: string, value: any): boolean => {
+  try {
+    localStorage.setItem(key, JSON.stringify(value));
+    return true;
+  } catch (err) {
+    console.error('Failed to save to localStorage:', err);
+    // If we hit quota, try to clear and set again
+    if (err instanceof Error && err.name === 'QuotaExceededError') {
+      try {
+        localStorage.removeItem(key);
+        localStorage.setItem(key, JSON.stringify(value));
+        return true;
+      } catch (retryErr) {
+        console.error('Failed to save to localStorage even after clearing:', retryErr);
+        return false;
+      }
+    }
+    return false;
+  }
+};
+
+export default function GithubEvents({ eventsPerPage = 40, hideMetadata = false }: { eventsPerPage?: number, hideMetadata?: boolean }) {
+  const router = useRouter();
   const [events, setEvents] = React.useState<DisplayEventDetails[]>([]);
   const [loading, setLoading] = React.useState<boolean>(true);
   const [error, setError] = React.useState<string | null>(null);
@@ -72,11 +101,20 @@ export default function GithubEvents({ eventsPerPage = 40, hideMetadata = false 
   const [cachedEvents, setCachedEvents] = React.useState<GitHubEvent[]>([]);
   const [lastUpdated, setLastUpdated] = React.useState<string>('');
   const [selectedEvent, selectEvent] = React.useState<DisplayEventDetails>({ id: '' } as DisplayEventDetails);
+  const [selectedIndex, setSelectedIndex] = React.useState<number>(0);
   const theme = useTheme();
-  
+  const [isInitialized, setIsInitialized] = React.useState(false);
+
   const scrollRef = React.useRef<HTMLDivElement>(null);
   const [showAttached, setShowAttached] = React.useState(false);
-  const [scrollTop, setScrollTop] =React. useState(0);
+  const [scrollTop, setScrollTop] = React.useState(0);
+
+  // Calculate total pages
+  const totalPages = React.useMemo(() => {
+    const pages = Math.ceil(totalCount / eventsPerPage);
+    console.log('[GithubEvents] Pagination debug:', { totalCount, eventsPerPage, totalPages: pages });
+    return pages;
+  }, [totalCount, eventsPerPage]);
 
   React.useEffect(() => {
     const el = scrollRef.current;
@@ -98,6 +136,158 @@ export default function GithubEvents({ eventsPerPage = 40, hideMetadata = false 
     return () => el.removeEventListener('scroll', onScroll);
   }, []);
 
+  // Fetch and cache filter metadata (repositories and event types)
+  const fetchAndCacheFilters = async () => {
+    try {
+      const response = await fetch('/api/github/filters');
+      if (!response.ok) throw new Error('Failed to fetch filters');
+      const data = await response.json();
+
+      // Update state
+      setRepositories(data.repositories);
+      setActionTypes(data.actionTypes);
+
+      // Cache in localStorage (separate from events cache)
+      safeSetLocalStorage('github_filters', {
+        repositories: data.repositories,
+        actionTypes: data.actionTypes,
+        lastFetched: Date.now()
+      });
+    } catch (err) {
+      console.error('Failed to fetch filters:', err);
+      // If fetch fails, build from cached events as fallback
+      if (cachedEvents.length > 0) {
+        buildFilterOptionsFromEvents(cachedEvents);
+      }
+    }
+  };
+
+  // Load filters from cache or fetch from API
+  React.useEffect(() => {
+    const cachedFilters = localStorage.getItem('github_filters');
+    if (cachedFilters) {
+      try {
+        const parsedFilters = JSON.parse(cachedFilters);
+        setRepositories(parsedFilters.repositories);
+        setActionTypes(parsedFilters.actionTypes);
+
+        // Refresh filters in background if cache is older than 1 hour
+        const hoursSinceLastFetch = (Date.now() - parsedFilters.lastFetched) / (1000 * 60 * 60);
+        if (hoursSinceLastFetch >= 1) {
+          fetchAndCacheFilters();
+        }
+      } catch (err) {
+        console.error('Failed to parse cached filters:', err);
+        fetchAndCacheFilters();
+      }
+    } else {
+      fetchAndCacheFilters();
+    }
+  }, []);
+
+  // Handle keyboard navigation
+  React.useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (!events.length) return;
+
+      if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
+        e.preventDefault();
+
+        let newIndex = selectedIndex;
+
+        if (e.key === 'ArrowDown') {
+          newIndex = selectedIndex + 1;
+
+          // Check if we need to go to the next page
+          if (newIndex >= events.length) {
+            if (page < totalPages) {
+              setPage(page + 1);
+              setSelectedIndex(0); // Will select first item of next page
+            }
+            return;
+          }
+        } else if (e.key === 'ArrowUp') {
+          newIndex = selectedIndex - 1;
+
+          // Check if we need to go to the previous page
+          if (newIndex < 0) {
+            if (page > 1) {
+              setPage(page - 1);
+              setSelectedIndex(eventsPerPage - 1); // Will select last item of previous page
+            }
+            return;
+          }
+        }
+
+        // Update selection within current page
+        if (newIndex >= 0 && newIndex < events.length) {
+          setSelectedIndex(newIndex);
+          const event = events[newIndex];
+          handleEventSelection(event, newIndex);
+
+          // Scroll the selected row into view
+          const selectedRow = document.getElementById(event.id);
+          if (selectedRow) {
+            selectedRow.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+          }
+        }
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [events, selectedIndex, page, totalPages]);
+
+  // Handle URL query parameters for direct links
+  React.useEffect(() => {
+    if (!router.isReady) return;
+
+    const { event: eventId } = router.query;
+
+    if (eventId && typeof eventId === 'string' && events.length > 0) {
+      const eventIndex = events.findIndex(e => e.id === eventId);
+      if (eventIndex !== -1) {
+        const event = events[eventIndex];
+        setSelectedIndex(eventIndex);
+        handleEventSelection(event, eventIndex);
+
+        // Scroll to the event
+        setTimeout(() => {
+          const selectedRow = document.getElementById(eventId);
+          if (selectedRow) {
+            selectedRow.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          }
+        }, 100);
+      }
+    }
+  }, [router.isReady, router.query, events]);
+
+  // Helper function to handle event selection
+  const handleEventSelection = (event: DisplayEventDetails, index: number) => {
+    // Remove previous selection
+    if (selectedEvent.id) {
+      const oldSelectedRow = document.getElementById(selectedEvent.id);
+      if (oldSelectedRow) {
+        oldSelectedRow.classList.remove('selected');
+      }
+    }
+
+    // Add new selection
+    const newSelectedRow = document.getElementById(event.id);
+    if (newSelectedRow) {
+      newSelectedRow.classList.add('selected');
+    }
+
+    selectEvent(event);
+    setSelectedIndex(index);
+
+    // Update URL with shallow routing
+    router.push({
+      pathname: router.pathname,
+      query: { ...router.query, event: event.id }
+    }, undefined, { shallow: true });
+  };
+
 
   // Load cached data on mount
   React.useEffect(() => {
@@ -112,6 +302,7 @@ export default function GithubEvents({ eventsPerPage = 40, hideMetadata = false 
           console.log('Cache version outdated, clearing and fetching fresh data');
           localStorage.removeItem('github_events');
           fetchGitHubEvents(1);
+          setIsInitialized(true);
           return;
         }
 
@@ -123,18 +314,55 @@ export default function GithubEvents({ eventsPerPage = 40, hideMetadata = false 
         const lastFetchDate = new Date(parsedCache.lastFetched);
         setLastUpdated(format(lastFetchDate, 'MMM d, yyyy h:mm a'));
 
-        // Check if we should fetch new events (if it's been more than 8 hours)
-        const hoursSinceLastFetch = (Date.now() - parsedCache.lastFetched) / (1000 * 60 * 60);
-        if (hoursSinceLastFetch >= 8) {
-          fetchNewEvents();
+        // Check if cache has enough events for the current eventsPerPage requirement
+        const filteredEvents = parsedCache.events;
+        if (filteredEvents.length >= eventsPerPage) {
+          // We have enough cached data, display it immediately
+          const processedEvents = processEvents(filteredEvents.slice(0, eventsPerPage));
+          setEvents(processedEvents);
+          setLoading(false);
+
+          // Select the first event
+          if (processedEvents.length > 0 && !router.query.event) {
+            setSelectedIndex(0);
+            handleEventSelection(processedEvents[0], 0);
+          }
+
+          // Check if we should fetch new events (if it's been more than 1 hour)
+          const hoursSinceLastFetch = (Date.now() - parsedCache.lastFetched) / (1000 * 60 * 60);
+          if (hoursSinceLastFetch >= 1) {
+            fetchNewEvents();
+          }
+        } else if (filteredEvents.length > 0 && parsedCache.totalCount > filteredEvents.length) {
+          // We have some cached data but not enough - fetch the missing events
+          // Display cached data first
+          const processedEvents = processEvents(filteredEvents);
+          setEvents(processedEvents);
+          setLoading(false);
+
+          // Select the first event
+          if (processedEvents.length > 0 && !router.query.event) {
+            setSelectedIndex(0);
+            handleEventSelection(processedEvents[0], 0);
+          }
+
+          // Fetch the remaining events we need in the background
+          fetchGitHubEvents(1);
+        } else {
+          // Cache doesn't have enough data, fetch from API
+          fetchGitHubEvents(1);
         }
+
+        setIsInitialized(true);
       } catch (err) {
         console.error('Failed to parse cached events:', err);
         localStorage.removeItem('github_events');
         fetchGitHubEvents(1);
+        setIsInitialized(true);
       }
     } else {
       fetchGitHubEvents(1);
+      setIsInitialized(true);
     }
   }, []);
 
@@ -146,56 +374,60 @@ export default function GithubEvents({ eventsPerPage = 40, hideMetadata = false 
         mostRecentDate = new Date(Math.max(...cachedEvents.map(e => new Date(e.created_at).getTime())));
       }
 
-      const response = await fetch('/api/github/events?page=1&per_page=100');
+      // Only fetch the most recent events to check for updates (not 100!)
+      const response = await fetch('/api/github/events?page=1&per_page=20');
       if (!response.ok) throw new Error('Failed to fetch new events');
       const data = await response.json();
-      
+
       // Filter out events we already have and add new ones
       const newEvents = [...cachedEvents];
       let hasNewEvents = false;
-      
+
       data.events.forEach((event: GitHubEvent) => {
         const eventDate = new Date(event.created_at);
-        if (eventDate > mostRecentDate && !newEvents.some(e => 
+        if (eventDate > mostRecentDate && !newEvents.some(e =>
           e.created_at === event.created_at && e.repo.name === event.repo.name
         )) {
           newEvents.push(event);
           hasNewEvents = true;
         }
       });
-      
+
       if (hasNewEvents) {
         // Sort events by date (newest first)
         newEvents.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
-        
-        // Update cache with new events
-        setCachedEvents(newEvents);
-        localStorage.setItem('github_events', JSON.stringify({
+
+        // Prune old events to keep localStorage size manageable
+        const prunedEvents = pruneOldEvents(newEvents);
+
+        // Update cache with pruned events but keep the TOTAL count from MongoDB
+        setCachedEvents(prunedEvents);
+        safeSetLocalStorage('github_events', {
           version: '4.0',
-          events: newEvents,
+          events: prunedEvents,
           lastFetched: Date.now(),
-          totalCount: newEvents.length
-        }));
-        
-        // Update UI
-        buildFilterOptionsFromEvents(newEvents);
-        setTotalCount(newEvents.length);
+          totalCount: data.total  // Use total from MongoDB, not pruned cache size
+        });
+
+        // Update UI (use prunedEvents for filters, but data.total for pagination)
+        buildFilterOptionsFromEvents(prunedEvents);
+        setTotalCount(data.total);  // Use total from MongoDB for accurate pagination
         setLastUpdated(format(new Date(), 'MMM d, yyyy h:mm a'));
-        
+
         // If we're on the first page, update the displayed events
         if (page === 1) {
-          const filteredEvents = filterEvents(newEvents);
+          const filteredEvents = filterEvents(prunedEvents);
           const processedEvents = processEvents(filteredEvents.slice(0, eventsPerPage));
           setEvents(processedEvents);
         }
       } else {
         // Just update the last fetched time
         const currentCache = JSON.parse(localStorage.getItem('github_events') || '{}');
-        localStorage.setItem('github_events', JSON.stringify({
+        safeSetLocalStorage('github_events', {
           ...currentCache,
           version: '4.0',
           lastFetched: Date.now()
-        }));
+        });
         setLastUpdated(format(new Date(), 'MMM d, yyyy h:mm a'));
       }
     } catch (err) {
@@ -204,15 +436,33 @@ export default function GithubEvents({ eventsPerPage = 40, hideMetadata = false 
     }
   };
 
+  // Helper function to prune old events from cache
+  const pruneOldEvents = (events: GitHubEvent[]): GitHubEvent[] => {
+    if (events.length <= MAX_CACHED_EVENTS) {
+      return events;
+    }
+
+    // Sort by date (newest first) and keep only the most recent MAX_CACHED_EVENTS
+    const sorted = [...events].sort((a, b) =>
+      new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+    );
+
+    const pruned = sorted.slice(0, MAX_CACHED_EVENTS);
+    console.log(`Pruned cache from ${events.length} to ${pruned.length} events`);
+    return pruned;
+  };
+
   const buildFilterOptionsFromEvents = (events: GitHubEvent[]) => {
     const uniqueRepos = new Set<string>();
     const uniqueActions = new Set<string>();
     const uniqueDescriptions = new Set<string>();
 
     events.forEach((event) => {
-      uniqueRepos.add(event.repo.name);
+      // Strip username from repo name (e.g., "username/repo" -> "repo")
+      const repoName = event.repo.name.split('/')[1] || event.repo.name;
+      uniqueRepos.add(repoName);
       uniqueActions.add(event.type.replace('Event', ''));
-      
+
       if (event.payload) {
         if (event.type === 'PushEvent') {
           const commitCount = event.payload.commits ? event.payload.commits.length : (event.payload.size || 0);
@@ -227,8 +477,36 @@ export default function GithubEvents({ eventsPerPage = 40, hideMetadata = false 
       }
     });
 
-    setRepositories(Array.from(uniqueRepos).sort());
-    setActionTypes(Array.from(uniqueActions).sort());
+    const newRepos = Array.from(uniqueRepos).sort();
+    const newActions = Array.from(uniqueActions).sort();
+
+    // Check if we found any new repos or event types not in the cached filters
+    const cachedFilters = localStorage.getItem('github_filters');
+    if (cachedFilters) {
+      try {
+        const parsedFilters = JSON.parse(cachedFilters);
+        const hasNewRepos = newRepos.some(repo => !parsedFilters.repositories.includes(repo));
+        const hasNewActions = newActions.some(action => !parsedFilters.actionTypes.includes(action));
+
+        // If we found new repos or actions, update the filter cache
+        if (hasNewRepos || hasNewActions) {
+          const updatedRepos = Array.from(new Set([...parsedFilters.repositories, ...newRepos])).sort();
+          const updatedActions = Array.from(new Set([...parsedFilters.actionTypes, ...newActions])).sort();
+
+          safeSetLocalStorage('github_filters', {
+            repositories: updatedRepos,
+            actionTypes: updatedActions,
+            lastFetched: parsedFilters.lastFetched // Keep original fetch time
+          });
+
+          setRepositories(updatedRepos);
+          setActionTypes(updatedActions);
+        }
+      } catch (err) {
+        console.error('Failed to update filter cache:', err);
+      }
+    }
+
     setDescriptions(Array.from(uniqueDescriptions).sort());
   };
 
@@ -332,15 +610,17 @@ export default function GithubEvents({ eventsPerPage = 40, hideMetadata = false 
 
   const filterEvents = (events: GitHubEvent[]) => {
     return events.filter(event => {
-      const matchesRepo = !repoFilter || event.repo.name === repoFilter;
+      // Compare just the repo name without username
+      const repoName = event.repo.name.split('/')[1] || event.repo.name;
+      const matchesRepo = !repoFilter || repoName === repoFilter;
       const matchesAction = !actionFilter || event.type.replace('Event', '') === actionFilter;
-      
+
       let matchesDescription = true;
       if (descriptionFilter) {
         const eventDescription = getEventDescription(event);
         matchesDescription = eventDescription.includes(descriptionFilter);
       }
-      
+
       if (dateFilter) {
         const filterDate = getFilteredDate(dateFilter);
         if (filterDate) {
@@ -348,7 +628,7 @@ export default function GithubEvents({ eventsPerPage = 40, hideMetadata = false 
           if (eventDate < filterDate) return false;
         }
       }
-      
+
       return matchesRepo && matchesAction && matchesDescription;
     });
   };
@@ -367,34 +647,38 @@ export default function GithubEvents({ eventsPerPage = 40, hideMetadata = false 
     return '';
   };
 
-  const fetchGitHubEvents = async (pageNum = 1, isFilterChange = false) => {
-    // If we have cached data and this is a filter change, use that first
-    if (isFilterChange && cachedEvents.length > 0) {
+  const fetchGitHubEvents = async (pageNum = 1, useCache = false) => {
+    // If we should use cache and have cached data
+    if (useCache && cachedEvents.length > 0) {
       const filteredCachedEvents = filterEvents(cachedEvents);
       const startIndex = (pageNum - 1) * eventsPerPage;
       const endIndex = startIndex + eventsPerPage;
       const paginatedEvents = filteredCachedEvents.slice(startIndex, endIndex);
-      const processedEvents = processEvents(paginatedEvents);
-      setEvents(processedEvents);
-      setTotalCount(filteredCachedEvents.length);
-      
-      // Select the most recent event by default
-      if (processedEvents.length > 0 && !selectedEvent.id) {
-        selectEvent(processedEvents[0]);
-        // Use setTimeout to ensure DOM is updated before we try to find the element
-        setTimeout(() => {
-          const firstRow = document.getElementById(processedEvents[0].id);
-          if (firstRow) {
-            firstRow.classList.add('selected');
-          }
-        }, 0);
+
+      // If we have enough cached data for this page, use it
+      if (paginatedEvents.length === eventsPerPage) {
+        const processedEvents = processEvents(paginatedEvents);
+        setEvents(processedEvents);
+        setLoading(false);
+
+        // Select the appropriate event on the page
+        if (processedEvents.length > 0) {
+          // Use selectedIndex if it's been set (e.g., from keyboard nav)
+          const indexToSelect = pageNum === page ? selectedIndex : 0;
+          const eventToSelect = processedEvents[Math.min(indexToSelect, processedEvents.length - 1)];
+          const actualIndex = processedEvents.findIndex(e => e.id === eventToSelect.id);
+
+          setSelectedIndex(actualIndex);
+          handleEventSelection(eventToSelect, actualIndex);
+        }
+        return;
       }
-      return;
+      // If we don't have enough cached data, fall through to fetch more
     }
 
     setLoading(true);
     setError(null);
-    
+
     try {
       const queryParams = new URLSearchParams({
         page: pageNum.toString(),
@@ -410,44 +694,54 @@ export default function GithubEvents({ eventsPerPage = 40, hideMetadata = false 
         throw new Error('Failed to fetch GitHub events');
       }
       const data = await response.json();
-      
-      // Add new events to cache if this is page 1
-      if (pageNum === 1) {
-        const newEvents = [...cachedEvents];
-        data.events.forEach((event: GitHubEvent) => {
-          if (!newEvents.some(e => e.created_at === event.created_at && e.repo.name === event.repo.name)) {
-            newEvents.push(event);
-          }
-        });
-        
-        // Update cache
-        setCachedEvents(newEvents);
-        localStorage.setItem('github_events', JSON.stringify({
-          version: '4.0',
-          events: newEvents,
-          lastFetched: Date.now(),
-          totalCount: data.total
-        }));
 
-        // Update filter options with new data
-        buildFilterOptionsFromEvents(newEvents);
-      }
-      
+      // Add new events to cache
+      const newEvents = [...cachedEvents];
+      data.events.forEach((event: GitHubEvent) => {
+        if (!newEvents.some(e => e.id === event.id)) {
+          newEvents.push(event);
+        }
+      });
+
+      // Sort by date (newest first)
+      newEvents.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
+
+      // Prune to keep cache size manageable (keep most recent MAX_CACHED_EVENTS)
+      const prunedEvents = pruneOldEvents(newEvents);
+
+      // Update cache
+      setCachedEvents(prunedEvents);
+      safeSetLocalStorage('github_events', {
+        version: '4.0',
+        events: prunedEvents,
+        lastFetched: Date.now(),
+        totalCount: data.total
+      });
+
+      // Update filter options with all cached data
+      buildFilterOptionsFromEvents(prunedEvents);
+
       // Process and set current events
+      console.log('[GithubEvents] API response:', {
+        totalFromAPI: data.total,
+        eventsCount: data.events?.length,
+        page: pageNum
+      });
       const processedEvents = processEvents(data.events);
       setEvents(processedEvents);
       setTotalCount(data.total || 0);
-      
-      // Select the most recent event by default
-      if (processedEvents.length > 0 && !selectedEvent.id) {
-        selectEvent(processedEvents[0]);
-        // Use setTimeout to ensure DOM is updated before we try to find the element
-        setTimeout(() => {
-          const firstRow = document.getElementById(processedEvents[0].id);
-          if (firstRow) {
-            firstRow.classList.add('selected');
-          }
-        }, 0);
+
+      // Select the appropriate event on the page
+      if (processedEvents.length > 0) {
+        // Use selectedIndex if it's been set (e.g., from keyboard nav)
+        const indexToSelect = pageNum === page ? selectedIndex : 0;
+        const eventToSelect = processedEvents[Math.min(indexToSelect, processedEvents.length - 1)];
+        const actualIndex = processedEvents.findIndex(e => e.id === eventToSelect.id);
+
+        if (!selectedEvent.id || pageNum !== page) {
+          setSelectedIndex(actualIndex);
+          handleEventSelection(eventToSelect, actualIndex);
+        }
       }
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'An error occurred';
@@ -484,30 +778,42 @@ export default function GithubEvents({ eventsPerPage = 40, hideMetadata = false 
     }
   };
 
-  const totalPages = React.useMemo(() => {
-    return Math.ceil(totalCount / eventsPerPage);
-  }, [totalCount]);
 
-  // Reset page when filters change
+  // Reset page when filters change and always fetch from API
   React.useEffect(() => {
+    if (!isInitialized) return; // Don't run on initial mount
+
+    // Always fetch from API when filters change because we can't know
+    // what data is not in localStorage cache
     if (page !== 1) {
       setPage(1);
     } else {
-      fetchGitHubEvents(1, true);
+      fetchGitHubEvents(1, false); // false = don't use cache, always fetch from API
     }
   }, [repoFilter, actionFilter, dateFilter, descriptionFilter]);
 
   // Fetch when page changes
   React.useEffect(() => {
-    fetchGitHubEvents(page, false);
+    if (!isInitialized) return; // Don't run on initial mount
+
+    // Use cached data for pagination if available
+    if (cachedEvents.length > 0) {
+      fetchGitHubEvents(page, true);
+    } else {
+      fetchGitHubEvents(page, false);
+    }
   }, [page]);
 
-  // Initial load
+  // Select first event when events change (e.g., after page navigation)
   React.useEffect(() => {
-    if (cachedEvents.length === 0) {
-      fetchGitHubEvents(1);   
+    if (events.length > 0 && selectedIndex === 0) {
+      // This ensures the first event is selected when navigating pages
+      const firstEvent = events[0];
+      if (firstEvent.id !== selectedEvent.id) {
+        handleEventSelection(firstEvent, 0);
+      }
     }
-  }, [cachedEvents.length]);
+  }, [events]);
 
   const getTimeOnly = (date: string) => {
     const parsed = parse(date, 'MMM d, yyyy h:mm a', new Date());
@@ -516,7 +822,7 @@ export default function GithubEvents({ eventsPerPage = 40, hideMetadata = false 
   
   let latestDateDisplayed: string | null = null;
   return (
-    <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
+    <Box id="github-events" className="w-[1144px]" sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
       <Box sx={{ mb: 1, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <Box sx={{ display: 'flex', gap: .5, flexDirection: 'column' }}>
           <Typography variant="subtitle1" fontWeight="semiBold">Work</Typography>
@@ -526,25 +832,32 @@ export default function GithubEvents({ eventsPerPage = 40, hideMetadata = false 
             </Typography>
           )}
         </Box>
-        {totalCount > eventsPerPage && (
-          <Pagination 
-            count={totalPages}
-            page={page}
-            onChange={(_, value) => setPage(value)}
-            size="small"
-            sx={{
-              '& .MuiPaginationItem-root': {
-                color: theme.palette.text.secondary,
-                borderColor: theme.palette.divider,
-              }
-            }}
-          />
+        {totalCount > 0 && (
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+            <Typography variant="caption" color="text.secondary">
+              {totalCount} total events
+            </Typography>
+            {totalPages > 0 && (
+              <Pagination
+                count={totalPages}
+                page={page}
+                onChange={(_, value) => setPage(value)}
+                size="small"
+                sx={{
+                  '& .MuiPaginationItem-root': {
+                    color: theme.palette.text.secondary,
+                    borderColor: theme.palette.divider,
+                  }
+                }}
+              />
+            )}
+          </Box>
         )}
       </Box>
-      <Box sx={{ display: 'flex', flexDirection: 'row', gap: '20px' }}>
+      <Box sx={{ display: 'flex', flexDirection: 'row', gap: '1px' }}>
         <Box 
           sx={{ 
-            width: '440px', 
+            width: '460px', 
             flexShrink: 0,
             display: 'block',
             position: 'relative'
@@ -566,13 +879,22 @@ export default function GithubEvents({ eventsPerPage = 40, hideMetadata = false 
                           value={dateFilter}
                           onChange={(e) => setDateFilter(e.target.value)}
                           displayEmpty
-                          sx={{ '& .MuiSelect-select': { py: 0.5 } }}
+                          sx={{
+                            '& .MuiSelect-select': {
+                              py: 0.5,
+                              fontSize: '0.875rem'
+                            },
+                            '& .MuiInputBase-root': {
+                              height: '32px',
+                              minHeight: '32px'
+                            }
+                          }}
                         >
-                          <MenuItem value="">All time</MenuItem>
-                          <MenuItem value="today">Today</MenuItem>
-                          <MenuItem value="yesterday">Yesterday</MenuItem>
-                          <MenuItem value="week">Past week</MenuItem>
-                          <MenuItem value="month">Past month</MenuItem>
+                          <MenuItem value="" sx={{ fontSize: '0.875rem' }}>All time</MenuItem>
+                          <MenuItem value="today" sx={{ fontSize: '0.875rem' }}>Today</MenuItem>
+                          <MenuItem value="yesterday" sx={{ fontSize: '0.875rem' }}>Yesterday</MenuItem>
+                          <MenuItem value="week" sx={{ fontSize: '0.875rem' }}>Past week</MenuItem>
+                          <MenuItem value="month" sx={{ fontSize: '0.875rem' }}>Past month</MenuItem>
                         </Select>
                       </FormControl>
                     </Box>
@@ -594,7 +916,11 @@ export default function GithubEvents({ eventsPerPage = 40, hideMetadata = false 
                                 height: '32px',
                                 minHeight: '32px',
                                 p: '0 8px',
-                                '& input': { p: '2.5px 4px' },
+                                fontSize: '0.875rem',
+                                '& input': {
+                                  p: '2.5px 4px',
+                                  fontSize: '0.875rem'
+                                 },
                                 '& fieldset': {
                                   borderColor: 'rgba(255, 255, 255, 0.23)'
                                 }
@@ -602,19 +928,41 @@ export default function GithubEvents({ eventsPerPage = 40, hideMetadata = false 
                             }}
                           />
                         )}
+                        slotProps={{
+                          popper: {
+                            placement: 'bottom-start',
+                            modifiers: [
+                              {
+                                name: 'offset',
+                                options: {
+                                  offset: [0, 4],
+                                },
+                              },
+                            ],
+                            sx: {
+                              '& .MuiPaper-root': {
+                                width: 'fit-content !important',
+                                minWidth: '100%',
+                              },
+                              '& .MuiAutocomplete-listbox': {
+                                fontSize: '0.875rem',
+                                padding: '4px',
+                                '& .MuiAutocomplete-option': {
+                                  fontSize: '0.875rem',
+                                  minHeight: '32px',
+                                  whiteSpace: 'nowrap',
+                                  padding: '6px 12px'
+                                }
+                              }
+                            }
+                          }
+                        }}
                         freeSolo
                         selectOnFocus
                         clearOnBlur
                         sx={{
                           '& .MuiOutlinedInput-root': {
                             p: 0
-                          },
-                          '& .MuiAutocomplete-listbox': {
-                            '& .MuiAutocomplete-option': {
-                              whiteSpace: 'nowrap',
-                              overflow: 'hidden',
-                              textOverflow: 'ellipsis'
-                            }
                           }
                         }}
                       />
@@ -637,7 +985,11 @@ export default function GithubEvents({ eventsPerPage = 40, hideMetadata = false 
                                 height: '32px',
                                 minHeight: '32px',
                                 p: '0 8px',
-                                '& input': { p: '2.5px 4px' },
+                                fontSize: '0.875rem',
+                                '& input': {
+                                  p: '2.5px 4px',
+                                  fontSize: '0.875rem'
+                                },
                                 '& fieldset': {
                                   borderColor: 'rgba(255, 255, 255, 0.23)'
                                 }
@@ -645,19 +997,42 @@ export default function GithubEvents({ eventsPerPage = 40, hideMetadata = false 
                             }}
                           />
                         )}
+                        slotProps={{
+                          popper: {
+                            placement: 'bottom-start',
+                            modifiers: [
+                              {
+                                name: 'offset',
+                                options: {
+                                  offset: [0, 4],
+                                },
+                              },
+                            ],
+                            sx: {
+                              '& .MuiPaper-root': {
+                                width: 'fit-content !important',
+                                minWidth: '100%',
+                              },
+                              '& .MuiAutocomplete-listbox': {
+                                fontSize: '0.875rem',
+                                padding: '4px',
+                                borderRadius: '0',
+                                '& .MuiAutocomplete-option': {
+                                  fontSize: '0.875rem',
+                                  minHeight: '32px',
+                                  whiteSpace: 'nowrap',
+                                  padding: '6px 12px'
+                                }
+                              }
+                            }
+                          }
+                        }}
                         freeSolo
                         selectOnFocus
                         clearOnBlur
                         sx={{
                           '& .MuiOutlinedInput-root': {
                             p: 0
-                          },
-                          '& .MuiAutocomplete-listbox': {
-                            '& .MuiAutocomplete-option': {
-                              whiteSpace: 'nowrap',
-                              overflow: 'hidden',
-                              textOverflow: 'ellipsis'
-                            }
                           }
                         }}
                       />
@@ -667,6 +1042,7 @@ export default function GithubEvents({ eventsPerPage = 40, hideMetadata = false 
               </TableHead>
               <TableBody sx={{
                 cursor: 'pointer',
+                background: 'rgba(255,255,255,.1)',
                 '& tr:hover td': {
                   backgroundColor: theme.palette.action.hover,
                 }
@@ -710,16 +1086,9 @@ export default function GithubEvents({ eventsPerPage = 40, hideMetadata = false 
                         onClick={(e) => {
                           e.preventDefault();
                           e.stopPropagation();
-                          const newSelectedRow = e.currentTarget;
-                          if (newSelectedRow) {
-                            if (selectedEvent.id) {
-                              const oldSelectedRow = document.getElementById(selectedEvent.id);
-                              if (oldSelectedRow) {
-                                oldSelectedRow.classList.remove('selected');
-                              }
-                            }
-                            newSelectedRow.classList.add('selected');
-                            selectEvent(event);
+                          const eventIndex = events.findIndex(evt => evt.id === event.id);
+                          if (eventIndex !== -1) {
+                            handleEventSelection(event, eventIndex);
                           }
                         }}
                         onMouseEnter={(e) => {
@@ -767,13 +1136,30 @@ export default function GithubEvents({ eventsPerPage = 40, hideMetadata = false 
             </Table>
           </TableContainer>
         </Box>
-        {!hideMetadata && selectedEvent.id && (
+        {hideMetadata && !selectedEvent.id && (
           <Box
+            id="detail-pane"
             sx={{
               display: 'flex',
               flexDirection: 'column',
               height: 'calc(100vh - 16px)',
-              position: 'relative'
+              position: 'relative',
+              opacity: 0.3
+            }}>
+            <MetadataDisplay>
+              <PullRequestEvent event={selectedEvent} />
+            </MetadataDisplay>
+          </Box>
+        )}
+        {!hideMetadata && selectedEvent.id && (
+          <Box
+            id="detail-pane"
+            sx={{
+              display: 'flex',
+              flexDirection: 'column',
+              height: '100%',
+              position: 'relative',
+              maxHeight: 'calc(100vh - 236px - 75px)'
             }}>
             <MetadataDisplay>
               {selectedEvent.actionType === 'PullRequestEvent' ? (
@@ -799,7 +1185,7 @@ export default function GithubEvents({ eventsPerPage = 40, hideMetadata = false 
                 collapsed={1}
                 collapseStringsAfterLength={50}
                 style={{
-                  backgroundColor: 'transparent',
+                  backgroundColor: 'red',
                   fontSize: '0.875rem',
                   fontFamily: 'monospace',
                   padding: '8px',
@@ -812,6 +1198,27 @@ export default function GithubEvents({ eventsPerPage = 40, hideMetadata = false 
           </Box>
         )}
       </Box>
+
+      {/* Bottom Pagination */}
+      {totalCount > 0 && totalPages > 1 && (
+        <Box sx={{ mt: 2, display: 'flex', justifyContent: 'center', alignItems: 'center', gap: 2 }}>
+          <Typography variant="caption" color="text.secondary">
+            Page {page} of {totalPages} ({totalCount} total events)
+          </Typography>
+          <Pagination
+            count={totalPages}
+            page={page}
+            onChange={(_, value) => setPage(value)}
+            size="medium"
+            sx={{
+              '& .MuiPaginationItem-root': {
+                color: theme.palette.text.secondary,
+                borderColor: theme.palette.divider,
+              }
+            }}
+          />
+        </Box>
+      )}
     </Box>
   );
 }

@@ -125,7 +125,7 @@ export default function PullRequestView({
             </Typography>
           </StatsBox>
         </Box>
-        <FileChanges files={files} />
+        <FileChanges files={files as any} />
       </TabPanel>
     </Box>
   );

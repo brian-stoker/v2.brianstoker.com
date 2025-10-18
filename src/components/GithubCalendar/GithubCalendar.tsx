@@ -88,7 +88,16 @@ export default function GithubCalendar({ windowMode = false, containerMode = fal
     setActivityLoading(true);
     
     try {
-      const response = await fetch('https://github-contributions-api.jogruber.de/v4/brian-stoker?y=2022&y=2023&y=2024&y=2025');
+       // Generate year query string from 2022 to current year
+      const currentYear = new Date().getFullYear();
+      const startYear = 2021;
+      const years: string[] = [];
+      for (let year = startYear; year <= currentYear; year++) {
+        years.push(`y=${year}`);
+      }
+      const yearQuery = years.join('&');
+
+      const response = await fetch(`https://github-contributions-api.jogruber.de/v4/brian-stoker?${yearQuery}`);
       
       if (!response.ok) {
         throw new Error(`API error: ${response.status}`);
@@ -104,15 +113,7 @@ export default function GithubCalendar({ windowMode = false, containerMode = fal
         }
         return 0;
       }
-      const earliestDate = data.contributions
-      .filter(item => item.count > 0) // Filter items with count > 0
-      .reduce((earliest, current) => {
-        return !earliest || new Date(current.date) < new Date(earliest.date)
-          ? current
-          : earliest;
-      }, null as { date: string; count: number; level: number } | null);
-
-      
+      const earliestDate = { date: '2021-09-26', count: 2, level: 2 };
       const today = new Date();
       const year = today.getFullYear();
       const month = String(today.getMonth() + 1).padStart(2, '0'); // Month is 0-indexed
@@ -124,8 +125,6 @@ export default function GithubCalendar({ windowMode = false, containerMode = fal
         return contrib.date.slice(2, 7)
       }).filter(yymm => yymm.slice(-2) === '01');
       const allJans = new Set(allJansSet);
-      console.log('allJans', [...allJans]);
-
       const all = (Object.values(data.total) as number[]).reduce((acc, curr) => acc + curr, 0);
       const totalKeys = Object.keys(data.total);
       data.countLabel = `${all} contributions from ${totalKeys[0]} to ${totalKeys[totalKeys.length - 1]}`;
@@ -169,18 +168,19 @@ export default function GithubCalendar({ windowMode = false, containerMode = fal
     if (hackedContainer) {
       const hacked = document.createElement('img');
       hacked.src = '/static/image/hbngha.png';
+      hacked.style.filter = 'drop-shadow(0 0 4px #000) drop-shadow(0 0 4px #000) drop-shadow(0 0 4px #000)';
       hacked.alt = 'hbngha';
       hacked.style.position = 'absolute';
       hacked.style.top = '0';
       hacked.style.left = '0';
       hacked.style.marginTop = '25px';
+      hacked.style.marginLeft = '10px';
       hacked.style.width = `${(activityData.blockSize || 12) * 7}px`;
       hacked.style.height = `${(activityData.blockSize || 12) * 7}px`;
       const div = document.createElement('div');
       div.style.position = 'relative';
       div.appendChild(hacked);
       hackedContainer.insertBefore(div, hackedContainer.firstChild);
-
     }
     return () => {
       if (fx) {
@@ -280,33 +280,31 @@ export default function GithubCalendar({ windowMode = false, containerMode = fal
             oldRect.dataset.timeoutId = timeoutId.toString();
           }
         });
-      } else {
+      } else if (fx === 'highlight') {
         const oldRect: any = rect.cloneNode(true);
         rect.parentNode?.replaceChild(oldRect, rect);
          // Add mouseenter event
-        rect.addEventListener('mouseenter', () => {
+        oldRect.addEventListener('mouseenter', () => {
           // Clear any existing timeout
-          if (rect?.dataset.timeoutId) {
-            clearTimeout(parseInt(rect?.dataset.timeoutId));
+          if (oldRect?.dataset.timeoutId) {
+            clearTimeout(parseInt(oldRect?.dataset.timeoutId));
           }
-           rect.style.position = 'relative';
+           oldRect.style.position = 'relative';
           // Add the animated class
-          rect?.classList.add('rect-highlight');
-          // Add the animated class
-          //oldRect?.classList.add('rect-animated');
-          
+          oldRect?.classList.add('rect-highlight');
+
           // Set a timeout to return after random delay
           const minDelay = 100;
           const randomDelay = Math.random() * 1000 + minDelay;
-          
+
           const timeoutId = setTimeout(() => {
-            rect?.classList.remove('rect-highlight');
-            delete rect?.dataset.timeoutId;
+            oldRect?.classList.remove('rect-highlight');
+            delete oldRect?.dataset.timeoutId;
           }, randomDelay);
-          
+
           // Store the timeout ID
-          if (rect?.dataset) {
-            rect.dataset.timeoutId = timeoutId.toString();
+          if (oldRect?.dataset) {
+            oldRect.dataset.timeoutId = timeoutId.toString();
           }
         });
       }
@@ -344,7 +342,7 @@ export default function GithubCalendar({ windowMode = false, containerMode = fal
           blockMargin={0.5}
           blockRadius={0}
           blockSize={activityData.blockSize || 12}
-          style={{
+          style={{          
             backgroundColor: theme.palette.background.paper,
           }}
           labels={{

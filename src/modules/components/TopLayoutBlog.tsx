@@ -203,6 +203,76 @@ const Root = styled('div')(
     }),
 );
 
+const mdxComponents = {
+  h1: (props: any) => (
+    <Typography component="h1" variant="h3" sx={{ mt: 6, mb: 2 }} {...props} />
+  ),
+  h2: (props: any) => (
+    <Typography component="h2" variant="h4" sx={{ mt: 4, mb: 2 }} {...props} />
+  ),
+  h3: (props: any) => (
+    <Typography component="h3" variant="h5" sx={{ mt: 3, mb: 1.5 }} {...props} />
+  ),
+  h4: (props: any) => (
+    <Typography component="h4" variant="h6" sx={{ mt: 2, mb: 1 }} {...props} />
+  ),
+  h5: (props: any) => (
+    <Typography component="h5" variant="subtitle1" sx={{ mt: 2, mb: 1 }} {...props} />
+  ),
+  h6: (props: any) => (
+    <Typography component="h6" variant="subtitle2" sx={{ mt: 2, mb: 1 }} {...props} />
+  ),
+  p: (props: any) => (
+    <Typography variant="body1" component="p" sx={{ my: 2 }} {...props} />
+  ),
+  a: (props: any) => (
+    <Link {...props} color="primary" />
+  ),
+  ul: (props: any) => (
+    <ul {...props} style={{ marginBottom: 16 }} />
+  ),
+  ol: (props: any) => (
+    <ol {...props} style={{ marginBottom: 16 }} />
+  ),
+  li: (props: any) => <li {...props} style={{ marginBottom: 8 }} />,
+  blockquote: (props: any) => (
+    <Typography
+      component="blockquote"
+      variant="body1"
+      sx={{
+        borderLeft: '4px solid',
+        borderColor: (theme) => theme.palette.grey[200],
+        pl: 2,
+        my: 2,
+        color: 'text.secondary',
+      }}
+      {...props}
+    />
+  ),
+  code: (props: any) => (
+    <code
+      {...props}
+      style={{
+        backgroundColor: 'rgba(0, 0, 0, 0.06)',
+        padding: '3px 5px',
+        borderRadius: '3px',
+        fontFamily: 'monospace',
+      }}
+    />
+  ),
+  pre: (props: any) => (
+    <pre
+      {...props}
+      style={{
+        backgroundColor: 'rgba(0, 0, 0, 0.06)',
+        padding: '12px',
+        borderRadius: '6px',
+        overflow: 'auto',
+      }}
+    />
+  ),
+};
+
 interface DocsHeader {
   title: string;
   manualCard: string;
@@ -214,8 +284,7 @@ interface DocsHeader {
 
 interface LocalizedDoc {
   description: string;
-  rendered?: React.ReactNode | React.ReactNode[];
-  mdxSource?: MDXRemoteSerializeResult;
+  rendered: string[];
   title?: string;
   headers: DocsHeader;
 }
@@ -230,12 +299,13 @@ interface TopLayoutBlogProps {
   demos?: Record<string, any>;
   docs: Docs;
   srcComponents?: Record<string, React.ComponentType<any>>;
+  source?: MDXRemoteSerializeResult;
 }
 
 export default function TopLayoutBlog(props: TopLayoutBlogProps): React.ReactElement {
   const theme = useTheme<Theme>();
-  const { className, docs, demos, demoComponents, srcComponents } = props;
-  const { description, rendered, mdxSource, title, headers } = docs.en;
+  const { className, docs, demos, demoComponents, srcComponents, source } = props;
+  const { description, rendered, title, headers } = docs.en;
   const finalTitle = title || headers.title;
   const router = useRouter();
   const slug = router.pathname.replace(/(.*)\/(.*)/, '$2');
@@ -263,8 +333,9 @@ export default function TopLayoutBlog(props: TopLayoutBlogProps): React.ReactEle
 
   return (
     <BrandingCssVarsProvider>
-      <AppHeader />
-      <Head
+      <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
+        <AppHeader />
+        <Head
         title={`${finalTitle} - SUI`}
         description={description}
         largeCard
@@ -321,7 +392,7 @@ export default function TopLayoutBlog(props: TopLayoutBlogProps): React.ReactEle
           }}
         />
       </Head>
-      <Root className={className}>
+      <Root className={className} sx={{ flex: 1 }}>
         <AppContainer component="main" className={classes.container}>
           <Link
             href={ROUTES.plan}
@@ -383,42 +454,24 @@ export default function TopLayoutBlog(props: TopLayoutBlogProps): React.ReactEle
               </AuthorsContainer>
             </React.Fragment>
           ) : null}
-          {contentNodes.map((node, index) => (
-            <React.Fragment key={index}>{node}</React.Fragment>
-          ))}
+          {source ? (
+            <div className="markdown-body">
+              <MDXRemote {...source} components={mdxComponents} />
+            </div>
+          ) : (
+            rendered?.map((chunk, index) => (
+              <MarkdownElement
+                key={index}
+                className="markdown-body"
+                dangerouslySetInnerHTML={{ __html: typeof chunk === 'string' ? chunk : '' }}
+              />
+            ))
+          )}
         </AppContainer>
-        <Divider />
-        <HeroEnd />
         <Divider />
         <AppFooter />
       </Root>
+      </div>
     </BrandingCssVarsProvider>
   );
-} 
-  const contentNodes = React.useMemo<React.ReactNode[]>(() => {
-    const nodes: React.ReactNode[] = [];
-
-    if (rendered) {
-      if (Array.isArray(rendered)) {
-        nodes.push(...rendered);
-      } else {
-        nodes.push(rendered);
-      }
-    }
-
-    if (!nodes.length && mdxSource) {
-      nodes.push(
-        <MarkdownElement key="mdx-content">
-          <MDXRemote
-            {...mdxSource}
-            components={{
-              ...(demoComponents || {}),
-              ...(srcComponents || {}),
-            }}
-          />
-        </MarkdownElement>,
-      );
-    }
-
-    return nodes;
-  }, [rendered, mdxSource, demoComponents, srcComponents]);
+}

@@ -63,17 +63,9 @@ export function PostPreview({post, size = 'default' }: {post: BlogPost, size?: '
         ))}
       </Box>
       <Typography component="h2" fontWeight="bold" variant="subtitle1" gutterBottom>
-        <NextLink href={`/.plan/${post?.slug}/`} passHref>
-          <MuiLink
-            aria-describedby={`describe-${post?.slug}`}
-            color="text.primary"
-            sx={{
-              '&:hover': {
-                textDecoration: 'underline',
-              },
-            }}
-          >
-            {post?.title}
+        <NextLink href={`/.plan/${post?.slug}/`} passHref legacyBehavior>
+          <MuiLink aria-describedby={`describe-${post?.slug}`} color="text.primary">
+              {post?.title}
           </MuiLink>
         </NextLink>
       </Typography>
@@ -150,7 +142,7 @@ export function PostPreview({post, size = 'default' }: {post: BlogPost, size?: '
             </Typography>
           )}
         </Box>
-        <NextLink href={`/.plan/${post?.slug}`} passHref>
+        <NextLink href={`/.plan/${post?.slug}`} passHref legacyBehavior>
           <Button
             component="a"
             aria-describedby={`describe-${post?.slug}`}
@@ -320,8 +312,9 @@ export default function Blog(props: InferGetStaticPropsType<typeof getStaticProp
         card="/static/social-previews/blog-preview.jpg"
         disableAlternateLocale
       />
-      <AppHeader />
-      <main id="main-content">
+      <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
+        <AppHeader />
+        <main id="main-content" style={{ flex: 1 }}>
         <Section cozy bg="gradient" sx={{ py: { xs: 4, sm: 6, md: 16 } }}>
           <SectionHeadline
             alwaysCenter
@@ -512,11 +505,10 @@ export default function Blog(props: InferGetStaticPropsType<typeof getStaticProp
             />
           </div>
         </Container>
-      </main>
-      <Divider />
-      <HeroEnd />
-      <Divider />
-      <AppFooter />
+        </main>
+        <Divider />
+        <AppFooter />
+      </div>
     </BrandingCssVarsProvider>
   );
 }

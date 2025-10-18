@@ -4,7 +4,18 @@ import Typography from '@mui/material/Typography';
 import Link from '@mui/material/Link';
 import Chip from '@mui/material/Chip';
 import Avatar from '@mui/material/Avatar';
+import CommentIcon from '@mui/icons-material/Comment';
 import { EventDetails } from '../../types/github';
+import { marked } from 'marked';
+
+// Helper function to render markdown text
+function renderMarkdown(text: string): string {
+  if (!text) return '';
+  return marked(text, {
+    breaks: true,
+    gfm: true
+  }) as string;
+}
 
 interface IssueCommentEventProps {
   event: EventDetails;
@@ -24,7 +35,7 @@ export default function IssueCommentEvent({ event }: IssueCommentEventProps): Re
   // Extract repository information
   const repoFullName = event.repo;
   const [repoOwner, repoName] = repoFullName.split('/');
-  
+
   // Extract issue information
   const issueTitle = issue.title;
   const issueUrl = issue.html_url;
@@ -32,7 +43,7 @@ export default function IssueCommentEvent({ event }: IssueCommentEventProps): Re
   const issueNumber = issue.number;
   const issueAuthor = issue.user?.login;
   const issueAuthorAvatar = issue.user?.avatar_url;
-  
+
   // Extract comment information
   const commentUrl = comment.html_url;
   const commentBody = comment.body;
@@ -45,49 +56,109 @@ export default function IssueCommentEvent({ event }: IssueCommentEventProps): Re
 
   return (
     <Box sx={{ p: 2 }}>
-      {/* Header with repository, issue number and state */}
-      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 2 }}>
-        <Typography variant="caption" color="text.secondary">
-          {event.date}
-        </Typography>
-        <Chip 
-          label={`${repoOwner}/${repoName}`}
-          size="small"
-          color="primary"
-          variant="outlined"
-        />
-        <Chip 
-          label={`#${issueNumber}`} 
-          size="small" 
-          color="default"
-        />
-        <Chip 
-          label={issueState} 
-          size="small" 
-          color={issueState === 'open' ? 'success' : 'error'}
-        />
+      {/* Header with icon, event type, and metadata */}
+      <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 2, mb: 2 }}>
+        <Box sx={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          width: 40,
+          height: 40,
+          borderRadius: 1,
+          backgroundColor: 'action.selected',
+          flexShrink: 0
+        }}>
+          <CommentIcon sx={{ fontSize: 24 }} />
+        </Box>
+
+        <Box sx={{ flexGrow: 1, minWidth: 0 }}>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 0.5, flexWrap: 'wrap' }}>
+            <Typography variant="subtitle2" fontWeight="bold">
+              Issue Comment
+            </Typography>
+            <Typography variant="caption" color="text.secondary">
+              •
+            </Typography>
+            <Typography variant="caption" color="text.secondary">
+              {event.date}
+            </Typography>
+          </Box>
+
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1, flexWrap: 'wrap' }}>
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+              <Link
+                href={`https://github.com/${repoOwner}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                sx={{
+                  textDecoration: 'none',
+                  color: 'primary.main',
+                  fontSize: '0.875rem',
+                  '&:hover': { textDecoration: 'underline' }
+                }}
+              >
+                {repoOwner}
+              </Link>
+              <Typography variant="body2" color="text.secondary">
+                /
+              </Typography>
+              <Link
+                href={`https://github.com/${repoFullName}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                sx={{
+                  textDecoration: 'none',
+                  color: 'primary.main',
+                  fontSize: '0.875rem',
+                  fontWeight: 600,
+                  '&:hover': { textDecoration: 'underline' }
+                }}
+              >
+                {repoName}
+              </Link>
+            </Box>
+            <Link
+              href={issueUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              sx={{ textDecoration: 'none' }}
+            >
+              <Chip
+                label={`#${issueNumber}`}
+                size="small"
+                color="default"
+                clickable
+              />
+            </Link>
+            <Chip
+              label={issueState}
+              size="small"
+              color={issueState === 'open' ? 'success' : 'error'}
+            />
+          </Box>
+        </Box>
       </Box>
 
       {/* Issue title as a link */}
-      <Typography variant="h6" component="h3" sx={{ mb: 1 }}>
-        <Link 
-          href={issueUrl} 
-          target="_blank" 
+      <Typography variant="h6" component="h3" sx={{ mb: 2 }}>
+        <Link
+          href={issueUrl}
+          target="_blank"
           rel="noopener noreferrer"
           sx={{ textDecoration: 'none' }}
         >
           {issueTitle}
         </Link>
       </Typography>
-      
+
       {/* Issue author if available */}
       {issueAuthor && (
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 2 }}>
           <Typography variant="body2" color="text.secondary">
             Issue by:
           </Typography>
-          <Avatar 
-            src={issueAuthorAvatar} 
+          <Avatar
+            src={issueAuthorAvatar}
             alt={issueAuthor}
             sx={{ width: 20, height: 20 }}
           />
@@ -113,40 +184,83 @@ export default function IssueCommentEvent({ event }: IssueCommentEventProps): Re
       </Box>
 
       {/* Comment content */}
-      <Box sx={{ 
-        p: 2, 
+      <Box sx={{
+        p: 2,
         backgroundColor: 'action.hover',
         borderRadius: 1,
         position: 'relative',
+        mb: 2,
+        maxHeight: 200,
+        overflow: 'auto',
+        '& h1': {
+          fontSize: '1.5rem',
+          fontWeight: 600,
+          mt: 2,
+          mb: 1
+        },
+        '& h2': {
+          fontSize: '1.25rem',
+          fontWeight: 600,
+          mt: 1.5,
+          mb: 1
+        },
+        '& h3': {
+          fontSize: '1.1rem',
+          fontWeight: 600,
+          mt: 1,
+          mb: 0.5
+        },
+        '& ul, & ol': {
+          pl: 3,
+          my: 1
+        },
+        '& li': {
+          my: 0.5
+        },
+        '& p': {
+          my: 1
+        },
+        '& code': {
+          backgroundColor: 'action.selected',
+          px: 0.5,
+          py: 0.25,
+          borderRadius: 0.5,
+          fontFamily: 'monospace',
+          fontSize: '0.875em'
+        },
+        '& pre': {
+          backgroundColor: 'action.selected',
+          p: 1.5,
+          borderRadius: 1,
+          overflow: 'auto',
+          my: 1
+        },
+        '& pre code': {
+          backgroundColor: 'transparent',
+          p: 0
+        }
+      }}
+        dangerouslySetInnerHTML={{
+          __html: renderMarkdown(commentBody)
+        }}
+      />
+      <Box sx={{
+        position: 'relative',
+        textAlign: 'right',
+        mt: -1,
         mb: 2
       }}>
-        <Typography 
-          variant="body2" 
-          sx={{ 
-            whiteSpace: 'pre-wrap',
-            maxHeight: 200,
-            overflow: 'auto'
+        <Link
+          href={commentUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          sx={{
+            textDecoration: 'none',
+            fontSize: '0.75rem'
           }}
         >
-          {commentBody}
-        </Typography>
-        <Box sx={{ 
-          position: 'absolute',
-          top: 8,
-          right: 8
-        }}>
-          <Link
-            href={commentUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            sx={{ 
-              textDecoration: 'none',
-              fontSize: '0.75rem'
-            }}
-          >
-            View on GitHub
-          </Link>
-        </Box>
+          View on GitHub
+        </Link>
       </Box>
 
       {/* Other comments summary if available */}

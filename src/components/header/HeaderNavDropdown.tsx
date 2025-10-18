@@ -10,11 +10,13 @@ import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
 import GitHubIcon from '@mui/icons-material/GitHub';
 import SvgHamburgerMenu from 'src/icons/SvgHamburgerMenu';
-import { Link } from '@stoked-ui/docs/Link';
+import NextLink from 'next/link';
 import ROUTES from 'src/route';
 import ThemeModeToggle from './ThemeModeToggle';
 
-const Anchor = styled('a')<{ component?: React.ElementType; noLinkStyle?: boolean }>(
+const Anchor = styled('a',{ 
+  shouldForwardProp: (prop) => prop !== 'noLinkStyle' && prop !== 'component',
+})<{ component?: React.ElementType; noLinkStyle?: boolean }>(
   ({ theme }) => [
     {
       ...theme.typography.body2,
@@ -162,11 +164,10 @@ export default function HeaderNavDropdown() {
                 <Stack direction="row" spacing={1} alignItems="center">
                   <ThemeModeToggle />
                   <Button
-                    component={Link}
+                    component={NextLink}
                     href="https://github.com/brian-stoker"
                     target="_blank"
                     rel="noopener"
-                    noLinkStyle
                     prefetch={false}
                     variant="outlined"
                     size="small"
@@ -179,33 +180,33 @@ export default function HeaderNavDropdown() {
               </Box>
               <Divider sx={{ mb: 2 }} />
               <li>
-                <Anchor href={ROUTES.work} as={Link} noLinkStyle>
+                <Anchor href={ROUTES.work} as={NextLink} noLinkStyle>
                   Work
                 </Anchor>
               </li>
               <li>
-                <Anchor href={ROUTES.art} as={Link} noLinkStyle>
+                <Anchor href={ROUTES.art} as={NextLink} noLinkStyle>
                   Art
                 </Anchor>
               </li>
               <li>
-                <Anchor href={ROUTES.photography} as={Link} noLinkStyle>
+                <Anchor href={ROUTES.photography} as={NextLink} noLinkStyle>
                   Photography
                 </Anchor>
               </li>
               <li>
-                <Anchor href={ROUTES.drums} as={Link} noLinkStyle>
+                <Anchor href={ROUTES.drums} as={NextLink} noLinkStyle>
                   Drums
                 </Anchor>
               </li>
               <li>
-                <Anchor href={ROUTES.resume} as={Link} noLinkStyle>
+                <Anchor href={ROUTES.resume} as={NextLink} noLinkStyle>
                   Resume
                 </Anchor>
               </li>
               
               <li>
-                <Anchor href={ROUTES.plan} as={Link} noLinkStyle>
+                <Anchor href={ROUTES.plan} as={NextLink} noLinkStyle>
                   .plan
                 </Anchor>
               </li>

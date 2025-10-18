@@ -1,14 +1,15 @@
 import * as React from 'react';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
-import Link from 'next/link';
 import Chip from '@mui/material/Chip';
 import CircularProgress from '@mui/material/CircularProgress';
 import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import CheckoutIcon from '@mui/icons-material/CallMade';
+import CallSplitIcon from '@mui/icons-material/CallSplit';
 import { EventDetails } from '../../types/github';
 import { useTheme } from '@mui/material/styles';
+import NextLink from "next/link";
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
 import Accordion from '@mui/material/Accordion';
@@ -16,6 +17,16 @@ import AccordionSummary from '@mui/material/AccordionSummary';
 import AccordionDetails from '@mui/material/AccordionDetails';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import FileChanges from '../PullRequest/FileChanges';
+import { marked } from 'marked';
+
+// Helper function to render markdown text
+function renderMarkdown(text: string): string {
+  if (!text) return '';
+  return marked(text, {
+    breaks: true,
+    gfm: true
+  }) as string;
+}
 
 // Commit component copied from PushEvent.tsx
 interface File {
@@ -72,17 +83,32 @@ function Commit({ commit, repo }: CommitProps) {
       expanded={expanded}
     >
       <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-        <Box>
-          <Typography variant="body2" sx={{ fontWeight: 600 }}>
-            <Link href={commit.html_url} passHref legacyBehavior>
-              <a target="_blank" rel="noopener noreferrer" style={{ textDecoration: 'none', color: 'inherit' }}>
-                {commit.commit.message.split('\n')[0]}
-              </a>
-            </Link>
-          </Typography>
-          <Typography variant="caption" color="text.secondary">
-            {commit.sha.substring(0, 7)} by {commit.commit.author.name}
-          </Typography>
+        <Box sx={{ width: '100%' }}>
+          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.5 }}>
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+              <NextLink
+                href={commit.html_url}
+                passHref
+                style={{ textDecoration: 'none', color: 'inherit' }}
+              >
+                <Typography variant="caption" color="text.secondary" sx={{ fontFamily: 'monospace' }}>
+                  {commit.sha.substring(0, 7)}
+                </Typography>
+              </NextLink>
+              <Typography variant="body2" sx={{ fontWeight: 600 }}>
+                <NextLink
+                  href={commit.html_url}
+                  passHref
+                  style={{ textDecoration: 'none', color: 'inherit' }}
+                >
+                  {commit.commit.message.split('\n')[0]}
+                </NextLink>
+              </Typography>
+            </Box>
+            <Typography variant="caption" color="text.secondary">
+              by {commit.commit.author.name}
+            </Typography>
+          </Box>
         </Box>
       </AccordionSummary>
       <AccordionDetails>
@@ -222,52 +248,105 @@ export default function PullRequestEvent({ event }: PullRequestEventProps): Reac
 
   const PrHeader = () => (
     <Box sx={{ mb: 2 }}>
-      <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 1 }}>
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-          <Typography variant="caption" color="text.secondary">
-            {event.date}
-          </Typography>
-          <Chip
-            label={`${repoOwner}/${repoName}`}
-            size="small"
-            color="primary"
-            variant="outlined"
-          />
-          <Chip
-            label={`#${pullRequest.number}`}
-            size="small"
-            color="default"
-          />
-          <Chip
-            label={pullRequest.state}
-            size="small"
-            color={pullRequest.state === 'open' ? 'success' : 'error'}
-          />
+      {/* Header with icon, event type, and metadata */}
+      <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 2, mb: 2 }}>
+        <Box sx={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          width: 40,
+          height: 40,
+          borderRadius: 1,
+          backgroundColor: 'action.selected',
+          flexShrink: 0
+        }}>
+          <CallSplitIcon sx={{ fontSize: 24 }} />
         </Box>
-        <Button
-          variant="outlined"
-          size="small"
-          startIcon={<CheckoutIcon />}
-          onClick={handleCheckout}
-          sx={{ textTransform: 'none' }}
-        >
-          Checkout
-        </Button>
+
+        <Box sx={{ flexGrow: 1, minWidth: 0 }}>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 0.5, flexWrap: 'wrap' }}>
+            <Typography variant="subtitle2" fontWeight="bold">
+              Pull Request
+            </Typography>
+            <Typography variant="caption" color="text.secondary">
+              •
+            </Typography>
+            <Typography variant="caption" color="text.secondary">
+              {event.date}
+            </Typography>
+          </Box>
+
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1, flexWrap: 'wrap' }}>
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+              <NextLink
+                href={`https://github.com/${repoOwner}`}
+                passHref
+                style={{
+                  textDecoration: 'none',
+                  color: 'inherit',
+                  fontSize: '0.875rem'
+                }}
+              >
+                {repoOwner}
+              </NextLink>
+              <Typography variant="body2" color="text.secondary">
+                /
+              </Typography>
+              <NextLink
+                href={`https://github.com/${repoFullName}`}
+                passHref
+                style={{
+                  textDecoration: 'none',
+                  color: 'inherit',
+                  fontSize: '0.875rem',
+                  fontWeight: 600
+                }}
+              >
+                {repoName}
+              </NextLink>
+            </Box>
+            <NextLink
+              href={pullRequest.html_url}
+              passHref
+              style={{ textDecoration: 'none' }}
+            >
+              <Chip
+                label={`#${pullRequest.number}`}
+                size="small"
+                color="default"
+                clickable
+              />
+            </NextLink>
+            <Chip
+              label={pullRequest.state}
+              size="small"
+              color={pullRequest.state === 'open' ? 'success' : 'error'}
+            />
+            <Button
+              variant="outlined"
+              size="small"
+              startIcon={<CheckoutIcon />}
+              onClick={handleCheckout}
+              sx={{ textTransform: 'none', ml: 'auto' }}
+            >
+              Checkout
+            </Button>
+          </Box>
+        </Box>
       </Box>
 
-      <Typography variant="h6" component="h3" sx={{ mb: 1 }}>
-        <Link
+      <Typography variant="h6" component="h3" sx={{ mb: 2 }}>
+        <NextLink
           href={pullRequest.html_url}
           passHref
-          legacyBehavior>
-          <a target="_blank" rel="noopener noreferrer" style={{ textDecoration: 'none' }}>
-            {pullRequest.title}
-          </a>
-        </Link>
+          style={{ textDecoration: 'none', color: 'inherit' }}
+        >
+          {pullRequest.title}
+        </NextLink>
       </Typography>
 
-      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
-        <Avatar 
+      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1, flexWrap: 'wrap' }}>
+        <Avatar
           src={authorAvatar}
           alt={authorLogin}
           sx={{ width: 24, height: 24 }}
@@ -278,7 +357,7 @@ export default function PullRequestEvent({ event }: PullRequestEventProps): Reac
         <Typography variant="body2" color="text.secondary">
           wants to merge from
         </Typography>
-        <Chip 
+        <Chip
           label={headBranch}
           size="small"
           color="default"
@@ -287,7 +366,7 @@ export default function PullRequestEvent({ event }: PullRequestEventProps): Reac
         <Typography variant="body2" color="text.secondary">
           into
         </Typography>
-        <Chip 
+        <Chip
           label={baseBranch}
           size="small"
           color="default"
@@ -332,41 +411,104 @@ export default function PullRequestEvent({ event }: PullRequestEventProps): Reac
   }));
 
   return (
-    <Box sx={{ p: 2 }}>
-      <PrHeader />
-      
+    <Box>
+      {/* Header */}
+      <Box sx={{ mb: 2 }}>
+        <PrHeader />
+      </Box>
+
+      {/* Scrollable Description Section */}
       {prDetails.body && (
-        <Accordion sx={{ mt: 2, backgroundColor: 'transparent', border: (theme) => `1px solid ${theme.palette.divider}` }}>
-          <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-            <Typography variant="subtitle2">Description</Typography>
-          </AccordionSummary>
-          <AccordionDetails>
-            <Typography variant="body2" sx={{ whiteSpace: 'pre-wrap' }}>
-              {prDetails.body}
-            </Typography>
-          </AccordionDetails>
-        </Accordion>
+        <Box sx={{ mb: 2 }}>
+          <Typography variant="subtitle2" sx={{ mb: 1.5, fontWeight: 'bold' }}>
+            Description
+          </Typography>
+          <Box
+            sx={{
+              p: 2,
+              backgroundColor: 'action.hover',
+              borderRadius: 1,
+              border: (theme) => `1px solid ${theme.palette.divider}`,
+              maxHeight: '200px',
+              overflow: 'auto',
+                '& h1': {
+                  fontSize: '1.5rem',
+                  fontWeight: 600,
+                  mt: 2,
+                  mb: 1
+                },
+                '& h2': {
+                  fontSize: '1.25rem',
+                  fontWeight: 600,
+                  mt: 1.5,
+                  mb: 1
+                },
+                '& h3': {
+                  fontSize: '1.1rem',
+                  fontWeight: 600,
+                  mt: 1,
+                  mb: 0.5
+                },
+                '& ul, & ol': {
+                  pl: 3,
+                  my: 1
+                },
+                '& li': {
+                  my: 0.5
+                },
+                '& p': {
+                  my: 1
+                },
+                '& code': {
+                  backgroundColor: 'action.selected',
+                  px: 0.5,
+                  py: 0.25,
+                  borderRadius: 0.5,
+                  fontFamily: 'monospace',
+                  fontSize: '0.875em'
+                },
+                '& pre': {
+                  backgroundColor: 'action.selected',
+                  p: 1.5,
+                  borderRadius: 1,
+                  overflow: 'auto',
+                  my: 1
+                },
+                '& pre code': {
+                  backgroundColor: 'transparent',
+                  p: 0
+                }
+              }}
+              dangerouslySetInnerHTML={{
+                __html: renderMarkdown(prDetails.body)
+              }}
+            />
+        </Box>
       )}
 
-      <Box sx={{ borderBottom: 1, borderColor: 'divider', mt: 2 }}>
+      {/* Tabs */}
+      <Box sx={{ borderBottom: 1, borderColor: 'divider', mb: 2 }}>
         <Tabs value={tabValue} onChange={handleTabChange}>
           <Tab label={`Commits (${(prDetails.commits_list || []).length})`} />
           <Tab label={`Files changed (${(prDetails.files || []).length})`} />
         </Tabs>
       </Box>
 
-      {tabValue === 0 && (
-        <Box sx={{ mt: 2 }}>
-          {(prDetails.commits_list || []).map((commit: any) => (
-            <Commit key={commit.sha} commit={commit} repo={repoFullName} />
-          ))}
-        </Box>
-      )}
-      {tabValue === 1 && (
-        <Box sx={{ mt: 2 }}>
-          <FileChanges files={transformedFiles} />
-        </Box>
-      )}
+      {/* Scrollable Tab Content */}
+      <Box sx={{ maxHeight: 'calc(100vh - 236px - 75px - 300px)', overflow: 'auto' }}>
+        {tabValue === 0 && (
+          <Box>
+            {(prDetails.commits_list || []).map((commit: any) => (
+              <Commit key={commit.sha} commit={commit} repo={repoFullName} />
+            ))}
+          </Box>
+        )}
+        {tabValue === 1 && (
+          <Box>
+            <FileChanges files={transformedFiles} />
+          </Box>
+        )}
+      </Box>
     </Box>
   );
 }

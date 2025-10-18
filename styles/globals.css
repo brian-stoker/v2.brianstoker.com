@@ -64,7 +64,7 @@
 
 }
 
-.react-activity-calendar__calendar rect.rect-hightlight {
+.react-activity-calendar__calendar rect.rect-highlight {
   stroke: 4px solid white;
   fill: white;
   opacity: 0;

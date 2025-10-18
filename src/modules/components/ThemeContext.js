@@ -234,7 +234,17 @@ export function ThemeProvider(props) {
             styleOverrides: {
               body: {
                 backgroundColor: calculatedMode === 'dark' ? '#333' : '#fff',
-              }
+              },
+              // Reset all link styles globally
+              'a, a:link, a:visited, a:hover, a:active': {
+                color: 'inherit !important',
+                textDecoration: 'none !important',
+              },
+              // Ensure GitHub events links don't show purple visited state
+              '#github-events a, #github-events a:visited, #detail-pane a, #detail-pane a:visited': {
+                color: 'inherit !important',
+                textDecoration: 'none !important',
+              },
             },
             defaultProps: {
               // TODO: Stoked UI v6, makes this the default

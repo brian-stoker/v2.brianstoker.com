@@ -41,16 +41,18 @@ export function HomeView({ HomeMain, mostRecentPosts = []}: { mostRecentPosts?: 
 
     </Head>
 
-    <NoSsr>
-      <NewsletterToast/>
-    </NoSsr>
-    <AppHeaderBanner/>
-    <AppHeader/>
-    <main id="main-content">
-      {isClient ? <Main mostRecentPosts={mostRecentPosts}/> : ''}
-    </main>
-    <Divider/>
-    <AppFooter/>
+    <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
+      <NoSsr>
+        <NewsletterToast/>
+      </NoSsr>
+      <AppHeaderBanner/>
+      <AppHeader/>
+      <main id="main-content" style={{ flex: 1 }}>
+        {isClient ? <Main mostRecentPosts={mostRecentPosts}/> : ''}
+      </main>
+      <Divider/>
+      <AppFooter/>
+    </div>
   </BrandingCssVarsProvider>
 
 }

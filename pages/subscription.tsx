@@ -127,8 +127,9 @@ export default function SubscriptionPage() {
         title="Subscription - SUI"
         description="Email Verification."
       />
-      <AppHeader />
-      <main id="main-content">
+      <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
+        <AppHeader />
+        <main id="main-content" style={{ flex: 1 }}>
         <Section bg="gradient" sx={{ py: { xs: 2, sm: 4 } }}>
           <Typography component="h1" variant="h2" sx={{ mb: 4, pl: 1 }}>
             Subscription
@@ -157,9 +158,10 @@ export default function SubscriptionPage() {
             )}
           </Box>
         </Section>
-      </main>
-      <Divider />
-      <AppFooter />
+        </main>
+        <Divider />
+        <AppFooter />
+      </div>
     </BrandingCssVarsProvider>
   );
 }

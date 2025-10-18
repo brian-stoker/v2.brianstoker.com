@@ -1,22 +1,19 @@
 import * as React from 'react';
-import { GetStaticPaths, GetStaticProps } from 'next';
-import { MDXRemoteSerializeResult } from 'next-mdx-remote';
+import type { GetStaticPaths, GetStaticProps } from 'next';
+import type { MDXRemoteSerializeResult } from 'next-mdx-remote';
 import { serialize } from 'next-mdx-remote/serialize';
 import fs from 'fs';
 import path from 'path';
 import matter from 'gray-matter';
 import TopLayoutBlog from '../../src/modules/components/TopLayoutBlog';
-const PLAN_CONTENT_DIR = path.join(process.cwd(), 'data', '.plan');
-const SUPPORTED_EXTENSIONS = ['.mdx', '.md'];
+import type { BlogPostMeta } from '../../lib/sourcing';
 
 interface MDXPost {
   source: MDXRemoteSerializeResult;
-  frontMatter: {
-    title?: string;
-    description?: string;
-    date?: string;
-    authors?: string[];
-    tags?: string[];
+  frontMatter: BlogPostMeta & {
+    manualCard?: boolean | string;
+    cardTitle?: string;
+    manualCardAsset?: string;
     [key: string]: any;
   };
   slug: string;
@@ -32,9 +29,8 @@ interface DocsHeader {
 }
 
 interface LocalizedDoc {
-  description?: string;
-  rendered?: React.ReactNode;
-  mdxSource?: MDXRemoteSerializeResult;
+  description: string;
+  rendered: string[];
   title?: string;
   headers: DocsHeader;
 }
@@ -42,6 +38,11 @@ interface LocalizedDoc {
 interface Docs {
   en: LocalizedDoc;
 }
+
+const planContentDirs = [
+  path.join(process.cwd(), 'data', '.plan'),
+  path.join(process.cwd(), 'pages', 'home'),
+];
 
 export default function PlanPost({ source, frontMatter, slug }: MDXPost) {
   const authors = Array.isArray(frontMatter.authors)
@@ -58,33 +59,42 @@ export default function PlanPost({ source, frontMatter, slug }: MDXPost) {
   const localizedDocs: LocalizedDoc = {
     title: frontMatter.title ?? slug,
     description: frontMatter.description,
-    mdxSource: source,
+    rendered: [],
     headers: {
-      title: frontMatter.title ?? slug,
-      manualCard: frontMatter.manualCard ?? '',
+      title: frontMatter.title,
+      manualCard:
+        typeof frontMatter.manualCard === 'boolean'
+          ? String(frontMatter.manualCard)
+          : frontMatter.manualCard,
       cardTitle: frontMatter.cardTitle,
       authors,
       tags,
       date: frontMatter.date ?? '',
     }
   }
-  return <TopLayoutBlog docs={{en: localizedDocs}} />
+  return <TopLayoutBlog docs={{en: localizedDocs}} source={source} />
 }
 
 // This function gets called at build time to generate the paths
 export const getStaticPaths: GetStaticPaths = async () => {
-  const files = fs.readdirSync(PLAN_CONTENT_DIR);
+  const slugs = new Set<string>();
 
-  const paths = files
-    .filter((filename) =>
-      SUPPORTED_EXTENSIONS.some((ext) => filename.toLowerCase().endsWith(ext)),
-    )
-    .map((filename) => ({
-      params: {
-        slug: filename.replace(/\.(mdx?|md)$/, ''),
-      },
-    }));
-  
+  planContentDirs.forEach((dir) => {
+    if (!fs.existsSync(dir)) {
+      return;
+    }
+
+    fs.readdirSync(dir)
+      .filter((filename) => filename.endsWith('.mdx'))
+      .forEach((filename) => {
+        slugs.add(filename.replace(/\.mdx$/, ''));
+      });
+  });
+
+  const paths = Array.from(slugs).map((slug) => ({
+    params: { slug },
+  }));
+
   return {
     paths,
     fallback: false, // Show 404 for paths not returned by getStaticPaths
@@ -94,19 +104,20 @@ export const getStaticPaths: GetStaticPaths = async () => {
 // This function gets called at build time on server-side
 export const getStaticProps: GetStaticProps = async ({ params }) => {
   const slug = params?.slug as string;
-  const matched = SUPPORTED_EXTENSIONS
-    .map((ext) => ({
-      ext,
-      filePath: path.join(PLAN_CONTENT_DIR, `${slug}${ext}`),
-    }))
-    .find(({ filePath }) => fs.existsSync(filePath));
+  const mdxDir = planContentDirs.find((dir) =>
+    fs.existsSync(path.join(dir, `${slug}.mdx`)),
+  );
 
-  if (!matched) {
-    return { notFound: true };
+  if (!mdxDir) {
+    return {
+      notFound: true,
+    };
   }
 
+  const mdxPath = path.join(mdxDir, `${slug}.mdx`);
+
   // Read file content
-  const raw = fs.readFileSync(matched.filePath, 'utf8');
+  const raw = fs.readFileSync(mdxPath, 'utf8');
   // Use gray-matter to parse the post metadata section
   const { content, data: frontMatter } = matter(raw);
   const normalizedFrontMatter = {
@@ -131,7 +142,7 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
     },
     scope: normalizedFrontMatter,
   });
-  
+
   // Use frontmatter directly since we're now using standard frontmatter format
   return {
     props: {
@@ -140,4 +151,4 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
       slug,
     },
   };
-}; 
+};

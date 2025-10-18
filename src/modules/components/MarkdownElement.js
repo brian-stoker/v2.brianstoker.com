@@ -804,22 +804,27 @@ const Root = styled('div')(
   }),
 );
 
-const MarkdownElement = React.forwardRef(function MarkdownElement(props, ref) {
+/**
+ * @typedef {import('react').HTMLAttributes<HTMLDivElement> & {
+ *   className?: string;
+ *   renderedMarkdown?: string;
+ * }} MarkdownElementProps
+ */
+
+/**
+ * @param {MarkdownElementProps} props
+ * @param {import('react').Ref<HTMLDivElement>} ref
+ */
+function MarkdownElement(props, ref) {
   const { className, renderedMarkdown, ...other } = props;
   const more = {};
 
   if (typeof renderedMarkdown === 'string') {
-    // workaround for https://github.com/facebook/react/issues/17170
-    // otherwise we could just set `dangerouslySetInnerHTML={undefined}`
+    // @ts-ignore
     more.dangerouslySetInnerHTML = { __html: renderedMarkdown };
   }
 
   return <Root className={clsx('markdown-body', className)} {...more} {...other} ref={ref} />;
-});
+}
 
-MarkdownElement.propTypes = {
-  className: PropTypes.string,
-  renderedMarkdown: PropTypes.string,
-};
-
-export default MarkdownElement;
+export default React.forwardRef(MarkdownElement);

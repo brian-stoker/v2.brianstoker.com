@@ -1,115 +1,25 @@
 import * as React from 'react';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
-import Link from 'next/link';
 import Chip from '@mui/material/Chip';
-import Accordion from '@mui/material/Accordion';
-import AccordionSummary from '@mui/material/AccordionSummary';
-import AccordionDetails from '@mui/material/AccordionDetails';
-import CircularProgress from '@mui/material/CircularProgress';
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import CodeIcon from '@mui/icons-material/Code';
 import { EventDetails } from '../../types/github';
 import { useTheme } from '@mui/material/styles';
+import NextLink from "next/link";
+import { marked } from 'marked';
 
 interface PushEventProps {
   event: EventDetails;
 }
 
-interface File {
-  filename: string;
-  status: string;
-  additions: number;
-  deletions: number;
-  changes: number;
+// Helper function to render markdown text
+function renderMarkdown(text: string): string {
+  if (!text) return '';
+  return marked(text, {
+    breaks: true,
+    gfm: true
+  }) as string;
 }
-
-interface CommitProps {
-  commit: any;
-  repo: string;
-}
-
-function Commit({ commit, repo }: CommitProps) {
-  const [files, setFiles] = React.useState<File[]>([]);
-  const [loading, setLoading] = React.useState(false);
-  const [error, setError] = React.useState<string | null>(null);
-  const [expanded, setExpanded] = React.useState(false);
-  const theme = useTheme();
-
-  const fetchFiles = async () => {
-    if (files.length > 0) return; // Don't refetch if already loaded
-
-    setLoading(true);
-    setError(null);
-    try {
-      const [owner, repoName] = repo.split('/');
-      const response = await fetch(`/api/github/commit-files?owner=${owner}&repo=${repoName}&sha=${commit.sha}`);
-      if (!response.ok) {
-        throw new Error('Failed to fetch commit files');
-      }
-      const data = await response.json();
-      setFiles(data.files);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'An unknown error occurred');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleAccordionChange = (event: React.SyntheticEvent, isExpanded: boolean) => {
-    setExpanded(isExpanded);
-    if (isExpanded) {
-      fetchFiles();
-    }
-  };
-
-  return (
-    <Accordion
-      sx={{ mt: 1, backgroundColor: 'transparent', border: `1px solid ${theme.palette.divider}` }}
-      onChange={handleAccordionChange}
-      expanded={expanded}
-    >
-      <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-        <Box>
-          <Typography variant="body2" sx={{ fontWeight: 600 }}>
-            <Link href={commit.html_url} passHref legacyBehavior>
-              <a target="_blank" rel="noopener noreferrer" style={{ textDecoration: 'none', color: 'inherit' }}>
-                {commit.message?.split('\n')[0]}
-              </a>
-            </Link>
-          </Typography>
-          <Typography variant="caption" color="text.secondary">
-            {commit.sha.substring(0, 7)} by {commit.author?.name || 'Unknown author'}
-          </Typography>
-        </Box>
-      </AccordionSummary>
-      <AccordionDetails>
-        {loading && <CircularProgress size={24} />}
-        {error && <Typography color="error">{error}</Typography>}
-        {files.length > 0 && (
-          <Box component="ul" sx={{ listStyle: 'none', p: 0, m: 0, display: 'flex', flexDirection: 'column', gap: 0.5 }}>
-            {files.map((file: File) => (
-              <Typography
-                key={file.filename}
-                component="li"
-                variant="body2"
-                sx={{
-                  fontFamily: 'monospace',
-                  color: file.status === 'added' ? 'success.main' : file.status === 'modified' ? 'info.main' : file.status === 'removed' ? 'error.main' : 'text.primary'
-                }}
-              >
-                {file.status === 'added' && '+ '}
-                {file.status === 'modified' && '~ '}
-                {file.status === 'removed' && '- '}
-                {file.filename}
-              </Typography>
-            ))}
-          </Box>
-        )}
-      </AccordionDetails>
-    </Accordion>
-  );
-}
-
 
 export default function PushEvent({ event }: PushEventProps): React.JSX.Element | null {
   const theme = useTheme();
@@ -118,12 +28,23 @@ export default function PushEvent({ event }: PushEventProps): React.JSX.Element 
   }
 
   const branchName = event.ref?.replace('refs/heads/', '') || 'main';
-  const commits = event.commitsList || [];
-  const commitCount = commits.length > 0 ? commits.length : (event.commits || 0);
+
+  // Try to get commits from commitsList first, then fall back to payload.commits
+  let commits = event.commitsList || [];
+  if (commits.length === 0 && event.payload?.commits) {
+    commits = event.payload.commits.map((commit: any) => ({
+      message: commit.message,
+      sha: commit.sha,
+      author: commit.author,
+      html_url: `https://github.com/${event.repo}/commit/${commit.sha}`
+    }));
+  }
+
+  const commitCount = commits.length > 0 ? commits.length : (event.commits || event.payload?.size || 0);
 
   const getSummary = () => {
     if (commits.length === 1) {
-      return commits[0].message?.split('\n')[0];
+      return commits[0].message?.toString()?.split('\n')[0];
     }
     if (commits.length > 1) {
       return `Pushed ${commitCount} commits to ${branchName}`;
@@ -132,39 +53,177 @@ export default function PushEvent({ event }: PushEventProps): React.JSX.Element 
   };
 
   const summary = getSummary();
+  const [repoOwner, repoName] = event.repo.split('/');
 
   return (
-    <Box sx={{ p: 2 }}>
-      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 2 }}>
-        <Typography variant="caption" color="text.secondary">
-          {event.date}
+    <Box>
+      {/* Header with icon, event type, and metadata */}
+      <Box sx={{ mb: 2 }}>
+        <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 2, mb: 2 }}>
+          <Box sx={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            width: 40,
+            height: 40,
+            borderRadius: 1,
+            backgroundColor: 'action.selected',
+            flexShrink: 0
+          }}>
+            <CodeIcon sx={{ fontSize: 24 }} />
+          </Box>
+
+          <Box sx={{ flexGrow: 1, minWidth: 0 }}>
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 0.5, flexWrap: 'wrap' }}>
+              <Typography variant="subtitle2" fontWeight="bold">
+                Push Event
+              </Typography>
+              <Typography variant="caption" color="text.secondary">
+                •
+              </Typography>
+              <Typography variant="caption" color="text.secondary">
+                {event.date}
+              </Typography>
+            </Box>
+
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1, flexWrap: 'wrap' }}>
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                <NextLink
+                  href={`https://github.com/${repoOwner}`}
+                  passHref
+                  style={{
+                    textDecoration: 'none',
+                    color: 'inherit',
+                    fontSize: '0.875rem'
+                  }}
+                >
+                  {repoOwner}
+                </NextLink>
+                <Typography variant="body2" color="text.secondary">
+                  /
+                </Typography>
+                <NextLink
+                  href={`https://github.com/${event.repo}`}
+                  passHref
+                  style={{
+                    textDecoration: 'none',
+                    color: 'inherit',
+                    fontSize: '0.875rem',
+                    fontWeight: 600
+                  }}
+                >
+                  {repoName}
+                </NextLink>
+              </Box>
+              <Chip
+                label={branchName}
+                size="small"
+                color="default"
+                variant="outlined"
+              />
+              <Chip
+                label={`${commitCount} commit${commitCount !== 1 ? 's' : ''}`}
+                size="small"
+                color="default"
+              />
+            </Box>
+          </Box>
+        </Box>
+
+        <Typography variant="h6" component="h3">
+          <NextLink
+            href={event.url}
+            passHref
+            style={{ textDecoration: 'none', color: 'inherit' }}
+          >
+            {summary}
+          </NextLink>
         </Typography>
-        <Chip
-          label={branchName}
-          size="small"
-          color="default"
-        />
-        <Chip
-          label={`${commitCount} commit${commitCount !== 1 ? 's' : ''}`}
-          size="small"
-          color="primary"
-        />
       </Box>
 
-      <Typography variant="h6" component="h3" sx={{ mb: 1 }}>
-        <Link href={event.url} passHref legacyBehavior>
-          <a target="_blank" rel="noopener noreferrer" style={{ textDecoration: 'none', color: 'inherit' }}>
-            {summary}
-          </a>
-        </Link>
-      </Typography>
-
       {commits.length > 0 && (
-        <Box sx={{ mt: 2 }}>
-          <Typography variant="subtitle2">Commits</Typography>
-          {commits.map((commit: any) => (
-            <Commit key={commit.sha} commit={commit} repo={event.repo} />
-          ))}
+        <Box>
+          <Typography variant="subtitle2" sx={{ mb: 1.5, fontWeight: 'bold' }}>
+            Commits
+          </Typography>
+          <Box sx={{
+            display: 'flex',
+            flexDirection: 'column',
+            gap: 2,
+            maxHeight: 'calc(100vh - 236px - 75px - 200px)',
+            overflow: 'auto'
+          }}>
+            {commits.map((commit: any) => (
+              <Box
+                key={commit.sha}
+                sx={{
+                  p: 2,
+                  backgroundColor: 'action.hover',
+                  borderRadius: 1,
+                  border: `1px solid ${theme.palette.divider}`,
+                  overflow: 'hidden'
+                }}
+              >
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 0.5 }}>
+                  <NextLink
+                    href={commit.html_url}
+                    passHref
+                    style={{ textDecoration: 'none', color: 'inherit' }}
+                  >
+                    <Typography variant="caption" color="text.secondary" sx={{ fontFamily: 'monospace' }}>
+                      {commit.sha.substring(0, 7)}
+                    </Typography>
+                  </NextLink>
+                  <Typography variant="body2" sx={{ fontWeight: 600 }}>
+                    <NextLink
+                      href={commit.html_url}
+                      passHref
+                      style={{ textDecoration: 'none', color: 'inherit' }}
+                    >
+                      {commit.message?.split('\n')[0] || 'No commit message'}
+                    </NextLink>
+                  </Typography>
+                </Box>
+                <Typography variant="caption" color="text.secondary" sx={{ mb: 1, display: 'block' }}>
+                  by {commit.author?.name || 'Unknown'}
+                </Typography>
+                {commit.message?.split('\n').slice(1).join('\n').trim() && (
+                  <Box
+                    sx={{
+                      color: 'text.secondary',
+                      maxHeight: '150px',
+                      overflow: 'auto',
+                      '& h2': {
+                        fontSize: '1.1rem',
+                        fontWeight: 600,
+                        mt: 1.5,
+                        mb: 1
+                      },
+                      '& h3': {
+                        fontSize: '1rem',
+                        fontWeight: 600,
+                        mt: 1,
+                        mb: 0.5
+                      },
+                      '& ul': {
+                        pl: 2,
+                        my: 0.5
+                      },
+                      '& li': {
+                        my: 0.25
+                      },
+                      '& p': {
+                        my: 0.5
+                      }
+                    }}
+                    dangerouslySetInnerHTML={{
+                      __html: renderMarkdown(commit.message?.split('\n').slice(1).join('\n'))
+                    }}
+                  />
+                )}
+              </Box>
+            ))}
+          </Box>
         </Box>
       )}
     </Box>

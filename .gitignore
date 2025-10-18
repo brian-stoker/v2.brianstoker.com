@@ -39,9 +39,9 @@ public/static/blog/feed/*
 # vale downloaded config
 .github/styles/
 .nx/cache
-**.env
-**.env.*
-
+.env
+.env.*
+.env.production
 packages-internal/x-tree-view-example
 export
 .next

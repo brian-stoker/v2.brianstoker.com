@@ -9,35 +9,51 @@ if (typeof window === 'undefined') {
   fs = require('fs');
 }
 
-const blogDir = path.join(process.cwd(), 'data/.plan');
-const SUPPORTED_EXTENSIONS = ['.mdx', '.md'];
+const blogDirs = [
+  path.join(process.cwd(), 'data/.plan'),
+  path.join(process.cwd(), 'pages/home'),
+];
 
-const getBlogFilePaths = () => {
-  return fs
-    .readdirSync(blogDir)
-    .filter((file: string) =>
-      SUPPORTED_EXTENSIONS.some((ext) => file.toLowerCase().endsWith(ext)),
-    );
+type BlogFileEntry = {
+  dir: string;
+  file: string;
+};
+
+const getBlogFileEntries = (ext = '.mdx'): BlogFileEntry[] => {
+  if (!fs) {
+    return [];
+  }
+
+  return blogDirs.flatMap((dir) => {
+    if (!fs.existsSync(dir)) {
+      return [];
+    }
+
+    return fs
+      .readdirSync(dir)
+      .filter((file: string) => file.endsWith(ext))
+      .map((file: string) => ({ dir, file }));
+  });
 };
 
 export interface BlogPostMeta {
    title: string;
   description: string;
-  image?: string;
+  image?: string | null;
   tags: Array<string>;
   authors?: Array<string>;
-  date?: string;
-  sui?: boolean;
+  date?: string | null;
+  sui?: boolean | null;
 }
 export interface BlogPost extends BlogPostMeta {
   slug: string;
   source?: MDXRemoteSerializeResult;
 }
 
-async function getBlogPost(filePath: string): Promise<BlogPost> {
-  
-  const slug = filePath.replace(/\.(mdx?|md)$/, '');
-  const raw = fs.readFileSync(path.join(blogDir, filePath), 'utf-8');
+async function getBlogPost(entry: BlogFileEntry): Promise<BlogPost> {
+  const { dir, file } = entry;
+  const slug = file.replace(/\.mdx$/, '');
+  const raw = fs.readFileSync(path.join(dir, file), 'utf-8');
   const { content, data: frontMatter } = matter(raw);
   // Use next-mdx-remote to serialize the content
   const source = await serialize(content, {
@@ -60,11 +76,11 @@ async function getBlogPost(filePath: string): Promise<BlogPost> {
     slug,
     title: meta.title || slug,
     description: meta.description || '',
-    image: meta.image,
+    image: meta.image || null,
     tags,
     authors: Array.isArray(meta.authors) ? meta.authors : meta.authors ? [meta.authors] : [],
-    date: meta.date,
-    sui: meta.sui,
+    date: meta.date || null,
+    sui: meta.sui || null,
   };
 }
 
@@ -104,9 +120,18 @@ export const getAllBlogPosts = async () => {
   if (typeof window !== 'undefined') {
     throw new Error('getAllBlogPosts can only be called on the server side');
   }
-  
-  const filePaths = getBlogFilePaths();
-  const blogPosts = await Promise.all(filePaths.map(async (name) => await getBlogPost(name)));
+
+  const fileEntries = getBlogFileEntries();
+  const blogPostsMap = new Map<string, BlogPost>();
+
+  await Promise.all(
+    fileEntries.map(async (entry) => {
+      const post = await getBlogPost(entry);
+      blogPostsMap.set(post.slug, post);
+    }),
+  );
+
+  const blogPosts = Array.from(blogPostsMap.values());
   const rawBlogPosts = blogPosts.sort((post1, post2) => {
       if (post1.date && post2.date) {
         return new Date(post1.date) > new Date(post2.date) ? -1 : 1;
