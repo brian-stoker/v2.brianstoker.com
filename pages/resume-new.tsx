@@ -203,8 +203,9 @@ export function PdfDoc ({ pdfWidth }: { pdfWidth?: number }) {
 
 export default function Resume({pdfMinWidth = 900}: { pdfMinWidth?: number }) {
   const windowWidth = useWindowWidth();
-  const iconWidth = windowWidth && windowWidth < pdfMinWidth ? 0 : 100;
-  const margin = windowWidth && windowWidth < pdfMinWidth ? 48 * 2 : 48;
+  const isMobile = windowWidth && windowWidth < 768;
+  const iconWidth = isMobile ? 0 : 100;
+  const margin = isMobile ? 16 * 2 : 48; // Smaller margins on mobile
   const maxWidth = 1025;
   const pdfWidth = Math.min((windowWidth ? windowWidth : maxWidth) - iconWidth - margin, maxWidth);
   const Container = styled(Box)<{ minWidth: number }>(({minWidth = 300}) => ({
@@ -231,13 +232,19 @@ export default function Resume({pdfMinWidth = 900}: { pdfMinWidth?: number }) {
     },
   }));
 
-  return (<Container className='' minWidth={pdfMinWidth} sx={{
+  return (<Container className='' minWidth={768} sx={{
     fontSize: "1.6rem", lineHeight: '2.4rem', display: 'flex', justifyContent: 'center'
   }}>
-    <Box sx={{minWidth: `${pdfMinWidth}px`, margin: 5, maxWidth: `${maxWidth}px`,}}>
+    <Box sx={{
+      minWidth: isMobile ? 'auto' : `${pdfMinWidth}px`,
+      margin: isMobile ? 2 : 5,
+      maxWidth: `${maxWidth}px`,
+      width: '100%',
+      px: isMobile ? 1 : 0
+    }}>
       <div className={'resume-containers'}>
         <PdfDoc pdfWidth={pdfWidth}/>
-        <div className={'resume-icons'}>sss
+        <div className={'resume-icons'}>
           <a href='/static/resume/brian-stoker-resume.pdf' download>
             <img src='/static/icons/pdf.svg'
               alt={'download pdf'}

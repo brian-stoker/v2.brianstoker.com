@@ -34,7 +34,7 @@ export default function AppFooter(props: AppFooterProps) {
           alignItems: 'flex-start',
           justifyContent: 'space-between',
           gap: 4,
-          gridTemplateColumns: { xs: '1fr', sm: '1fr  1.75fr', md: '1.75fr 1.75fr', lg: '1.75fr 1fr' },
+          gridTemplateColumns: { xs: '1fr', sm: '1fr', md: '1.75fr 1.75fr', lg: '1.75fr 1fr' },
           gridTemplateRows: 'auto',
           '& a:not(.MuiIconButton-root)': {
             pt: 0.5,
@@ -91,10 +91,16 @@ export default function AppFooter(props: AppFooterProps) {
             display: 'grid',
             gridTemplateColumns: '1fr 1fr',
             gridAutoColumns: '1fr 1fr',
-            gap: 2,
+            gap: {xs: 10, sm: 6, md: 4 },
+            px: {xs: 10, sm: 8, md: 4 }, // Equal padding on both sides for mobile/tablet
+            mx: 'auto',
+            width: '100%',
           }}
         >
-          <Box sx={{ display: 'flex', flexDirection: 'column' }}>
+          <Box sx={{
+            display: 'flex',
+            flexDirection: 'column',
+          }}>
             <NextLink prefetch={false} href={ROUTES.home}>
               <Typography fontWeight="semiBold" variant="body2" sx={{ mb: 0.5 }}>
                 Brian Stoker
@@ -123,7 +129,10 @@ export default function AppFooter(props: AppFooterProps) {
             </NextLink>
           </Box>
 
-          <Box sx={{ display: 'flex', flexDirection: 'column' }}>
+          <Box sx={{
+            display: 'flex',
+            flexDirection: 'column',
+          }}>
             <NextLink prefetch={false} href={ROUTES.stokedConsulting}>
               <Typography fontWeight="semiBold" variant="body2" sx={{ mb: 0.5 }}>
                 Stoked Consulting

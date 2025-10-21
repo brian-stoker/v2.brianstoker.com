@@ -493,6 +493,7 @@ export default function Blog(props: InferGetStaticPropsType<typeof getStaticProp
             page={page + 1}
             count={totalPage}
             variant="outlined"
+            className="justify-items-center"
             shape="rounded"
             onChange={(_, value) => {
               setPage(value - 1);
