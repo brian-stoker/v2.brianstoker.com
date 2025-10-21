@@ -16,20 +16,21 @@ export const VIEWPORTS = {
   TABLET_LANDSCAPE: { width: 1024, height: 768 }, // iPad Landscape
 
   // Desktop viewports
-  DESKTOP_SMALL: { width: 960, height: 720 }, // MUI 'md' breakpoint
-  DESKTOP_MEDIUM: { width: 1280, height: 720 }, // MUI 'lg' breakpoint
-  DESKTOP_LARGE: { width: 1920, height: 1080 }, // MUI 'xl' breakpoint
+  DESKTOP_SMALL: { width: 900, height: 720 }, // MUI 'md' breakpoint
+  DESKTOP_MEDIUM: { width: 1200, height: 720 }, // MUI 'lg' breakpoint
+  DESKTOP_LARGE: { width: 1536, height: 864 }, // MUI 'xl' breakpoint
 } as const;
 
 /**
  * MUI breakpoints for reference
+ * These match the default MUI v5 breakpoint values
  */
 export const MUI_BREAKPOINTS = {
   xs: 0,
   sm: 600,
-  md: 960,
-  lg: 1280,
-  xl: 1920,
+  md: 900,
+  lg: 1200,
+  xl: 1536,
 } as const;
 
 /**

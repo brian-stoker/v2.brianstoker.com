@@ -32,7 +32,7 @@ export default function generateRssFeed(allBlogPosts: Array<BlogPost>) {
 
     feed.addItem({
       title: post.title,
-      image: post.image,
+      image: post.image || undefined, // Convert null to undefined for RSS feed compatibility
       id: postLink,
       link: postLink,
       description: post.description,

@@ -16,7 +16,8 @@ import FormControl from '@mui/material/FormControl';
 import { format, parse, parseISO } from 'date-fns';
 import { toZonedTime } from 'date-fns-tz';
 import { enUS } from 'date-fns/locale';
-import { styled, useTheme } from '@mui/material/styles';
+import { alpha, styled, Theme, useTheme } from '@mui/material/styles';
+import useMediaQuery from '@mui/material/useMediaQuery';
 import Autocomplete from '@mui/material/Autocomplete';
 import Pagination from '@mui/material/Pagination';
 import dynamic from 'next/dynamic';
@@ -29,6 +30,14 @@ import IssuesEvent from './IssuesEvent';
 import IssueCommentEvent from './IssueCommentEvent';
 import { EventDetails, GitHubEvent, CachedData } from '../../types/github';
 import { oklab } from 'culori';
+import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
+import CommentIcon from '@mui/icons-material/Comment';
+import CodeIcon from '@mui/icons-material/Code';
+import MergeTypeIcon from '@mui/icons-material/MergeType';
+import DeleteIcon from '@mui/icons-material/Delete';
+import AddBoxIcon from '@mui/icons-material/AddBox';
+import BugReportIcon from '@mui/icons-material/BugReport';
+
 // Extend the EventDetails interface for internal component use
 interface DisplayEventDetails extends EventDetails {
   dateOnly: string;
@@ -40,51 +49,88 @@ const ReactJson = dynamic(() => import('react-json-view'), {
   loading: () => <div>Loading JSON viewer...</div>
 });
 
-const MetadataDisplay = styled(Box)(({ theme }) => {
-  return {
-    backgroundColor: 'rgba(255, 255, 255, 0.06)',
-    borderTopRightRadius: theme.shape.borderRadius,
-    borderBottomRightRadius: theme.shape.borderRadius,
-    boxShadow: theme.shadows[2],
-    padding: theme.spacing(2),
-    position: 'sticky',
-    width: '672px',
-    maxWidth: '692px',
-    minWidth: '300px',
-    top: '84px',
-    maxHeight: 'calc(100vh - 236px - 75px)',
-    display: 'flex',
-    flexDirection: 'column'
-  };
-});
+const MetadataDisplay = styled(Box)(({ theme }: { theme: Theme }) => ({
+  backgroundColor: 'rgba(255, 255, 255, 0.06)',
+  boxShadow: theme.shadows[2],
+  padding: theme.spacing(2),
+  position: 'sticky',
+  maxHeight: 'calc(100vh - 236px - 75px)',
+  display: 'flex',
+  flexDirection: 'column',
+  overflowY: 'auto',
+  overflowX: 'hidden'
+}));
 
 // Keep only the most recent events in localStorage to prevent quota exceeded errors
-// Reduced to 50 events to avoid localStorage quota issues with large event payloads
-const MAX_CACHED_EVENTS = 50;
+// Further reduced to 30 events to avoid localStorage quota issues with large event payloads
+const MAX_CACHED_EVENTS = 30;
 
 // Helper function to safely set localStorage with error handling
 const safeSetLocalStorage = (key: string, value: any): boolean => {
   try {
+    // First, try to estimate the size of what we're storing
+    const dataStr = JSON.stringify(value);
+    const sizeInBytes = new Blob([dataStr]).size;
+    const sizeInKB = sizeInBytes / 1024;
+
+    // If data is too large (> 2MB), reduce the number of cached events
+    if (sizeInKB > 2048) {
+      console.warn(`Cache data too large (${sizeInKB.toFixed(2)} KB), reducing to 20 events`);
+      if (value.events && Array.isArray(value.events)) {
+        value.events = value.events.slice(0, 20);
+      }
+    }
+
     localStorage.setItem(key, JSON.stringify(value));
     return true;
   } catch (err) {
     console.error('Failed to save to localStorage:', err);
-    // If we hit quota, try to clear and set again
+
+    // If we hit quota, try multiple strategies
     if (err instanceof Error && err.name === 'QuotaExceededError') {
       try {
+        // Strategy 1: Clear our own key first
         localStorage.removeItem(key);
+
+        // Strategy 2: Clear old keys that might be from previous versions
+        const keysToRemove = ['github_events_cache', 'github_filters', 'github_events_old'];
+        keysToRemove.forEach(k => {
+          try {
+            localStorage.removeItem(k);
+          } catch (e) {
+            // Ignore errors when removing keys
+          }
+        });
+
+        // Strategy 3: If still failing, reduce data to just 10 most recent events
+        if (value.events && Array.isArray(value.events)) {
+          console.warn('Reducing cache to 10 events due to storage quota');
+          value.events = value.events.slice(0, 10);
+        }
+
+        // Try one more time with reduced data
         localStorage.setItem(key, JSON.stringify(value));
         return true;
       } catch (retryErr) {
-        console.error('Failed to save to localStorage even after clearing:', retryErr);
-        return false;
+        console.error('Failed to save to localStorage even after cleanup:', retryErr);
+        // Last resort: Clear all localStorage for this domain
+        try {
+          console.warn('Clearing all localStorage due to persistent quota issues');
+          localStorage.clear();
+          // Try once more after clearing everything
+          localStorage.setItem(key, JSON.stringify(value));
+          return true;
+        } catch (finalErr) {
+          console.error('Cannot save to localStorage at all:', finalErr);
+          return false;
+        }
       }
     }
     return false;
   }
 };
 
-export default function GithubEvents({ eventsPerPage = 40, hideMetadata = false }: { eventsPerPage?: number, hideMetadata?: boolean }) {
+export default function GithubEvents({ eventsPerPage = 40, hideMetadata = false, alwaysColumn = false }: { eventsPerPage?: number, hideMetadata?: boolean, alwaysColumn?: boolean }) {
   const router = useRouter();
   const [events, setEvents] = React.useState<DisplayEventDetails[]>([]);
   const [loading, setLoading] = React.useState<boolean>(true);
@@ -108,6 +154,19 @@ export default function GithubEvents({ eventsPerPage = 40, hideMetadata = false 
   const scrollRef = React.useRef<HTMLDivElement>(null);
   const [showAttached, setShowAttached] = React.useState(false);
   const [scrollTop, setScrollTop] = React.useState(0);
+  const pendingEventSelection = React.useRef<string | null>(null);
+  const isMobile = useMediaQuery(theme.breakpoints.down(900));
+  const [allLoadedEvents, setAllLoadedEvents] = React.useState<DisplayEventDetails[]>([]);
+
+
+  const actionIcons: Record<string, any> = {
+    Issue: <BugReportIcon sx={{ fontSize: 18 }} />,
+    Comment: <CommentIcon sx={{ fontSize: 18 }} />,
+    Push: <CodeIcon sx={{ fontSize: 18 }} />,
+    'Pull Request': <MergeTypeIcon sx={{ fontSize: 18 }} />,
+    Delete: <DeleteIcon sx={{ fontSize: 18 }} />,
+    Create: <AddBoxIcon sx={{ fontSize: 18 }} />
+  };
 
   // Calculate total pages
   const totalPages = React.useMemo(() => {
@@ -191,6 +250,18 @@ export default function GithubEvents({ eventsPerPage = 40, hideMetadata = false 
       if (!events.length) return;
 
       if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
+         // Only handle keyboard navigation if the table or its elements have focus
+        // or if a modifier key is pressed (e.g., Shift, Ctrl, Alt)
+        const activeElement = document.activeElement;
+        const isTableFocused = activeElement?.closest('.MuiTableContainer-root') !== null ||
+                              activeElement?.closest('tbody') !== null ||
+                              e.shiftKey || e.ctrlKey || e.altKey || e.metaKey;
+
+        // If table is not focused and no modifier keys, allow normal scrolling
+        if (!isTableFocused) {
+          return;
+        }
+        
         e.preventDefault();
 
         let newIndex = selectedIndex;
@@ -238,29 +309,109 @@ export default function GithubEvents({ eventsPerPage = 40, hideMetadata = false 
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [events, selectedIndex, page, totalPages]);
 
-  // Handle URL query parameters for direct links
+  // Handle URL query parameters for direct links - only on initial load
   React.useEffect(() => {
     if (!router.isReady) return;
 
+    // Only process URL parameter on initial mount, not on every query change
     const { event: eventId } = router.query;
 
-    if (eventId && typeof eventId === 'string' && events.length > 0) {
+    // Use a ref to track if we've already processed the initial URL
+    if (eventId && typeof eventId === 'string' && !isInitialized && cachedEvents.length > 0) {
+      // Search in all cached events (applying current filters)
+      const allFilteredEvents = filterEvents(cachedEvents);
+      const globalEventIndex = allFilteredEvents.findIndex(e => e.id === eventId);
+
+      if (globalEventIndex !== -1) {
+        // Calculate which page this event is on
+        const targetPage = Math.floor(globalEventIndex / eventsPerPage) + 1;
+
+        if (targetPage !== page) {
+          // Store the event ID to select after page loads
+          pendingEventSelection.current = eventId;
+          // Navigate to the correct page
+          setPage(targetPage);
+        } else {
+          // Event is on current page, select it immediately
+          const currentPageIndex = events.findIndex(e => e.id === eventId);
+          if (currentPageIndex !== -1) {
+            const event = events[currentPageIndex];
+            setSelectedIndex(currentPageIndex);
+            selectEvent(event);
+
+            // Mark the row as selected visually
+            setTimeout(() => {
+              const selectedRow = document.getElementById(eventId);
+              if (selectedRow) {
+                selectedRow.classList.add('selected');
+                selectedRow.scrollIntoView({ behavior: 'auto', block: 'nearest' });
+              }
+            }, 100);
+          }
+        }
+      }
+    }
+  }, [router.isReady, cachedEvents.length, eventsPerPage, isInitialized, page]); // Only depend on necessary values
+
+  // Handle pending event selection after page change
+  React.useEffect(() => {
+    if (pendingEventSelection.current && events.length > 0) {
+      const eventId = pendingEventSelection.current;
       const eventIndex = events.findIndex(e => e.id === eventId);
+
       if (eventIndex !== -1) {
         const event = events[eventIndex];
         setSelectedIndex(eventIndex);
-        handleEventSelection(event, eventIndex);
+        selectEvent(event);
 
-        // Scroll to the event
+        // Mark the row as selected visually
         setTimeout(() => {
           const selectedRow = document.getElementById(eventId);
           if (selectedRow) {
-            selectedRow.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            selectedRow.classList.add('selected');
+            selectedRow.scrollIntoView({ behavior: 'auto', block: 'nearest' });
           }
         }, 100);
+
+        // Clear the pending selection
+        pendingEventSelection.current = null;
       }
     }
-  }, [router.isReady, router.query, events]);
+  }, [events]); // Run whenever events change
+
+  // Handle infinite scroll for mobile
+  React.useEffect(() => {
+    if (isMobile) {
+      // Accumulate events for infinite scroll
+      if (page === 1) {
+        setAllLoadedEvents(events);
+      } else {
+        setAllLoadedEvents(prev => [...prev, ...events]);
+      }
+    }
+  }, [events, page, isMobile]);
+
+  // Add scroll listener for infinite scroll on mobile
+  React.useEffect(() => {
+    if (!isMobile) return;
+
+    const handleScroll = () => {
+      const container = document.querySelector('.master-container');
+      if (!container) return;
+
+      const { scrollTop, scrollHeight, clientHeight } = container;
+      // Load more when user is 200px from bottom
+      if (scrollHeight - scrollTop - clientHeight < 200 && !loading && page < totalPages) {
+        setPage(prev => prev + 1);
+      }
+    };
+
+    const container = document.querySelector('.master-container');
+    if (container) {
+      container.addEventListener('scroll', handleScroll);
+      return () => container.removeEventListener('scroll', handleScroll);
+    }
+  }, [isMobile, loading, page, totalPages]);
 
   // Helper function to handle event selection
   const handleEventSelection = (event: DisplayEventDetails, index: number) => {
@@ -281,8 +432,9 @@ export default function GithubEvents({ eventsPerPage = 40, hideMetadata = false 
     selectEvent(event);
     setSelectedIndex(index);
 
-    // Update URL with shallow routing
-    router.push({
+    // Update URL with replace and shallow routing to avoid adding to history stack
+    // This prevents back button issues and avoids any page reload
+    router.replace({
       pathname: router.pathname,
       query: { ...router.query, event: event.id }
     }, undefined, { shallow: true });
@@ -820,60 +972,10 @@ export default function GithubEvents({ eventsPerPage = 40, hideMetadata = false 
     return format(parsed, 'h:mm a');
   }
   
-  let latestDateDisplayed: string | null = null;
-  return (
-    <Box id="github-events" className="w-[1144px]" sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
-      <Box sx={{ mb: 1, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <Box sx={{ display: 'flex', gap: .5, flexDirection: 'column' }}>
-          <Typography variant="subtitle1" fontWeight="semiBold">Work</Typography>
-          {lastUpdated && (
-            <Typography variant="caption" color="text.secondary">
-              Last updated: {lastUpdated}
-            </Typography>
-          )}
-        </Box>
-        {totalCount > 0 && (
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-            <Typography variant="caption" color="text.secondary">
-              {totalCount} total events
-            </Typography>
-            {totalPages > 0 && (
-              <Pagination
-                count={totalPages}
-                page={page}
-                onChange={(_, value) => setPage(value)}
-                size="small"
-                sx={{
-                  '& .MuiPaginationItem-root': {
-                    color: theme.palette.text.secondary,
-                    borderColor: theme.palette.divider,
-                  }
-                }}
-              />
-            )}
-          </Box>
-        )}
-      </Box>
-      <Box sx={{ display: 'flex', flexDirection: 'row', gap: '1px' }}>
-        <Box 
-          sx={{ 
-            width: '460px', 
-            flexShrink: 0,
-            display: 'block',
-            position: 'relative'
-          }} 
-          className="master-container">
-          {error && (
-            <Typography color="error" sx={{ mb: 2 }}>{error}</Typography>
-          )}
-          <TableContainer component={Paper} sx={{ mb: 4, borderRadius: 0, position: 'relative' }} className="overflow-visible">
-            
-            <Table size="small">
-              <TableHead>
-                <TableRow>
+  const filters = <TableRow>
                   <TableCell>
                     <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
-                      Date
+                      {(!isMobile && !alwaysColumn) ? 'Date' : null}
                       <FormControl size="small" fullWidth>
                         <Select
                           value={dateFilter}
@@ -900,8 +1002,8 @@ export default function GithubEvents({ eventsPerPage = 40, hideMetadata = false 
                     </Box>
                   </TableCell>
                   <TableCell>
-                    <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
-                      Repository
+                    <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0 }}>
+                      {(!isMobile && !alwaysColumn) ? 'Repository' : null}
                       <Autocomplete
                         size="small"
                         options={repositories}
@@ -910,7 +1012,7 @@ export default function GithubEvents({ eventsPerPage = 40, hideMetadata = false 
                         renderInput={(params) => (
                           <TextField
                             {...params}
-                            placeholder="All"
+                            placeholder={isMobile || alwaysColumn ? 'Repository' : 'All'}
                             sx={{
                               '& .MuiInputBase-root': {
                                 height: '32px',
@@ -969,8 +1071,8 @@ export default function GithubEvents({ eventsPerPage = 40, hideMetadata = false 
                     </Box>
                   </TableCell>
                   <TableCell>
-                    <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
-                      Type
+                    <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0 }}>
+                      {(!isMobile && !alwaysColumn) ? 'Type' : null}
                       <Autocomplete
                         size="small"
                         options={actionTypes}
@@ -979,7 +1081,7 @@ export default function GithubEvents({ eventsPerPage = 40, hideMetadata = false 
                         renderInput={(params) => (
                           <TextField
                             {...params}
-                            placeholder="All"
+                            placeholder={isMobile || alwaysColumn ? 'Event Type' : 'All'}
                             sx={{
                               '& .MuiInputBase-root': {
                                 height: '32px',
@@ -1039,7 +1141,104 @@ export default function GithubEvents({ eventsPerPage = 40, hideMetadata = false 
                     </Box>
                   </TableCell>
                 </TableRow>
-              </TableHead>
+
+  let latestDateDisplayed: string | null = null;
+  return (
+    <Box id="github-events" className={alwaysColumn || isMobile  ? 'w-full' : 'w-[1144px]'} sx={{
+       display: 'flex',
+        flexDirection: 'column',
+        gap: 1,
+        // margin: {
+        //   lg: 0, 
+        //   md: '0 10px'
+        // },
+        maxWidth: { xs: '100%', lg: alwaysColumn || isMobile ? '680px' : 'calc(100vw - 20px)'},
+      
+    }}>
+      {!alwaysColumn && <Box sx={{ mb: 1, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Box sx={{ 
+          display: 'flex', 
+          gap: 0,
+          flexDirection: 'column',
+       
+        }}>
+          <Typography variant="subtitle1" fontWeight="semiBold">Work</Typography>
+          {lastUpdated && (
+            <Typography variant="caption" color="text.secondary">
+              Last updated: {lastUpdated}
+            </Typography>
+          )}
+        </Box>
+        {totalCount > 0 && (
+          <Box sx={{
+            display: 'flex', 
+            alignItems: { 
+              xs: undefined, 
+              lg: 'center'
+            }, 
+            alignSelf: { 
+              xs: 'end', 
+              lg: undefined 
+            }, 
+            gap: 0,
+            
+          }}>
+            <Typography variant="caption" color="text.secondary">
+              {totalCount} total events
+            </Typography>
+            {!isMobile && !alwaysColumn && totalPages > 0 && (
+              <Pagination
+                count={totalPages}
+                page={page}
+                onChange={(_, value) => setPage(value)}
+                size="small"
+                sx={{
+                  '& .MuiPaginationItem-root': {
+                    color: theme.palette.text.secondary,
+                    borderColor: 'hsl(210deg 12.42% 36.87%)',
+                  }
+                }}
+              />
+            )}
+          </Box>
+        )}
+      </Box> }
+      <Box sx={{
+        display: 'flex',
+        flexDirection: isMobile || alwaysColumn ? 'column-reverse' : 'row',
+        gap: 0,
+        width: '100%',
+        border: 0,
+      }}>
+        <Box
+          sx={{
+            width: isMobile || alwaysColumn  ? '100%' : '460px',
+            flexShrink: 0,
+            display: 'block',
+            position: 'relative',
+            maxHeight: isMobile || alwaysColumn  ? '50vh' : 'auto',
+            overflowY: 'visible',
+            border: 0,
+          }}
+          className="master-container">
+          {error && (
+            <Typography color="error" sx={{ mb: 2 }}>{error}</Typography>
+          )}
+          <TableContainer component={Paper} 
+            sx={{ 
+              mb: 4, 
+              borderRadius: '0', 
+              position: 'relative', 
+              overflow: 'visible',
+              borderTop: '0px',
+              border: 0
+            }}>
+            <Table 
+              size="small"
+            >
+              {!alwaysColumn && <TableHead>
+                {filters}
+              </TableHead>}
               <TableBody sx={{
                 cursor: 'pointer',
                 background: 'rgba(255,255,255,.1)',
@@ -1047,7 +1246,7 @@ export default function GithubEvents({ eventsPerPage = 40, hideMetadata = false 
                   backgroundColor: theme.palette.action.hover,
                 }
               }}>
-                {events.map((event, index) => {
+                {(isMobile ? allLoadedEvents : events).map((event, index) => {
                     const showDateRow = event.dateOnly !== latestDateDisplayed;
                     latestDateDisplayed = event.dateOnly;
 
@@ -1066,22 +1265,52 @@ export default function GithubEvents({ eventsPerPage = 40, hideMetadata = false 
                         key={index}
                         id={event.id}
                         sx={{
+                          cursor: 'pointer',
+                         
                           '& td': {
                             backgroundColor: theme.palette.background.paper,
-                            transition: 'all 1s cubic-bezier(1.1, 1.4, 2.1, 1.1, 0.8, 0.7,0.6,0.5,0.4,0.3,0.2,0.1,0.05)',
+                            transition: 'all 0.3s ease',
                           },
-                          '&.selected td': {
-                            backgroundColor: theme.palette.action.selected,
-                            transition: 'all 0.3s cubic-bezier(1.1, 1.4, 2.1, 1.1, 0.8, 0.7,0.6,0.5,0.4,0.3,0.2,0.1,0.05)',
+                          '&.selected': {
+                            '& td': {
+                              backgroundColor: 'hsla(210, 16%, 55%, 0.40)',
+                              transition: 'all 0.2s ease',
+                              color: '#FFF',
+                              position: 'relative',
+                            },
+                            '& td:first-of-type': {
+                              borderLeft: '1px solid hsla(211, 70%, 75%, 1.00)',
+                              borderTop: '1px solid hsla(211, 70%, 75%, 1.00)',
+                              borderBottom: '1px solid hsla(211, 70%, 75%, 1.00)',
+                            },
+                            '& td:last-of-type': {
+                              borderRight: '1px solid hsla(211, 70%, 75%, 1.00)',
+                              borderTop: '1px solid hsla(211, 70%, 75%, 1.00)',
+                              borderBottom: '1px solid hsla(211, 70%, 75%, 1.00)',
+                            },
+                            '& td:not(:first-of-type):not(:last-of-type)': {
+                              borderTop: '1px solid hsla(211, 70%, 75%, 1.00)',
+                              borderBottom: '1px solid hsla(211, 70%, 75%, 1.00)',
+                            },
+                            ...theme.applyDarkStyles({
+                              '& td': {
+                                backgroundColor: 'hsla(210, 40%, 38%, 1.00)',
+                                transition: 'all 0.2s ease',
+                                color: '#FFF',
+                              },
+                            }),
                           },
-                          '&.hover td': {
-                            backgroundColor: theme.palette.action.hover,
-                            transition: 'all 0.3s cubic-bezier(1.1, 1.4, 2.1, 1.1, 0.8, 0.7,0.6,0.5,0.4,0.3,0.2,0.1,0.05)',
+                          '&:not(.selected):hover': {
+                            '& td': {
+                              backgroundColor: theme.palette.primary[50],
+                              transition: 'all 0.2s ease',
+                            },
+                            ...theme.applyDarkStyles({
+                              '& td': {
+                                backgroundColor: alpha(theme.palette.primary[900], 0.1),
+                              },
+                            }),
                           },
-                          '&.selected.hover td': {
-                            backgroundColor: theme.palette.action.selected,
-                            transition: 'all 0.3s cubic-bezier(1.1, 1.4, 2.1, 1.1, 0.8, 0.7,0.6,0.5,0.4,0.3,0.2,0.1,0.05)',
-                          }
                         }}
                         onClick={(e) => {
                           e.preventDefault();
@@ -1091,34 +1320,22 @@ export default function GithubEvents({ eventsPerPage = 40, hideMetadata = false 
                             handleEventSelection(event, eventIndex);
                           }
                         }}
-                        onMouseEnter={(e) => {
-                          const closestRow = e.currentTarget;
-                          if (closestRow) {
-
-                            closestRow.classList.add('hover');
-                          }
-
-                        }}
-                        onMouseLeave={(e) => {
-                          const closestRow = e.currentTarget;
-                          if (closestRow) {
-                            closestRow.classList.remove('hover');
-                          }
-
-                        }}
                       >
                         <TableCell>{getTimeOnly(event.date)}</TableCell>
                         <TableCell>
                           {event.repo.split('/')[1]}
                         </TableCell>
-                        <TableCell>
-                          {event.action}
+                        <TableCell sx={{ height: '38px' }}>
+                          <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                            {actionIcons[event.action] || null}
+                            <span>{event.action}</span>
+                          </Box>
                         </TableCell>
                       </TableRow>
                     </React.Fragment>
                   )
                 })}
-                {events.length === 0 && !loading && (
+                {(isMobile ? allLoadedEvents : events).length === 0 && !loading && (
                   <TableRow>
                     <TableCell colSpan={4} align="center">
                       No events found
@@ -1136,13 +1353,12 @@ export default function GithubEvents({ eventsPerPage = 40, hideMetadata = false 
             </Table>
           </TableContainer>
         </Box>
-        {hideMetadata && !selectedEvent.id && (
+        {!selectedEvent.id && (
           <Box
-            id="detail-pane"
+            id="detail-pane-temp"
             sx={{
               display: 'flex',
               flexDirection: 'column',
-              height: 'calc(100vh - 16px)',
               position: 'relative',
               opacity: 0.3
             }}>
@@ -1151,17 +1367,36 @@ export default function GithubEvents({ eventsPerPage = 40, hideMetadata = false 
             </MetadataDisplay>
           </Box>
         )}
-        {!hideMetadata && selectedEvent.id && (
+        {selectedEvent.id && (
           <Box
             id="detail-pane"
             sx={{
               display: 'flex',
               flexDirection: 'column',
-              height: '100%',
+              height: isMobile || alwaysColumn ? 'auto' : '100%',
               position: 'relative',
-              maxHeight: 'calc(100vh - 236px - 75px)'
+              maxHeight: isMobile || alwaysColumn ? '50vh' : 'calc(100vh - 236px - 75px)',
+              maxWidth: isMobile || alwaysColumn  ? '100%' : '680px',
+              width: '100%!important',
+              marginRight: isMobile || alwaysColumn ? 0 : '10px',
+              marginTop: 0,
+              overflow: 'hidden',
+              borderRadius: '14px 14px 0px 0',
             }}>
-            <MetadataDisplay>
+            <MetadataDisplay
+              sx={{
+                borderTopRightRadius: theme.shape.borderRadius,
+                // Default value for xs and up, then override at lg
+                borderTopLeftRadius: {
+                  xs: theme.shape.borderRadius,  // xs and up (includes sm, md)
+                  lg: alwaysColumn ? theme.shape.borderRadius : 0                          // lg and up (includes xl)
+                },
+                // Default value for xs and up, then override at lg
+                borderBottomRightRadius: {
+                  xs: 0,                          // xs and up (includes sm, md)
+                  lg: alwaysColumn ? 0 : theme.shape.borderRadius   // lg and up (includes xl)
+                },
+              }}>
               {selectedEvent.actionType === 'PullRequestEvent' ? (
                 <PullRequestEvent event={selectedEvent} />
               ) : selectedEvent.actionType === 'PushEvent' ? (
@@ -1199,12 +1434,9 @@ export default function GithubEvents({ eventsPerPage = 40, hideMetadata = false 
         )}
       </Box>
 
-      {/* Bottom Pagination */}
-      {totalCount > 0 && totalPages > 1 && (
-        <Box sx={{ mt: 2, display: 'flex', justifyContent: 'center', alignItems: 'center', gap: 2 }}>
-          <Typography variant="caption" color="text.secondary">
-            Page {page} of {totalPages} ({totalCount} total events)
-          </Typography>
+      {/* Bottom Pagination - hide on mobile since we use infinite scroll */}
+      {!isMobile && !alwaysColumn && totalCount > 0 && totalPages > 1 && (
+        <Box sx={{ mb: 2, display: 'flex', justifyContent: 'center', alignItems: 'center', gap: 2 }}>
           <Pagination
             count={totalPages}
             page={page}
@@ -1213,7 +1445,7 @@ export default function GithubEvents({ eventsPerPage = 40, hideMetadata = false 
             sx={{
               '& .MuiPaginationItem-root': {
                 color: theme.palette.text.secondary,
-                borderColor: theme.palette.divider,
+                borderColor: 'hsl(210deg 12.42% 36.87%)',
               }
             }}
           />

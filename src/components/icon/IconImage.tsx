@@ -2,6 +2,10 @@ import * as React from 'react';
 import { useTheme, styled, Theme } from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import { SxProps } from '@mui/system';
+import SvgIcon from '@mui/material/SvgIcon';
+import SuiSvg from 'public/static/logo-no-padding.svg';
+
+
 
 export type IconImageProps = {
   name:
@@ -35,14 +39,21 @@ export type IconImageProps = {
     | 'companies/ebay'
     | 'companies/samsung'
     | 'companies/volvo'
-    | string;
+    | string
+    | 'sui-logo'
+    | React.ReactElement;
   height?: number;
   mode?: '' | 'light' | 'dark';
   sx?: SxProps<Theme>;
   width?: number;
 } & Omit<JSX.IntrinsicElements['img'], 'ref'>;
 
-const Img = styled('img')({ display: 'inline-block', verticalAlign: 'bottom' });
+const Img = styled('img')({
+  display: 'inline-block',
+  verticalAlign: 'bottom',
+  maxWidth: '100%',
+  height: 'auto'
+});
 
 let neverHydrated = true;
 
@@ -54,20 +65,45 @@ export default function IconImage(props: IconImageProps) {
     setFirstRender(false);
     neverHydrated = false;
   }, []);
-  let defaultWidth;
-  let defaultHeight;
+  // Handle React elements directly
+  if (React.isValidElement(name)) {
+    return name;
+  }
+
   const mode = modeProp ?? (theme.palette.mode as any);
-    defaultWidth = 74;
-    defaultHeight = 74;
+
+  // Type guard to ensure name is a string for the remaining code
+  if (typeof name !== 'string') {
+    return null;
+  }
+
+  let defaultWidth: number = 74;
+  let defaultHeight: number = 74;
+
   if (name.startsWith('product-')) {
     defaultWidth = 74;
     defaultHeight = 74;
-  } else if (name.startsWith('pricing/x-.plan-')) {
+  } else if (name.startsWith('pricing/x-plan-')) {
     defaultWidth = 13;
     defaultHeight = 15;
   } else if (['pricing/yes', 'pricing/no', 'pricing/time'].indexOf(name) !== -1) {
     defaultWidth = 18;
     defaultHeight = 18;
+  } else if (name === 'sui-logo') {
+    return (
+      <SvgIcon
+        component={SuiSvg}
+        inheritViewBox
+        sx={{
+          width: widthProp ?? 30,
+          height: heightProp ?? 30,
+          maxWidth: widthProp ?? 30,
+          maxHeight: heightProp ?? 30,
+          flexShrink: 0,
+          display: 'inline-block'
+        }}
+      />
+    );
   }
 
   const width = widthProp ?? defaultWidth;

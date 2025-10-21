@@ -19,7 +19,6 @@ export function PdfDocView({ pdfMinWidth = 900}: { pdfMinWidth?: number }) {
   const css = (minWidth: number = 900) => {
     return `
     .react-pdf__Page {
-      aspect-ratio: 1 / 1.35;
     }
 
     .resume-icons {

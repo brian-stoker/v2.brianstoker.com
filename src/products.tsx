@@ -35,6 +35,9 @@ import ImageShowcase from "./components/home/ImageShowcase";
 import {BlogPost } from "../lib/sourcing";
 import KeyIcon from "./components/icon/KeyIcon";
 import GithubEventsShowcase from "./components/home/GithubEventsShowcase";
+import ProductCarousel from './components/ProductSwitcher';
+import SvgIcon from '@mui/material/SvgIcon';
+
 
 type RouteType = 'product' | 'doc';
 const routeTypes: RouteType[] = ['product', 'doc'];
@@ -57,7 +60,7 @@ type TProduct = {
   name: string;
   fullName: string;
   description: string;
-  icon: string;
+  icon: string | React.ReactElement;
   features?: TFeature[];
   url: string;
   hideProductFeatures?: boolean;
@@ -287,11 +290,11 @@ class Product {
         maxHeight: direction === 'row' ? 75 : 88,
       }]}
     >
-      {this.item(this.link(linkType), direction, index, productIndex)}
+      {this.item(this.link(linkType), direction)}
     </Highlighter>);
   }
 
-  item(linkType: LinkType, direction: 'row' | 'column', index: number, selected: number) {
+  item(linkType: LinkType, direction: 'row' | 'column') {
     return (
       <Box
         component="div"
@@ -304,7 +307,7 @@ class Product {
          
         }}
       >
-        <span>{index !== undefined ? this.key(index, selected) : this.icon}</span>
+        <span>{this.icon}</span>
         <span>
           <Typography
             component="span"
@@ -352,7 +355,7 @@ class Product {
   }
 
   get icon() {
-    return <IconImage name={this.data.icon } />;
+    return <IconImage name={this.data.icon } width={24} height={24} />;
   }
 
   key(index: number, selected: number) {
@@ -533,7 +536,7 @@ type ProductSwitcherProps = ProductStackProps & {
   products: Products;
 }
 
-function MobileProductCarousel(props: ProductSwitcherProps) {
+function MobileProductCarousel_old(props: ProductSwitcherProps) {
   const { inView = false, products, productIndex, setProductIndex } = props;
   const theme = useTheme();
   const liveProducts = products.live;
@@ -554,7 +557,7 @@ function MobileProductCarousel(props: ProductSwitcherProps) {
   }, [setProductIndex]);
 
   return (
-    <Box sx={{ display: { xs: 'block', md: 'none' }, mb: 3 }}>
+    <Box sx={{ display: { xs: 'block', md: 'none' }, mb: 3, overflow: 'visible' }}>
       {inView ? (
         <React.Fragment>
           <SwipeableViews
@@ -562,13 +565,24 @@ function MobileProductCarousel(props: ProductSwitcherProps) {
             index={productIndex}
             onChangeIndex={handleChangeIndex}
             enableMouseEvents
+            slideClassName="product-slide"
+            containerStyle={{
+              paddingBottom: 8,
+            }}
+            slideStyle={{
+              paddingRight: '28%',
+            }}
+            style={{
+              padding: '0 0.5rem',
+              margin: '0 -0.5rem',
+            }}
             resistance
-            containerStyle={{ paddingBottom: 12 }}
           >
             {liveProducts.map((product, index) => (
-              <Box key={product.id} sx={{ px: 1 }}>
+              <Box key={product.id} sx={{ px: 0.5, width: '100%' }}>
                 <ButtonBase
                   focusRipple
+                  className={'product-carousel-button'}
                   type="button"
                   onClick={() => setProductIndex(index)}
                   aria-label={`Preview ${product.name}`}
@@ -577,63 +591,98 @@ function MobileProductCarousel(props: ProductSwitcherProps) {
                     (themeArg) => ({
                       width: '100%',
                       textAlign: 'left',
-                      borderRadius: 2,
+                      borderRadius: '12px',
                       display: 'flex',
                       flexDirection: 'column',
                       alignItems: 'flex-start',
-                      gap: themeArg.spacing(1.5),
-                      padding: themeArg.spacing(2.5, 2),
+                      gap: themeArg.spacing(1),
+                      padding: themeArg.spacing(2),
+                      minHeight: '157px',
                       border: '1px solid',
-                      borderColor: themeArg.palette.divider,
-                      backgroundColor: themeArg.palette.background.paper,
-                      transition: themeArg.transitions.create([
-                        'transform',
-                        'border-color',
-                        'background-color',
-                      ]),
-                      '&:hover, &.Mui-focusVisible': {
-                        transform: 'translateY(-2px)',
+                      position: 'relative',
+                      borderColor: 'transparent',
+                      backgroundColor: 'transparent',
+                      transition: 'all 0.3s',
+                      '&::before': {
+                        content: '""',
+                        position: 'absolute',
+                        inset: 0,
+                        borderRadius: '12px',
+                        backgroundColor: themeArg.palette.action.hover,
+                        opacity: 0,
+                        transition: 'opacity 0.3s',
+                      },
+                      '&:hover::before': {
+                        opacity: 1,
+                      },
+                      '&:hover': {
+                        borderColor: alpha(themeArg.palette.primary.main, 0.3),
                       },
                       ...themeArg.applyDarkStyles({
-                        borderColor: themeArg.palette.primaryDark[700],
-                        backgroundColor: themeArg.palette.primaryDark[900],
+                        '&::before': {
+                          backgroundColor: alpha(themeArg.palette.primary.main, 0.08),
+                        },
+                        '&:hover': {
+                          borderColor: alpha(themeArg.palette.primary.light, 0.3),
+                        },
                       }),
                     }),
                     productIndex === index
                       ? (themeArg: Theme) => ({
-                          borderColor: themeArg.palette.primary.main,
+                          borderColor: `${alpha(themeArg.palette.primary.main, 0.8)} !important`,
                           backgroundColor: alpha(themeArg.palette.primary.main, 0.08),
+                          color: themeArg.palette.primary.main,
+                          '&::before': {
+                            opacity: 0,
+                          },
                           ...themeArg.applyDarkStyles({
-                            borderColor: themeArg.palette.primary[300],
-                            backgroundColor: alpha(themeArg.palette.primary[700], 0.25),
+                            borderColor: `${alpha(themeArg.palette.primary.light, 0.8)} !important`,
+                            backgroundColor: alpha(themeArg.palette.primary.dark, 0.2),
+                            color: themeArg.palette.primary.light,
                           }),
                         })
                       : null,
                   ]}
                 >
-                  <Stack direction="row" spacing={2} alignItems="center" sx={{ width: '100%' }}>
+                  <Box sx={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    width: 36,
+                    height: 36,
+                    flexShrink: 0,
+                    position: 'relative',
+                    zIndex: 1,
+                  }}>
                     {product.icon}
-                    <Box sx={{ flexGrow: 1 }}>
-                      <Typography
-                        component="span"
-                        variant="subtitle1"
-                        fontWeight={600}
-                        display="block"
-                      >
-                        {product.name}
-                      </Typography>
-                      <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>
-                        {product.description}
-                      </Typography>
-                    </Box>
-                  </Stack>
-                  {product.features.length ? (
-                    <Stack direction="row" spacing={1} flexWrap="wrap" useFlexGap>
-                      {product.features.slice(0, 3).map((feature) => (
-                        <Chip key={feature.id} size="small" label={feature.name} />
-                      ))}
-                    </Stack>
-                  ) : null}
+                  </Box>
+                  <Box sx={{ flexGrow: 1, minWidth: 0, position: 'relative', zIndex: 1 }}>
+                    <Typography
+                      variant="body1"
+                      fontWeight={600}
+                      sx={{
+                        fontSize: '0.9375rem',
+                        lineHeight: 1.2,
+                        mb: 0.5,
+                      }}
+                    >
+                      {product.name}
+                    </Typography>
+                    <Typography
+                      variant="body2"
+                      color="text.secondary"
+                      sx={{
+                        fontSize: '0.8125rem',
+                        lineHeight: 1.4,
+                        display: '-webkit-box',
+                        WebkitLineClamp: 2,
+                        WebkitBoxOrient: 'vertical',
+                        overflow: 'hidden',
+                      }}
+                    >
+                      {product.description}
+                    </Typography>
+                  </Box>
                 </ButtonBase>
               </Box>
             ))}
@@ -667,11 +716,22 @@ function MobileProductCarousel(props: ProductSwitcherProps) {
               sx={(themeArg) => ({
                 mt: 1.5,
                 px: 0,
+                flexGrow: 1,
+                pb: 0,
                 justifyContent: 'space-between',
                 backgroundColor: 'transparent',
                 '& .MuiMobileStepper-dots': {
                   flexGrow: 1,
                   justifyContent: 'center',
+                  gap: 1.5,
+                },
+                '& .MuiMobileStepper-dot': {
+                  width: 20,
+                  height: 20,
+                  backgroundColor: alpha(themeArg.palette.primary.main, 0.2),
+                  '&.MuiMobileStepper-dotActive': {
+                    backgroundColor: themeArg.palette.primary.main,
+                  },
                 },
                 ...themeArg.applyDarkStyles({
                   '& .MuiMobileStepper-dotActive': {
@@ -687,14 +747,14 @@ function MobileProductCarousel(props: ProductSwitcherProps) {
   );
 }
 
-function ProductsSwitcher(props: ProductSwitcherProps) {
-  return (
-    <React.Fragment>
-      <MobileProductCarousel {...props} />
-      {props.products.stack(props)}
-    </React.Fragment>
-  );
-}
+// function ProductsSwitcher(props: ProductSwitcherProps) {
+//   return (
+//     <React.Fragment>
+//       <MobileProductCarousel {...props} />
+//       {props.products.stack(props)}
+//     </React.Fragment>
+//   );
+// }
 
 function ProductsPreviews({ products, mostRecentPosts }: { products: Products, mostRecentPosts?: BlogPost[] } ) {
   const [productIndex, setProductIndex] = React.useState(0);
@@ -708,15 +768,31 @@ function ProductsPreviews({ products, mostRecentPosts }: { products: Products, m
   const showcaseProps = { showcaseContent: content};
 
   return (
-    <Section bg="gradient" ref={ref}>
-
-      <Grid container spacing={'24px'}>
-        <Grid item md={6}>
+    <Section
+     id="productPreviews"
+     bg="gradient"
+     ref={ref}
+    >
+      <Box
+        id="grid-first"
+        sx={{
+          display: 'flex',
+          flexDirection: { xs: 'column', md: 'row' },
+          gap: { xs: 0, md: '24px', lg: '24px' },
+        }}
+      >
+        <Box
+          id="grid-second"
+          sx={{
+            width: { xs: '100%', md: '50%', lg: '425px' },
+            flexShrink: 0,
+          }}
+        >
           <Box
+            id="title-box"
             sx={{
               textAlign: { xs: 'center', md: 'left' },
               maxWidth: { xs: 340, sm: '100%' },
-              mx: { xs: 'auto', md: 0 },
             }}
           >
             <Typography
@@ -739,28 +815,63 @@ function ProductsPreviews({ products, mostRecentPosts }: { products: Products, m
             </Typography>
           </Box>
           {products.switcher({ inView, productIndex, setProductIndex })}
-        </Grid>
-        <Grid
-          item
-          xs={12}
-          md={6}
+        </Box>
+        <Box
+          sx={{
+            width: { xs: '100%', md: '50%', lg: 'calc(100% - 425px - 24px)' },
+            flexGrow: { md: 0, lg: 1 },
+            display: 'flex',
+            alignItems: 'center',
+            minHeight: { xs: 'auto', md: '600px', lg: '700px' },
+          }}
         >
           {inView ? (
-            <Box 
-              component={Link}
-              href={products.live[productIndex].url('product')}
-              sx={{
-                cursor: `${products.live[productIndex].cursor}!important`,
-                 display: 'flex'
-              }}
-            >
-              <Showcase {...showcaseProps}/>
-            </Box>
+            products.live[productIndex].showcaseType === GithubEventsShowcase ? (
+              // Don't wrap GithubEventsShowcase in a Link to avoid nested anchor tags
+              <Box
+                sx={(theme) => ({
+                  cursor: `${products.live[productIndex].cursor}!important`,
+                  display: 'flex',
+                  width: '100%',
+                  height: '100%',
+                  border: `1px solid hsl(210deg 12.42% 36.87%)`,
+                  borderRadius: '14px 14px 0 0',
+                  overflow: 'hidden',
+                  ...theme.applyDarkStyles({
+                    border: `1px solid hsl(210deg 12.42% 36.87%)`,
+                  }),
+                })}
+              >
+                <Showcase {...showcaseProps}/>
+              </Box>
+            ) : (
+              <Box
+                component={Link}
+                href={products.live[productIndex].url('product')}
+                sx={{
+                  cursor: `${products.live[productIndex].cursor}!important`,
+                  display: 'flex',
+                  width: '100%',
+                  height: '100%',
+                  // Apply border to all showcases except BlogShowcase (.plan)
+                  ...(products.live[productIndex].data.showcaseType !== BlogShowcase ? {
+                    border: `1px solid hsl(210deg 12.42% 36.87%)`,
+                    // Use 14px top radius for GithubEventsShowcase, 12px for others
+                    borderRadius: products.live[productIndex].data.showcaseType === GithubEventsShowcase
+                      ? '14px 14px 12px 12px'
+                      : '12px',
+                  } : {}),
+                  overflow: 'hidden',
+                }}
+              >
+                <Showcase {...showcaseProps}/>
+              </Box>
+            )
           ) : (
             <Box sx={{ height: { xs: 0, md: 803 } }} />
           )}
-        </Grid>
-      </Grid>
+        </Box>
+      </Box>
     </Section>
   );
 }
@@ -804,7 +915,7 @@ class Products extends IndexObject<Product> {
   }
 
   public switcher(props: ProductStackProps) {
-    return <ProductsSwitcher {...props} products={this} />;
+    return <ProductCarousel {...props} />;
   }
 
   getFeatureUrl(productId: string, featureId: string, type: LinkType = 'doc') {
@@ -834,7 +945,7 @@ class Products extends IndexObject<Product> {
 
   stack(props: ProductStackProps) {
     const { productIndex, setProductIndex } = props;
-    return (<Stack spacing={1} sx={{ display: { xs: 'none', md: 'flex' }, maxWidth: 500, maxHeight: 520 }}>
+    return (<Stack spacing={1} sx={{ display: { xs: 'none', lg: 'flex' },  }}>
       {this.live.map((product, index) => {
         return product.highlightedItem(productIndex, setProductIndex, index, 'column' );
       })}
@@ -1048,7 +1159,7 @@ const artData: TProduct = {
   name: "Art",
   fullName: "BRIAN STOKER: Art",
   description: "Acrylic on Canvas and random things",
-  icon: "product-toolpad",
+  icon: "icon-hex",
   url: ROUTES.art,
   preview: {
     image: '/img/brian-art.png'
@@ -1066,7 +1177,7 @@ const photographyData: TProduct = {
   name: "Photography",
   fullName: "BRIAN STOKER: Photography",
   description: "Them thangs",
-  icon: "product-core",
+  icon: "icon-radiate",
   url: ROUTES.photography,
   preview: {
     image: '/static/photography/bed-selfie.jpg'
@@ -1074,7 +1185,7 @@ const photographyData: TProduct = {
   showcaseType: ImageShowcase,
   showcaseContent: '/static/photography/bed-selfie.jpg',
   live: true,
-  cursor: 'grab'
+  cursor: 'pointer'
 }
 
 const photography = new Product(photographyData);
@@ -1085,7 +1196,7 @@ const drumsData: TProduct = {
   name: "Drums",
   fullName: "BRIAN STOKER: Drums",
   description: "\"I like to play\" - Garth",
-  icon: "product-designkits",
+  icon: "icon-diamonds",
   url: ROUTES.drums,
   preview:{
     video: 'https://cenv-public.s3.amazonaws.com/tell-me-mister-2.mp4'
@@ -1097,26 +1208,27 @@ const drumsData: TProduct = {
     title: 'Tell Me Mister'
   },
   live: true,
-  cursor: 'help'
+  cursor: 'pointer'
 }
 
 const drums = new Product(drumsData);
 
+        
 
 const workData: TProduct = {
   id: 'work',
   name: "Work",
   fullName: "Work",
   description: "This is where I work. Say hi to the codez.",
-  icon: "1",
+  icon: 'sui-logo',
   url: ROUTES.work,
   preview: {
     text: 'recalcitrant robot\n' + '@brianstoker\n' + '·\n' + 'Feb 15, 2021\n' + '#atx #snowboarding #merica @ Auditorium Shores https://www.instagram.com/p/CLVQg7ql34O4prJIa6hpXGg-RaupDXP0THly3A0/'
   },
   showcaseType: GithubEventsShowcase,
-  showcaseContent: { eventsPerPage: 10, hideMetadata: true },
+  showcaseContent: { eventsPerPage: 10, alwaysColumn: true },
   live: true,
-  cursor: 'wait'
+  cursor: 'pointer'
 }
 
 const work = new Product(workData);
@@ -1126,7 +1238,7 @@ const planData: TProduct = {
   name: ".plan",
   fullName: ".plan (brian stoker)",
   description: "Random musings probably not worth mentioning",
-  icon: "2",
+  icon: "icon-triangle",
   url: ROUTES.plan,
   preview: {
     text: 'recalcitrant robot\n' + '@brianstoker\n' + '·\n' + 'Feb 15, 2021\n' + '#atx #snowboarding #merica @ Auditorium Shores https://www.instagram.com/p/CLVQg7ql34O4prJIa6hpXGg-RaupDXP0THly3A0/'
@@ -1144,14 +1256,14 @@ const resumeData: TProduct = {
   name: "Resume",
   fullName: "BRIAN STOKER: Resume",
   description: "Keeping my eyes open for my next big project.",
-  icon: "3",
+  icon: "icon-rect",
   url: ROUTES.resume,
   preview:{
     image: 'https://cenv-public.s3.amazonaws.com/resume-preview.png'
   },
   showcaseType: PdfShowcase,
   live: true,
-  cursor: 'zoom-in'
+  cursor: 'pointer'
 }
 
 const resume = new Product(resumeData);

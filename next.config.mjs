@@ -23,6 +23,13 @@ const nextConfig = withMDX({
         '@mui/icons-material': '@mui/icons-material/esm',
       };
     }
+
+    // Configure @svgr/webpack for SVG imports as React components
+    config.module.rules.push({
+      test: /\.svg$/,
+      use: ['@svgr/webpack'],
+    });
+
     return config;
   },
   // Any other config you need

@@ -126,7 +126,14 @@ export default function MediaShowcase({ sx, showcaseContent }: { sx?: SxProps<Th
       >
         <Frame.Demo
           sx={{
-            display: 'flex', position: 'relative', justifyContent: 'center', alignItems: 'center', minHeight: 220, p: 0,
+            display: 'flex',
+            position: 'relative',
+            justifyContent: 'center',
+            alignItems: 'center',
+            minHeight: 220,
+            height: '100%',
+            width: '100%',
+            p: 0,
           }}
         >
           {showcaseContent}

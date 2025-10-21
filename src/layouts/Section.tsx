@@ -10,6 +10,7 @@ interface SelectionProps extends BoxProps {
    */
   cozy?: boolean;
   noPaddingBottom?: boolean;
+  containerSx?: BoxProps['sx'];
 }
 
 const map = {
@@ -27,15 +28,17 @@ const map = {
   },
   transparent: {
     light: 'transparent',
+
     dark: 'transparent',
   },
 };
 
 const Section = React.forwardRef<HTMLDivElement, SelectionProps>(function Section(props, ref) {
-  const { bg = 'white', children, sx, cozy = false, noPaddingBottom = false, ...other } = props;
+  const { bg = 'white', children, sx, cozy = false, noPaddingBottom = false, containerSx, ...other } = props;
 
   return (
     <Box
+      id={'section'}
       ref={ref}
       {...other}
       sx={[
@@ -65,7 +68,19 @@ const Section = React.forwardRef<HTMLDivElement, SelectionProps>(function Sectio
         ...(Array.isArray(sx) ? sx : [sx]),
       ]}
     >
-      <Container>{children}</Container>
+      <Container
+        maxWidth={false}
+        sx={[
+          {
+            maxWidth: { xs: '100%', lg: '1140px' },
+            mx: 'auto',
+            px: { xs: '10px', sm: '10px', md: '10px', lg: 4 },
+          },
+          ...(Array.isArray(containerSx) ? containerSx : [containerSx]),
+        ]}
+      >
+        {children}
+      </Container>
     </Box>
   );
 });

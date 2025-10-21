@@ -186,9 +186,9 @@ export const TEMPLATES_CUSTOMERS: Array<IconImageProps> = [
 export default function CompaniesGrid({ data }: { data: Array<IconImageProps> }) {
   return (
     <Grid container spacing={4}>
-      {data.map((imgProps) => (
+      {data.map((imgProps, index) => (
         <Grid
-          key={imgProps.name}
+          key={typeof imgProps.name === 'string' ? imgProps.name : index}
           xs={6}
           sm={4}
           md={2}

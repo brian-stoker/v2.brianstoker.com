@@ -32,6 +32,12 @@ const DiffView = styled(Box)(({ theme }) => ({
   fontSize: '12px',
   lineHeight: 1.5,
   overflow: 'auto',
+  maxWidth: '100%',
+  width: '100%',
+  '& pre': {
+    margin: 0,
+    overflow: 'auto'
+  }
 }));
 
 const DiffLine = styled(Box, {
@@ -39,6 +45,7 @@ const DiffLine = styled(Box, {
 })<{ type?: 'addition' | 'deletion' | 'context' }>(({ theme, type }) => ({
   padding: '0 16px',
   whiteSpace: 'pre',
+  overflowX: 'auto',
   ...(type === 'addition' && {
     backgroundColor: 'rgba(46, 160, 67, 0.15)',
     borderLeft: '4px solid #2ea043',

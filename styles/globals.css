@@ -2,6 +2,54 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Remove underlines from all links and prevent purple visited links */
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+a:link {
+  color: inherit;
+}
+
+a:visited {
+  color: inherit;
+}
+
+a:hover {
+  text-decoration: none;
+  color: inherit;
+}
+
+a:active {
+  color: inherit;
+}
+
+/* Ensure MUI Link components also don't show purple visited state */
+.MuiLink-root {
+  color: inherit !important;
+}
+
+.MuiLink-root:visited {
+  color: inherit !important;
+}
+
+/* Ensure Next.js Link components also don't show purple visited state */
+a.MuiTypography-root:visited {
+  color: inherit !important;
+}
+
+/* Prevent SVG icons from stretching during initial load */
+svg {
+  max-width: 100%;
+  height: auto;
+}
+
+/* Specific constraints for MUI SvgIcon components */
+.MuiSvgIcon-root {
+  flex-shrink: 0;
+}
+
 
 .activity {
   margin-top: -24px;
@@ -85,12 +133,36 @@
   transition: all 0.3s ease-in;
 }
 
-/* Add hover effect for MDX post links */
+/* Remove hover effect for MDX post links */
 .post-link:hover {
-  text-decoration: underline;
+  text-decoration: none;
 }
 
-/* Add hover effect for MDX links */
+/* Fix SwipeableViews to show partial slides */
+.react-swipeable-view-container {
+  overflow: visible !important;
+  clip-path: none !important;
+}
+
+.react-swipeable-view {
+  overflow: visible !important;
+}
+
+.product-slide {
+  overflow: visible !important;
+}
+
+/* Ensure the container div also shows overflow */
+[data-swipeable="true"] {
+  overflow: visible !important;
+}
+
+/* Remove hover effect for MDX links */
 .mdx-link:hover {
-  text-decoration: underline;
+  text-decoration: none;
+}
+
+/* Fix overflow for table containers */
+.overflow-visible {
+  overflow: visible !important;
 }

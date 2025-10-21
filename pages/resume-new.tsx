@@ -28,7 +28,6 @@ const resizeObserverOptions = {};
 const maxWidth = 800;
 const StyledDoc = styled(Document)(() => ({
   "& .react-pdf__Page": {
-    aspectRatio: "1 / 1.35",
     position: "relative",
     width: '100%',
     borderRadius: '12px',
@@ -239,12 +238,14 @@ export default function Resume({pdfMinWidth = 900}: { pdfMinWidth?: number }) {
       <div className={'resume-containers'}>
         <PdfDoc pdfWidth={pdfWidth}/>
         <div className={'resume-icons'}>sss
-          <a href='/static/resume/brian-stoker-resume.pdf' download><img src='/static/icons/pdf.svg'
-                                                                         alt={'download pdf'}
-                                                                         style={{
-                                                                           height: '62px',
-                                                                           margin: '15px 10px 30px 30px'
-                                                                         }}/></a>
+          <a href='/static/resume/brian-stoker-resume.pdf' download>
+            <img src='/static/icons/pdf.svg'
+              alt={'download pdf'}
+              style={{
+                height: '62px',
+                margin: '15px 10px 30px 30px'
+            }}/>
+          </a>
           <a href='/static/resume/brian-stoker-resume.docx' download><img
             src='/static/icons/docx.svg'
             alt={'download word doc'}

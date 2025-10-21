@@ -80,10 +80,16 @@ export default async function handler(
 
     console.log(`Starting ${fullRefresh ? 'full' : 'incremental'} sync for user: ${githubUser}`);
 
+    // For full refresh, clear existing events before we start
+    if (fullRefresh) {
+      console.log('Full refresh: Clearing existing events');
+      await eventsCollection.deleteMany({});
+    }
+
     let newEvents: GitHubEvent[] = [];
     let duplicateCount = 0;
     let githubPage = 1;
-    const maxPages = 30;
+    const maxPages = 3; // GitHub API limit for user events endpoint is 300 events (3 pages of 100)
     let shouldContinue = true;
 
     while (shouldContinue && githubPage <= maxPages) {
@@ -290,8 +296,32 @@ export default async function handler(
           }
         }
 
-        newEvents = [...newEvents, ...data];
-        githubPage++;
+        // Store events immediately as we fetch them (write as we go)
+        if (data.length > 0) {
+          for (const event of data) {
+            await eventsCollection.updateOne(
+              { _id: event.id } as any,
+              {
+                $set: {
+                  ...event,
+                  _syncedAt: new Date(),
+                  _id: event.id
+                }
+              },
+              { upsert: true }
+            );
+          }
+          newEvents = [...newEvents, ...data];
+          console.log(`Stored ${data.length} events from page ${githubPage}`);
+        }
+
+        // Check if we should fetch the next page
+        if (githubPage >= maxPages) {
+          console.log(`Reached maximum page limit (${maxPages}), stopping sync`);
+          shouldContinue = false;
+        } else {
+          githubPage++;
+        }
       }
 
       // Stop if we're getting close to rate limit
@@ -303,50 +333,12 @@ export default async function handler(
 
     console.log(`Sync complete: ${newEvents.length} new events fetched${duplicateCount > 0 ? ` (${duplicateCount} duplicates skipped)` : ''}`);
 
-    // Store events in MongoDB
+    // Events are already stored as we fetched them above
+    // Just log the summary
     if (fullRefresh) {
-      // For full refresh, clear everything and insert all events
-      console.log('Full refresh: Clearing existing events');
-      await eventsCollection.deleteMany({});
-
-      if (newEvents.length > 0) {
-        const eventsWithMetadata = newEvents.map(event => ({
-          ...event,
-          _syncedAt: new Date(),
-          _id: event.id
-        }));
-
-        await eventsCollection.insertMany(eventsWithMetadata as any);
-        console.log(`Inserted ${newEvents.length} events`);
-      }
+      console.log('Full refresh completed');
     } else {
-      // For incremental sync, upsert only new events
-      if (newEvents.length > 0) {
-        let insertedCount = 0;
-        let updatedCount = 0;
-
-        for (const event of newEvents) {
-          const result = await eventsCollection.updateOne(
-            { _id: event.id } as any,
-            {
-              $set: {
-                ...event,
-                _syncedAt: new Date(),
-                _id: event.id
-              }
-            },
-            { upsert: true }
-          );
-
-          if (result.upsertedCount) {
-            insertedCount++;
-          } else if (result.modifiedCount) {
-            updatedCount++;
-          }
-        }
-
-        console.log(`Upserted ${insertedCount} new events, updated ${updatedCount} existing events`);
-      } else {
+      if (newEvents.length === 0) {
         console.log('No new events to sync');
       }
     }

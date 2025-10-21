@@ -89,10 +89,9 @@ export default function AppFooter(props: AppFooterProps) {
         <Box
           sx={{
             display: 'grid',
-            gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr' },
-            gridAutoColumns: '1fr',
+            gridTemplateColumns: '1fr 1fr',
+            gridAutoColumns: '1fr 1fr',
             gap: 2,
-            textAlign: { xs: 'center', sm: 'left' },
           }}
         >
           <Box sx={{ display: 'flex', flexDirection: 'column' }}>

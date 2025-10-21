@@ -322,7 +322,7 @@ export default function PullRequestEvent({ event }: PullRequestEventProps): Reac
               size="small"
               color={pullRequest.state === 'open' ? 'success' : 'error'}
             />
-            <Button
+            {/* <Button
               variant="outlined"
               size="small"
               startIcon={<CheckoutIcon />}
@@ -330,7 +330,7 @@ export default function PullRequestEvent({ event }: PullRequestEventProps): Reac
               sx={{ textTransform: 'none', ml: 'auto' }}
             >
               Checkout
-            </Button>
+            </Button> */}
           </Box>
         </Box>
       </Box>
@@ -495,7 +495,13 @@ export default function PullRequestEvent({ event }: PullRequestEventProps): Reac
       </Box>
 
       {/* Scrollable Tab Content */}
-      <Box sx={{ maxHeight: 'calc(100vh - 236px - 75px - 300px)', overflow: 'auto' }}>
+      <Box sx={{ 
+        maxHeight: 'calc(100vh - 236px - 75px - 300px)', 
+        overflow: 'auto',
+        '& .MuiPaper-root': {
+          backgroundColor: (theme) => theme.palette.background.paper,
+        },
+      }}>
         {tabValue === 0 && (
           <Box>
             {(prDetails.commits_list || []).map((commit: any) => (
@@ -504,7 +510,7 @@ export default function PullRequestEvent({ event }: PullRequestEventProps): Reac
           </Box>
         )}
         {tabValue === 1 && (
-          <Box>
+          <Box sx={{ width: '100%', overflow: 'hidden' }}>
             <FileChanges files={transformedFiles} />
           </Box>
         )}
