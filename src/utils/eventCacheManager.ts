@@ -351,7 +351,7 @@ export function clearAllCaches(): void {
  * Migrate from old cache format (version 4.0) to new format
  */
 export function migrateOldCache(): void {
-  const oldCache = safeGetItem('github_events', null);
+  const oldCache = safeGetItem<{ version?: string; events?: GitHubEvent[]; totalCount?: number } | null>('github_events', null);
 
   if (!oldCache || oldCache.version !== '4.0') {
     console.log('[Cache] No old cache to migrate');
