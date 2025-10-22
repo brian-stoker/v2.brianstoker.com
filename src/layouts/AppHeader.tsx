@@ -86,7 +86,7 @@ export default function AppHeader(props: AppHeaderProps) {
             <ThemeModeToggle/>
           </NoSsr>
         </Stack>
-        <Box sx={{display: {md: 'none'}, ml: 1}}>
+        <Box sx={{display: {md: 'none'}, width: '100%'}}>
           <HeaderNavDropdown/>
         </Box>
       </Container>

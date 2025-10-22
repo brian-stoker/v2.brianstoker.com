@@ -4,7 +4,11 @@ import {useWindowWidth} from '../hooks/useWindowSize';
 import Box from "@mui/material/Box";
 import Divider from "@mui/material/Divider";
 import {HomeView} from "./index";
-import {PdfDoc } from "./resume-new";
+import { createTheme, SxProps, Theme, useTheme } from '@mui/material/styles';
+import {Data} from 'src/components/home/ElementPointer';
+import Fade from '@mui/material/Fade/Fade';
+import Frame from 'src/components/action/Frame';
+import { PdfDoc } from './resume-new';
 
 
 export function PdfDocView({ pdfMinWidth = 900}: { pdfMinWidth?: number }) {
@@ -12,15 +16,18 @@ export function PdfDocView({ pdfMinWidth = 900}: { pdfMinWidth?: number }) {
   const iconWidth = windowWidth && windowWidth < pdfMinWidth ? 0 : 100;
   const margin = windowWidth && windowWidth < pdfMinWidth ? 48 * 2 : 48;
   const maxWidth = 1025;
-  const pdfWidth = Math.min((windowWidth ? windowWidth : maxWidth) - iconWidth - margin, maxWidth);
-
-
+  const pdfWidth = Math.min(windowWidth ? windowWidth : maxWidth - margin, maxWidth);
 
   const css = (minWidth: number = 900) => {
     return `
     .react-pdf__Page {
+      border-radius: 8px;
     }
 
+    .react-pdf__Page__canvas {
+      box-shadow: rgba(16, 36, 94, 0.16) 0px 15px 20px 0px;
+      border-radius: 8px;
+    }
     .resume-icons {
       display: flex;
       flex-direction: column;
@@ -59,12 +66,15 @@ export function PdfDocView({ pdfMinWidth = 900}: { pdfMinWidth?: number }) {
     }`
   }
 
-  return (<Box sx={{
+  return (<Box 
+    sx={{
       fontSize: "1.6rem", 
       lineHeight: '2.4rem',
       display: 'flex',
       justifyContent: 'center',
-    }}>
+      }}
+      className={'pdfShowcase'}
+    >
       <Box sx={{
         maxWidth: '1300px '
       }}
@@ -73,21 +83,8 @@ export function PdfDocView({ pdfMinWidth = 900}: { pdfMinWidth?: number }) {
         <style>
           {css(pdfMinWidth)}
         </style>
-        <div className={'resume-containers'}>
-          <PdfDoc pdfWidth={pdfWidth}/>
-          <div className={'resume-icons'}>
-            <div className={'resume-icons-container'}>
-            <a href='/static/resume/brian-stoker-resume.pdf' download><img src='/static/icons/pdf.svg'
-                                                                          alt={'download pdf'} style={{
-              height: '62px', margin: '15px 10px 30px 30px'
-            }}/></a>
-            <a href='/static/resume/brian-stoker-resume.docx' download><img src='/static/icons/docx.svg'
-                                                                            alt={'download word doc'}
-                                                                            style={{
-                                                                              height: '70px', margin: '11px 10px 0px 20px'
-                                                                            }}/></a>
-            </div>
-          </div>
+        <div className={'resume-containers rounded-sm'} >
+          <PdfDoc />
         </div>
         <Box sx={{height: '112px'}}/>
       </Box>

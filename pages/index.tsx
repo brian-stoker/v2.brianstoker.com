@@ -9,8 +9,9 @@ import AppHeaderBanner from "../src/components/banner/AppHeaderBanner";
 import AppHeader from "../src/layouts/AppHeader";
 import Hero from "../src/components/home/HeroMain";
 import {BlogPost, getAllBlogPosts} from "../lib/sourcing";
+import Section from 'src/layouts/Section';
 
-export function HomeView({ HomeMain, mostRecentPosts = []}: { mostRecentPosts?: BlogPost[], HomeMain: React.ComponentType<any> }) {
+export function HomeView({ HomeMain, mostRecentPosts = [], noSection = false }: { mostRecentPosts?: BlogPost[], HomeMain: React.ComponentType<any>, noSection?: boolean }) {
 
   const Main: React.ComponentType<{mostRecentPosts?: BlogPost[]}> = HomeMain;
   const [isClient, setIsClient] = React.useState(false)
@@ -18,6 +19,9 @@ export function HomeView({ HomeMain, mostRecentPosts = []}: { mostRecentPosts?: 
   React.useEffect(() => {
     setIsClient(true)
   }, [])
+
+  const main = isClient ? <Main mostRecentPosts={mostRecentPosts}/> : '';
+  const content = noSection ? main : <Section>{main}</Section>;
 
   return <BrandingCssVarsProvider>
     <Head
@@ -48,7 +52,7 @@ export function HomeView({ HomeMain, mostRecentPosts = []}: { mostRecentPosts?: 
       <AppHeaderBanner/>
       <AppHeader/>
       <main id="main-content" style={{ flex: 1 }}>
-        {isClient ? <Main mostRecentPosts={mostRecentPosts}/> : ''}
+        {content}
       </main>
       <Divider/>
       <AppFooter/>
@@ -72,5 +76,5 @@ export const getStaticProps = async () => {
 };
 
 export default function Home(data: { mostRecentPosts: BlogPost[] }) {
-  return <HomeView HomeMain={ MainView } mostRecentPosts={data.mostRecentPosts}/>;
+  return <HomeView HomeMain={ MainView } mostRecentPosts={data.mostRecentPosts} noSection />;
 }

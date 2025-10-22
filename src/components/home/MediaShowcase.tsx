@@ -109,6 +109,7 @@ export default function MediaShowcase({ sx, showcaseContent }: { sx?: SxProps<Th
   return (
     <Fade in timeout={700}>
       <Box
+        className="media-showcase"
         sx={{
           display: 'flex',
           flexDirection: 'column',

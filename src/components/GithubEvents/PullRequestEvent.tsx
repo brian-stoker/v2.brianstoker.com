@@ -6,7 +6,7 @@ import CircularProgress from '@mui/material/CircularProgress';
 import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import CheckoutIcon from '@mui/icons-material/CallMade';
-import CallSplitIcon from '@mui/icons-material/CallSplit';
+import MergeTypeIcon from '@mui/icons-material/MergeType';
 import { EventDetails } from '../../types/github';
 import { useTheme } from '@mui/material/styles';
 import NextLink from "next/link";
@@ -18,6 +18,7 @@ import AccordionDetails from '@mui/material/AccordionDetails';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import FileChanges from '../PullRequest/FileChanges';
 import { marked } from 'marked';
+import EventHeader from './EventHeader';
 
 // Helper function to render markdown text
 function renderMarkdown(text: string): string {
@@ -86,23 +87,25 @@ function Commit({ commit, repo }: CommitProps) {
         <Box sx={{ width: '100%' }}>
           <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.5 }}>
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-              <NextLink
+              <a
                 href={commit.html_url}
-                passHref
+                target="_blank"
+                rel="noopener noreferrer"
                 style={{ textDecoration: 'none', color: 'inherit' }}
               >
                 <Typography variant="caption" color="text.secondary" sx={{ fontFamily: 'monospace' }}>
                   {commit.sha.substring(0, 7)}
                 </Typography>
-              </NextLink>
+              </a>
               <Typography variant="body2" sx={{ fontWeight: 600 }}>
-                <NextLink
+                <a
                   href={commit.html_url}
-                  passHref
+                  target="_blank"
+                  rel="noopener noreferrer"
                   style={{ textDecoration: 'none', color: 'inherit' }}
                 >
                   {commit.commit.message.split('\n')[0]}
-                </NextLink>
+                </a>
               </Typography>
             </Box>
             <Typography variant="caption" color="text.secondary">
@@ -247,102 +250,48 @@ export default function PullRequestEvent({ event }: PullRequestEventProps): Reac
   };
 
   const PrHeader = () => (
-    <Box sx={{ mb: 2 }}>
-      {/* Header with icon, event type, and metadata */}
-      <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 2, mb: 2 }}>
-        <Box sx={{
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          width: 40,
-          height: 40,
-          borderRadius: 1,
-          backgroundColor: 'action.selected',
-          flexShrink: 0
-        }}>
-          <CallSplitIcon sx={{ fontSize: 24 }} />
-        </Box>
-
-        <Box sx={{ flexGrow: 1, minWidth: 0 }}>
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 0.5, flexWrap: 'wrap' }}>
-            <Typography variant="subtitle2" fontWeight="bold">
-              Pull Request
-            </Typography>
-            <Typography variant="caption" color="text.secondary">
-              •
-            </Typography>
-            <Typography variant="caption" color="text.secondary">
-              {event.date}
-            </Typography>
-          </Box>
-
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1, flexWrap: 'wrap' }}>
-            <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-              <NextLink
-                href={`https://github.com/${repoOwner}`}
-                passHref
-                style={{
-                  textDecoration: 'none',
-                  color: 'inherit',
-                  fontSize: '0.875rem'
-                }}
-              >
-                {repoOwner}
-              </NextLink>
-              <Typography variant="body2" color="text.secondary">
-                /
-              </Typography>
-              <NextLink
-                href={`https://github.com/${repoFullName}`}
-                passHref
-                style={{
-                  textDecoration: 'none',
-                  color: 'inherit',
-                  fontSize: '0.875rem',
-                  fontWeight: 600
-                }}
-              >
-                {repoName}
-              </NextLink>
-            </Box>
-            <NextLink
-              href={pullRequest.html_url}
-              passHref
-              style={{ textDecoration: 'none' }}
-            >
-              <Chip
-                label={`#${pullRequest.number}`}
-                size="small"
-                color="default"
-                clickable
-              />
-            </NextLink>
+    <Box>
+      <EventHeader
+        eventType="Pull Request"
+        date={event.date}
+        icon={<MergeTypeIcon sx={{ fontSize: 24 }} />}
+        repoOwner={repoOwner}
+        repoName={repoName}
+        branchName={headBranch}
+        chips={[
+          <a
+            key="pr-number"
+            href={pullRequest.html_url}
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{ textDecoration: 'none' }}
+          >
             <Chip
-              label={pullRequest.state}
+              label={`#${pullRequest.number}`}
               size="small"
-              color={pullRequest.state === 'open' ? 'success' : 'error'}
+              color="default"
+              clickable
+              className={'border-image-0 border-0'}
             />
-            {/* <Button
-              variant="outlined"
-              size="small"
-              startIcon={<CheckoutIcon />}
-              onClick={handleCheckout}
-              sx={{ textTransform: 'none', ml: 'auto' }}
-            >
-              Checkout
-            </Button> */}
-          </Box>
-        </Box>
-      </Box>
+          </a>,
+          <Chip
+            key="pr-state"
+            label={pullRequest.state}
+            size="small"
+            color={pullRequest.state === 'open' ? 'success' : 'error'}
+          />
+        ]}
+      />
 
       <Typography variant="h6" component="h3" sx={{ mb: 2 }}>
-        <NextLink
+        <a
           href={pullRequest.html_url}
-          passHref
+          target="_blank"
+          rel="noopener noreferrer"
           style={{ textDecoration: 'none', color: 'inherit' }}
         >
           {pullRequest.title}
-        </NextLink>
+        </a>
       </Typography>
 
       <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1, flexWrap: 'wrap' }}>

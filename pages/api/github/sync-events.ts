@@ -96,7 +96,7 @@ export default async function handler(
       console.log(`Fetching page ${githubPage}...`);
 
       const response = await fetch(
-        `https://api.github.com/users/${githubUser}/events?page=${githubPage}&per_page=100`,
+        `https://api.github.com/users/${githubUser}/events?page=${githubPage}&per_page=40`,
         {
           headers: {
             Authorization: `token ${githubToken}`,

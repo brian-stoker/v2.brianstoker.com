@@ -51,6 +51,25 @@ export default class MyDocument extends Document {
 
           {/* Inline Font Styles for fallback */}
           {this.renderInlineFontStyles()}
+
+          {/* Critical CSS to prevent icon FOUC */}
+          <style
+            dangerouslySetInnerHTML={{
+              __html: `
+                svg {
+                  max-width: 100%;
+                  height: auto;
+                }
+                .MuiSvgIcon-root {
+                  width: 1em;
+                  height: 1em;
+                  flex-shrink: 0;
+                  display: inline-block;
+                  font-size: 1.5rem;
+                }
+              `,
+            }}
+          />
         </Head>
         <body>
         {getMuiInitColorSchemeScript()}

@@ -7,7 +7,7 @@ import { useTheme } from '@mui/material/styles';
 export function WorkView({ pdfMinWidth = 900}: { pdfMinWidth?: number }) {
   const theme = useTheme();
   return (
-    <React.Fragment>
+    <Box>
       <GithubCalendar fx='punch' />
       <Box sx={{ 
         backgroundColor: theme.palette.background.paper,
@@ -15,13 +15,14 @@ export function WorkView({ pdfMinWidth = 900}: { pdfMinWidth?: number }) {
         flexDirection: 'row',
         gap: 2,
         justifyContent: 'center',
+        minHeight: 'calc(100vh - 174px)'
       }}>
         <GithubEvents />
       </Box>
-    </React.Fragment>
+    </Box>
   );
 }
 
 export default function Work({HomeMain}: { HomeMain: React.ComponentType }) {
-  return <HomeView HomeMain={WorkView}/>;
+  return <HomeView HomeMain={WorkView} noSection />;
 }

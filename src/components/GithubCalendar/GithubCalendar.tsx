@@ -86,7 +86,7 @@ export default function GithubCalendar({ windowMode = false, containerMode = fal
 
   const fetchActivityData = async () => {
     setActivityLoading(true);
-    
+
     try {
        // Generate year query string from 2022 to current year
       const currentYear = new Date().getFullYear();
@@ -342,8 +342,8 @@ export default function GithubCalendar({ windowMode = false, containerMode = fal
           blockMargin={0.5}
           blockRadius={0}
           blockSize={activityData.blockSize || 12}
-          style={{          
-            backgroundColor: theme.palette.background.paper,
+          style={{
+            background: `linear-gradient(transparent, ${theme.palette.background.paper})`,
           }}
           labels={{
             totalCount: activityData.countLabel

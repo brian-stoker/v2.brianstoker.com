@@ -9,7 +9,6 @@ export default function ImageShowcase({ showcaseContent }: { showcaseContent?: a
       '& img': {
         height: '100%',
         width: '100%',
-        maxHeight: { xs: '500px', md: '100%' }
       }
     }}
     showcaseContent={

@@ -3,7 +3,9 @@ import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Link from '@mui/material/Link';
 import Chip from '@mui/material/Chip';
+import AddBoxIcon from '@mui/icons-material/AddBox';
 import { EventDetails } from '../../types/github';
+import EventHeader from './EventHeader';
 
 interface CreateEventProps {
   event: EventDetails;
@@ -18,22 +20,29 @@ export default function CreateEvent({ event }: CreateEventProps): React.JSX.Elem
   const refName = event.payload?.ref || 'unknown';
   const repoUrl = `https://github.com/${event.repo}`;
   const description = event.payload?.description;
+  const [repoOwner, repoName] = event.repo.split('/');
 
   return (
-    <Box sx={{ p: 2 }}>
-      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 2 }}>
-        <Typography variant="caption" color="text.secondary">
-          {event.date}
-        </Typography>
-        <Chip 
-          label={refType}
-          size="small"
-          color="success"
-        />
-      </Box>
+    <Box>
+      <EventHeader
+        eventType="Create Event"
+        date={event.date}
+        icon={<AddBoxIcon sx={{ fontSize: 24 }} />}
+        repoOwner={repoOwner}
+        repoName={repoName}
+        branchName={refType === 'branch' ? refName : undefined}
+        chips={[
+          <Chip
+            key="ref-type"
+            label={refType}
+            size="small"
+            color="success"
+          />
+        ]}
+      />
 
       <Typography variant="h6" component="h3" sx={{ mb: 1 }}>
-        <Link 
+        <Link
           href={repoUrl}
           target="_blank"
           rel="noopener noreferrer"
@@ -48,12 +57,6 @@ export default function CreateEvent({ event }: CreateEventProps): React.JSX.Elem
           {description}
         </Typography>
       )}
-
-      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-        <Typography variant="body2" color="text.secondary">
-          in {event.repo}
-        </Typography>
-      </Box>
     </Box>
   );
 } 

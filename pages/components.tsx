@@ -58,57 +58,57 @@ export default function Components() {
       <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
         <AppHeader />
         <main id="main-content" style={{ flex: 1 }}>
-        <Section bg="gradient" sx={{ py: { xs: 2, sm: 4 } }}>
-          <Typography component="h1" variant="h2" sx={{ mb: 4, pl: 1 }}>
-            All Components
-          </Typography>
-          <Box
-            sx={{
-              display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))',
-            }}
-          >
-            {(componentPageData?.children || []).map((page) => (
-              <Box key={page.pathname} sx={{ pb: 2 }}>
-                <Typography
-                  component="h2"
-                  variant="body2"
-                  sx={{
-                    fontWeight: 500,
-                    color: 'grey.600',
-                    px: 1,
-                  }}
-                >
-                  {pageToTitleI18n(page, t)}
-                </Typography>
-                <List>
-                  {(page.children || []).map((nestedPage) => {
-                    if (nestedPage.children) {
-                      return (
-                        <ListItem key={nestedPage.pathname} sx={{ py: 0, px: 1 }}>
-                          <Box sx={{ width: '100%', pt: 1 }}>
-                            <Typography
-                              component="div"
-                              variant="body2"
-                              sx={{
-                                fontWeight: 500,
-                                color: 'grey.600',
-                              }}
-                            >
-                              {pageToTitleI18n(nestedPage, t) || ''}
-                            </Typography>
-                            <List>{nestedPage.children.map(renderItem)}</List>
-                          </Box>
-                        </ListItem>
-                      );
-                    }
-                    return renderItem(nestedPage);
-                  })}
-                </List>
-              </Box>
-            ))}
-          </Box>
-        </Section>
+          <Section bg="gradient" sx={{ py: { xs: 2, sm: 4 } }}>
+            <Typography component="h1" variant="h2" sx={{ mb: 4, pl: 1 }}>
+              All Components
+            </Typography>
+            <Box
+              sx={{
+                display: 'grid',
+                gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))',
+              }}
+            >
+              {(componentPageData?.children || []).map((page) => (
+                <Box key={page.pathname} sx={{ pb: 2 }}>
+                  <Typography
+                    component="h2"
+                    variant="body2"
+                    sx={{
+                      fontWeight: 500,
+                      color: 'grey.600',
+                      px: 1,
+                    }}
+                  >
+                    {pageToTitleI18n(page, t)}
+                  </Typography>
+                  <List>
+                    {(page.children || []).map((nestedPage) => {
+                      if (nestedPage.children) {
+                        return (
+                          <ListItem key={nestedPage.pathname} sx={{ py: 0, px: 1 }}>
+                            <Box sx={{ width: '100%', pt: 1 }}>
+                              <Typography
+                                component="div"
+                                variant="body2"
+                                sx={{
+                                  fontWeight: 500,
+                                  color: 'grey.600',
+                                }}
+                              >
+                                {pageToTitleI18n(nestedPage, t) || ''}
+                              </Typography>
+                              <List>{nestedPage.children.map(renderItem)}</List>
+                            </Box>
+                          </ListItem>
+                        );
+                      }
+                      return renderItem(nestedPage);
+                    })}
+                  </List>
+                </Box>
+              ))}
+            </Box>
+          </Section>
         </main>
         <Divider />
         <AppFooter />

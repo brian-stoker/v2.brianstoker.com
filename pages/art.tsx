@@ -18,6 +18,7 @@ const art: string[] = [
   '/static/art/backyard.jpg',
   '/static/art/trees.jpg'
 ]
+
 function MainView() {
   return (
     <Box sx={{

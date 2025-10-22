@@ -24,7 +24,7 @@ export default function ProjectsV2FieldEvent({ event }: ProjectsV2FieldEventProp
   const fieldType = field.data_type || 'Unknown Type';
 
   return (
-    <Box sx={{ p: 2 }}>
+    <Box>
       <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 2 }}>
         <Typography variant="caption" color="text.secondary">
           {event.date}

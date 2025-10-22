@@ -7,6 +7,7 @@ import Avatar from '@mui/material/Avatar';
 import CommentIcon from '@mui/icons-material/Comment';
 import { EventDetails } from '../../types/github';
 import { marked } from 'marked';
+import EventHeader from './EventHeader';
 
 // Helper function to render markdown text
 function renderMarkdown(text: string): string {
@@ -55,91 +56,37 @@ export default function IssueCommentEvent({ event }: IssueCommentEventProps): Re
   const otherComments = event.payload?.comments || [];
 
   return (
-    <Box sx={{ p: 2 }}>
-      {/* Header with icon, event type, and metadata */}
-      <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 2, mb: 2 }}>
-        <Box sx={{
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          width: 40,
-          height: 40,
-          borderRadius: 1,
-          backgroundColor: 'action.selected',
-          flexShrink: 0
-        }}>
-          <CommentIcon sx={{ fontSize: 24 }} />
-        </Box>
-
-        <Box sx={{ flexGrow: 1, minWidth: 0 }}>
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 0.5, flexWrap: 'wrap' }}>
-            <Typography variant="subtitle2" fontWeight="bold">
-              Issue Comment
-            </Typography>
-            <Typography variant="caption" color="text.secondary">
-              •
-            </Typography>
-            <Typography variant="caption" color="text.secondary">
-              {event.date}
-            </Typography>
-          </Box>
-
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1, flexWrap: 'wrap' }}>
-            <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-              <Link
-                href={`https://github.com/${repoOwner}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                sx={{
-                  textDecoration: 'none',
-                  color: 'primary.main',
-                  fontSize: '0.875rem',
-                  '&:hover': { textDecoration: 'underline' }
-                }}
-              >
-                {repoOwner}
-              </Link>
-              <Typography variant="body2" color="text.secondary">
-                /
-              </Typography>
-              <Link
-                href={`https://github.com/${repoFullName}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                sx={{
-                  textDecoration: 'none',
-                  color: 'primary.main',
-                  fontSize: '0.875rem',
-                  fontWeight: 600,
-                  '&:hover': { textDecoration: 'underline' }
-                }}
-              >
-                {repoName}
-              </Link>
-            </Box>
-            <Link
-              href={issueUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              sx={{ textDecoration: 'none' }}
-            >
-              <Chip
-                label={`#${issueNumber}`}
-                size="small"
-                color="default"
-                clickable
-              />
-            </Link>
+    <Box>
+      <EventHeader
+        eventType="Issue Comment"
+        date={event.date}
+        icon={<CommentIcon sx={{ fontSize: 24 }} />}
+        repoOwner={repoOwner}
+        repoName={repoName}
+        chips={[
+          <Link
+            key="issue-number"
+            href={issueUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            sx={{ textDecoration: 'none' }}
+          >
             <Chip
-              label={issueState}
+              label={`#${issueNumber}`}
               size="small"
-              color={issueState === 'open' ? 'success' : 'error'}
+              color="default"
+              clickable
             />
-          </Box>
-        </Box>
-      </Box>
+          </Link>,
+          <Chip
+            key="issue-state"
+            label={issueState}
+            size="small"
+            color={issueState === 'open' ? 'success' : 'error'}
+          />
+        ]}
+      />
 
-      {/* Issue title as a link */}
       <Typography variant="h6" component="h3" sx={{ mb: 2 }}>
         <Link
           href={issueUrl}

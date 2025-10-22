@@ -7,16 +7,16 @@ import Divider from '@mui/material/Divider';
 import Stack from '@mui/material/Stack';
 import { ClickAwayListener } from '@mui/base/ClickAwayListener';
 import IconButton from '@mui/material/IconButton';
+import Tooltip from '@mui/material/Tooltip';
 import Typography from '@mui/material/Typography';
 import GitHubIcon from '@mui/icons-material/GitHub';
 import SvgHamburgerMenu from 'src/icons/SvgHamburgerMenu';
 import NextLink from 'next/link';
 import ROUTES from 'src/route';
 import ThemeModeToggle from './ThemeModeToggle';
+import IconImage from '../icon/IconImage';
 
-const Anchor = styled('a',{ 
-  shouldForwardProp: (prop) => prop !== 'noLinkStyle' && prop !== 'component',
-})<{ component?: React.ElementType; noLinkStyle?: boolean }>(
+const StyledLink = styled(NextLink)(
   ({ theme }) => [
     {
       ...theme.typography.body2,
@@ -59,161 +59,45 @@ const UList = styled('ul')({
   margin: 0,
 });
 
+const navItems = [
+  { href: ROUTES.work, icon: 'sui-logo', label: 'Work' },
+  { href: ROUTES.art, icon: 'icon-hex', label: 'Art' },
+  { href: ROUTES.photography, icon: 'icon-radiate', label: 'Photography' },
+  { href: ROUTES.drums, icon: 'icon-diamonds', label: 'Drums' },
+  { href: ROUTES.resume, icon: 'icon-rect', label: 'Resume' },
+  { href: ROUTES.plan, icon: 'icon-triangle', label: '.plan' },
+];
+
 export default function HeaderNavDropdown() {
   const [open, setOpen] = React.useState(false);
   const hambugerRef = React.useRef<HTMLButtonElement>(null);
   const menuId = React.useId();
   return (
     <React.Fragment>
-      <IconButton
-        color="primary"
-        aria-label="Menu"
-        ref={hambugerRef}
-        disableRipple
-        onClick={() => setOpen((value) => !value)}
-        aria-expanded={open ? 'true' : 'false'}
-        aria-haspopup="true"
-        aria-controls={open ? menuId : undefined}
-        sx={{
-          position: 'relative',
-          '& rect': {
-            transformOrigin: 'center',
-            transition: '0.2s',
-          },
-          ...(open && {
-            '& rect:first-of-type': {
-              transform: 'translate(1.5px, 1.6px) rotateZ(-45deg)',
-            },
-            '& rect:last-of-type': {
-              transform: 'translate(1.5px, -1.2px) rotateZ(45deg)',
-            },
-          }),
-        }}
-      >
-        <SvgHamburgerMenu/>
-      </IconButton>
-      <ClickAwayListener
-        onClickAway={(event) => {
-          if (!hambugerRef.current!.contains(event.target as Node)) {
-            setOpen(false);
-          }
-        }}
-      >
-        <Collapse
-          in={open}
-          sx={(theme) => ({
-            position: 'fixed',
-            top: 'var(--MuiDocs-header-height)',
-            left: 0,
-            right: 0,
-            boxShadow: `0px 16px 20px rgba(170, 180, 190, 0.3)`,
-            ...theme.applyDarkStyles({
-              boxShadow: '0px 16px 20px rgba(0, 0, 0, 0.8)',
-            }),
-          })}
-          aria-labelledby={menuId}
-          id={menuId}
-        >
-          <Box
-            sx={{
-              p: 2,
-              bgcolor: 'background.default',
-              maxHeight: 'calc(100vh - 56px)',
-              overflow: 'auto',
-            }}
-          >
-            <UList
-              sx={(theme) => ({
-              '& ul': {
-                borderLeft: '1px solid',
-                borderColor: 'grey.100',
-                ...theme.applyDarkStyles({
-                  borderColor: 'primaryDark.700',
-                }),
-                pl: 1,
-                pb: 1,
-                ml: 1,
-
-                },
-              })}
+      <Box sx={{
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'space-evenly',
+        width: '100%',
+        pr: 2,
+      }}>
+        {navItems.map((item) => (
+          <Tooltip key={item.href} title={item.label} arrow>
+            <IconButton
+              component={NextLink}
+              href={item.href}
+              color="primary"
+              aria-label={item.label}
+              disableRipple
+              sx={{
+                position: 'relative',
+              }}
             >
-              <Box
-                sx={(theme) => ({
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'space-between',
-                  mb: 2,
-                  gap: 1,
-                  '& .MuiButton-root': {
-                    flexGrow: 1,
-                  },
-                  ...theme.applyDarkStyles({
-                    '& .MuiButton-root': {
-                      borderColor: 'primaryDark.600',
-                    },
-                  }),
-                })}
-              >
-                <Typography
-                  variant="body2"
-                  color="text.secondary"
-                  sx={{ fontWeight: theme => theme.typography.fontWeightSemiBold }}
-                >
-                  Quick actions
-                </Typography>
-                <Stack direction="row" spacing={1} alignItems="center">
-                  <ThemeModeToggle />
-                  <Button
-                    component={NextLink}
-                    href="https://github.com/brian-stoker"
-                    target="_blank"
-                    rel="noopener"
-                    prefetch={false}
-                    variant="outlined"
-                    size="small"
-                    startIcon={<GitHubIcon fontSize="small" />}
-                    sx={{ whiteSpace: 'nowrap' }}
-                  >
-                    GitHub
-                  </Button>
-                </Stack>
-              </Box>
-              <Divider sx={{ mb: 2 }} />
-              <li>
-                <Anchor href={ROUTES.work} as={NextLink} noLinkStyle>
-                  Work
-                </Anchor>
-              </li>
-              <li>
-                <Anchor href={ROUTES.art} as={NextLink} noLinkStyle>
-                  Art
-                </Anchor>
-              </li>
-              <li>
-                <Anchor href={ROUTES.photography} as={NextLink} noLinkStyle>
-                  Photography
-                </Anchor>
-              </li>
-              <li>
-                <Anchor href={ROUTES.drums} as={NextLink} noLinkStyle>
-                  Drums
-                </Anchor>
-              </li>
-              <li>
-                <Anchor href={ROUTES.resume} as={NextLink} noLinkStyle>
-                  Resume
-                </Anchor>
-              </li>
-              
-              <li>
-                <Anchor href={ROUTES.plan} as={NextLink} noLinkStyle>
-                  .plan
-                </Anchor>
-              </li>
-            </UList>
-          </Box>
-        </Collapse>
-      </ClickAwayListener>
+              <IconImage name={item.icon} width={20} height={20} />
+            </IconButton>
+          </Tooltip>
+        ))}
+      </Box>
     </React.Fragment>
   );
 }

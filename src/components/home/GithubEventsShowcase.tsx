@@ -1,5 +1,4 @@
 import Box from "@mui/material/Box";
-import GithubCalendar from "../GithubCalendar/GithubCalendar";
 import GithubEvents from "../GithubEvents/GithubEvents";
 import React from "react";
 
@@ -7,9 +6,9 @@ export default function GithubEventsShowcase({ showcaseContent }: { showcaseCont
   console.log('showcaseContent', showcaseContent);
   return <Box sx={{
     display: 'flex',
+    width: '100%',
     flexDirection: 'column',
     overflow: 'hidden',
-    width: '100%',
     '& .react-activity-calendar': {
       backgroundColor: 'transparent !important',
     },
@@ -17,3 +16,4 @@ export default function GithubEventsShowcase({ showcaseContent }: { showcaseCont
     <GithubEvents {...showcaseContent} fx='highlight' column />
   </Box>
 }
+

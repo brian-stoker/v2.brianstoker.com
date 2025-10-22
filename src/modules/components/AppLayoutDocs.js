@@ -111,7 +111,7 @@ export default function AppLayoutDocs(props) {
             '--MuiDocs-navDrawer-width': '300px',
           },
           body: {
-            backgroundColor: 'hsl(0, 0%, 92%)',
+            //backgroundColor: 'hsl(0, 0%, 92%)',
           }
         }}
       />

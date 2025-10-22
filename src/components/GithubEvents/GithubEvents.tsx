@@ -1,22 +1,16 @@
 import * as React from 'react';
 import Box from "@mui/material/Box";
 import TextField from "@mui/material/TextField";
-import Table from "@mui/material/Table";
-import TableBody from "@mui/material/TableBody";
-import TableCell from "@mui/material/TableCell";
-import TableContainer from "@mui/material/TableContainer";
-import TableHead from "@mui/material/TableHead";
-import TableRow from "@mui/material/TableRow";
-import Paper from "@mui/material/Paper";
 import Typography from "@mui/material/Typography";
 import CircularProgress from "@mui/material/CircularProgress";
 import Select from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
+import IconButton from '@mui/material/IconButton';
 import { format, parse, parseISO } from 'date-fns';
 import { toZonedTime } from 'date-fns-tz';
 import { enUS } from 'date-fns/locale';
-import { alpha, styled, Theme, useTheme } from '@mui/material/styles';
+import { alpha, emphasize, styled, Theme, useTheme } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import Autocomplete from '@mui/material/Autocomplete';
 import Pagination from '@mui/material/Pagination';
@@ -37,6 +31,17 @@ import MergeTypeIcon from '@mui/icons-material/MergeType';
 import DeleteIcon from '@mui/icons-material/Delete';
 import AddBoxIcon from '@mui/icons-material/AddBox';
 import BugReportIcon from '@mui/icons-material/BugReport';
+import {
+  getIndexCache,
+  getDetailsCache,
+  updateIndexCache,
+  addManyEventDetails,
+  getEventDetails,
+  getIndexPage,
+  migrateOldCache,
+  clearAllCaches,
+  addEventDetails
+} from '../../utils/eventCacheManager';
 
 // Extend the EventDetails interface for internal component use
 interface DisplayEventDetails extends EventDetails {
@@ -61,76 +66,13 @@ const MetadataDisplay = styled(Box)(({ theme }: { theme: Theme }) => ({
   overflowX: 'hidden'
 }));
 
-// Keep only the most recent events in localStorage to prevent quota exceeded errors
-// Further reduced to 30 events to avoid localStorage quota issues with large event payloads
-const MAX_CACHED_EVENTS = 30;
+// Cache management is now handled by eventCacheManager utility
+// which implements a two-tier system:
+// - Index cache: 1000 lightweight entries for list display (~200KB)
+// - Details cache: 150 full events with LRU eviction (~300KB)
+const EVENT_PAGE_SIZE = 20;
 
-// Helper function to safely set localStorage with error handling
-const safeSetLocalStorage = (key: string, value: any): boolean => {
-  try {
-    // First, try to estimate the size of what we're storing
-    const dataStr = JSON.stringify(value);
-    const sizeInBytes = new Blob([dataStr]).size;
-    const sizeInKB = sizeInBytes / 1024;
-
-    // If data is too large (> 2MB), reduce the number of cached events
-    if (sizeInKB > 2048) {
-      console.warn(`Cache data too large (${sizeInKB.toFixed(2)} KB), reducing to 20 events`);
-      if (value.events && Array.isArray(value.events)) {
-        value.events = value.events.slice(0, 20);
-      }
-    }
-
-    localStorage.setItem(key, JSON.stringify(value));
-    return true;
-  } catch (err) {
-    console.error('Failed to save to localStorage:', err);
-
-    // If we hit quota, try multiple strategies
-    if (err instanceof Error && err.name === 'QuotaExceededError') {
-      try {
-        // Strategy 1: Clear our own key first
-        localStorage.removeItem(key);
-
-        // Strategy 2: Clear old keys that might be from previous versions
-        const keysToRemove = ['github_events_cache', 'github_filters', 'github_events_old'];
-        keysToRemove.forEach(k => {
-          try {
-            localStorage.removeItem(k);
-          } catch (e) {
-            // Ignore errors when removing keys
-          }
-        });
-
-        // Strategy 3: If still failing, reduce data to just 10 most recent events
-        if (value.events && Array.isArray(value.events)) {
-          console.warn('Reducing cache to 10 events due to storage quota');
-          value.events = value.events.slice(0, 10);
-        }
-
-        // Try one more time with reduced data
-        localStorage.setItem(key, JSON.stringify(value));
-        return true;
-      } catch (retryErr) {
-        console.error('Failed to save to localStorage even after cleanup:', retryErr);
-        // Last resort: Clear all localStorage for this domain
-        try {
-          console.warn('Clearing all localStorage due to persistent quota issues');
-          localStorage.clear();
-          // Try once more after clearing everything
-          localStorage.setItem(key, JSON.stringify(value));
-          return true;
-        } catch (finalErr) {
-          console.error('Cannot save to localStorage at all:', finalErr);
-          return false;
-        }
-      }
-    }
-    return false;
-  }
-};
-
-export default function GithubEvents({ eventsPerPage = 40, hideMetadata = false, alwaysColumn = false }: { eventsPerPage?: number, hideMetadata?: boolean, alwaysColumn?: boolean }) {
+export default function GithubEvents({ eventsPerPage = EVENT_PAGE_SIZE, hideMetadata = false, alwaysColumn = false }: { eventsPerPage?: number, hideMetadata?: boolean, alwaysColumn?: boolean }) {
   const router = useRouter();
   const [events, setEvents] = React.useState<DisplayEventDetails[]>([]);
   const [loading, setLoading] = React.useState<boolean>(true);
@@ -159,13 +101,33 @@ export default function GithubEvents({ eventsPerPage = 40, hideMetadata = false,
   const [allLoadedEvents, setAllLoadedEvents] = React.useState<DisplayEventDetails[]>([]);
 
 
+  // Helper function to get action name from event type
+  const getActionName = (eventType: string): string => {
+    switch (eventType) {
+      case 'PushEvent':
+        return 'Push';
+      case 'PullRequestEvent':
+        return 'Pull Request';
+      case 'IssuesEvent':
+        return 'Issue';
+      case 'IssueCommentEvent':
+        return 'Comment';
+      case 'DeleteEvent':
+        return 'Delete';
+      case 'CreateEvent':
+        return 'Create';
+      default:
+        return eventType.replace('Event', '');
+    }
+  };
+
   const actionIcons: Record<string, any> = {
-    Issue: <BugReportIcon sx={{ fontSize: 18 }} />,
-    Comment: <CommentIcon sx={{ fontSize: 18 }} />,
-    Push: <CodeIcon sx={{ fontSize: 18 }} />,
-    'Pull Request': <MergeTypeIcon sx={{ fontSize: 18 }} />,
-    Delete: <DeleteIcon sx={{ fontSize: 18 }} />,
-    Create: <AddBoxIcon sx={{ fontSize: 18 }} />
+    Issue: <BugReportIcon sx={{ fontSize: 20 }} />,
+    Comment: <CommentIcon sx={{ fontSize: 20 }} />,
+    Push: <CodeIcon sx={{ fontSize: 20 }} />,
+    'Pull Request': <MergeTypeIcon sx={{ fontSize: 20 }} />,
+    Delete: <DeleteIcon sx={{ fontSize: 20 }} />,
+    Create: <AddBoxIcon sx={{ fontSize: 20 }} />
   };
 
   // Calculate total pages
@@ -207,17 +169,19 @@ export default function GithubEvents({ eventsPerPage = 40, hideMetadata = false,
       setActionTypes(data.actionTypes);
 
       // Cache in localStorage (separate from events cache)
-      safeSetLocalStorage('github_filters', {
-        repositories: data.repositories,
-        actionTypes: data.actionTypes,
-        lastFetched: Date.now()
-      });
+      try {
+        localStorage.setItem('github_filters', JSON.stringify({
+          repositories: data.repositories,
+          actionTypes: data.actionTypes,
+          lastFetched: Date.now()
+        }));
+      } catch (err) {
+        console.warn('Failed to cache filters in localStorage:', err);
+        // Continue without caching - not critical
+      }
     } catch (err) {
       console.error('Failed to fetch filters:', err);
-      // If fetch fails, build from cached events as fallback
-      if (cachedEvents.length > 0) {
-        buildFilterOptionsFromEvents(cachedEvents);
-      }
+      // Filters will be empty, which is fine - user can still browse events
     }
   };
 
@@ -250,11 +214,10 @@ export default function GithubEvents({ eventsPerPage = 40, hideMetadata = false,
       if (!events.length) return;
 
       if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
-         // Only handle keyboard navigation if the table or its elements have focus
+         // Only handle keyboard navigation if the events container or its elements have focus
         // or if a modifier key is pressed (e.g., Shift, Ctrl, Alt)
         const activeElement = document.activeElement;
-        const isTableFocused = activeElement?.closest('.MuiTableContainer-root') !== null ||
-                              activeElement?.closest('tbody') !== null ||
+        const isTableFocused = activeElement?.closest('#events-table-container') !== null ||
                               e.shiftKey || e.ctrlKey || e.altKey || e.metaKey;
 
         // If table is not focused and no modifier keys, allow normal scrolling
@@ -381,12 +344,27 @@ export default function GithubEvents({ eventsPerPage = 40, hideMetadata = false,
 
   // Handle infinite scroll for mobile
   React.useEffect(() => {
-    if (isMobile) {
-      // Accumulate events for infinite scroll
+    if (isMobile && events.length > 0) {
+      // Accumulate events for infinite scroll, but limit to prevent memory leak
+      // Keep max 200 events (~5 pages) to prevent unbounded memory growth
+      const MAX_MOBILE_EVENTS = 200;
+
       if (page === 1) {
         setAllLoadedEvents(events);
       } else {
-        setAllLoadedEvents(prev => [...prev, ...events]);
+        setAllLoadedEvents(prev => {
+          // Prevent duplicate events - check if last event in prev matches first in new events
+          if (prev.length > 0 && events.length > 0 && prev[prev.length - 1].id === events[0].id) {
+            return prev; // Skip duplicate append
+          }
+
+          const combined = [...prev, ...events];
+          // If we exceed the limit, keep only the most recent events
+          if (combined.length > MAX_MOBILE_EVENTS) {
+            return combined.slice(combined.length - MAX_MOBILE_EVENTS);
+          }
+          return combined;
+        });
       }
     }
   }, [events, page, isMobile]);
@@ -396,7 +374,7 @@ export default function GithubEvents({ eventsPerPage = 40, hideMetadata = false,
     if (!isMobile) return;
 
     const handleScroll = () => {
-      const container = document.querySelector('.master-container');
+      const container = document.querySelector('#events-table-container');
       if (!container) return;
 
       const { scrollTop, scrollHeight, clientHeight } = container;
@@ -406,7 +384,7 @@ export default function GithubEvents({ eventsPerPage = 40, hideMetadata = false,
       }
     };
 
-    const container = document.querySelector('.master-container');
+    const container = document.querySelector('#events-table-container');
     if (container) {
       container.addEventListener('scroll', handleScroll);
       return () => container.removeEventListener('scroll', handleScroll);
@@ -414,7 +392,7 @@ export default function GithubEvents({ eventsPerPage = 40, hideMetadata = false,
   }, [isMobile, loading, page, totalPages]);
 
   // Helper function to handle event selection
-  const handleEventSelection = (event: DisplayEventDetails, index: number) => {
+  const handleEventSelection = async (event: DisplayEventDetails, index: number) => {
     // Remove previous selection
     if (selectedEvent.id) {
       const oldSelectedRow = document.getElementById(selectedEvent.id);
@@ -429,8 +407,41 @@ export default function GithubEvents({ eventsPerPage = 40, hideMetadata = false,
       newSelectedRow.classList.add('selected');
     }
 
-    selectEvent(event);
     setSelectedIndex(index);
+
+    // Check if we have details cached
+    let details = getEventDetails(event.id);
+
+    if (!details) {
+      // Not in cache - show event with loading state first
+      selectEvent({ ...event, payload: undefined });
+
+      // Fetch from API
+      console.log(`[Details] Event ${event.id} not in cache, fetching from API...`);
+      try {
+        const response = await fetch(`/api/github/event/${event.id}`);
+        if (response.ok) {
+          const fullEvent: GitHubEvent = await response.json();
+          addEventDetails(fullEvent);
+          details = getEventDetails(event.id);
+        } else {
+          console.error(`[Details] Failed to fetch event: ${response.status}`);
+        }
+      } catch (err) {
+        console.error('[Details] Failed to fetch event details:', err);
+      }
+    }
+
+    // Update event with full payload
+    if (details) {
+      const enrichedEvent = {
+        ...event,
+        payload: details.payload
+      };
+      selectEvent(enrichedEvent);
+    } else {
+      selectEvent(event);
+    }
 
     // Update URL with replace and shallow routing to avoid adding to history stack
     // This prevents back button issues and avoids any page reload
@@ -443,223 +454,138 @@ export default function GithubEvents({ eventsPerPage = 40, hideMetadata = false,
 
   // Load cached data on mount
   React.useEffect(() => {
-    const cached = localStorage.getItem('github_events');
-    if (cached) {
-      try {
-        const parsedCache: CachedData = JSON.parse(cached);
+    // Migrate old cache if it exists
+    migrateOldCache();
 
-        // Check if cache version is outdated - force refresh if structure changed
-        const cacheVersion = (parsedCache as any).version;
-        if (cacheVersion !== '4.0') {
-          console.log('Cache version outdated, clearing and fetching fresh data');
-          localStorage.removeItem('github_events');
-          fetchGitHubEvents(1);
-          setIsInitialized(true);
-          return;
-        }
+    // Load index cache
+    const indexCache = getIndexCache();
+    console.log(`[Cache] Found ${indexCache.events.length} indexed events (v${indexCache.version})`);
 
-        setCachedEvents(parsedCache.events);
-        setTotalCount(parsedCache.totalCount);
-        buildFilterOptionsFromEvents(parsedCache.events);
-
-        // Format last updated time
-        const lastFetchDate = new Date(parsedCache.lastFetched);
-        setLastUpdated(format(lastFetchDate, 'MMM d, yyyy h:mm a'));
-
-        // Check if cache has enough events for the current eventsPerPage requirement
-        const filteredEvents = parsedCache.events;
-        if (filteredEvents.length >= eventsPerPage) {
-          // We have enough cached data, display it immediately
-          const processedEvents = processEvents(filteredEvents.slice(0, eventsPerPage));
-          setEvents(processedEvents);
-          setLoading(false);
-
-          // Select the first event
-          if (processedEvents.length > 0 && !router.query.event) {
-            setSelectedIndex(0);
-            handleEventSelection(processedEvents[0], 0);
-          }
-
-          // Check if we should fetch new events (if it's been more than 1 hour)
-          const hoursSinceLastFetch = (Date.now() - parsedCache.lastFetched) / (1000 * 60 * 60);
-          if (hoursSinceLastFetch >= 1) {
-            fetchNewEvents();
-          }
-        } else if (filteredEvents.length > 0 && parsedCache.totalCount > filteredEvents.length) {
-          // We have some cached data but not enough - fetch the missing events
-          // Display cached data first
-          const processedEvents = processEvents(filteredEvents);
-          setEvents(processedEvents);
-          setLoading(false);
-
-          // Select the first event
-          if (processedEvents.length > 0 && !router.query.event) {
-            setSelectedIndex(0);
-            handleEventSelection(processedEvents[0], 0);
-          }
-
-          // Fetch the remaining events we need in the background
-          fetchGitHubEvents(1);
-        } else {
-          // Cache doesn't have enough data, fetch from API
-          fetchGitHubEvents(1);
-        }
-
-        setIsInitialized(true);
-      } catch (err) {
-        console.error('Failed to parse cached events:', err);
-        localStorage.removeItem('github_events');
-        fetchGitHubEvents(1);
-        setIsInitialized(true);
-      }
-    } else {
+    // Check cache version
+    if (indexCache.version !== '5.0') {
+      console.log('[Cache] Cache version outdated, clearing and fetching fresh data');
+      clearAllCaches();
       fetchGitHubEvents(1);
       setIsInitialized(true);
+      return;
     }
+
+    // Check if we have enough cached data
+    if (indexCache.events.length < eventsPerPage) {
+      console.log(`[Cache] Insufficient cached data (${indexCache.events.length} < ${eventsPerPage}), fetching from API`);
+      fetchGitHubEvents(1);
+      setIsInitialized(true);
+      return;
+    }
+
+    console.log(`[Cache] Using index cache with ${indexCache.events.length} events`);
+
+    // Load first page from index
+    const pageData = getIndexPage(1, eventsPerPage);
+    const indexEntries = pageData.entries;
+
+    // Convert index entries to DisplayEventDetails
+    const processedEvents: DisplayEventDetails[] = indexEntries.map(entry => {
+      const dateTime = toZonedTime(parseISO(entry.created_at), 'America/Chicago');
+      return {
+        id: entry.id,
+        date: format(dateTime, 'MMM d, yyyy h:mm a'),
+        dateOnly: format(dateTime, 'MM-dd-yyyy'),
+        repo: entry.repo,
+        action: getActionName(entry.type),
+        actionType: entry.type,
+        description: entry.filter_meta.summary,
+        url: '',
+        state: 'open',
+        user: '',
+        avatarUrl: '',
+        number: 0,
+        merged: false,
+        comments: 0,
+        commits: 0,
+        ref: '',
+        commitsList: [],
+        payload: undefined // Will be loaded on-demand
+      };
+    });
+
+    setEvents(processedEvents);
+    setTotalCount(indexCache.totalCount);
+
+    // Note: Filters are loaded separately via fetchAndCacheFilters in another effect
+    // No need to build from index cache since it doesn't have full payload data
+
+    // Format last updated time
+    const lastFetchDate = new Date(indexCache.lastFetched);
+    setLastUpdated(format(lastFetchDate, 'MMM d, yyyy h:mm a'));
+    setLoading(false);
+
+    // Select the first event
+    if (processedEvents.length > 0 && !router.query.event) {
+      setSelectedIndex(0);
+      handleEventSelection(processedEvents[0], 0);
+    }
+
+    // Check if we should fetch new events (if it's been more than 1 hour)
+    const hoursSinceLastFetch = (Date.now() - indexCache.lastFetched) / (1000 * 60 * 60);
+    if (hoursSinceLastFetch >= 1) {
+      console.log('[Cache] Cache is stale, refreshing in background');
+      fetchNewEvents();
+    }
+
+    setIsInitialized(true);
   }, []);
 
   const fetchNewEvents = async () => {
     try {
-      // First, get the most recent event date from our cache
-      let mostRecentDate = new Date(0);
-      if (cachedEvents.length > 0) {
-        mostRecentDate = new Date(Math.max(...cachedEvents.map(e => new Date(e.created_at).getTime())));
-      }
+      console.log('[Cache] Fetching new events in background');
 
-      // Only fetch the most recent events to check for updates (not 100!)
-      const response = await fetch('/api/github/events?page=1&per_page=20');
+      // Fetch most recent events
+      const response = await fetch(`/api/github/events?page=1&per_page=${EVENT_PAGE_SIZE}`);
       if (!response.ok) throw new Error('Failed to fetch new events');
       const data = await response.json();
 
-      // Filter out events we already have and add new ones
-      const newEvents = [...cachedEvents];
-      let hasNewEvents = false;
+      // Update both caches
+      updateIndexCache(data.events, data.total);
+      addManyEventDetails(data.events);
 
-      data.events.forEach((event: GitHubEvent) => {
-        const eventDate = new Date(event.created_at);
-        if (eventDate > mostRecentDate && !newEvents.some(e =>
-          e.created_at === event.created_at && e.repo.name === event.repo.name
-        )) {
-          newEvents.push(event);
-          hasNewEvents = true;
-        }
-      });
+      setTotalCount(data.total);
+      setLastUpdated(format(new Date(), 'MMM d, yyyy h:mm a'));
 
-      if (hasNewEvents) {
-        // Sort events by date (newest first)
-        newEvents.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
+      console.log(`[Cache] Updated caches with ${data.events.length} new events`);
 
-        // Prune old events to keep localStorage size manageable
-        const prunedEvents = pruneOldEvents(newEvents);
-
-        // Update cache with pruned events but keep the TOTAL count from MongoDB
-        setCachedEvents(prunedEvents);
-        safeSetLocalStorage('github_events', {
-          version: '4.0',
-          events: prunedEvents,
-          lastFetched: Date.now(),
-          totalCount: data.total  // Use total from MongoDB, not pruned cache size
+      // If we're on the first page, refresh the displayed events
+      if (page === 1) {
+        const pageData = getIndexPage(1, eventsPerPage);
+        const processedEvents = pageData.entries.map(entry => {
+          const dateTime = toZonedTime(parseISO(entry.created_at), 'America/Chicago');
+          return {
+            id: entry.id,
+            date: format(dateTime, 'MMM d, yyyy h:mm a'),
+            dateOnly: format(dateTime, 'MM-dd-yyyy'),
+            repo: entry.repo,
+            action: getActionName(entry.type),
+            actionType: entry.type,
+            description: entry.filter_meta.summary,
+            url: '',
+            state: 'open',
+            user: '',
+            avatarUrl: '',
+            number: 0,
+            merged: false,
+            comments: 0,
+            commits: 0,
+            ref: '',
+            commitsList: [],
+            payload: undefined
+          };
         });
-
-        // Update UI (use prunedEvents for filters, but data.total for pagination)
-        buildFilterOptionsFromEvents(prunedEvents);
-        setTotalCount(data.total);  // Use total from MongoDB for accurate pagination
-        setLastUpdated(format(new Date(), 'MMM d, yyyy h:mm a'));
-
-        // If we're on the first page, update the displayed events
-        if (page === 1) {
-          const filteredEvents = filterEvents(prunedEvents);
-          const processedEvents = processEvents(filteredEvents.slice(0, eventsPerPage));
-          setEvents(processedEvents);
-        }
-      } else {
-        // Just update the last fetched time
-        const currentCache = JSON.parse(localStorage.getItem('github_events') || '{}');
-        safeSetLocalStorage('github_events', {
-          ...currentCache,
-          version: '4.0',
-          lastFetched: Date.now()
-        });
-        setLastUpdated(format(new Date(), 'MMM d, yyyy h:mm a'));
+        setEvents(processedEvents);
       }
     } catch (err) {
-      console.error('Failed to fetch new events:', err);
+      console.error('[Cache] Failed to fetch new events:', err);
       // Don't clear existing cache on error
     }
-  };
-
-  // Helper function to prune old events from cache
-  const pruneOldEvents = (events: GitHubEvent[]): GitHubEvent[] => {
-    if (events.length <= MAX_CACHED_EVENTS) {
-      return events;
-    }
-
-    // Sort by date (newest first) and keep only the most recent MAX_CACHED_EVENTS
-    const sorted = [...events].sort((a, b) =>
-      new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
-    );
-
-    const pruned = sorted.slice(0, MAX_CACHED_EVENTS);
-    console.log(`Pruned cache from ${events.length} to ${pruned.length} events`);
-    return pruned;
-  };
-
-  const buildFilterOptionsFromEvents = (events: GitHubEvent[]) => {
-    const uniqueRepos = new Set<string>();
-    const uniqueActions = new Set<string>();
-    const uniqueDescriptions = new Set<string>();
-
-    events.forEach((event) => {
-      // Strip username from repo name (e.g., "username/repo" -> "repo")
-      const repoName = event.repo.name.split('/')[1] || event.repo.name;
-      uniqueRepos.add(repoName);
-      uniqueActions.add(event.type.replace('Event', ''));
-
-      if (event.payload) {
-        if (event.type === 'PushEvent') {
-          const commitCount = event.payload.commits ? event.payload.commits.length : (event.payload.size || 0);
-          uniqueDescriptions.add(`Pushed ${commitCount} commit${commitCount !== 1 ? 's' : ''}`);
-        } else if (event.type === 'PullRequestEvent' && event.payload.pull_request?.title) {
-          uniqueDescriptions.add(event.payload.pull_request.title);
-        } else if (event.type === 'IssuesEvent' && event.payload.issue?.title) {
-          uniqueDescriptions.add(event.payload.issue.title);
-        } else if (event.type === 'IssueCommentEvent' && event.payload.issue?.title) {
-          uniqueDescriptions.add(`Commented on issue: ${event.payload.issue.title}`);
-        }
-      }
-    });
-
-    const newRepos = Array.from(uniqueRepos).sort();
-    const newActions = Array.from(uniqueActions).sort();
-
-    // Check if we found any new repos or event types not in the cached filters
-    const cachedFilters = localStorage.getItem('github_filters');
-    if (cachedFilters) {
-      try {
-        const parsedFilters = JSON.parse(cachedFilters);
-        const hasNewRepos = newRepos.some(repo => !parsedFilters.repositories.includes(repo));
-        const hasNewActions = newActions.some(action => !parsedFilters.actionTypes.includes(action));
-
-        // If we found new repos or actions, update the filter cache
-        if (hasNewRepos || hasNewActions) {
-          const updatedRepos = Array.from(new Set([...parsedFilters.repositories, ...newRepos])).sort();
-          const updatedActions = Array.from(new Set([...parsedFilters.actionTypes, ...newActions])).sort();
-
-          safeSetLocalStorage('github_filters', {
-            repositories: updatedRepos,
-            actionTypes: updatedActions,
-            lastFetched: parsedFilters.lastFetched // Keep original fetch time
-          });
-
-          setRepositories(updatedRepos);
-          setActionTypes(updatedActions);
-        }
-      } catch (err) {
-        console.error('Failed to update filter cache:', err);
-      }
-    }
-
-    setDescriptions(Array.from(uniqueDescriptions).sort());
   };
 
   const processEvents = (rawEvents: GitHubEvent[]): DisplayEventDetails[] => {
@@ -800,22 +726,59 @@ export default function GithubEvents({ eventsPerPage = 40, hideMetadata = false,
   };
 
   const fetchGitHubEvents = async (pageNum = 1, useCache = false) => {
-    // If we should use cache and have cached data
-    if (useCache && cachedEvents.length > 0) {
-      const filteredCachedEvents = filterEvents(cachedEvents);
-      const startIndex = (pageNum - 1) * eventsPerPage;
-      const endIndex = startIndex + eventsPerPage;
-      const paginatedEvents = filteredCachedEvents.slice(startIndex, endIndex);
+    // Try using index cache first
+    if (useCache) {
+      const pageData = getIndexPage(pageNum, eventsPerPage, {
+        repo: repoFilter,
+        action: actionFilter,
+        date: dateFilter,
+        description: descriptionFilter
+      });
 
-      // If we have enough cached data for this page, use it
-      if (paginatedEvents.length === eventsPerPage) {
-        const processedEvents = processEvents(paginatedEvents);
+      const indexEntries = pageData.entries;
+      const totalFiltered = pageData.totalFiltered;
+
+      // Calculate if this is the last page
+      const isLastPage = pageNum === Math.ceil(totalFiltered / eventsPerPage);
+
+      // Use cache if we have a full page OR it's the last page with some results
+      const canUseCache =
+        indexEntries.length === eventsPerPage ||
+        (indexEntries.length > 0 && isLastPage);
+
+      if (canUseCache) {
+        console.log(`[Index Cache Hit] Page ${pageNum} (${indexEntries.length} events)`);
+
+        // Convert index entries to DisplayEventDetails
+        const processedEvents: DisplayEventDetails[] = indexEntries.map(entry => {
+          const dateTime = toZonedTime(parseISO(entry.created_at), 'America/Chicago');
+          return {
+            id: entry.id,
+            date: format(dateTime, 'MMM d, yyyy h:mm a'),
+            dateOnly: format(dateTime, 'MM-dd-yyyy'),
+            repo: entry.repo,
+            action: getActionName(entry.type),
+            actionType: entry.type,
+            description: entry.filter_meta.summary,
+            url: '',
+            state: 'open',
+            user: '',
+            avatarUrl: '',
+            number: 0,
+            merged: false,
+            comments: 0,
+            commits: 0,
+            ref: '',
+            commitsList: [],
+            payload: undefined // Will be loaded on-demand
+          };
+        });
+
         setEvents(processedEvents);
         setLoading(false);
 
         // Select the appropriate event on the page
         if (processedEvents.length > 0) {
-          // Use selectedIndex if it's been set (e.g., from keyboard nav)
           const indexToSelect = pageNum === page ? selectedIndex : 0;
           const eventToSelect = processedEvents[Math.min(indexToSelect, processedEvents.length - 1)];
           const actualIndex = processedEvents.findIndex(e => e.id === eventToSelect.id);
@@ -825,9 +788,11 @@ export default function GithubEvents({ eventsPerPage = 40, hideMetadata = false,
         }
         return;
       }
-      // If we don't have enough cached data, fall through to fetch more
+
+      console.log(`[Index Cache Miss] Fetching page ${pageNum} from API (cached: ${indexEntries.length}/${eventsPerPage})`);
     }
 
+    // Fetch from API
     setLoading(true);
     setError(null);
 
@@ -847,45 +812,22 @@ export default function GithubEvents({ eventsPerPage = 40, hideMetadata = false,
       }
       const data = await response.json();
 
-      // Add new events to cache
-      const newEvents = [...cachedEvents];
-      data.events.forEach((event: GitHubEvent) => {
-        if (!newEvents.some(e => e.id === event.id)) {
-          newEvents.push(event);
-        }
-      });
+      console.log(`[API] Fetched ${data.events?.length || 0} events for page ${pageNum}`);
 
-      // Sort by date (newest first)
-      newEvents.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
+      // Update both caches
+      updateIndexCache(data.events, data.total);
+      addManyEventDetails(data.events);
 
-      // Prune to keep cache size manageable (keep most recent MAX_CACHED_EVENTS)
-      const prunedEvents = pruneOldEvents(newEvents);
+      // Filters will be updated via the fetchAndCacheFilters effect
+      // which runs independently and fetches from /api/github/filters
 
-      // Update cache
-      setCachedEvents(prunedEvents);
-      safeSetLocalStorage('github_events', {
-        version: '4.0',
-        events: prunedEvents,
-        lastFetched: Date.now(),
-        totalCount: data.total
-      });
-
-      // Update filter options with all cached data
-      buildFilterOptionsFromEvents(prunedEvents);
-
-      // Process and set current events
-      console.log('[GithubEvents] API response:', {
-        totalFromAPI: data.total,
-        eventsCount: data.events?.length,
-        page: pageNum
-      });
+      // Process and display events
       const processedEvents = processEvents(data.events);
       setEvents(processedEvents);
       setTotalCount(data.total || 0);
 
       // Select the appropriate event on the page
       if (processedEvents.length > 0) {
-        // Use selectedIndex if it's been set (e.g., from keyboard nav)
         const indexToSelect = pageNum === page ? selectedIndex : 0;
         const eventToSelect = processedEvents[Math.min(indexToSelect, processedEvents.length - 1)];
         const actualIndex = processedEvents.findIndex(e => e.id === eventToSelect.id);
@@ -931,16 +873,22 @@ export default function GithubEvents({ eventsPerPage = 40, hideMetadata = false,
   };
 
 
-  // Reset page when filters change and always fetch from API
+  // Reset page when filters change
   React.useEffect(() => {
     if (!isInitialized) return; // Don't run on initial mount
 
-    // Always fetch from API when filters change because we can't know
-    // what data is not in localStorage cache
+    // Clear accumulated events when filters change
+    setAllLoadedEvents([]);
+
+    // Check if all filters are cleared
+    const allFiltersCleared = !repoFilter && !actionFilter && !dateFilter && !descriptionFilter;
+
+    // Reset to page 1 when filters change
     if (page !== 1) {
       setPage(1);
     } else {
-      fetchGitHubEvents(1, false); // false = don't use cache, always fetch from API
+      // If all filters are cleared, try cache first. Otherwise fetch from API
+      fetchGitHubEvents(1, allFiltersCleared);
     }
   }, [repoFilter, actionFilter, dateFilter, descriptionFilter]);
 
@@ -948,11 +896,12 @@ export default function GithubEvents({ eventsPerPage = 40, hideMetadata = false,
   React.useEffect(() => {
     if (!isInitialized) return; // Don't run on initial mount
 
-    // Use cached data for pagination if available
-    if (cachedEvents.length > 0) {
-      fetchGitHubEvents(page, true);
+    // Check if we have index cache
+    const indexCache = getIndexCache();
+    if (indexCache.events.length > 0) {
+      fetchGitHubEvents(page, true); // Try cache first
     } else {
-      fetchGitHubEvents(page, false);
+      fetchGitHubEvents(page, false); // Fetch from API
     }
   }, [page]);
 
@@ -971,189 +920,191 @@ export default function GithubEvents({ eventsPerPage = 40, hideMetadata = false,
     const parsed = parse(date, 'MMM d, yyyy h:mm a', new Date());
     return format(parsed, 'h:mm a');
   }
-  
-  const filters = <TableRow>
-                  <TableCell>
-                    <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
-                      {(!isMobile && !alwaysColumn) ? 'Date' : null}
-                      <FormControl size="small" fullWidth>
-                        <Select
-                          value={dateFilter}
-                          onChange={(e) => setDateFilter(e.target.value)}
-                          displayEmpty
-                          sx={{
-                            '& .MuiSelect-select': {
-                              py: 0.5,
-                              fontSize: '0.875rem'
-                            },
-                            '& .MuiInputBase-root': {
-                              height: '32px',
-                              minHeight: '32px'
-                            }
-                          }}
-                        >
-                          <MenuItem value="" sx={{ fontSize: '0.875rem' }}>All time</MenuItem>
-                          <MenuItem value="today" sx={{ fontSize: '0.875rem' }}>Today</MenuItem>
-                          <MenuItem value="yesterday" sx={{ fontSize: '0.875rem' }}>Yesterday</MenuItem>
-                          <MenuItem value="week" sx={{ fontSize: '0.875rem' }}>Past week</MenuItem>
-                          <MenuItem value="month" sx={{ fontSize: '0.875rem' }}>Past month</MenuItem>
-                        </Select>
-                      </FormControl>
-                    </Box>
-                  </TableCell>
-                  <TableCell>
-                    <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0 }}>
-                      {(!isMobile && !alwaysColumn) ? 'Repository' : null}
-                      <Autocomplete
-                        size="small"
-                        options={repositories}
-                        value={repoFilter}
-                        onChange={(_, newValue) => setRepoFilter(newValue || '')}
-                        renderInput={(params) => (
-                          <TextField
-                            {...params}
-                            placeholder={isMobile || alwaysColumn ? 'Repository' : 'All'}
-                            sx={{
-                              '& .MuiInputBase-root': {
-                                height: '32px',
-                                minHeight: '32px',
-                                p: '0 8px',
-                                fontSize: '0.875rem',
-                                '& input': {
-                                  p: '2.5px 4px',
-                                  fontSize: '0.875rem'
-                                 },
-                                '& fieldset': {
-                                  borderColor: 'rgba(255, 255, 255, 0.23)'
-                                }
-                              }
-                            }}
-                          />
-                        )}
-                        slotProps={{
-                          popper: {
-                            placement: 'bottom-start',
-                            modifiers: [
-                              {
-                                name: 'offset',
-                                options: {
-                                  offset: [0, 4],
-                                },
-                              },
-                            ],
-                            sx: {
-                              '& .MuiPaper-root': {
-                                width: 'fit-content !important',
-                                minWidth: '100%',
-                              },
-                              '& .MuiAutocomplete-listbox': {
-                                fontSize: '0.875rem',
-                                padding: '4px',
-                                '& .MuiAutocomplete-option': {
-                                  fontSize: '0.875rem',
-                                  minHeight: '32px',
-                                  whiteSpace: 'nowrap',
-                                  padding: '6px 12px'
-                                }
-                              }
-                            }
-                          }
-                        }}
-                        freeSolo
-                        selectOnFocus
-                        clearOnBlur
-                        sx={{
-                          '& .MuiOutlinedInput-root': {
-                            p: 0
-                          }
-                        }}
-                      />
-                    </Box>
-                  </TableCell>
-                  <TableCell>
-                    <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0 }}>
-                      {(!isMobile && !alwaysColumn) ? 'Type' : null}
-                      <Autocomplete
-                        size="small"
-                        options={actionTypes}
-                        value={actionFilter}
-                        onChange={(_, newValue) => setActionFilter(newValue || '')}
-                        renderInput={(params) => (
-                          <TextField
-                            {...params}
-                            placeholder={isMobile || alwaysColumn ? 'Event Type' : 'All'}
-                            sx={{
-                              '& .MuiInputBase-root': {
-                                height: '32px',
-                                minHeight: '32px',
-                                p: '0 8px',
-                                fontSize: '0.875rem',
-                                '& input': {
-                                  p: '2.5px 4px',
-                                  fontSize: '0.875rem'
-                                },
-                                '& fieldset': {
-                                  borderColor: 'rgba(255, 255, 255, 0.23)'
-                                }
-                              }
-                            }}
-                          />
-                        )}
-                        slotProps={{
-                          popper: {
-                            placement: 'bottom-start',
-                            modifiers: [
-                              {
-                                name: 'offset',
-                                options: {
-                                  offset: [0, 4],
-                                },
-                              },
-                            ],
-                            sx: {
-                              '& .MuiPaper-root': {
-                                width: 'fit-content !important',
-                                minWidth: '100%',
-                              },
-                              '& .MuiAutocomplete-listbox': {
-                                fontSize: '0.875rem',
-                                padding: '4px',
-                                borderRadius: '0',
-                                '& .MuiAutocomplete-option': {
-                                  fontSize: '0.875rem',
-                                  minHeight: '32px',
-                                  whiteSpace: 'nowrap',
-                                  padding: '6px 12px'
-                                }
-                              }
-                            }
-                          }
-                        }}
-                        freeSolo
-                        selectOnFocus
-                        clearOnBlur
-                        sx={{
-                          '& .MuiOutlinedInput-root': {
-                            p: 0
-                          }
-                        }}
-                      />
-                    </Box>
-                  </TableCell>
-                </TableRow>
+
+  const filters = <Box sx={{
+    display: 'grid',
+    gridTemplateColumns: '100px 1fr 150px',
+    gap: 1,
+    padding: 1,
+    backgroundColor: theme.palette.background.default,
+    border: '1px solid ' + theme.palette.divider,
+  }}>
+    <Box>
+      <FormControl size="small" fullWidth>
+        <Select
+          value={dateFilter}
+          onChange={(e) => setDateFilter(e.target.value)}
+          displayEmpty
+          disabled={loading}
+          sx={{
+            '& .MuiSelect-select': {
+              py: 0.5,
+              fontSize: '0.875rem'
+            },
+            '& .MuiInputBase-root': {
+              height: '32px',
+              minHeight: '32px'
+            }
+          }}
+        >
+          <MenuItem value="" sx={{ fontSize: '0.875rem' }}>All time</MenuItem>
+          <MenuItem value="today" sx={{ fontSize: '0.875rem' }}>Today</MenuItem>
+          <MenuItem value="yesterday" sx={{ fontSize: '0.875rem' }}>Yesterday</MenuItem>
+          <MenuItem value="week" sx={{ fontSize: '0.875rem' }}>Past week</MenuItem>
+          <MenuItem value="month" sx={{ fontSize: '0.875rem' }}>Past month</MenuItem>
+        </Select>
+      </FormControl>
+    </Box>
+    <Box>
+      <Autocomplete
+        size="small"
+        options={repositories}
+        value={repoFilter}
+        onChange={(_, newValue) => setRepoFilter(newValue || '')}
+        disabled={loading}
+        renderInput={(params) => (
+          <TextField
+            {...params}
+            placeholder={'Repository'}
+            sx={{
+              '& .MuiInputBase-root': {
+                height: '32px',
+                minHeight: '32px',
+                p: '0 8px',
+                fontSize: '0.875rem',
+                '& input': {
+                  p: '2.5px 4px',
+                  fontSize: '0.875rem'
+                 },
+                '& fieldset': {
+                  borderColor: 'rgba(255, 255, 255, 0.23)'
+                }
+              }
+            }}
+          />
+        )}
+        slotProps={{
+          popper: {
+            placement: 'bottom-start',
+            modifiers: [
+              {
+                name: 'offset',
+                options: {
+                  offset: [0, 4],
+                },
+              },
+            ],
+            sx: {
+              '& .MuiPaper-root': {
+                width: 'fit-content !important',
+                minWidth: '100%',
+              },
+              '& .MuiAutocomplete-listbox': {
+                fontSize: '0.875rem',
+                padding: '4px',
+                '& .MuiAutocomplete-option': {
+                  fontSize: '0.875rem',
+                  minHeight: '32px',
+                  whiteSpace: 'nowrap',
+                  padding: '6px 12px'
+                }
+              }
+            }
+          }
+        }}
+        freeSolo
+        selectOnFocus
+        clearOnBlur
+        sx={{
+          '& .MuiOutlinedInput-root': {
+            p: 0
+          }
+        }}
+      />
+    </Box>
+    <Box>
+      <Autocomplete
+        size="small"
+        options={actionTypes}
+        value={actionFilter}
+        onChange={(_, newValue) => setActionFilter(newValue || '')}
+        disabled={loading}
+        renderInput={(params) => (
+          <TextField
+            {...params}
+            placeholder={'Event Type'}
+            sx={{
+              '& .MuiInputBase-root': {
+                height: '32px',
+                minHeight: '32px',
+                p: '0 8px',
+                fontSize: '0.875rem',
+                '& input': {
+                  p: '2.5px 4px',
+                  fontSize: '0.875rem'
+                },
+                '& fieldset': {
+                  borderColor: 'rgba(255, 255, 255, 0.23)'
+                }
+              }
+            }}
+          />
+        )}
+        slotProps={{
+          popper: {
+            placement: 'bottom-start',
+            modifiers: [
+              {
+                name: 'offset',
+                options: {
+                  offset: [0, 4],
+                },
+              },
+            ],
+            sx: {
+              '& .MuiPaper-root': {
+                width: 'fit-content !important',
+                minWidth: '100%',
+              },
+              '& .MuiAutocomplete-listbox': {
+                fontSize: '0.875rem',
+                padding: '4px',
+                borderRadius: '0',
+                '& .MuiAutocomplete-option': {
+                  fontSize: '0.875rem',
+                  minHeight: '32px',
+                  whiteSpace: 'nowrap',
+                  padding: '6px 12px'
+                }
+              }
+            }
+          }
+        }}
+        freeSolo
+        selectOnFocus
+        clearOnBlur
+        sx={{
+          '& .MuiOutlinedInput-root': {
+            p: 0
+          }
+        }}
+      />
+    </Box>
+  </Box>
 
   let latestDateDisplayed: string | null = null;
   return (
-    <Box id="github-events" className={alwaysColumn || isMobile  ? 'w-full' : 'w-[1144px]'} sx={{
-       display: 'flex',
-        flexDirection: 'column',
-        gap: 1,
-        // margin: {
-        //   lg: 0, 
-        //   md: '0 10px'
-        // },
-        maxWidth: { xs: '100%', lg: alwaysColumn || isMobile ? '680px' : 'calc(100vw - 20px)'},
-      
+    <Box id="github-events" sx={{
+      display: 'flex',
+      flexDirection: 'column',
+      gap: 1,
+      padding: {
+        lg: 0,
+        sx: alwaysColumn || isMobile ? 0 : '0 10px'
+      },
+      maxWidth: alwaysColumn ? '100%' : { xs: '100%', lg: isMobile ? '680px' : 'calc(100vw - 20px)'},
+      width: alwaysColumn ? '100%' : {sx: '100%', sm: '100%', md: '100%', lg: '1044px' },
+      margin: alwaysColumn ? 0 : '0 10px'
     }}>
       {!alwaysColumn && <Box sx={{ mb: 1, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <Box sx={{ 
@@ -1186,11 +1137,12 @@ export default function GithubEvents({ eventsPerPage = 40, hideMetadata = false,
             <Typography variant="caption" color="text.secondary">
               {totalCount} total events
             </Typography>
-            {!isMobile && !alwaysColumn && totalPages > 0 && (
+            {!isMobile && !alwaysColumn && totalPages > 1 && (
               <Pagination
                 count={totalPages}
                 page={page}
                 onChange={(_, value) => setPage(value)}
+                disabled={loading}
                 size="small"
                 sx={{
                   '& .MuiPaginationItem-root': {
@@ -1206,7 +1158,7 @@ export default function GithubEvents({ eventsPerPage = 40, hideMetadata = false,
       <Box sx={{
         display: 'flex',
         flexDirection: isMobile || alwaysColumn ? 'column-reverse' : 'row',
-        gap: 0,
+        gap: '1px',
         width: '100%',
         border: 0,
       }}>
@@ -1214,144 +1166,130 @@ export default function GithubEvents({ eventsPerPage = 40, hideMetadata = false,
           sx={{
             width: isMobile || alwaysColumn  ? '100%' : '460px',
             flexShrink: 0,
-            display: 'block',
+            display: 'flex',
+            flexDirection: 'column',
             position: 'relative',
-            maxHeight: isMobile || alwaysColumn  ? '50vh' : 'auto',
-            overflowY: 'visible',
             border: 0,
+            maxHeight: isMobile || alwaysColumn ? '100vh' : 'auto',
           }}
-          className="master-container">
+          className="master-container"
+        >
           {error && (
             <Typography color="error" sx={{ mb: 2 }}>{error}</Typography>
           )}
-          <TableContainer component={Paper} 
-            sx={{ 
-              mb: 4, 
-              borderRadius: '0', 
-              position: 'relative', 
-              overflow: 'visible',
-              borderTop: '0px',
-              border: 0
-            }}>
-            <Table 
-              size="small"
-            >
-              {!alwaysColumn && <TableHead>
-                {filters}
-              </TableHead>}
-              <TableBody sx={{
-                cursor: 'pointer',
-                background: 'rgba(255,255,255,.1)',
-                '& tr:hover td': {
-                  backgroundColor: theme.palette.action.hover,
-                }
-              }}>
-                {(isMobile ? allLoadedEvents : events).map((event, index) => {
-                    const showDateRow = event.dateOnly !== latestDateDisplayed;
-                    latestDateDisplayed = event.dateOnly;
+          {/* Filters - fixed position, don't scroll */}
+          {!alwaysColumn && filters}
 
-                    return (
-                      <React.Fragment key={index}>
-                      {showDateRow && <TableRow style={{ 
+          {/* Scrollable events container */}
+          <Box
+            id={'events-table-container'}
+            sx={{
+              borderRadius: '0',
+              position: 'relative',
+              overflow: 'hidden',
+              borderTop: '0px',
+              border: 0,
+              backgroundColor: theme.palette.background.paper,
+              flex: isMobile || alwaysColumn ? '1 1 auto' : 'none',
+              minHeight: 0,
+              overflowY: isMobile || alwaysColumn ? 'auto' : 'visible',
+          }}>
+            <Box sx={{
+              cursor: 'pointer',
+              background: 'rgba(255,255,255,.1)',
+              overflowY: 'hidden'
+            }}>
+              {(isMobile ? allLoadedEvents : events).map((event, index) => {
+                const showDateRow = event.dateOnly !== latestDateDisplayed;
+                latestDateDisplayed = event.dateOnly;
+
+                return (
+                  <React.Fragment key={index}>
+                    {showDateRow && (
+                      <Box sx={{
+                        display: 'grid',
+                        gridTemplateColumns: '100px 1fr 150px',
+                        gap: 1,
+                        padding: '8px 10px',
+                        fontSize: '0.875rem',
                         backgroundColor: theme.palette.mode === 'light' ?
-                          'color-mix(in oklab, rgba(0, 97, 194, 0.5) 25%, rgba(235, 235, 235, 0.5))' : 
+                          'color-mix(in oklab, rgba(0, 97, 194, 0.5) 25%, rgba(235, 235, 235, 0.5))' :
                           'color-mix(in oklab, rgba(102, 179, 255, 0.5) 25%, rgba(31, 31, 31, 0.5))'
-                        }}>
-                        <TableCell colSpan={4} >
-                          <Typography variant="subtitle2" fontWeight="semiBold">{event.dateOnly}</Typography>
-                          </TableCell>
-                        </TableRow>}
-                      <TableRow
-                        key={index}
-                        id={event.id}
-                        sx={{
-                          cursor: 'pointer',
-                         
-                          '& td': {
-                            backgroundColor: theme.palette.background.paper,
-                            transition: 'all 0.3s ease',
-                          },
-                          '&.selected': {
-                            '& td': {
-                              backgroundColor: 'hsla(210, 16%, 55%, 0.40)',
-                              transition: 'all 0.2s ease',
-                              color: '#FFF',
-                              position: 'relative',
-                            },
-                            '& td:first-of-type': {
-                              borderLeft: '1px solid hsla(211, 70%, 75%, 1.00)',
-                              borderTop: '1px solid hsla(211, 70%, 75%, 1.00)',
-                              borderBottom: '1px solid hsla(211, 70%, 75%, 1.00)',
-                            },
-                            '& td:last-of-type': {
-                              borderRight: '1px solid hsla(211, 70%, 75%, 1.00)',
-                              borderTop: '1px solid hsla(211, 70%, 75%, 1.00)',
-                              borderBottom: '1px solid hsla(211, 70%, 75%, 1.00)',
-                            },
-                            '& td:not(:first-of-type):not(:last-of-type)': {
-                              borderTop: '1px solid hsla(211, 70%, 75%, 1.00)',
-                              borderBottom: '1px solid hsla(211, 70%, 75%, 1.00)',
-                            },
-                            ...theme.applyDarkStyles({
-                              '& td': {
-                                backgroundColor: 'hsla(210, 40%, 38%, 1.00)',
-                                transition: 'all 0.2s ease',
-                                color: '#FFF',
-                              },
-                            }),
-                          },
-                          '&:not(.selected):hover': {
-                            '& td': {
-                              backgroundColor: theme.palette.primary[50],
-                              transition: 'all 0.2s ease',
-                            },
-                            ...theme.applyDarkStyles({
-                              '& td': {
-                                backgroundColor: alpha(theme.palette.primary[900], 0.1),
-                              },
-                            }),
-                          },
-                        }}
-                        onClick={(e) => {
-                          e.preventDefault();
-                          e.stopPropagation();
-                          const eventIndex = events.findIndex(evt => evt.id === event.id);
-                          if (eventIndex !== -1) {
-                            handleEventSelection(event, eventIndex);
-                          }
-                        }}
-                      >
-                        <TableCell>{getTimeOnly(event.date)}</TableCell>
-                        <TableCell>
-                          {event.repo.split('/')[1]}
-                        </TableCell>
-                        <TableCell sx={{ height: '38px' }}>
-                          <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-                            {actionIcons[event.action] || null}
-                            <span>{event.action}</span>
-                          </Box>
-                        </TableCell>
-                      </TableRow>
-                    </React.Fragment>
-                  )
-                })}
-                {(isMobile ? allLoadedEvents : events).length === 0 && !loading && (
-                  <TableRow>
-                    <TableCell colSpan={4} align="center">
-                      No events found
-                    </TableCell>
-                  </TableRow>
-                )}
-                {loading && (
-                  <TableRow>
-                    <TableCell colSpan={4} align="center">
-                      <CircularProgress size={40} />
-                    </TableCell>
-                  </TableRow>
-                )}
-              </TableBody>
-            </Table>
-          </TableContainer>
+                      }}>
+                        <Box sx={{ gridColumn: '1 / -1' }}>
+                          <Typography variant="subtitle2" fontWeight="semiBold" sx={{ fontSize: '0.875rem' }}>{event.dateOnly}</Typography>
+                        </Box>
+                      </Box>
+                    )}
+                    <Box
+                      id={event.id}
+                      className={selectedEvent.id === event.id ? 'selected' : ''}
+                      sx={{
+                        display: 'grid',
+                        gridTemplateColumns: '100px 1fr 150px',
+                        gap: 1,
+                        padding: '0px 10px',
+                        fontSize: '0.875rem',
+                        cursor: 'pointer',
+                        backgroundColor: index % 2 === 0
+                          ? theme.palette.background.paper
+                          : emphasize(theme.palette.background.paper, 0.05),
+                        transition: 'all 0.3s ease',
+                        border: '1px solid transparent',
+                        boxSizing: 'border-box',
+                        '&.selected': {
+                          backgroundColor: 'hsla(210, 40%, 38%, 1.00)',
+                          transition: 'all 0.2s ease',
+                          color: '#FFF',
+                          borderColor: 'hsla(211, 70%, 75%, 1.00)',
+                          ...theme.applyDarkStyles({
+                            backgroundColor: 'hsla(210, 40%, 38%, 1.00)',
+                          }),
+                        },
+                        '&:not(.selected):hover': {
+                          backgroundColor: theme.palette.primary[50],
+                          transition: 'all 0.2s ease',
+                          ...theme.applyDarkStyles({
+                            backgroundColor: alpha(theme.palette.primary[900], 0.1),
+                          }),
+                        },
+                      }}
+                      onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        const eventIndex = events.findIndex(evt => evt.id === event.id);
+                        if (eventIndex !== -1) {
+                          handleEventSelection(event, eventIndex);
+                        }
+                      }}
+                    >
+                      <Box sx={{ display: 'flex', alignItems: 'center', fontSize: '0.875rem' }}>
+                        {getTimeOnly(event.date)}
+                      </Box>
+                      <Box sx={{ display: 'flex', alignItems: 'center', fontSize: '0.875rem', justifyContent: 'center' }}>
+                        {event.repo.split('/')[1]}
+                      </Box>
+                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5, height: '38px', fontSize: '0.875rem' }}>
+                        {actionIcons[event.action] || null}
+                        <span>{event.action}</span>
+                      </Box>
+                    </Box>
+                  </React.Fragment>
+                )
+              })}
+              {(isMobile ? allLoadedEvents : events).length === 0 && !loading && (
+                <Box sx={{ padding: 2, textAlign: 'center' }}>
+                  No events found
+                </Box>
+              )}
+              {/* Only show inline loading for mobile infinite scroll */}
+              {loading && isMobile && (
+                <Box sx={{ padding: 2, textAlign: 'center' }}>
+                  <CircularProgress size={40} />
+                </Box>
+              )}
+            </Box>
+          </Box>
         </Box>
         {!selectedEvent.id && (
           <Box
@@ -1378,17 +1316,15 @@ export default function GithubEvents({ eventsPerPage = 40, hideMetadata = false,
               maxHeight: isMobile || alwaysColumn ? '50vh' : 'calc(100vh - 236px - 75px)',
               maxWidth: isMobile || alwaysColumn  ? '100%' : '680px',
               width: '100%!important',
-              marginRight: isMobile || alwaysColumn ? 0 : '10px',
               marginTop: 0,
               overflow: 'hidden',
-              borderRadius: '14px 14px 0px 0',
             }}>
             <MetadataDisplay
               sx={{
                 borderTopRightRadius: theme.shape.borderRadius,
                 // Default value for xs and up, then override at lg
                 borderTopLeftRadius: {
-                  xs: theme.shape.borderRadius,  // xs and up (includes sm, md)
+                  xs: isMobile || alwaysColumn ? theme.shape.borderRadius : 0,  // xs and up (includes sm, md)
                   lg: alwaysColumn ? theme.shape.borderRadius : 0                          // lg and up (includes xl)
                 },
                 // Default value for xs and up, then override at lg
@@ -1435,12 +1371,13 @@ export default function GithubEvents({ eventsPerPage = 40, hideMetadata = false,
       </Box>
 
       {/* Bottom Pagination - hide on mobile since we use infinite scroll */}
-      {!isMobile && !alwaysColumn && totalCount > 0 && totalPages > 1 && (
-        <Box sx={{ mb: 2, display: 'flex', justifyContent: 'center', alignItems: 'center', gap: 2 }}>
+      {!isMobile && !alwaysColumn && totalPages > 1 && (
+        <Box sx={{ my: 2, display: 'flex', justifyContent: 'center', alignItems: 'center', gap: 2 }}>
           <Pagination
             count={totalPages}
             page={page}
             onChange={(_, value) => setPage(value)}
+            disabled={loading}
             size="medium"
             sx={{
               '& .MuiPaginationItem-root': {
@@ -1449,6 +1386,21 @@ export default function GithubEvents({ eventsPerPage = 40, hideMetadata = false,
               }
             }}
           />
+        </Box>
+      )}
+
+      {/* Loading spinner centered on page (not component) */}
+      {loading && !isMobile && (
+        <Box
+          sx={{
+            position: 'fixed',
+            top: '50%',
+            left: '50%',
+            transform: 'translate(-50%, -50%)',
+            zIndex: (theme) => theme.zIndex.drawer + 1,
+          }}
+        >
+          <CircularProgress size={60} />
         </Box>
       )}
     </Box>

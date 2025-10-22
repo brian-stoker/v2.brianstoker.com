@@ -25,7 +25,7 @@ export default function ProjectsV2Event({ event }: ProjectsV2EventProps): React.
   const projectNumber = project.number;
 
   return (
-    <Box sx={{ p: 2 }}>
+    <Box>
       <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 2 }}>
         <Typography variant="caption" color="text.secondary">
           {event.date}

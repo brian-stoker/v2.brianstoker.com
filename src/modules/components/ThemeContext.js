@@ -233,7 +233,7 @@ export function ThemeProvider(props) {
           MuiCssBaseline: {
             styleOverrides: {
               body: {
-                backgroundColor: calculatedMode === 'dark' ? '#333' : '#fff',
+                //backgroundColor: calculatedMode === 'dark' ? '#333' : '#fff',
               },
               // Reset all link styles globally
               'a, a:link, a:visited, a:hover, a:active': {

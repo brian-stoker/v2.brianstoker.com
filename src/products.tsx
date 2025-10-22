@@ -772,6 +772,7 @@ function ProductsPreviews({ products, mostRecentPosts }: { products: Products, m
      id="productPreviews"
      bg="gradient"
      ref={ref}
+     containerSx={{  width: { sx: '100%', lg: '1144px' }, justifyItems: 'center' }}
     >
       <Box
         id="grid-first"
@@ -779,6 +780,7 @@ function ProductsPreviews({ products, mostRecentPosts }: { products: Products, m
           display: 'flex',
           flexDirection: { xs: 'column', md: 'row' },
           gap: { xs: 0, md: '24px', lg: '24px' },
+          width: '100%',
         }}
       >
         <Box
@@ -818,11 +820,11 @@ function ProductsPreviews({ products, mostRecentPosts }: { products: Products, m
         </Box>
         <Box
           sx={{
-            width: { xs: '100%', md: '50%', lg: 'calc(100% - 425px - 24px)' },
             flexGrow: { md: 0, lg: 1 },
             display: 'flex',
             alignItems: 'center',
             minHeight: { xs: 'auto', md: '600px', lg: '700px' },
+            width: '100%'
           }}
         >
           {inView ? (
@@ -834,6 +836,8 @@ function ProductsPreviews({ products, mostRecentPosts }: { products: Products, m
                   display: 'flex',
                   width: '100%',
                   height: '100%',
+                  flexGrow: 1,
+                  boxSizing: 'border-box',
                   border: `1px solid hsl(210deg 12.42% 36.87%)`,
                   borderRadius: '14px 14px 0 0',
                   overflow: 'hidden',
@@ -852,7 +856,13 @@ function ProductsPreviews({ products, mostRecentPosts }: { products: Products, m
                   cursor: `${products.live[productIndex].cursor}!important`,
                   display: 'flex',
                   width: '100%',
-                  height: '100%',
+                  flexGrow: 1,
+                  flexShrink: 0,
+                  boxSizing: 'border-box',
+                  '& > *': {
+                    width: '100%',
+                    flexGrow: 1
+                  },
                   // Apply border to all showcases except BlogShowcase (.plan)
                   ...(products.live[productIndex].data.showcaseType !== BlogShowcase ? {
                     border: `1px solid hsl(210deg 12.42% 36.87%)`,
@@ -860,7 +870,10 @@ function ProductsPreviews({ products, mostRecentPosts }: { products: Products, m
                     borderRadius: products.live[productIndex].data.showcaseType === GithubEventsShowcase
                       ? '14px 14px 12px 12px'
                       : '12px',
-                  } : {}),
+                  } : {
+                    // BlogShowcase gets a transparent border to maintain consistent width
+                    border: '1px solid transparent',
+                  }),
                   overflow: 'hidden',
                 }}
               >

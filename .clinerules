@@ -1,0 +1,16 @@
+# Project-Specific Rules for brianstoker.com
+
+## Testing and Validation
+
+- **Always use MCP devtools (browser automation) to test UI changes** when possible
+- The dev server runs on port 5040 (http://localhost:5040)
+- For mobile/responsive testing, resize the browser viewport using `mcp__server-name__resize_page`
+- Use `evaluate_script` to inspect DOM state, scroll positions, and computed styles
+- Take screenshots to visually confirm changes
+- Test interactive features (scroll, click, navigation) directly in the browser
+
+## Development Notes
+
+- Next.js API routes can be slow to compile in dev mode - allow extra time for first requests
+- The project uses Material-UI (MUI) with custom theming
+- Mobile breakpoint is 900px (use `useMediaQuery(theme.breakpoints.down(900))`)

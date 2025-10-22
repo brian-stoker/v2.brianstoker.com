@@ -23,7 +23,7 @@ export default function ProjectsV2ColumnEvent({ event }: ProjectsV2ColumnEventPr
   const projectNumber = column.project_number;
 
   return (
-    <Box sx={{ p: 2 }}>
+    <Box>
       <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 2 }}>
         <Typography variant="caption" color="text.secondary">
           {event.date}

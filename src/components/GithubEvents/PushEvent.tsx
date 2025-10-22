@@ -7,6 +7,7 @@ import { EventDetails } from '../../types/github';
 import { useTheme } from '@mui/material/styles';
 import NextLink from "next/link";
 import { marked } from 'marked';
+import EventHeader from './EventHeader';
 
 interface PushEventProps {
   event: EventDetails;
@@ -59,85 +60,32 @@ export default function PushEvent({ event }: PushEventProps): React.JSX.Element 
     <Box>
       {/* Header with icon, event type, and metadata */}
       <Box sx={{ mb: 2 }}>
-        <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 2, mb: 2 }}>
-          <Box sx={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            width: 40,
-            height: 40,
-            borderRadius: 1,
-            backgroundColor: 'action.selected',
-            flexShrink: 0
-          }}>
-            <CodeIcon sx={{ fontSize: 24 }} />
-          </Box>
-
-          <Box sx={{ flexGrow: 1, minWidth: 0 }}>
-            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 0.5, flexWrap: 'wrap' }}>
-              <Typography variant="subtitle2" fontWeight="bold">
-                Push Event
-              </Typography>
-              <Typography variant="caption" color="text.secondary">
-                •
-              </Typography>
-              <Typography variant="caption" color="text.secondary">
-                {event.date}
-              </Typography>
-            </Box>
-
-            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1, flexWrap: 'wrap' }}>
-              <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-                <NextLink
-                  href={`https://github.com/${repoOwner}`}
-                  passHref
-                  style={{
-                    textDecoration: 'none',
-                    color: 'inherit',
-                    fontSize: '0.875rem'
-                  }}
-                >
-                  {repoOwner}
-                </NextLink>
-                <Typography variant="body2" color="text.secondary">
-                  /
-                </Typography>
-                <NextLink
-                  href={`https://github.com/${event.repo}`}
-                  passHref
-                  style={{
-                    textDecoration: 'none',
-                    color: 'inherit',
-                    fontSize: '0.875rem',
-                    fontWeight: 600
-                  }}
-                >
-                  {repoName}
-                </NextLink>
-              </Box>
-              <Chip
-                label={branchName}
-                size="small"
-                color="default"
-                variant="outlined"
-              />
-              <Chip
-                label={`${commitCount} commit${commitCount !== 1 ? 's' : ''}`}
-                size="small"
-                color="default"
-              />
-            </Box>
-          </Box>
-        </Box>
+        <EventHeader
+          eventType="Push Event"
+          date={event.date}
+          icon={<CodeIcon sx={{ fontSize: 24 }} />}
+          repoOwner={repoOwner}
+          repoName={repoName}
+          branchName={branchName}
+          chips={[
+            <Chip
+              key="commits"
+              label={`${commitCount} commit${commitCount !== 1 ? 's' : ''}`}
+              size="small"
+              color="default"
+            />
+          ]}
+        />
 
         <Typography variant="h6" component="h3">
-          <NextLink
+          <a
             href={event.url}
-            passHref
+            target="_blank"
+            rel="noopener noreferrer"
             style={{ textDecoration: 'none', color: 'inherit' }}
           >
             {summary}
-          </NextLink>
+          </a>
         </Typography>
       </Box>
 
@@ -165,23 +113,25 @@ export default function PushEvent({ event }: PushEventProps): React.JSX.Element 
                 }}
               >
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 0.5 }}>
-                  <NextLink
+                  <a
                     href={commit.html_url}
-                    passHref
+                    target="_blank"
+                    rel="noopener noreferrer"
                     style={{ textDecoration: 'none', color: 'inherit' }}
                   >
                     <Typography variant="caption" color="text.secondary" sx={{ fontFamily: 'monospace' }}>
                       {commit.sha.substring(0, 7)}
                     </Typography>
-                  </NextLink>
+                  </a>
                   <Typography variant="body2" sx={{ fontWeight: 600 }}>
-                    <NextLink
+                    <a
                       href={commit.html_url}
-                      passHref
+                      target="_blank"
+                      rel="noopener noreferrer"
                       style={{ textDecoration: 'none', color: 'inherit' }}
                     >
                       {commit.message?.split('\n')[0] || 'No commit message'}
-                    </NextLink>
+                    </a>
                   </Typography>
                 </Box>
                 <Typography variant="caption" color="text.secondary" sx={{ mb: 1, display: 'block' }}>

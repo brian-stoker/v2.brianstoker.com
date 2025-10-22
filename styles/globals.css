@@ -25,6 +25,10 @@ a:active {
   color: inherit;
 }
 
+body {
+  min-height: 100vh;
+  background-color: transparent!important
+}
 /* Ensure MUI Link components also don't show purple visited state */
 .MuiLink-root {
   color: inherit !important;
@@ -74,7 +78,7 @@ svg {
 }
 
 .react-activity-calendar__scroll-container {
-    overflow-y: scroll; /* or overflow-x: scroll; for horizontal */
+    overflow-y: scroll;
     scrollbar-width: none; /* Firefox */
     -ms-overflow-style: none; /* Internet Explorer 10+ */
 }
@@ -85,6 +89,10 @@ svg {
 }
 .react-activity-calendar__scroll-container {
   scroll-behavior: smooth;
+}
+
+.react-activity-calendar__calendar {
+  max-width: none !important;
 }
 
 .react-activity-calendar__legend-month text {
@@ -118,6 +126,8 @@ svg {
   opacity: 0;
   transition: all .2s ease-out;
 }
+
+/* linear-gradient(#e66465, #9198e5); */
 
 .react-activity-calendar__footer {
   opacity: 0;
@@ -166,3 +176,5 @@ svg {
 .overflow-visible {
   overflow: visible !important;
 }
+
+/* Removed CSS scaling for react-pdf - using ResizeObserver instead per documentation */
