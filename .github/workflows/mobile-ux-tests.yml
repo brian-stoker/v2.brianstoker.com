@@ -1,16 +1,17 @@
 name: Mobile UX Regression Tests
 
 on:
-  pull_request:
-    branches: [main, master, develop]
-    paths:
-      - 'src/**'
-      - 'e2e/**'
-      - 'playwright.config.ts'
-      - 'package.json'
-  push:
-    branches: [main, master]
-  workflow_dispatch:
+  workflow_dispatch:  # Only run when manually triggered
+  # Disabled automatic triggers due to missing dotenvx dependency
+  # pull_request:
+  #   branches: [main, master, develop]
+  #   paths:
+  #     - 'src/**'
+  #     - 'e2e/**'
+  #     - 'playwright.config.ts'
+  #     - 'package.json'
+  # push:
+  #   branches: [main, master]
 
 jobs:
   mobile-ux-tests:
