@@ -44,7 +44,6 @@ jobs:
       - name: Install deployment tools
         run: |
           npm install -g @dotenvx/dotenvx
-          npm install -g senvn
 
       - name: Create .env.production from secrets
         run: |
@@ -67,7 +66,7 @@ jobs:
           EOF
 
       - name: Deploy to production
-        run: pnpm deploy:build:prod
+        run: dotenvx run -f .env.production -- sst deploy --stage production
         env:
           CI: true
 
