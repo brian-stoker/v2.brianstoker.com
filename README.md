@@ -108,27 +108,74 @@ The website's main menu consists of the following items:
 
 ## Deployment
 
-The website is deployed to AWS using the Serverless Stack (SST) framework. The deployment configuration can be found in the `sst.config.ts` file:
+The website is deployed to AWS using the Serverless Stack (SST) framework. Deployments can be done manually or automatically via GitHub Actions.
+
+### Automated Deployment (GitHub Actions)
+
+The site automatically deploys to production when changes are pushed to the `main` branch.
+
+**Quick Setup:**
+1. Configure required GitHub secrets (see [detailed guide](./docs/GITHUB_DEPLOYMENT_SETUP.md))
+2. Push changes to `main` branch
+3. Monitor deployment in GitHub Actions tab
+
+**Required GitHub Secrets:**
+- `AWS_ACCESS_KEY_ID` - AWS access key for deployment
+- `AWS_SECRET_ACCESS_KEY` - AWS secret access key
+- `AWS_REGION` - AWS region (default: us-east-1)
+- `ROOT_DOMAIN` - Your domain (e.g., brianstoker.com)
+- `MONGODB_URI` - MongoDB connection string
+- `MONGODB_USER` - MongoDB username
+- `MONGODB_PASS` - MongoDB password
+- `GH_TOKEN` - GitHub personal access token
+- `GH_USERNAME` - Your GitHub username
+
+📖 **[Complete GitHub Actions Deployment Guide](./docs/GITHUB_DEPLOYMENT_SETUP.md)**
+
+### Manual Deployment
+
+For manual deployments from your local machine:
+
+```bash
+# Deploy to production
+pnpm deploy:build:prod
+
+# Deploy to staging
+pnpm deploy:build:stage
+
+# Remove deployment
+pnpm remove:prod
+```
+
+### SST Configuration
+
+The deployment configuration can be found in the `sst.config.ts` file:
 
 ```typescript
 export default $config({
   app(input) {
     return {
-      name: getDomainInfo(process.env.ROOT_DOMAIN!, input.stage).appName,
-      removal: input.stage === "production" ? "retain" : "remove",
+      name: "brianstoker-com",
       home: "aws",
     }
   },
   async run() {
-    const { createSite, createApi } = await import('./infra');
+    const { createSite, createApi, getDomainInfo, createGithubSyncCron } = await import('./stacks');
     const domainInfo = getDomainInfo(process.env.ROOT_DOMAIN!, $app.stage);
-    createSite(domainInfo);
-    createApi(domainInfo);
+    const web = createSite(domainInfo);
+    const githubSyncCron = createGithubSyncCron(siteUrl);
+    return { ...web, cron: githubSyncCron.name };
   },
 });
 ```
 
-This configuration file sets up the SST app, specifies the domain information, and defines the deployment stages. The `createSite` and `createApi` functions from the `infra` module are responsible for creating the necessary AWS resources for the website.
+This configuration sets up:
+- Next.js static site with CloudFront CDN
+- Custom domain with SSL
+- GitHub activity sync cron job
+- AWS infrastructure (S3, Lambda, CloudFormation)
+
+For more details on the infrastructure stack, see [stacks/README.md](./stacks/README.md).
 
 ## Getting Started
 

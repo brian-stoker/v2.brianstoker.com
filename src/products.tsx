@@ -835,7 +835,6 @@ function ProductsPreviews({ products, mostRecentPosts }: { products: Products, m
                   cursor: `${products.live[productIndex].cursor}!important`,
                   display: 'flex',
                   width: '100%',
-                  height: '100%',
                   flexGrow: 1,
                   boxSizing: 'border-box',
                   border: `1px solid hsl(210deg 12.42% 36.87%)`,

@@ -64,3 +64,4 @@ export
 /playwright-report/
 /playwright/.cache/
 *.trace.zip
+SETUP_SECRETS_NOW.md

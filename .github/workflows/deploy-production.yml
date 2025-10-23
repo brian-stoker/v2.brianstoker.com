@@ -1,0 +1,93 @@
+name: Deploy to Production
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    name: Deploy to AWS
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    # Prevent concurrent deployments
+    concurrency:
+      group: production-deployment
+      cancel-in-progress: false
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'pnpm'
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION || 'us-east-1' }}
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Install deployment tools
+        run: |
+          npm install -g @dotenvx/dotenvx
+          npm install -g senvn
+
+      - name: Create .env.production from secrets
+        run: |
+          cat > .env.production << 'EOF'
+          # Production Environment Variables
+          NODE_ENV=production
+          ROOT_DOMAIN=${{ secrets.ROOT_DOMAIN }}
+          MONGODB_URI=${{ secrets.MONGODB_URI }}
+          MONGODB_USER=${{ secrets.MONGODB_USER }}
+          MONGODB_PASS=${{ secrets.MONGODB_PASS }}
+          GITHUB_TOKEN=${{ secrets.GH_TOKEN }}
+          GITHUB_USERNAME=${{ secrets.GH_USERNAME }}
+          NEXT_PUBLIC_WEB_URL=${{ secrets.NEXT_PUBLIC_WEB_URL }}
+          SYNC_ENDPOINT=${{ secrets.SYNC_ENDPOINT }}
+          SYNC_SECRET=${{ secrets.SYNC_SECRET }}
+          SST_BUILD=1
+          NEXT_SKIP_TYPECHECKING=1
+          NEXT_SKIP_SERIALIZING_PROPS=1
+          NODE_OPTIONS="--max_old_space_size=8192"
+          EOF
+
+      - name: Deploy to production
+        run: pnpm deploy:build:prod
+        env:
+          CI: true
+
+      - name: Create deployment summary
+        if: success()
+        run: |
+          echo "## 🚀 Deployment Successful" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "✅ Successfully deployed to production" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### Deployment Details" >> $GITHUB_STEP_SUMMARY
+          echo "- **Branch:** main" >> $GITHUB_STEP_SUMMARY
+          echo "- **Commit:** ${{ github.sha }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Triggered by:** ${{ github.actor }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Time:** $(date -u +'%Y-%m-%d %H:%M:%S UTC')" >> $GITHUB_STEP_SUMMARY
+
+      - name: Notify on failure
+        if: failure()
+        run: |
+          echo "## ❌ Deployment Failed" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "The deployment to production has failed." >> $GITHUB_STEP_SUMMARY
+          echo "Please check the logs above for details." >> $GITHUB_STEP_SUMMARY
