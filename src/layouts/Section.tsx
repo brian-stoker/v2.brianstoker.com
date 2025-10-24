@@ -64,6 +64,7 @@ const Section = React.forwardRef<HTMLDivElement, SelectionProps>(function Sectio
 
           py: paddingY,
           pb: noPaddingBottom ? '0 !important' : undefined,
+          minHeight: '100%',
           overflow: 'hidden',
         }),
         ...(Array.isArray(sx) ? sx : [sx]),
