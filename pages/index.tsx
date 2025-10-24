@@ -21,7 +21,7 @@ export function HomeView({ HomeMain, mostRecentPosts = [], noSection = false }: 
   }, [])
 
   const main = isClient ? <Main mostRecentPosts={mostRecentPosts}/> : '';
-  const content = noSection ? main : <Section>{main}</Section>;
+  const content = noSection ? main : <Section noPaddingBottom>{main}</Section>;
 
   return <BrandingCssVarsProvider>
     <Head

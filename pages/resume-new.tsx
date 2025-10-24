@@ -235,13 +235,15 @@ export function PdfDoc () {
               </IconButton>
             </Tooltip>            
   return (
-    <div 
-    ref={containerRef} 
+    <div
+    ref={containerRef}
     style={{
-      width: 'unset',
+      width: '100%',
       padding: '0',
       boxSizing: 'border-box',
-      position: 'relative'
+      position: 'relative',
+      display: 'flex',
+      justifyContent: 'center'
     }}
     className="resume-pdf-doc">
       {containerWidth && (
@@ -256,10 +258,10 @@ export function PdfDoc () {
               boxShadow: 'rgba(210, 210, 210, 0.1) 0px 15px 30px 0px',
           }),
           {
-            width: '100%',
-            //maxWidth: containerWidth,
+            width: 'fit-content',
             position: 'relative',
-            margin: '0'
+            margin: '0',
+            padding: 0
           }
         ]}>
        
@@ -270,11 +272,11 @@ export function PdfDoc () {
           options={options}
           >
           {/* Buttons placed outside StyledDoc so they appear above the PDF canvas */}
-          <Box 
-            sx={{ 
+          <Box
+            sx={{
               position: 'relative',
               padding: 0,
-              width: containerWidth
+              width: 'fit-content'
             }}
           >
           {WordButton}
@@ -327,37 +329,4 @@ export function PdfDoc () {
   );
 
 
-}
-
-function Resume() {
-  const windowWidth = useWindowWidth();
-  const isMobile = windowWidth && windowWidth < 768;
-  const maxWidth = 1025;
-
-  return (<Section containerSx={{fontSize: "1.6rem", lineHeight: '2.4rem', display: 'flex', justifyContent: 'center'}}>
-    <Box sx={{
-      margin: isMobile ? 2 : 5,
-      maxWidth: `${maxWidth}px`,
-      width: '100%',
-      px: isMobile ? 1 : 0
-    }}>
-      <Box className={'resume-containers'} sx={{
-        display: "flex",
-        flexDirection: { xs: "column", sm: "row" },
-        alignItems: { xs: "center", sm: "flex-start" },
-        gap: { xs: 2, sm: 0 },
-        width: '100%',
-        maxWidth: '100%',
-        overflow: 'hidden'
-      }}>
-        <PdfDoc/>
-      </Box>
-      <Box sx={{height: '112px'}}/>
-    </Box>
-  </Section>);
-}
-
-
-export default function Home() {
-  return <HomeView HomeMain={Resume}/>;
 }

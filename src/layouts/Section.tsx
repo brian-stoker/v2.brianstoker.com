@@ -37,6 +37,8 @@ const map = {
 const Section = React.forwardRef<HTMLDivElement, SelectionProps>(function Section(props, ref) {
   const { bg = 'white', children, sx, cozy = false, noPaddingBottom = false, noPadding, containerSx, ...other } = props;
 
+  const paddingY = noPadding ?  0 : cozy ? { xs: 6, sm: 5, md: 6 } : { xs: 4, sm: 7, md: 8 };
+
   return (
     <Box
       className={'section'}
@@ -52,15 +54,15 @@ const Section = React.forwardRef<HTMLDivElement, SelectionProps>(function Sectio
                 }),
               }
             : bg === 'none'
-            ? {} 
+            ? {}
             : {
                 background: `linear-gradient(#FFF 0%, ${alpha(theme.palette.primary[100], 0.4)} 100%)`,
                 ...theme.applyDarkStyles({
                     background: `linear-gradient(${theme.palette.primaryDark[900]} 0%, ${alpha(theme.palette.primary[900], 0.2)} 100%)`,
                 }),
               }),
-          
-          py: noPadding ?  0 : cozy ? { xs: 6, sm: 5, md: 6 } : { xs: 4, sm: 7, md: 8 },
+
+          py: paddingY,
           pb: noPaddingBottom ? '0 !important' : undefined,
           overflow: 'hidden',
         }),
@@ -74,6 +76,8 @@ const Section = React.forwardRef<HTMLDivElement, SelectionProps>(function Sectio
             maxWidth: { xs: '100%', lg: undefined },
             mx: 'auto',
             px: { xs: '10px', sm: '10px', md: '10px', lg: 4 },
+            height: '100%',
+            pb: noPaddingBottom ? paddingY : undefined,
           },
           ...(Array.isArray(containerSx) ? containerSx : [containerSx]),
         ]}

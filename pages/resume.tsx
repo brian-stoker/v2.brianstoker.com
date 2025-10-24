@@ -66,28 +66,20 @@ export function PdfDocView({ pdfMinWidth = 900}: { pdfMinWidth?: number }) {
     }`
   }
 
-  return (<Box 
+  return (<Box
     sx={{
-      fontSize: "1.6rem", 
+      fontSize: "1.6rem",
       lineHeight: '2.4rem',
       display: 'flex',
       justifyContent: 'center',
       }}
       className={'pdfShowcase'}
     >
-      <Box sx={{
-        maxWidth: '1300px '
-      }}
-      className={'master-container'}>
-      <Box sx={{minWidth: `${pdfMinWidth}px`, margin: 5, maxWidth: `${maxWidth}px`,}} >
+      <Box sx={{minWidth: `${pdfMinWidth}px`, paddingY: 5, maxWidth: `${maxWidth}px`,}} >
         <style>
           {css(pdfMinWidth)}
         </style>
-        <div className={'resume-containers rounded-sm'} >
-          <PdfDoc />
-        </div>
-        <Box sx={{height: '112px'}}/>
-      </Box>
+        <PdfDoc />
     </Box>
   </Box>)
 }
