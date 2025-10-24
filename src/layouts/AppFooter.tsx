@@ -15,7 +15,7 @@ import DiscordIcon from 'src/icons/DiscordIcon';
 import NextLink from 'next/link';
 import SvgStackOverflow from 'src/icons/SvgStackOverflow';
 import Slack from '../icons/Slack';
-import { NoSsr } from '@mui/material';
+import { Link, NoSsr } from '@mui/material';
 
 interface AppFooterProps {
   stackOverflowUrl?: string;
@@ -75,7 +75,7 @@ export default function AppFooter(props: AppFooterProps) {
                 <span className={'stoked-font'} style={{ fontSize: '24px' }}>BRIAN STOKER</span>
               </NextLink>
             </Box>
-            <Box sx={{ ml: 1 }}>
+            <Box sx={{ ml: '4px' }}>
               <Typography variant="body2" fontWeight="semiBold" gutterBottom>
                 Keep up to date
               </Typography>
@@ -89,11 +89,10 @@ export default function AppFooter(props: AppFooterProps) {
         <Box
           sx={{
             display: 'grid',
-            gridTemplateColumns: '1fr 1fr',
+            gridTemplateColumns: '150px 150px',
+            justifyContent: 'center',
             gridAutoColumns: '1fr 1fr',
-            gap: {xs: 10, sm: 6, md: 4 },
-            px: {xs: 10, sm: 8, md: 4 }, // Equal padding on both sides for mobile/tablet
-            mx: 'auto',
+            gap: '40px',
             width: '100%',
           }}
         >
@@ -124,35 +123,32 @@ export default function AppFooter(props: AppFooterProps) {
             <NextLink prefetch={false} href={ROUTES.resume}>
               Resume
             </NextLink>
-            <NextLink prefetch={false} href={ROUTES.privacyPolicy}>
-              Privacy
-            </NextLink>
           </Box>
 
           <Box sx={{
             display: 'flex',
             flexDirection: 'column',
           }}>
-            <NextLink prefetch={false} href={ROUTES.stokedConsulting}>
+            <a href={ROUTES.stokedConsulting} target="_blank" rel="noopener noreferrer">
               <Typography fontWeight="semiBold" variant="body2" sx={{ mb: 0.5 }}>
                 Stoked Consulting
               </Typography>
-            </NextLink>
-            <NextLink prefetch={false} href={ROUTES.stokedUi}>
+            </a>
+            <a href={ROUTES.stokedUi} target="_blank" rel="noopener noreferrer">
               Stoked UI
-            </NextLink>
-            <NextLink prefetch={false} href={ROUTES.about}>
+            </a>
+            <a href={ROUTES.about} target="_blank" rel="noopener noreferrer">
               About
-            </NextLink>
-            <NextLink prefetch={false} href={ROUTES.vision}>
+            </a>
+            <a href={ROUTES.vision} target="_blank" rel="noopener noreferrer">
               Vision
-            </NextLink>
-            <NextLink prefetch={false} href={ROUTES.support}>
+            </a>
+            <a href={ROUTES.support} target="_blank" rel="noopener noreferrer">
               Support
-            </NextLink>
-            <NextLink target="_blank" href="mailto:b@stokedconsulting.com">
+            </a>
+            <a target="_blank" rel="noopener noreferrer" href="mailto:b@stokedconsulting.com">
               Contact us
-            </NextLink>
+            </a>
           </Box>
         </Box>
       </Box>
