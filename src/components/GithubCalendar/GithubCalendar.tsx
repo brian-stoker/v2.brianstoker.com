@@ -343,7 +343,7 @@ export default function GithubCalendar({ windowMode = false, containerMode = fal
           blockRadius={0}
           blockSize={activityData.blockSize || 12}
           style={{
-            background: `linear-gradient(transparent, ${theme.palette.background.paper})`,
+            background: `linear-gradient(transparent, #0f1214)`,
           }}
           labels={{
             totalCount: activityData.countLabel

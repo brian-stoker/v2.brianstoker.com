@@ -764,7 +764,7 @@ function ProductsPreviews({ products, mostRecentPosts }: { products: Products, m
     rootMargin: '0px 50px',
   });
   const Showcase = products.live[productIndex].showcaseType;
-  const content = products.live[productIndex].name === '.plan' ? mostRecentPosts : products.products?.[productIndex]?.data?.showcaseContent;
+  const content = products.live[productIndex].name === '.plan' ? mostRecentPosts : products.live[productIndex]?.data?.showcaseContent;
   const showcaseProps = { showcaseContent: content};
 
   return (
@@ -796,8 +796,8 @@ function ProductsPreviews({ products, mostRecentPosts }: { products: Products, m
           <Box
             id="title-box"
             sx={{
-              textAlign: { xs: 'center', lg: 'left' },
-              maxWidth: { xs: 340, sm: '100%' },
+              textAlign: { xs: 'center', md: 'left', lg: 'left' },
+              maxWidth: '100%',
             }}
           >
             <Typography

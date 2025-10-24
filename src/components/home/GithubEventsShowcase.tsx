@@ -3,7 +3,6 @@ import GithubEvents from "../GithubEvents/GithubEvents";
 import React from "react";
 
 export default function GithubEventsShowcase({ showcaseContent }: { showcaseContent?: any }): React.JSX.Element | null{
-  console.log('showcaseContent', showcaseContent);
   return <Box sx={{
     display: 'flex',
     width: '100%',
@@ -13,7 +12,7 @@ export default function GithubEventsShowcase({ showcaseContent }: { showcaseCont
       backgroundColor: 'transparent !important',
     },
   }}>
-    <GithubEvents {...showcaseContent} fx='highlight' column />
+    <GithubEvents {...showcaseContent} fx='highlight' />
   </Box>
 }
 

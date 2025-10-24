@@ -59,7 +59,6 @@ const MetadataDisplay = styled(Box)(({ theme }: { theme: Theme }) => ({
   boxShadow: theme.shadows[2],
   padding: theme.spacing(2),
   position: 'sticky',
-  maxHeight: 'calc(100vh - 236px - 75px)',
   display: 'flex',
   flexDirection: 'column',
   overflowY: 'auto',
@@ -1098,12 +1097,12 @@ export default function GithubEvents({ eventsPerPage = EVENT_PAGE_SIZE, hideMeta
       display: 'flex',
       flexDirection: 'column',
       gap: 1,
-      padding: {
-        lg: 0,
-        sx: alwaysColumn || isMobile ? 0 : '0 10px'
+      padding: 0,
+      maxWidth: { xs: '100%', lg: isMobile || alwaysColumn ? '100%' : 'calc(100vw - 20px)'},
+      width: {
+        lg: '1144px',
+        xs: '100%'
       },
-      maxWidth: alwaysColumn ? '100%' : { xs: '100%', lg: isMobile ? '680px' : 'calc(100vw - 20px)'},
-      width: alwaysColumn ? '100%' : {sx: '100%', sm: '100%', md: '100%' },
       margin: alwaysColumn ? 0 : '0 10px'
     }}>
       {!alwaysColumn && <Box sx={{ mb: 1, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
@@ -1170,7 +1169,7 @@ export default function GithubEvents({ eventsPerPage = EVENT_PAGE_SIZE, hideMeta
             flexDirection: 'column',
             position: 'relative',
             border: 0,
-            maxHeight: isMobile || alwaysColumn ? '100vh' : 'auto',
+            maxHeight: 'auto',
           }}
           className="master-container"
         >
@@ -1313,9 +1312,8 @@ export default function GithubEvents({ eventsPerPage = EVENT_PAGE_SIZE, hideMeta
               flexDirection: 'column',
               height: isMobile || alwaysColumn ? 'auto' : '100%',
               position: 'relative',
-              maxHeight: isMobile || alwaysColumn ? '50vh' : 'calc(100vh - 236px - 75px)',
-              maxWidth: isMobile || alwaysColumn ? '100%' : '680px',
-              width: '100%!important',
+              maxWidth: isMobile ? '100%' : '726.8px',
+              width: '100%',
               marginTop: 0,
               overflow: 'hidden',
             }}>
@@ -1362,7 +1360,6 @@ export default function GithubEvents({ eventsPerPage = EVENT_PAGE_SIZE, hideMeta
                   padding: '8px',
                   borderRadius: '4px',
                   overflow: 'auto',
-                  maxHeight: 'calc(100vh - 200px)'
                 }}
               />)}
             </MetadataDisplay>

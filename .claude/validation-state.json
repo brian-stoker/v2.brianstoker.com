@@ -1,5 +1,0 @@
-{
-    "attempt": 2,
-    "timestamp": "2025-10-24T02:56:38Z",
-    "last_prompt": "we will come back to the section spacing.. it isn't right still.. but lets look at the footer links for stoked consulting.. they are all throwing weird errors.. i made them normal a links because they are external and that still didnt' fix it. what gives? its weird.. also getting rror:   x Unexpected token `BrandingCssVarsProvider`. Expected jsx identifier\n\n./pages/bstoked.plan.tsx\n\nError:   x Unexpected token `BrandingCssVarsProvider`. Expected jsx identifier\n     ,-[/Users/stoked/work/brianstoker.com/pages/bstoked.plan.tsx:313:1]\n 310 |   };\n 311 | \n 312 |   return (\n 313 |     <BrandingCssVarsProvider>\n     :      ^^^^^^^^^^^^^^^^^^^^^^^\n 314 |       <Head\n 315 |         title=\"bstoked.plan\"\n 316 |         description=\"notes, musings, and ignorable anecdotes\"\n     `----\n\nCaused by:\n    Syntax Error\n\nImport trace for requested module:\n./pages/bstoked.plan.tsx\n./src/components/home/BlogShowcase.tsx\n./src/products.tsx\n./src/components/home/HeroMain.tsx\n./pages/index.tsx\n"
-  }

@@ -10,12 +10,10 @@ export function WorkView({ pdfMinWidth = 900}: { pdfMinWidth?: number }) {
     <Box>
       <GithubCalendar fx='punch' />
       <Box sx={{ 
-        backgroundColor: theme.palette.background.paper,
         display: 'flex',
         flexDirection: 'row',
         gap: 2,
         justifyContent: 'center',
-        minHeight: 'calc(100vh - 174px)'
       }}>
         <GithubEvents />
       </Box>
