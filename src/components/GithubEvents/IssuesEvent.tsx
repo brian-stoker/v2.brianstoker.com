@@ -46,7 +46,7 @@ export default function IssuesEvent({ event }: IssuesEventProps): React.JSX.Elem
   const [repoOwner, repoName] = event.repo.split('/');
 
   return (
-    <Box >
+    <Box sx={{ display: 'flex', flexDirection: 'column'}}>
       <EventHeader
         eventType={`Issue ${issueAction}`}
         date={event.date}

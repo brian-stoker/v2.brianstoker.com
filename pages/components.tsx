@@ -16,6 +16,7 @@ import {useTranslate} from '@stoked-ui/docs/i18n';
 import {Link} from '@stoked-ui/docs/Link';
 import type {MuiPage} from 'src/MuiPage';
 import materialPages from '../data/pages';
+import Main from 'src/components/Main';
 
 export default function Components() {
   const t = useTranslate();
@@ -57,8 +58,12 @@ export default function Components() {
       />
       <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
         <AppHeader />
-        <main id="main-content" style={{ flex: 1 }}>
-          <Section bg="gradient" sx={{ py: { xs: 2, sm: 4 } }}>
+        <Main 
+          id="main-content" 
+          style={{ 
+            flex: 1, 
+        }}>
+          <Section bg="none" sx={{ py: { xs: 2, sm: 4 } }}>
             <Typography component="h1" variant="h2" sx={{ mb: 4, pl: 1 }}>
               All Components
             </Typography>

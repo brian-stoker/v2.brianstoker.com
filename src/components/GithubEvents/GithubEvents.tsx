@@ -1103,7 +1103,7 @@ export default function GithubEvents({ eventsPerPage = EVENT_PAGE_SIZE, hideMeta
         sx: alwaysColumn || isMobile ? 0 : '0 10px'
       },
       maxWidth: alwaysColumn ? '100%' : { xs: '100%', lg: isMobile ? '680px' : 'calc(100vw - 20px)'},
-      width: alwaysColumn ? '100%' : {sx: '100%', sm: '100%', md: '100%', lg: '1044px' },
+      width: alwaysColumn ? '100%' : {sx: '100%', sm: '100%', md: '100%' },
       margin: alwaysColumn ? 0 : '0 10px'
     }}>
       {!alwaysColumn && <Box sx={{ mb: 1, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
@@ -1314,7 +1314,7 @@ export default function GithubEvents({ eventsPerPage = EVENT_PAGE_SIZE, hideMeta
               height: isMobile || alwaysColumn ? 'auto' : '100%',
               position: 'relative',
               maxHeight: isMobile || alwaysColumn ? '50vh' : 'calc(100vh - 236px - 75px)',
-              maxWidth: isMobile || alwaysColumn  ? '100%' : '680px',
+              maxWidth: isMobile || alwaysColumn ? '100%' : '680px',
               width: '100%!important',
               marginTop: 0,
               overflow: 'hidden',

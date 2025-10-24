@@ -10,6 +10,7 @@ import AppHeader from "../src/layouts/AppHeader";
 import Hero from "../src/components/home/HeroMain";
 import {BlogPost, getAllBlogPosts} from "../lib/sourcing";
 import Section from 'src/layouts/Section';
+import { default as NextMain } from '../src/components/Main'
 
 export function HomeView({ HomeMain, mostRecentPosts = [], noSection = false }: { mostRecentPosts?: BlogPost[], HomeMain: React.ComponentType<any>, noSection?: boolean }) {
 
@@ -21,7 +22,7 @@ export function HomeView({ HomeMain, mostRecentPosts = [], noSection = false }: 
   }, [])
 
   const main = isClient ? <Main mostRecentPosts={mostRecentPosts}/> : '';
-  const content = noSection ? main : <Section noPaddingBottom>{main}</Section>;
+  const content = noSection ? main : <Section noPaddingBottom bg='none'>{main}</Section>;
 
   return <BrandingCssVarsProvider>
     <Head
@@ -51,9 +52,9 @@ export function HomeView({ HomeMain, mostRecentPosts = [], noSection = false }: 
       </NoSsr>
       <AppHeaderBanner/>
       <AppHeader/>
-      <main id="main-content" style={{ flex: 1 }}>
+      <NextMain id="main-content" style={{ flex: 1 }}>
         {content}
-      </main>
+      </NextMain>
       <Divider/>
       <AppFooter/>
     </div>

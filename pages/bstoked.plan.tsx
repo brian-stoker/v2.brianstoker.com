@@ -29,7 +29,8 @@ import {BlogPost, getAllBlogPosts} from "../lib/sourcing";
 import generateRssFeed from "../scripts/generateRSSFeed";
 import SectionHeadline from "../src/components/typography/SectionHeadline";
 import HeroEnd from "../src/components/home/HeroEnd";
-  
+import Main from '../src/components/Main'
+
 export const getStaticProps = async () => {
   const data = await getAllBlogPosts();
   generateRssFeed(data.allBlogPosts);
@@ -240,13 +241,6 @@ export function PostPreviewBox({post, size = 'default' }: {post: BlogPost, size?
 
 const PAGE_SIZE = 7;
 
-const MainStyled = styled('main')(({ theme }) => ({
-  background:  `linear-gradient(#FFF 0%, ${alpha(theme.palette.primary[100], 0.4)} 100%)`,
-    ...theme.applyDarkStyles({
-        background: `linear-gradient(${theme.palette.primaryDark[900]} 0%, ${alpha(theme.palette.primary[900], 0.05)} 100%)`,
-    }),
-}));
-
 export default function Blog(props: InferGetStaticPropsType<typeof getStaticProps>) {
   const router = useRouter();
   const postListRef = React.useRef<HTMLDivElement | null>(null);
@@ -318,7 +312,7 @@ export default function Blog(props: InferGetStaticPropsType<typeof getStaticProp
         disableAlternateLocale
       />
       <AppHeader />
-      <MainStyled id="main-content" style={{ flex: 1 }}>
+      <Main id="main-content" style={{ flex: 1 }}>
         <Box 
           sx={(theme) => ({
           })}>
@@ -516,7 +510,7 @@ export default function Blog(props: InferGetStaticPropsType<typeof getStaticProp
             </Container>
           </Section>
         </Box>
-      </MainStyled>
+      </Main>
       <Divider />
       <AppFooter />
     </BrandingCssVarsProvider>

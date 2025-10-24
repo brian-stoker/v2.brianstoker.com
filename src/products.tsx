@@ -770,9 +770,11 @@ function ProductsPreviews({ products, mostRecentPosts }: { products: Products, m
   return (
     <Section
      id="productPreviews"
-     bg="gradient"
+     bg="none"
      ref={ref}
-     containerSx={{  width: { sx: '100%', lg: '1144px' }, justifyItems: 'center' }}
+     className="section-product"
+     sx={{ padding: 0, margin: '0 10px' }}
+     containerSx={{  width: { sx: '100%', md: '1144px' }, padding: '0!important', justifyItems: 'center' }}
     >
       <Box
         id="grid-first"
@@ -780,20 +782,21 @@ function ProductsPreviews({ products, mostRecentPosts }: { products: Products, m
           display: 'flex',
           flexDirection: { xs: 'column', md: 'row' },
           gap: { xs: 0, md: '24px', lg: '24px' },
+          marginLeft: {xs: '10px', lg: 0 },
+          marginRight: {xs: '10px', lg: 0 },
           width: '100%',
         }}
       >
         <Box
           id="grid-second"
           sx={{
-            width: { xs: '100%', md: '50%', lg: '425px' },
             flexShrink: 0,
           }}
         >
           <Box
             id="title-box"
             sx={{
-              textAlign: { xs: 'center', md: 'left' },
+              textAlign: { xs: 'center', lg: 'left' },
               maxWidth: { xs: 340, sm: '100%' },
             }}
           >
