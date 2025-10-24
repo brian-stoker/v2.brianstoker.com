@@ -53,37 +53,37 @@ export default function AppFooter(props: AppFooterProps) {
           },
         }}
       >
-        <Box>
-          <Box
-            component={NextLink}
-            prefetch={false}
-            href="/"
-            aria-label="Go to homepage"
-            sx={{
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: '4px',
-              textDecoration: 'none',
-              mb: { xs: 2, sm: 4, md: 6 },
-              '& span': {
-                transition: 'color 0.3s ease',
-              },
-              '&:hover span': {
-                color: '#fff',
-              }
-            }}
-          >
-            <SvgBsLogotype height={28} />
-            <span className={'stoked-font'} style={{ fontSize: '24px' }}>BRIAN STOKER</span>
-          </Box>
-          <Box sx={{ ml: 1 }}>
-            <Typography variant="body2" fontWeight="semiBold" gutterBottom>
-              Keep up to date
-            </Typography>
-            <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
-              Join the newsletter for plan updates. No spam ever.
-            </Typography>
-            <EmailSubscribe sx={{ mt: 2, mx: { xs: 'auto', sm: 0 }, maxWidth: 360 }} />
+        <Box sx={{ justifyItems: 'center' }}>
+          <Box sx={{ width: '350px', justifyContent: 'center', flexDirection: 'column' }}>
+            <Box
+              sx={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '4px',
+                mb: { xs: 2, sm: 4, md: 6 },
+                '& span': {
+                  transition: 'color 0.3s ease',
+                },
+                '&:hover span': {
+                  color: '#fff',
+                }
+              }}
+            >
+                
+              <NextLink href={'/'} aria-label="Go to homepage" style={{alignItems: 'center', display: 'flex' }}>
+                <SvgBsLogotype height={28} />
+                <span className={'stoked-font'} style={{ fontSize: '24px' }}>BRIAN STOKER</span>
+              </NextLink>
+            </Box>
+            <Box sx={{ ml: 1 }}>
+              <Typography variant="body2" fontWeight="semiBold" gutterBottom>
+                Keep up to date
+              </Typography>
+              <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
+                Join the newsletter for plan updates. No spam ever.
+              </Typography>
+              <EmailSubscribe sx={{ mt: 2, mx: { xs: 'auto', sm: 0 }, maxWidth: 360 }} />
+            </Box>
           </Box>
         </Box>
         <Box

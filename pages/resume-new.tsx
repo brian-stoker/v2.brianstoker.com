@@ -238,8 +238,7 @@ export function PdfDoc () {
     <div 
     ref={containerRef} 
     style={{
-      width: '100%',
-      maxWidth: '100%',
+      width: 'unset',
       padding: '0',
       boxSizing: 'border-box',
       position: 'relative'
@@ -271,8 +270,16 @@ export function PdfDoc () {
           options={options}
           >
           {/* Buttons placed outside StyledDoc so they appear above the PDF canvas */}
+          <Box 
+            sx={{ 
+              position: 'relative',
+              padding: 0,
+              width: containerWidth
+            }}
+          >
           {WordButton}
           {PdfButton}
+          </Box>
         <ButtonGroup
         variant="outlined"
         aria-label="Basic button group"
