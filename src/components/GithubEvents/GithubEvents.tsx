@@ -1100,7 +1100,7 @@ export default function GithubEvents({ eventsPerPage = EVENT_PAGE_SIZE, hideMeta
       padding: 0,
       maxWidth: { xs: '100%', lg: isMobile || alwaysColumn ? '100%' : 'calc(100vw - 20px)'},
       width: {
-        lg: '1144px',
+        lg: alwaysColumn ?  '100%' : '1144px',
         xs: '100%'
       },
       margin: alwaysColumn ? 0 : '0 10px'
