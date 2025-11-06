@@ -114,7 +114,7 @@ export default function Components() {
               ))}
             </Box>
           </Section>
-        </main>
+        </Main>
         <Divider />
         <AppFooter />
       </div>

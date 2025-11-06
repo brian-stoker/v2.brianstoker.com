@@ -276,11 +276,11 @@ export function PdfDoc () {
             sx={{
               position: 'relative',
               padding: 0,
-              width: 'fit-content'
+              width: '100%'
             }}
           >
-          {WordButton}
-          {PdfButton}
+            {WordButton}
+            {PdfButton}
           </Box>
         <ButtonGroup
         variant="outlined"
@@ -327,6 +327,6 @@ export function PdfDoc () {
       )}
     </div>
   );
-
-
 }
+
+export default PdfDoc;

@@ -1,0 +1,52 @@
+{
+  "version": "1.0.0",
+  "llms": {
+    "claude": {
+      "enabled": true,
+      "maxConcurrentIssues": 1,
+      "cliPath": "/Users/stoked/.claude/local/claude",
+      "hooksEnabled": true,
+      "cliArgs": [
+        "--dangerously-skip-permissions"
+      ]
+    },
+    "gemini": {
+      "enabled": false,
+      "maxConcurrentIssues": 1,
+      "hooksEnabled": false
+    },
+    "codex": {
+      "enabled": false,
+      "maxConcurrentIssues": 1,
+      "hooksEnabled": false
+    }
+  },
+  "github": {
+    "owner": "brian-stoker",
+    "repo": "v2.brianstoker.com",
+    "labels": [
+      "autonomous-ready"
+    ],
+    "excludeLabels": [
+      "wontfix",
+      "duplicate"
+    ]
+  },
+  "worktree": {
+    "baseDir": "..",
+    "namingPattern": "{projectName}-issue-{number}",
+    "branchPrefix": "feature/issue-",
+    "cleanup": {
+      "onComplete": false,
+      "onError": false
+    }
+  },
+  "requirements": {
+    "testingRequired": true,
+    "ciMustPass": true,
+    "prTemplateRequired": false
+  },
+  "logging": {
+    "level": "info"
+  }
+}

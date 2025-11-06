@@ -3,6 +3,7 @@ import Box from "@mui/material/Box";
 import {HomeView} from "./index";
 import ImageList from '@mui/material/ImageList';
 import ImageListItem from '@mui/material/ImageListItem';
+import LightboxGallery from "src/components/LightboxGallery";
 
 const photography: string[] = [
   '/static/photography/alter.jpg',
@@ -18,6 +19,8 @@ const photography: string[] = [
 ]
 
 function MainView() {
+  const [openIndex, setOpenIndex] = React.useState<number | null>(null);
+
   return (
     <Box sx={{
       fontSize: "1.6rem",
@@ -25,18 +28,33 @@ function MainView() {
       display: 'flex', justifyContent: 'center',
       margin: 10,
     }}>
-      <ImageList variant="masonry" cols={3} gap={8}>
+      <ImageList variant="masonry" cols={3} gap={8} sx={{ maxWidth: 1120, overflow: 'visible'  }}>
         {photography.map((item, index) => (
           <ImageListItem key={index}>
             <img
               srcSet={`${item}?w=248&fit=crop&auto=format&dpr=2 2x`}
               src={`${item}`}
-              alt={'art image'}
+              alt={`photography ${index}`}
               loading="lazy"
+              onClick={() => setOpenIndex(index)}
+              style={{
+                cursor: "pointer",
+                borderRadius: 8,
+                transition: "transform 0.2s ease",
+              }}
+              onMouseEnter={(e) => (e.currentTarget.style.transform = "scale(1.02)")}
+              onMouseLeave={(e) => (e.currentTarget.style.transform = "scale(1)")}
             />
           </ImageListItem>
         ))}
       </ImageList>
+
+      {/* Lightbox */}
+      <LightboxGallery
+        items={photography.map((src) => ({ src, type: "image" }))}
+        openIndex={openIndex}
+        onClose={() => setOpenIndex(null)}
+      />
     </Box>
   )
 }

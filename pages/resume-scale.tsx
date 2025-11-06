@@ -236,6 +236,6 @@ export function PdfDoc () {
       )}
     </div>
   );
-
-
 }
+
+export default PdfDoc;
