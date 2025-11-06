@@ -107,8 +107,8 @@ export function PdfDoc () {
         const parent = containerRef.current.parentElement;
         const parentWidth = parent ? parent.getBoundingClientRect().width : window.innerWidth;
 
-        // More aggressive padding to ensure it fits
-        const padding = 64; // 32px on each side minimum
+        // Adjust padding as needed
+        const padding = 0; // Can be changed without causing loops now
         const maxWidth = Math.min(
           parentWidth - padding,
           window.innerWidth - padding,
@@ -124,7 +124,13 @@ export function PdfDoc () {
     const resizeObserver = new ResizeObserver(() => {
       const width = calculateWidth();
       if (width && width > 0) {
-        setContainerWidth(width);
+        // Only update if the change is significant (> 5px) to prevent resize loops
+        setContainerWidth(prevWidth => {
+          if (!prevWidth || Math.abs(width - prevWidth) > 5) {
+            return width;
+          }
+          return prevWidth;
+        });
       }
     });
 
@@ -141,7 +147,13 @@ export function PdfDoc () {
     const handleResize = () => {
       const width = calculateWidth();
       if (width && width > 0) {
-        setContainerWidth(width);
+        // Only update if the change is significant (> 5px) to prevent resize loops
+        setContainerWidth(prevWidth => {
+          if (!prevWidth || Math.abs(width - prevWidth) > 5) {
+            return width;
+          }
+          return prevWidth;
+        });
       }
     };
     window.addEventListener('resize', handleResize);
