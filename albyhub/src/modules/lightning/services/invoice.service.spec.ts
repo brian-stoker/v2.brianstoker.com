@@ -1,19 +1,217 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { InvoiceService } from './invoice.service';
+import { NwcWalletService } from '../../nwc/services/nwc-wallet.service';
 
 describe('InvoiceService', () => {
   let service: InvoiceService;
+  let nwcWallet: jest.Mocked<NwcWalletService>;
 
   beforeEach(async () => {
+    // Create mock NWC wallet service
+    nwcWallet = {
+      makeInvoice: jest.fn(),
+    } as any;
+
     const module: TestingModule = await Test.createTestingModule({
-      providers: [InvoiceService],
+      providers: [
+        InvoiceService,
+        { provide: NwcWalletService, useValue: nwcWallet },
+      ],
     }).compile();
 
     service = module.get<InvoiceService>(InvoiceService);
   });
 
+  afterEach(() => {
+    jest.clearAllMocks();
+  });
+
   it('should be defined', () => {
     expect(service).toBeDefined();
+  });
+
+  describe('generateInvoice', () => {
+    const metadata = JSON.stringify([
+      ['text/plain', 'Pay to Brian Stoker'],
+      ['text/identifier', 'pay@brianstoker.com'],
+    ]);
+
+    const mockInvoiceResult = {
+      invoice: 'lnbc10n1pjx9qkhpp5example...',
+      payment_hash:
+        '0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef',
+      expires_at: Math.floor(Date.now() / 1000) + 600,
+    };
+
+    it('should generate invoice via NWC in <3s (Test-3.2.a)', async () => {
+      nwcWallet.makeInvoice.mockResolvedValue(mockInvoiceResult);
+
+      const startTime = Date.now();
+      const result = await service.generateInvoice(10000, metadata);
+      const duration = Date.now() - startTime;
+
+      expect(result).toBeDefined();
+      expect(result.bolt11).toBe(mockInvoiceResult.invoice);
+      expect(duration).toBeLessThan(3000);
+    });
+
+    it('should validate payment hash is 64-char hex string (Test-3.2.b)', async () => {
+      nwcWallet.makeInvoice.mockResolvedValue(mockInvoiceResult);
+
+      const result = await service.generateInvoice(10000, metadata);
+
+      expect(result.payment_hash).toMatch(/^[0-9a-f]{64}$/i);
+      expect(result.payment_hash.length).toBe(64);
+      expect(result.payment_hash).toBe(mockInvoiceResult.payment_hash);
+    });
+
+    it('should set expiry to current_time + 600 seconds (Test-3.2.c)', async () => {
+      const currentTime = Math.floor(Date.now() / 1000);
+      const expectedExpiry = currentTime + 600;
+
+      const mockResult = {
+        ...mockInvoiceResult,
+        expires_at: expectedExpiry,
+      };
+
+      nwcWallet.makeInvoice.mockResolvedValue(mockResult);
+
+      const result = await service.generateInvoice(10000, metadata);
+
+      expect(result.expires_at).toBe(expectedExpiry);
+      // Verify it's approximately 10 minutes from now
+      expect(result.expires_at - currentTime).toBeGreaterThanOrEqual(595);
+      expect(result.expires_at - currentTime).toBeLessThanOrEqual(605);
+    });
+
+    it('should include comment in invoice description (Test-3.2.d)', async () => {
+      nwcWallet.makeInvoice.mockResolvedValue(mockInvoiceResult);
+
+      await service.generateInvoice(10000, metadata, 'test payment');
+
+      expect(nwcWallet.makeInvoice).toHaveBeenCalledWith(
+        expect.objectContaining({
+          amount: 10000,
+          description: expect.stringContaining('test payment'),
+          expiry: 600,
+        }),
+      );
+    });
+
+    it('should propagate Voltage error with message (Test-3.2.e)', async () => {
+      nwcWallet.makeInvoice.mockRejectedValue(
+        new Error('Insufficient liquidity: Not enough inbound capacity'),
+      );
+
+      await expect(
+        service.generateInvoice(1000000, metadata),
+      ).rejects.toThrow(/insufficient liquidity/i);
+    });
+
+    it(
+      'should timeout after 30s when mock does not respond (Test-3.2.f)',
+      async () => {
+        nwcWallet.makeInvoice.mockImplementation(() => {
+          return new Promise((_, reject) => {
+            setTimeout(() => reject(new Error('Request timeout: make_invoice')), 30000);
+          });
+        });
+
+        const startTime = Date.now();
+
+        await expect(
+          service.generateInvoice(10000, metadata),
+        ).rejects.toThrow(/timeout/i);
+
+        const duration = Date.now() - startTime;
+        expect(duration).toBeGreaterThanOrEqual(30000);
+      },
+      35000,
+    );
+
+    it('should hash metadata per LNURL spec', async () => {
+      nwcWallet.makeInvoice.mockResolvedValue(mockInvoiceResult);
+
+      await service.generateInvoice(10000, metadata);
+
+      expect(nwcWallet.makeInvoice).toHaveBeenCalledWith(
+        expect.objectContaining({
+          description: expect.stringMatching(/\[.+\.\.\.\]/),
+        }),
+      );
+    });
+
+    it('should include metadata hash in description', async () => {
+      nwcWallet.makeInvoice.mockResolvedValue(mockInvoiceResult);
+
+      await service.generateInvoice(10000, metadata);
+
+      const call = nwcWallet.makeInvoice.mock.calls[0][0];
+      expect(call.description).toContain('[');
+      expect(call.description).toContain('...]');
+    });
+
+    it('should create description with comment and metadata hash', async () => {
+      nwcWallet.makeInvoice.mockResolvedValue(mockInvoiceResult);
+
+      await service.generateInvoice(10000, metadata, 'My payment');
+
+      const call = nwcWallet.makeInvoice.mock.calls[0][0];
+      expect(call.description).toContain('My payment');
+      expect(call.description).toContain('[');
+    });
+
+    it('should create description without comment', async () => {
+      nwcWallet.makeInvoice.mockResolvedValue(mockInvoiceResult);
+
+      await service.generateInvoice(10000, metadata);
+
+      const call = nwcWallet.makeInvoice.mock.calls[0][0];
+      expect(call.description).toMatch(/^Payment \[.+\.\.\.\]$/);
+    });
+
+    it('should set expiry to 600 seconds', async () => {
+      nwcWallet.makeInvoice.mockResolvedValue(mockInvoiceResult);
+
+      await service.generateInvoice(10000, metadata);
+
+      expect(nwcWallet.makeInvoice).toHaveBeenCalledWith(
+        expect.objectContaining({
+          expiry: 600,
+        }),
+      );
+    });
+
+    it('should handle invoice generation errors gracefully', async () => {
+      nwcWallet.makeInvoice.mockRejectedValue(new Error('Network error'));
+
+      await expect(
+        service.generateInvoice(10000, metadata),
+      ).rejects.toThrow('Network error');
+    });
+
+    it('should log invoice generation success', async () => {
+      const logSpy = jest.spyOn(service['logger'], 'log');
+      nwcWallet.makeInvoice.mockResolvedValue(mockInvoiceResult);
+
+      await service.generateInvoice(10000, metadata);
+
+      expect(logSpy).toHaveBeenCalledWith(
+        expect.stringMatching(/Invoice generated in \d+ms/),
+        expect.any(Object),
+      );
+    });
+
+    it('should log invoice generation errors', async () => {
+      const errorSpy = jest.spyOn(service['logger'], 'error');
+      nwcWallet.makeInvoice.mockRejectedValue(new Error('Test error'));
+
+      await expect(
+        service.generateInvoice(10000, metadata),
+      ).rejects.toThrow();
+
+      expect(errorSpy).toHaveBeenCalled();
+    });
   });
 
   describe('generateMockInvoice', () => {

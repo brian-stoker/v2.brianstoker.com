@@ -15,6 +15,7 @@ describe('SecretsService', () => {
     VOLTAGE_API_KEY: 'test-api-key',
     VOLTAGE_MACAROON: 'test-macaroon',
     VOLTAGE_CONNECTION_URL: 'https://voltage.example.com',
+    VOLTAGE_WEBHOOK_SECRET: 'test-webhook-secret',
     NOSTR_PRIVATE_KEY: 'test-private-key-hex',
     NOSTR_PUBLIC_KEY: 'test-public-key-hex',
     NWC_RELAY_URL: 'wss://relay.example.com',
@@ -182,7 +183,7 @@ describe('SecretsService', () => {
       service = module.get<SecretsService>(SecretsService);
 
       await expect(service.getSecrets()).rejects.toThrow(
-        'Missing required secrets in albyhub/secrets/test: VOLTAGE_CONNECTION_URL, NOSTR_PRIVATE_KEY, NOSTR_PUBLIC_KEY, NWC_RELAY_URL',
+        'Missing required secrets in albyhub/secrets/test: VOLTAGE_CONNECTION_URL, VOLTAGE_WEBHOOK_SECRET, NOSTR_PRIVATE_KEY, NOSTR_PUBLIC_KEY, NWC_RELAY_URL',
       );
     });
 

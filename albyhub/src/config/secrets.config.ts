@@ -6,6 +6,7 @@ export interface AppSecrets {
     apiKey: string;
     macaroon: string;
     connectionUrl: string;
+    webhookSecret: string;
   };
   nostr: {
     privateKey: string;
@@ -123,6 +124,7 @@ export class SecretsService implements OnModuleInit {
       if (!secretData.VOLTAGE_API_KEY) missingSecrets.push('VOLTAGE_API_KEY');
       if (!secretData.VOLTAGE_MACAROON) missingSecrets.push('VOLTAGE_MACAROON');
       if (!secretData.VOLTAGE_CONNECTION_URL) missingSecrets.push('VOLTAGE_CONNECTION_URL');
+      if (!secretData.VOLTAGE_WEBHOOK_SECRET) missingSecrets.push('VOLTAGE_WEBHOOK_SECRET');
       if (!secretData.NOSTR_PRIVATE_KEY) missingSecrets.push('NOSTR_PRIVATE_KEY');
       if (!secretData.NOSTR_PUBLIC_KEY) missingSecrets.push('NOSTR_PUBLIC_KEY');
       if (!secretData.NWC_RELAY_URL) missingSecrets.push('NWC_RELAY_URL');
@@ -140,6 +142,7 @@ export class SecretsService implements OnModuleInit {
           apiKey: secretData.VOLTAGE_API_KEY,
           macaroon: secretData.VOLTAGE_MACAROON,
           connectionUrl: secretData.VOLTAGE_CONNECTION_URL,
+          webhookSecret: secretData.VOLTAGE_WEBHOOK_SECRET,
         },
         nostr: {
           privateKey: secretData.NOSTR_PRIVATE_KEY,

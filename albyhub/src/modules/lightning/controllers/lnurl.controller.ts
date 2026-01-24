@@ -131,8 +131,8 @@ export class LnurlController {
         ['text/identifier', 'pay@brianstoker.com'],
       ]);
 
-      // Generate mock invoice
-      const invoice = this.invoiceService.generateMockInvoice(
+      // Generate real invoice via Voltage API
+      const invoiceResult = await this.invoiceService.generateInvoice(
         amount,
         metadata,
         comment,
@@ -145,7 +145,7 @@ export class LnurlController {
 
       // Return LUD-06 compliant response
       const response: LnurlCallbackResponse = {
-        pr: invoice,
+        pr: invoiceResult.bolt11,
         routes: [],
         successAction: {
           tag: 'message',

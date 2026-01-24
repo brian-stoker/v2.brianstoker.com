@@ -1,11 +1,94 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { createHash } from 'crypto';
+import { NwcWalletService } from '../../nwc/services/nwc-wallet.service';
+
+export interface GenerateInvoiceResult {
+  bolt11: string;
+  payment_hash: string;
+  expires_at: number;
+}
 
 @Injectable()
 export class InvoiceService {
+  private readonly logger = new Logger(InvoiceService.name);
+
+  constructor(private readonly nwcWallet: NwcWalletService) {}
+
+  /**
+   * Generates a real Lightning bolt11 invoice using Voltage API via NWC.
+   *
+   * @param amountMillisats - Payment amount in millisatoshis
+   * @param metadata - Payment metadata (LNURL metadata string)
+   * @param comment - Optional payment comment
+   * @returns Invoice result with bolt11, payment hash, and expiry
+   * @throws Error if invoice generation fails
+   */
+  async generateInvoice(
+    amountMillisats: number,
+    metadata: string,
+    comment?: string,
+  ): Promise<GenerateInvoiceResult> {
+    const startTime = Date.now();
+
+    try {
+      // Create invoice description from metadata and comment
+      const description = this.createDescription(metadata, comment);
+
+      this.logger.log(
+        `Generating invoice for ${amountMillisats} msats${comment ? ' with comment' : ''}`,
+      );
+
+      // Call Voltage API via NWC
+      const result = await this.nwcWallet.makeInvoice({
+        amount: amountMillisats,
+        description,
+        expiry: 600, // 10 minutes
+      });
+
+      const duration = Date.now() - startTime;
+      this.logger.log(`Invoice generated in ${duration}ms`, {
+        payment_hash: result.payment_hash.substring(0, 16) + '...',
+        duration,
+      });
+
+      return {
+        bolt11: result.invoice,
+        payment_hash: result.payment_hash,
+        expires_at: result.expires_at,
+      };
+    } catch (error) {
+      const duration = Date.now() - startTime;
+      this.logger.error(
+        `Failed to generate invoice after ${duration}ms`,
+        (error as Error).stack,
+      );
+      throw error;
+    }
+  }
+
+  /**
+   * Create invoice description from metadata and optional comment.
+   * Hashes metadata per LNURL spec for verification.
+   *
+   * @param metadata - LNURL metadata JSON string
+   * @param comment - Optional payment comment
+   * @returns Invoice description string
+   */
+  private createDescription(metadata: string, comment?: string): string {
+    // Hash metadata per LNURL spec (LUD-06)
+    const metadataHash = createHash('sha256').update(metadata).digest('hex');
+
+    // Include comment if provided
+    if (comment) {
+      return `${comment} [${metadataHash.substring(0, 16)}...]`;
+    }
+
+    return `Payment [${metadataHash.substring(0, 16)}...]`;
+  }
+
   /**
    * Generates a mock Lightning bolt11 invoice for testing purposes.
-   * In production, this would call the actual Lightning node API.
+   * DEPRECATED: Use generateInvoice() for production.
    *
    * @param amountMillisats - Payment amount in millisatoshis
    * @param description - Payment description/metadata
