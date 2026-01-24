@@ -79,6 +79,55 @@ pnpm test:cov
 pnpm test:e2e
 ```
 
+## Deployment
+
+The application is deployed to AWS Lambda using SST (Serverless Stack).
+
+### Prerequisites
+
+- AWS credentials configured
+- SST installed globally or in the parent project
+- Environment variables set (see root `.env`)
+
+### Deploy to AWS
+
+From the project root (not albyhub directory):
+
+```bash
+# Deploy to development
+sst deploy
+
+# Deploy to production
+sst deploy --stage production
+```
+
+### Lambda Configuration
+
+- Runtime: Node.js 20.x
+- Memory: 512 MB
+- Timeout: 29 seconds
+- Architecture: arm64 (AWS Graviton2)
+
+### Health Check
+
+The health endpoint is available at:
+
+- Development: `https://<api-id>.execute-api.us-east-1.amazonaws.com/health`
+- Production: `https://albyhub.brianstoker.com/health`
+
+### Monitoring
+
+Logs are available in CloudWatch with 30-day retention:
+- Log Group: `/aws/lambda/AlbyHubFunction`
+
+### Environment Variables in Lambda
+
+The following environment variables are automatically injected:
+
+- `NODE_ENV`: production or development (based on stage)
+- `APP_VERSION`: Application version
+- `LOG_LEVEL`: warn (production) or debug (development)
+
 ## Development
 
 ### Global Exception Filter

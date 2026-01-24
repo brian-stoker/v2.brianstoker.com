@@ -17,7 +17,7 @@ export default $config({
   async run() {
     // Apply our externals configuration to SST's build process
     process.env.SST_ESBUILD_CONFIG_TRANSFORMER = "addExternals";
-    const { createSite, createApi, getDomainInfo, createGithubSyncCron } = await import("./stacks");
+    const { createSite, createApi, getDomainInfo, createGithubSyncCron, createAlbyHubApi } = await import("./stacks");
     process.env.SST_STAGE = $app.stage || "local";
 
     const domainInfo = getDomainInfo(process.env.ROOT_DOMAIN!, $app.stage);
@@ -30,9 +30,14 @@ export default $config({
 
     const githubSyncCron = createGithubSyncCron(siteUrl);
 
+    // Create AlbyHub API
+    const albyHub = createAlbyHubApi(domainInfo);
+
     return {
       ...web,
       cron: githubSyncCron.name,
+      albyHubApi: albyHub.api.url,
+      albyHubFunction: albyHub.function.name,
     };
   },
 });
