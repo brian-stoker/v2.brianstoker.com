@@ -31,6 +31,55 @@ albyhub/
 - Retry logic with exponential backoff for AWS API failures
 - Strict TypeScript configuration
 - Comprehensive test coverage
+- LNURL-pay Lightning Address support (LUD-06, LUD-16 compliant)
+
+## API Endpoints
+
+### Lightning Address (LNURL-pay)
+
+#### GET /.well-known/lnurlp/pay
+
+Returns LNURL-pay metadata for Lightning Address (LUD-16 compliant).
+
+**Response:**
+```json
+{
+  "callback": "https://albyhub.brianstoker.com/lnurl/callback",
+  "minSendable": 1000,
+  "maxSendable": 100000000,
+  "metadata": "[[\"text/plain\",\"Pay to Brian Stoker\"],[\"text/identifier\",\"pay@brianstoker.com\"]]",
+  "tag": "payRequest",
+  "commentAllowed": 280
+}
+```
+
+#### GET /lnurl/callback
+
+Generates a Lightning invoice for payment (LUD-06 compliant).
+
+**Query Parameters:**
+- `amount` (required): Payment amount in millisatoshis (integer, min: 1000, max: 100000000)
+- `comment` (optional): Payment comment/memo (string, max: 280 characters)
+
+**Success Response (200):**
+```json
+{
+  "pr": "lnbc10n1234567890p...",
+  "routes": [],
+  "successAction": {
+    "tag": "message",
+    "message": "Payment received! Thank you."
+  }
+}
+```
+
+**Error Response (400):**
+```json
+{
+  "status": "ERROR",
+  "reason": "Amount 500 is below minimum sendable 1000"
+}
+```
 
 ## Environment Variables
 
@@ -43,6 +92,12 @@ PORT=3000
 # AWS Secrets Manager Configuration
 SECRETS_MANAGER_NAME=albyhub/secrets
 AWS_REGION=us-east-1
+
+# LNURL Configuration (optional)
+MIN_SENDABLE=1000              # Minimum payment amount in millisats
+MAX_SENDABLE=100000000         # Maximum payment amount in millisats (100k sats)
+COMMENT_ALLOWED=280            # Max comment length
+LNURL_CALLBACK_URL=https://albyhub.brianstoker.com/lnurl/callback
 ```
 
 ## Secrets Management

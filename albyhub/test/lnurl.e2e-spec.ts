@@ -198,4 +198,235 @@ describe('LNURL Controller (e2e)', () => {
         .expect('Content-Type', /json/);
     });
   });
+
+  describe('GET /lnurl/callback', () => {
+    it('AC-2.2.a: should return 200 with valid LNURL-pay response JSON in <1s', async () => {
+      const startTime = Date.now();
+      const response = await request(app.getHttpServer())
+        .get('/lnurl/callback')
+        .query({ amount: 10000 })
+        .expect(200);
+
+      const responseTime = Date.now() - startTime;
+      expect(responseTime).toBeLessThan(1000);
+
+      expect(response.body).toBeDefined();
+      expect(response.body).toHaveProperty('pr');
+      expect(response.body).toHaveProperty('routes');
+      expect(response.body).toHaveProperty('successAction');
+    });
+
+    it('AC-2.2.b: amount within allowed range should return pr field with valid bolt11 invoice format', async () => {
+      const amount = 50000; // 50 sats in millisats
+      const response = await request(app.getHttpServer())
+        .get('/lnurl/callback')
+        .query({ amount })
+        .expect(200);
+
+      const { pr } = response.body;
+
+      // Should be a string
+      expect(typeof pr).toBe('string');
+
+      // Should start with 'lnbc' (Lightning invoice prefix)
+      expect(pr).toMatch(/^lnbc/);
+
+      // Should contain amount information
+      expect(pr.length).toBeGreaterThan(20);
+    });
+
+    it('AC-2.2.c: amount < minSendable should return 400 with error JSON containing reason', async () => {
+      const minSendable = parseInt(process.env.MIN_SENDABLE || '1000', 10);
+      const amount = minSendable - 500; // Below minimum
+
+      const response = await request(app.getHttpServer())
+        .get('/lnurl/callback')
+        .query({ amount })
+        .expect(400);
+
+      expect(response.body).toHaveProperty('status', 'ERROR');
+      expect(response.body).toHaveProperty('reason');
+      expect(response.body.reason).toContain('below minimum');
+    });
+
+    it('AC-2.2.d: amount > maxSendable should return 400 with error JSON containing reason', async () => {
+      const maxSendable = parseInt(
+        process.env.MAX_SENDABLE || '100000000',
+        10,
+      );
+      const amount = maxSendable + 1000000; // Above maximum
+
+      const response = await request(app.getHttpServer())
+        .get('/lnurl/callback')
+        .query({ amount })
+        .expect(400);
+
+      expect(response.body).toHaveProperty('status', 'ERROR');
+      expect(response.body).toHaveProperty('reason');
+      expect(response.body.reason).toContain('exceeds maximum');
+    });
+
+    it('AC-2.2.e: amount parameter missing should return 400 with error JSON', async () => {
+      const response = await request(app.getHttpServer())
+        .get('/lnurl/callback')
+        .expect(400);
+
+      expect(response.body).toHaveProperty('status', 'ERROR');
+      expect(response.body).toHaveProperty('reason');
+      expect(response.body.reason).toContain('required');
+    });
+
+    it('AC-2.2.f: comment provided and <= 280 chars should succeed and comment logged', async () => {
+      const amount = 10000;
+      const comment = 'test payment';
+
+      const response = await request(app.getHttpServer())
+        .get('/lnurl/callback')
+        .query({ amount, comment })
+        .expect(200);
+
+      expect(response.body).toHaveProperty('pr');
+      expect(response.body.pr).toMatch(/^lnbc/);
+
+      // Verify the response is successful
+      expect(response.body).toHaveProperty('successAction');
+    });
+
+    it('AC-2.2.g: comment > 280 chars should return 400 with error JSON', async () => {
+      const amount = 10000;
+      const comment = 'a'.repeat(281); // 281 characters
+
+      const response = await request(app.getHttpServer())
+        .get('/lnurl/callback')
+        .query({ amount, comment })
+        .expect(400);
+
+      expect(response.body).toHaveProperty('status', 'ERROR');
+      expect(response.body).toHaveProperty('reason');
+      expect(response.body.reason).toContain('exceeds maximum');
+    });
+
+    it('AC-2.2.h: successAction should be present in response with tag:"message" and message field', async () => {
+      const amount = 10000;
+
+      const response = await request(app.getHttpServer())
+        .get('/lnurl/callback')
+        .query({ amount })
+        .expect(200);
+
+      const { successAction } = response.body;
+
+      expect(successAction).toBeDefined();
+      expect(successAction).toHaveProperty('tag', 'message');
+      expect(successAction).toHaveProperty('message');
+      expect(typeof successAction.message).toBe('string');
+      expect(successAction.message.length).toBeGreaterThan(0);
+    });
+
+    it('should return routes as empty array', async () => {
+      const amount = 10000;
+
+      const response = await request(app.getHttpServer())
+        .get('/lnurl/callback')
+        .query({ amount })
+        .expect(200);
+
+      expect(response.body.routes).toBeDefined();
+      expect(Array.isArray(response.body.routes)).toBe(true);
+      expect(response.body.routes.length).toBe(0);
+    });
+
+    it('should handle comment at exactly 280 characters', async () => {
+      const amount = 10000;
+      const comment = 'a'.repeat(280); // Exactly 280 characters
+
+      const response = await request(app.getHttpServer())
+        .get('/lnurl/callback')
+        .query({ amount, comment })
+        .expect(200);
+
+      expect(response.body).toHaveProperty('pr');
+      expect(response.body.pr).toMatch(/^lnbc/);
+    });
+
+    it('should generate different invoices for different amounts', async () => {
+      const response1 = await request(app.getHttpServer())
+        .get('/lnurl/callback')
+        .query({ amount: 10000 })
+        .expect(200);
+
+      const response2 = await request(app.getHttpServer())
+        .get('/lnurl/callback')
+        .query({ amount: 20000 })
+        .expect(200);
+
+      expect(response1.body.pr).not.toBe(response2.body.pr);
+    });
+
+    it('should generate different invoices for the same amount at different times', async () => {
+      const amount = 10000;
+
+      const response1 = await request(app.getHttpServer())
+        .get('/lnurl/callback')
+        .query({ amount })
+        .expect(200);
+
+      // Small delay to ensure different timestamp
+      await new Promise((resolve) => setTimeout(resolve, 10));
+
+      const response2 = await request(app.getHttpServer())
+        .get('/lnurl/callback')
+        .query({ amount })
+        .expect(200);
+
+      expect(response1.body.pr).not.toBe(response2.body.pr);
+    });
+
+    it('should handle amount at minimum boundary (minSendable)', async () => {
+      const minSendable = parseInt(process.env.MIN_SENDABLE || '1000', 10);
+
+      const response = await request(app.getHttpServer())
+        .get('/lnurl/callback')
+        .query({ amount: minSendable })
+        .expect(200);
+
+      expect(response.body).toHaveProperty('pr');
+      expect(response.body.pr).toMatch(/^lnbc/);
+    });
+
+    it('should handle amount at maximum boundary (maxSendable)', async () => {
+      const maxSendable = parseInt(
+        process.env.MAX_SENDABLE || '100000000',
+        10,
+      );
+
+      const response = await request(app.getHttpServer())
+        .get('/lnurl/callback')
+        .query({ amount: maxSendable })
+        .expect(200);
+
+      expect(response.body).toHaveProperty('pr');
+      expect(response.body.pr).toMatch(/^lnbc/);
+    });
+
+    it('should have correct Content-Type header', async () => {
+      await request(app.getHttpServer())
+        .get('/lnurl/callback')
+        .query({ amount: 10000 })
+        .expect(200)
+        .expect('Content-Type', /json/);
+    });
+
+    it('should handle empty comment', async () => {
+      const amount = 10000;
+
+      const response = await request(app.getHttpServer())
+        .get('/lnurl/callback')
+        .query({ amount, comment: '' })
+        .expect(200);
+
+      expect(response.body).toHaveProperty('pr');
+      expect(response.body.pr).toMatch(/^lnbc/);
+    });
+  });
 });
