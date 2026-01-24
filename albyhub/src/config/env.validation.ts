@@ -1,5 +1,12 @@
 import { plainToInstance } from 'class-transformer';
-import { IsEnum, IsNotEmpty, IsNumber, IsString, validateSync } from 'class-validator';
+import {
+  IsEnum,
+  IsNotEmpty,
+  IsNumber,
+  IsOptional,
+  IsString,
+  validateSync,
+} from 'class-validator';
 
 enum Environment {
   Development = 'development',
@@ -17,11 +24,30 @@ export class EnvironmentVariables {
   PORT: number = 3000;
 
   // AWS Secrets Manager configuration
+  @IsOptional()
   @IsString()
   SECRETS_MANAGER_NAME?: string = 'albyhub/secrets';
 
+  @IsOptional()
   @IsString()
   AWS_REGION?: string = 'us-east-1';
+
+  // LNURL configuration
+  @IsOptional()
+  @IsNumber()
+  MIN_SENDABLE?: number = 1000; // 1 sat in millisats
+
+  @IsOptional()
+  @IsNumber()
+  MAX_SENDABLE?: number = 100000000; // 1M sats in millisats
+
+  @IsOptional()
+  @IsNumber()
+  COMMENT_ALLOWED?: number = 280;
+
+  @IsOptional()
+  @IsString()
+  LNURL_CALLBACK_URL?: string;
 }
 
 export function validate(config: Record<string, unknown>) {

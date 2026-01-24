@@ -9,7 +9,10 @@ import { SecretsService } from './secrets.config';
     NestConfigModule.forRoot({
       isGlobal: true,
       validate,
-      envFilePath: ['.env.local', '.env'],
+      envFilePath:
+        process.env.NODE_ENV === 'test'
+          ? ['.env.test']
+          : ['.env.local', '.env'],
     }),
   ],
   providers: [SecretsService],

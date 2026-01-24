@@ -10,9 +10,46 @@ import { INestApplication } from '@nestjs/common';
 import { AppModule } from '../src/app.module';
 import { HttpExceptionFilter } from '../src/common/filters/http-exception.filter';
 import { ValidationPipe as CustomValidationPipe } from '../src/common/pipes/validation.pipe';
+import { SecretsManagerClient } from '@aws-sdk/client-secrets-manager';
+
+// Mock the AWS SDK
+jest.mock('@aws-sdk/client-secrets-manager');
+
+const mockSecretsManagerClient =
+  SecretsManagerClient as jest.MockedClass<typeof SecretsManagerClient>;
 
 describe('AppController (e2e)', () => {
   let app: INestApplication;
+  let mockSend: jest.Mock;
+
+  const validSecretsData = {
+    VOLTAGE_API_KEY: 'test-api-key',
+    VOLTAGE_MACAROON: 'test-macaroon',
+    VOLTAGE_CONNECTION_URL: 'https://voltage.example.com',
+    NOSTR_PRIVATE_KEY: 'test-private-key-hex',
+    NOSTR_PUBLIC_KEY: 'test-public-key-hex',
+    NWC_RELAY_URL: 'wss://relay.example.com',
+  };
+
+  beforeAll(() => {
+    jest.clearAllMocks();
+    mockSend = jest.fn();
+
+    mockSecretsManagerClient.mockImplementation(
+      () =>
+        ({
+          send: mockSend,
+        }) as any,
+    );
+
+    // Mock successful secret fetch
+    mockSend.mockResolvedValue({
+      SecretString: JSON.stringify(validSecretsData),
+    });
+
+    process.env.SECRETS_MANAGER_NAME = 'albyhub/secrets/test';
+    process.env.AWS_REGION = 'us-east-1';
+  });
 
   describe('Test-1.1.b: Startup fails with exit code 1 when required env vars missing', () => {
     it('should fail when ALBY_HUB_URL is missing', async () => {

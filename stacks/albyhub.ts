@@ -12,6 +12,14 @@ export const createAlbyHubApi = (domainInfo: DomainInfo) => {
     LOG_LEVEL: $app.stage === "production" ? "warn" : "debug",
     SECRETS_MANAGER_NAME: secretName,
     AWS_REGION: $app.providers?.aws?.region || "us-east-1",
+    // LNURL Configuration
+    MIN_SENDABLE: "1000",
+    MAX_SENDABLE: "100000000",
+    COMMENT_ALLOWED: "280",
+    LNURL_CALLBACK_URL:
+      $app.stage === "production"
+        ? `https://albyhub.${domainInfo.domains[0]}/lnurl/callback`
+        : "http://localhost:3000/lnurl/callback",
   };
 
   // Create the AlbyHub Lambda function

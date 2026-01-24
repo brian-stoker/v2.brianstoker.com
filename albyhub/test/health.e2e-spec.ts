@@ -1,12 +1,46 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication } from '@nestjs/common';
-import * as request from 'supertest';
+import request from 'supertest';
 import { AppModule } from '../src/app.module';
+import { SecretsManagerClient } from '@aws-sdk/client-secrets-manager';
+
+// Mock the AWS SDK
+jest.mock('@aws-sdk/client-secrets-manager');
+
+const mockSecretsManagerClient =
+  SecretsManagerClient as jest.MockedClass<typeof SecretsManagerClient>;
 
 describe('Health (e2e)', () => {
   let app: INestApplication;
+  let mockSend: jest.Mock;
+
+  const validSecretsData = {
+    VOLTAGE_API_KEY: 'test-api-key',
+    VOLTAGE_MACAROON: 'test-macaroon',
+    VOLTAGE_CONNECTION_URL: 'https://voltage.example.com',
+    NOSTR_PRIVATE_KEY: 'test-private-key-hex',
+    NOSTR_PUBLIC_KEY: 'test-public-key-hex',
+    NWC_RELAY_URL: 'wss://relay.example.com',
+  };
 
   beforeAll(async () => {
+    jest.clearAllMocks();
+    mockSend = jest.fn();
+
+    mockSecretsManagerClient.mockImplementation(
+      () =>
+        ({
+          send: mockSend,
+        }) as any,
+    );
+
+    // Mock successful secret fetch
+    mockSend.mockResolvedValue({
+      SecretString: JSON.stringify(validSecretsData),
+    });
+
+    process.env.SECRETS_MANAGER_NAME = 'albyhub/secrets/test';
+    process.env.AWS_REGION = 'us-east-1';
     const moduleFixture: TestingModule = await Test.createTestingModule({
       imports: [AppModule],
     }).compile();
@@ -31,7 +65,7 @@ describe('Health (e2e)', () => {
       });
   });
 
-  it('/health (GET) should return valid JSON', () => {
+  it('/health (GET) should return valid JSON', async () => {
     return request(app.getHttpServer())
       .get('/health')
       .expect(200)
