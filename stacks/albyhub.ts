@@ -5,6 +5,13 @@ import { DomainInfo } from "./domains";
 export const createAlbyHubApi = (domainInfo: DomainInfo) => {
   const secretName = `albyhub/secrets/${$app.stage}`;
 
+  // Custom domain configuration for Lightning Address
+  // Subdomain approach: albyhub.brianstoker.com
+  // This is safer than using the main domain and allows separation of concerns
+  const customDomain = $app.stage === "production"
+    ? `albyhub.${domainInfo.domains[0]}`
+    : undefined;
+
   // Environment variables for AlbyHub Lambda
   const envVars = {
     NODE_ENV: $app.stage === "production" ? "production" : "development",
@@ -12,6 +19,8 @@ export const createAlbyHubApi = (domainInfo: DomainInfo) => {
     LOG_LEVEL: $app.stage === "production" ? "warn" : "debug",
     SECRETS_MANAGER_NAME: secretName,
     AWS_REGION: $app.providers?.aws?.region || "us-east-1",
+    // Custom Domain Configuration
+    CUSTOM_DOMAIN: customDomain || "",
     // LNURL Configuration
     MIN_SENDABLE: "1000",
     MAX_SENDABLE: "100000000",
@@ -58,6 +67,16 @@ export const createAlbyHubApi = (domainInfo: DomainInfo) => {
   });
 
   // Create API Gateway with AlbyHub routes
+  // Custom domain configuration for Lightning Address (LNURL-pay)
+  // DNS Records Required:
+  //   - CNAME: albyhub.brianstoker.com -> <api-gateway-domain>
+  // SSL/TLS:
+  //   - Certificate in ACM (us-east-1 region)
+  //   - Auto-managed by SST via API Gateway custom domain
+  // Endpoints exposed:
+  //   - GET /.well-known/lnurlp/pay (Lightning Address metadata)
+  //   - GET /lnurl/callback (LNURL-pay callback for invoice generation)
+  //   - GET /health (Health check)
   const albyHubApi = new sst.aws.ApiGatewayV2(
     "AlbyHubApi",
     $dev

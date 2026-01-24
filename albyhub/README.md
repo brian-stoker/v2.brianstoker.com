@@ -93,11 +93,37 @@ PORT=3000
 SECRETS_MANAGER_NAME=albyhub/secrets
 AWS_REGION=us-east-1
 
+# Custom Domain Configuration
+CUSTOM_DOMAIN=albyhub.brianstoker.com
+
 # LNURL Configuration (optional)
 MIN_SENDABLE=1000              # Minimum payment amount in millisats
 MAX_SENDABLE=100000000         # Maximum payment amount in millisats (100k sats)
 COMMENT_ALLOWED=280            # Max comment length
 LNURL_CALLBACK_URL=https://albyhub.brianstoker.com/lnurl/callback
+```
+
+## DNS Configuration
+
+The API is served at `https://albyhub.brianstoker.com` to support Lightning Address discovery.
+
+For complete DNS setup instructions, see [DNS_CONFIGURATION.md](./docs/DNS_CONFIGURATION.md).
+
+### Quick DNS Setup
+
+After deployment, configure a CNAME record in your DNS provider:
+- **Name:** albyhub
+- **Type:** CNAME
+- **Value:** `<API-Gateway-Domain>` (from SST deployment output)
+
+### Verification
+
+```bash
+# Test DNS resolution
+nslookup albyhub.brianstoker.com
+
+# Test HTTPS endpoint
+curl https://albyhub.brianstoker.com/.well-known/lnurlp/pay
 ```
 
 ## Secrets Management
@@ -134,6 +160,8 @@ pnpm start:debug
 
 ## Testing
 
+### Unit Tests
+
 ```bash
 # Unit tests
 pnpm test
@@ -147,6 +175,29 @@ pnpm test:cov
 # E2E tests
 pnpm test:e2e
 ```
+
+### Post-Deployment Validation
+
+After deploying to AWS and configuring DNS, validate the setup:
+
+```bash
+# Validate DNS configuration
+./scripts/validate-dns.sh
+
+# Test full Lightning Address flow
+./scripts/test-lightning-address.sh
+
+# Specify custom domain
+LIGHTNING_DOMAIN=albyhub.example.com ./scripts/test-lightning-address.sh
+```
+
+These scripts validate:
+- DNS resolution
+- SSL/TLS certificate validity
+- HTTPS connectivity
+- Lightning Address endpoints
+- Response times
+- Acceptance criteria compliance
 
 ## Deployment
 

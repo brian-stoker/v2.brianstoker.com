@@ -147,6 +147,34 @@ pnpm deploy:build:stage
 pnpm remove:prod
 ```
 
+### Lightning Address Deployment
+
+The project includes a Lightning Address implementation (AlbyHub API) for accepting Lightning Network payments via `pay@brianstoker.com`.
+
+#### DNS Configuration for Lightning Address
+
+After deploying with SST, configure DNS to make the Lightning Address discoverable:
+
+**Quick Setup:**
+1. Deploy the application: `sst deploy --stage production`
+2. Note the API Gateway domain from the output
+3. Configure DNS CNAME record:
+   - Name: `albyhub`
+   - Type: `CNAME`
+   - Value: `<API-Gateway-Domain>` (from step 1)
+4. Verify DNS propagation (5-15 minutes)
+
+**Validation:**
+```bash
+# Validate DNS and SSL configuration
+./scripts/validate-dns.sh
+
+# Test Lightning Address flow
+./scripts/test-lightning-address.sh
+```
+
+For complete DNS setup and troubleshooting guide, see [albyhub/docs/DNS_CONFIGURATION.md](./albyhub/docs/DNS_CONFIGURATION.md).
+
 ### SST Configuration
 
 The deployment configuration can be found in the `sst.config.ts` file:
