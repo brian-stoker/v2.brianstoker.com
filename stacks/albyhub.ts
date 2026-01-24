@@ -3,11 +3,15 @@
 import { DomainInfo } from "./domains";
 
 export const createAlbyHubApi = (domainInfo: DomainInfo) => {
+  const secretName = `albyhub/secrets/${$app.stage}`;
+
   // Environment variables for AlbyHub Lambda
   const envVars = {
     NODE_ENV: $app.stage === "production" ? "production" : "development",
     APP_VERSION: "1.0.0",
     LOG_LEVEL: $app.stage === "production" ? "warn" : "debug",
+    SECRETS_MANAGER_NAME: secretName,
+    AWS_REGION: $app.providers?.aws?.region || "us-east-1",
   };
 
   // Create the AlbyHub Lambda function
@@ -18,6 +22,12 @@ export const createAlbyHubApi = (domainInfo: DomainInfo) => {
     timeout: "29 seconds",
     architecture: "arm64",
     environment: envVars,
+    permissions: [
+      {
+        actions: ["secretsmanager:GetSecretValue"],
+        resources: [`arn:aws:secretsmanager:*:*:secret:${secretName}-*`],
+      },
+    ],
     nodejs: {
       esbuild: {
         bundle: true,

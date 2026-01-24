@@ -26,6 +26,9 @@ albyhub/
 - Global exception filter for consistent error responses
 - Global validation pipe for automatic DTO validation
 - Environment variable validation with fail-fast on startup
+- Secure secrets management with AWS Secrets Manager
+- In-memory caching with 30-minute TTL
+- Retry logic with exponential backoff for AWS API failures
 - Strict TypeScript configuration
 - Comprehensive test coverage
 
@@ -37,11 +40,22 @@ Copy `.env.example` to `.env.local` and configure:
 NODE_ENV=development
 PORT=3000
 
-# Alby Hub Configuration
-ALBY_HUB_URL=https://api.getalby.com
-ALBY_HUB_CLIENT_ID=your_client_id_here
-ALBY_HUB_CLIENT_SECRET=your_client_secret_here
+# AWS Secrets Manager Configuration
+SECRETS_MANAGER_NAME=albyhub/secrets
+AWS_REGION=us-east-1
 ```
+
+## Secrets Management
+
+Sensitive credentials are stored in AWS Secrets Manager. See [SECRETS_MANAGEMENT.md](./docs/SECRETS_MANAGEMENT.md) for details.
+
+Required secrets in AWS Secrets Manager:
+- `VOLTAGE_API_KEY` - Voltage API authentication key
+- `VOLTAGE_MACAROON` - Voltage node macaroon
+- `VOLTAGE_CONNECTION_URL` - Voltage node connection URL
+- `NOSTR_PRIVATE_KEY` - Nostr private key (hex format)
+- `NOSTR_PUBLIC_KEY` - Nostr public key (hex format)
+- `NWC_RELAY_URL` - NWC relay URL
 
 ## Installation
 
@@ -127,6 +141,15 @@ The following environment variables are automatically injected:
 - `NODE_ENV`: production or development (based on stage)
 - `APP_VERSION`: Application version
 - `LOG_LEVEL`: warn (production) or debug (development)
+- `SECRETS_MANAGER_NAME`: AWS Secrets Manager secret name (e.g., `albyhub/secrets/production`)
+- `AWS_REGION`: AWS region for Secrets Manager
+
+### Secrets Management in Lambda
+
+The Lambda function has the following IAM permissions:
+- `secretsmanager:GetSecretValue` - Scoped to `albyhub/secrets/[stage]` secret
+
+Secrets are loaded at startup and cached for 30 minutes. See [SECRETS_MANAGEMENT.md](./docs/SECRETS_MANAGEMENT.md).
 
 ## Development
 

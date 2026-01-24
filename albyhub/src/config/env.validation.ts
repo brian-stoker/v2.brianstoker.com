@@ -16,17 +16,12 @@ export class EnvironmentVariables {
   @IsNotEmpty()
   PORT: number = 3000;
 
+  // AWS Secrets Manager configuration
   @IsString()
-  @IsNotEmpty()
-  ALBY_HUB_URL!: string;
+  SECRETS_MANAGER_NAME?: string = 'albyhub/secrets';
 
   @IsString()
-  @IsNotEmpty()
-  ALBY_HUB_CLIENT_ID!: string;
-
-  @IsString()
-  @IsNotEmpty()
-  ALBY_HUB_CLIENT_SECRET!: string;
+  AWS_REGION?: string = 'us-east-1';
 }
 
 export function validate(config: Record<string, unknown>) {
