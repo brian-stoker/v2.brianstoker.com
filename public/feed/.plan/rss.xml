@@ -4,7 +4,7 @@
         <title>bstoked.plan</title>
         <link>brianstoker.com/blog</link>
         <description>Follow the SUI .plan to learn about new product features, latest advancements in UI development, and business initiatives.</description>
-        <lastBuildDate>Thu, 06 Nov 2025 13:01:20 GMT</lastBuildDate>
+        <lastBuildDate>Fri, 06 Feb 2026 13:04:07 GMT</lastBuildDate>
         <docs>https://validator.w3.org/feed/docs/rss2.html</docs>
         <generator>https://github.com/jpmonette/feed</generator>
         <language>en</language>
@@ -13,7 +13,7 @@
             <url>https://brianstoker.com/static/logo.svg</url>
             <link>brianstoker.com/blog</link>
         </image>
-        <copyright>Copyright © 2025 brianstoker.com</copyright>
+        <copyright>Copyright © 2026 brianstoker.com</copyright>
         <item>
             <title><![CDATA[launched bstoked.plan (its what you are looking at right meow)]]></title>
             <link>https://brianstoker.com/.plan/2025-02-21-launched-bstoked-plan</link>

@@ -5,6 +5,10 @@
 
 declare module "sst" {
   export interface Resource {
+    "HalBucket": {
+      "name": string
+      "type": "sst.aws.Bucket"
+    }
     "brianstokercomNextjsSite": {
       "type": "sst.aws.Nextjs"
       "url": string

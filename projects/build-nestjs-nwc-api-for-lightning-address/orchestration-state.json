@@ -1,0 +1,96 @@
+{
+  "title": "Build NestJS NWC API for Lightning Address",
+  "slug": "build-nestjs-nwc-api-for-lightning-address",
+  "problem_description": "build a nestjs api that is deployed via lambda with sst for my pay@brianstoker.com endpoint for nwc connection to my lightning node on voltage..",
+  "created_at": "2026-01-24T00:00:00Z",
+  "pfb_path": "./projects/build-nestjs-nwc-api-for-lightning-address/pfb.md",
+  "pfb_completed": true,
+  "prd_path": "./projects/build-nestjs-nwc-api-for-lightning-address/prd.md",
+  "prd_completed": true,
+  "phases": [
+    {
+      "number": 1,
+      "title": "Foundation & Infrastructure",
+      "work_items": [
+        {"number": "1.1", "title": "NestJS Application Scaffolding"},
+        {"number": "1.2", "title": "SST Configuration & AWS Lambda Setup"},
+        {"number": "1.3", "title": "Secrets Management & Configuration"},
+        {"number": "1.4", "title": "Health Check & Monitoring Endpoints"}
+      ]
+    },
+    {
+      "number": 2,
+      "title": "Lightning Address Implementation",
+      "work_items": [
+        {"number": "2.1", "title": "Lightning Address Metadata Endpoint"},
+        {"number": "2.2", "title": "LNURL-pay Callback Endpoint (Mock Implementation)"},
+        {"number": "2.3", "title": "DNS Configuration & Domain Routing"}
+      ]
+    },
+    {
+      "number": 3,
+      "title": "NWC Integration & Voltage API",
+      "work_items": [
+        {"number": "3.1", "title": "Nostr Client & NWC Connection"},
+        {"number": "3.2", "title": "Voltage API Invoice Generation"},
+        {"number": "3.3", "title": "Payment Webhook & Verification"}
+      ]
+    },
+    {
+      "number": 4,
+      "title": "Testing & Security Hardening",
+      "work_items": [
+        {"number": "4.1", "title": "End-to-End Integration Tests"},
+        {"number": "4.2", "title": "Security Hardening & Input Validation"},
+        {"number": "4.3", "title": "Error Handling & Resilience"},
+        {"number": "4.4", "title": "Performance Optimization"}
+      ]
+    },
+    {
+      "number": 5,
+      "title": "Deployment & Monitoring",
+      "work_items": [
+        {"number": "5.1", "title": "Production Deployment"},
+        {"number": "5.2", "title": "Monitoring & Alerting"},
+        {"number": "5.3", "title": "Documentation & Runbook"},
+        {"number": "5.4", "title": "Production Validation & Load Testing"}
+      ]
+    }
+  ],
+  "stages_completed": ["stage-1", "stage-2", "stage-3", "stage-4", "stage-5"],
+  "repo_owner": "brian-stoker",
+  "repo_name": "v2.brianstoker.com",
+  "project_number": 4,
+  "project_id": "PVT_kwHOBW_57M4BNZMP",
+  "project_url": "https://github.com/users/brian-stoker/projects/4",
+  "master_issues": {
+    "phase-1": 20,
+    "phase-2": 21,
+    "phase-3": 22,
+    "phase-4": 23,
+    "phase-5": 24
+  },
+  "work_item_issues": {
+    "1.1": 25,
+    "1.2": 26,
+    "1.3": 27,
+    "1.4": 28,
+    "2.1": 29,
+    "2.2": 30,
+    "2.3": 31,
+    "3.1": 32,
+    "3.2": 33,
+    "3.3": 34,
+    "4.1": 35,
+    "4.2": 36,
+    "4.3": 37,
+    "4.4": 38,
+    "5.1": 39,
+    "5.2": 40,
+    "5.3": 41,
+    "5.4": 42
+  },
+  "total_issues_created": 23,
+  "all_issues_linked_to_project": true,
+  "completion_date": "2026-01-24T00:00:00Z"
+}

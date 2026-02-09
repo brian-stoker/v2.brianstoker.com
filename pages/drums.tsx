@@ -18,7 +18,7 @@ const videos = [
       preload: 'metadata',
       controls: true,
       playsInline: true,
-      defaultMuted: true,
+      muted: true,
       disablePictureInPicture: true,
     },
   },{
@@ -33,7 +33,7 @@ const videos = [
       preload: 'metadata',
       controls: true,
       playsInline: true,
-      defaultMuted: true,
+      muted: true,
       disablePictureInPicture: true,
     },
 
@@ -49,7 +49,7 @@ const videos = [
       preload: 'metadata',
       controls: true,
       playsInline: true,
-      defaultMuted: true,
+      muted: true,
       disablePictureInPicture: true,
     },
   },

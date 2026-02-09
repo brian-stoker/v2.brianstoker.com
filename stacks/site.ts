@@ -1,7 +1,7 @@
 import {pickProperties} from "../utils/types";
 import {DomainInfo} from "./domains";
 
-export const createSite = (domainInfo: DomainInfo) => {
+export const createSite = (domainInfo: DomainInfo, extraEnv?: Record<string, string>) => {
   const { env } = process;
   const envVarKeys = [
     "NEXT_PUBLIC_WEB_URL",
@@ -9,6 +9,9 @@ export const createSite = (domainInfo: DomainInfo) => {
     "MONGODB_USER",
     "MONGODB_PASS",
     "SST_STAGE",
+    "NEXTAUTH_SECRET",
+    "GOOGLE_CLIENT_ID",
+    "GOOGLE_CLIENT_SECRET",
   ];
   const envVars = pickProperties(env, envVarKeys);
   const validateEnvVars = Object.values(envVars).every((v) => v);
@@ -32,6 +35,8 @@ export const createSite = (domainInfo: DomainInfo) => {
     environment: {
       ...(envVars as Record<string, string>),
       MONGODB_NAME: domainInfo.dbName,
+      NEXTAUTH_URL: `https://${domainInfo.domains[0]}`,
+      ...extraEnv,
     },
     permissions: [
       {

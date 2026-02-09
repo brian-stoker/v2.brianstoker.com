@@ -8,9 +8,13 @@ import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import Chip from '@mui/material/Chip';
 import Grid from '@mui/material/Grid';
-import { Link } from '@stoked-ui/docs/Link';
+import NextLink from 'next/link';
+import MuiLink from '@mui/material/Link';
+import * as StokedDocs from '@stoked-ui/docs';
 import AppHeader from 'src/layouts/AppHeader';
 import AppFooter from 'src/layouts/AppFooter';
+
+const { BrandingCssVarsProvider } = StokedDocs;
 import {BlogPost, getAllBlogPosts} from "../../lib/sourcing";
 import generateRssFeed from "../../scripts/generateRSSFeed";
 // Import all the blog post metadata
@@ -30,7 +34,7 @@ export default function PlanIndex(props) {
   const posts = props.allBlogPosts.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
 
   return (
-    <>
+    <BrandingCssVarsProvider>
       <Head>
         <title>The Plan | Brian Stoker</title>
         <meta 
@@ -79,12 +83,13 @@ export default function PlanIndex(props) {
                     gutterBottom
                     sx={{ mb: 2, flexGrow: 1 }}
                   >
-                    <Link
+                    <MuiLink
+                      component={NextLink}
                       href={`/.plan/${post.slug}`}
                       sx={{ color: 'inherit', textDecoration: 'none' }}
                     >
                       {post.title}
-                    </Link>
+                    </MuiLink>
                   </Typography>
                   
                   <Typography 
@@ -120,6 +125,6 @@ export default function PlanIndex(props) {
         </Grid>
       </Container>
       <AppFooter />
-    </>
+    </BrandingCssVarsProvider>
   );
 } 

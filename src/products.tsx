@@ -767,6 +767,18 @@ function ProductsPreviews({ products, mostRecentPosts }: { products: Products, m
   const content = products.live[productIndex].name === '.plan' ? mostRecentPosts : products.live[productIndex]?.data?.showcaseContent;
   const showcaseProps = { showcaseContent: content};
 
+  // Handle clicks on video showcase to allow controls to work without navigation
+  const handleShowcaseClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    // Check if the click is on Plyr controls or interactive elements
+    const target = e.target as HTMLElement;
+    const isPlyrControl = target.closest('.plyr__controls, .plyr__control, button, .plyr__volume, .plyr__progress');
+
+    if (isPlyrControl) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
+  };
+
   return (
     <Section
      id="productPreviews"
@@ -854,6 +866,7 @@ function ProductsPreviews({ products, mostRecentPosts }: { products: Products, m
               <Box
                 component={Link}
                 href={products.live[productIndex].url('product')}
+                onClick={products.live[productIndex].showcaseType === VideoShowcase ? handleShowcaseClick : undefined}
                 sx={{
                   cursor: `${products.live[productIndex].cursor}!important`,
                   display: 'flex',

@@ -19,6 +19,11 @@ export default function VideoShowcase({ showcaseContent }: { showcaseContent?: a
       ],
       poster: showcaseContent.poster,
     }, // https://github.com/sampotts/plyr#the-source-setter
+    options: {
+      autoplay: true,
+      muted: true,
+      controls: ['play-large', 'play', 'progress', 'current-time', 'mute', 'volume', 'fullscreen'],
+    },
   }
 
   return <NoSsr>
