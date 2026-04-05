@@ -8,6 +8,7 @@ import Button from '@mui/material/Button';
 import CheckoutIcon from '@mui/icons-material/CallMade';
 import MergeTypeIcon from '@mui/icons-material/MergeType';
 import { EventDetails } from '../../types/github';
+import { replaceGithubEmoji } from '../../utils/githubEmoji';
 import { useTheme } from '@mui/material/styles';
 import NextLink from "next/link";
 import Tabs from '@mui/material/Tabs';
@@ -104,7 +105,7 @@ function Commit({ commit, repo }: CommitProps) {
                   rel="noopener noreferrer"
                   style={{ textDecoration: 'none', color: 'inherit' }}
                 >
-                  {commit.commit.message.split('\n')[0]}
+                  {replaceGithubEmoji(commit.commit.message.split('\n')[0])}
                 </a>
               </Typography>
             </Box>

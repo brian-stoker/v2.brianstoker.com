@@ -18,18 +18,12 @@ interface ActivityData {
    fx?: 'punch' | 'highlight'
 }
 
-const defaultActivityData = { total: {}, contributions: [], countLabel: 'Loading...' };  
-function sleep(duration) {
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      resolve(void 0);
-    }, duration);
-  });
-}
+const defaultActivityData = { total: {}, contributions: [], countLabel: 'Loading...' };
 export default function GithubCalendar({ windowMode = false, containerMode = false, blockSize: inputBlockSize = 12, fx = undefined }: { windowMode?: boolean, containerMode?: boolean, blockSize?: number, fx?: 'punch' | 'highlight' }) {
   const [activityTheme, setActivityTheme] = React.useState<'light' | 'dark'>('light');
   const [activityData, setActivityData] = React.useState<ActivityData>(defaultActivityData);
   const [activityLoading, setActivityLoading] = React.useState<boolean>(true);
+  const [activityReady, setActivityReady] = React.useState<boolean>(false);
   const [activityHover, setActivityHover] = React.useState<boolean>(false);
   const [activityLabels, setActivityLabels] = React.useState<boolean>(false);
   const [activityClass, setActivityClass] = React.useState<string>('activity');
@@ -71,17 +65,40 @@ export default function GithubCalendar({ windowMode = false, containerMode = fal
     setActivityClass('activity ' + (activityLabels ? 'hover labels' : activityHover ? 'hover' : ''));
   }, [activityHover, activityLabels]);
   
-  // Scroll activity all the way to the right on mount
+  // Scroll to the right instantly while hidden, then reveal
+  // Uses polling to wait for the scroll container to have actual overflow content
   React.useEffect(() => {
-    
-    if (!activityLoading) {
-      setTimeout(() => {
-        const activityContainer = document.querySelector('.react-activity-calendar__scroll-container') as HTMLElement;
+    if (activityLoading) return;
+
+    let attempts = 0;
+    const maxAttempts = 40; // 40 × 50ms = 2 seconds max
+    const pollInterval = 50;
+
+    const timer = setInterval(() => {
+      attempts++;
+      const activityContainer = elementRef.current?.querySelector('.react-activity-calendar__scroll-container') as HTMLElement;
+
+      if (activityContainer && activityContainer.scrollWidth > activityContainer.clientWidth) {
+        clearInterval(timer);
+        activityContainer.style.scrollBehavior = 'auto';
+        activityContainer.scrollLeft = activityContainer.scrollWidth;
+        requestAnimationFrame(() => {
+          activityContainer.style.scrollBehavior = '';
+          setActivityReady(true);
+        });
+      } else if (attempts >= maxAttempts) {
+        clearInterval(timer);
+        // Give up and reveal anyway
         if (activityContainer) {
+          activityContainer.style.scrollBehavior = 'auto';
           activityContainer.scrollLeft = activityContainer.scrollWidth;
+          activityContainer.style.scrollBehavior = '';
         }
-      }, 200);
-    }
+        setActivityReady(true);
+      }
+    }, pollInterval);
+
+    return () => clearInterval(timer);
   }, [activityLoading]);
 
   const fetchActivityData = async () => {
@@ -148,44 +165,18 @@ export default function GithubCalendar({ windowMode = false, containerMode = fal
     }
   };
   
-  // Initial load
+  // Initial load - fetch data only
   React.useEffect(() => {
+    fetchActivityData().catch(() => console.error('Error fetching activity data'));
 
-    async function setup() {
-      await fetchActivityData();
-      await sleep(800);
-      setupRectAnimations();
+    if (fx) {
       window.addEventListener('resize', handleResize);
     }
 
-    if (!fx) {
-      fetchActivityData().catch(() => console.error('Error fetching activity data'));
-    } else {
-      setup().catch(() => console.error('Error fetching activity data'));
-    }
-
-    const hackedContainer = document.querySelector('.react-activity-calendar__scroll-container');
-    if (hackedContainer) {
-      const hacked = document.createElement('img');
-      hacked.src = '/static/image/hbngha.png';
-      hacked.style.filter = 'drop-shadow(0 0 4px #000) drop-shadow(0 0 4px #000) drop-shadow(0 0 4px #000)';
-      hacked.alt = 'hbngha';
-      hacked.style.position = 'absolute';
-      hacked.style.top = '0';
-      hacked.style.left = '0';
-      hacked.style.marginTop = '25px';
-      hacked.style.marginLeft = '10px';
-      hacked.style.width = `${(activityData.blockSize || 12) * 7}px`;
-      hacked.style.height = `${(activityData.blockSize || 12) * 7}px`;
-      const div = document.createElement('div');
-      div.style.position = 'relative';
-      div.appendChild(hacked);
-      hackedContainer.insertBefore(div, hackedContainer.firstChild);
-    }
     return () => {
       if (fx) {
         window.removeEventListener('resize', handleResize);
-        
+
         // Clean up any active timeouts
         const svg = elementRef.current?.querySelector('svg');
         if (svg) {
@@ -199,6 +190,17 @@ export default function GithubCalendar({ windowMode = false, containerMode = fal
       }
     }
   },[]);
+
+  // Set up rect animations after calendar renders and re-renders
+  React.useEffect(() => {
+    if (!fx || activityLoading || !activityData.blockSize) return;
+
+    const timer = setTimeout(() => {
+      setupRectAnimations();
+    }, 300);
+
+    return () => clearTimeout(timer);
+  }, [activityLoading, activityData.blockSize, activityTheme]);
 
   const handleResize = () => {
     // Clear all animations first
@@ -312,6 +314,86 @@ export default function GithubCalendar({ windowMode = false, containerMode = fal
   }
 
 
+  // Insert hacked image after data loads and calendar renders
+  React.useEffect(() => {
+    if (activityLoading || !activityData.blockSize) return;
+
+    // Wait for the calendar to render
+    const timer = setTimeout(() => {
+      const hackedContainer = elementRef.current?.querySelector('.react-activity-calendar__scroll-container');
+      if (hackedContainer && !hackedContainer.querySelector('.hbngha-overlay')) {
+        const hacked = document.createElement('img');
+        hacked.src = '/static/image/hbngha.png';
+        hacked.style.filter = 'drop-shadow(0 0 4px #000) drop-shadow(0 0 4px #000) drop-shadow(0 0 4px #000)';
+        hacked.alt = 'hbngha';
+        hacked.style.position = 'absolute';
+        hacked.style.top = '0';
+        hacked.style.left = '0';
+        hacked.style.marginTop = '25px';
+        hacked.style.marginLeft = '10px';
+        hacked.style.width = `${(activityData.blockSize!) * 7}px`;
+        hacked.style.height = `${(activityData.blockSize!) * 7}px`;
+        const div = document.createElement('div');
+        div.className = 'hbngha-overlay';
+        div.style.position = 'relative';
+        div.appendChild(hacked);
+        hackedContainer.insertBefore(div, hackedContainer.firstChild);
+      }
+    }, 300);
+
+    return () => clearTimeout(timer);
+  }, [activityLoading, activityData.blockSize]);
+
+  // Replace "Jan" month labels with 2-digit year ('22, '23, etc.)
+  React.useEffect(() => {
+    if (activityLoading || !activityData.blockSize) return;
+
+    const timer = setTimeout(() => {
+      const svg = elementRef.current?.querySelector('svg');
+      if (!svg) return;
+
+      const monthGroup = svg.querySelector('.react-activity-calendar__legend-month');
+      if (!monthGroup) return;
+
+      const textElements = monthGroup.querySelectorAll('text');
+      // Week <g> elements have transform attributes (unlike legend groups which have class names)
+      const weekGroups = svg.querySelectorAll('g[transform]');
+
+      textElements.forEach((textEl) => {
+        if (textEl.textContent !== 'Jan') return;
+
+        // The text x position corresponds to a week column
+        const textX = parseFloat(textEl.getAttribute('x') || '0');
+        const blockStep = (activityData.blockSize || 12) + 0.5; // blockSize + blockMargin
+
+        // Find the week group at this x position by matching transform
+        let matchedRect: Element | null = null;
+        for (const g of weekGroups) {
+          const transform = g.getAttribute('transform') || '';
+          const match = transform.match(/translate\(([\d.]+)/);
+          if (match && Math.abs(parseFloat(match[1]) - textX) < blockStep) {
+            matchedRect = g.querySelector('rect[data-date]');
+            if (matchedRect) break;
+          }
+        }
+
+        if (!matchedRect) return;
+
+        const date = matchedRect.getAttribute('data-date');
+        if (!date) return;
+
+        // Extract 2-digit year from the date (format: YYYY-MM-DD)
+        const year = date.substring(2, 4);
+        textEl.textContent = `'${year}`;
+        textEl.style.fontWeight = 'bold';
+        textEl.style.fontSize = '1.15em';
+        textEl.style.transform = 'translateY(-2px)';
+      });
+    }, 400);
+
+    return () => clearTimeout(timer);
+  }, [activityLoading, activityData.blockSize, activityTheme]);
+
   React.useEffect(() => {
     setActivityTheme(theme.palette.mode === 'dark' ? 'dark' : 'light');
   }, [theme.palette.mode])
@@ -324,7 +406,7 @@ export default function GithubCalendar({ windowMode = false, containerMode = fal
           setActivityHover(false);
           setActivityLabels(false);
         }}
-        className={`${activityClass} ${activityLoading ? 'loading' : ''}`}
+        className={`${activityClass} ${!activityReady ? 'loading' : ''}`}
         sx={{
           '& .activity > *': {
             transition: '1s ease-in-out',
@@ -332,18 +414,19 @@ export default function GithubCalendar({ windowMode = false, containerMode = fal
           position: 'sticky',
         }}
       >
-        <ActivityCalendar 
-          data={activityData.contributions} 
+        <ActivityCalendar
+          data={activityData.contributions}
+          colorScheme={activityTheme}
           theme={{
-            light: activityTheme === 'light' ? ['hsl(0, 0%, 92%)', theme.palette.primary.dark] : ['hsl(0, 0%, 12%)', theme.palette.primary.light], 
-            dark: activityTheme === 'light' ? ['hsl(0, 0%, 92%)', theme.palette.primary.dark] : ['hsl(0, 0%, 12%)', theme.palette.primary.light], 
+            light: ['hsl(0, 0%, 92%)', theme.palette.primary.dark],
+            dark: ['hsl(0, 0%, 12%)', theme.palette.primary.dark],
           }}
           loading={activityLoading}
           blockMargin={0.5}
           blockRadius={0}
           blockSize={activityData.blockSize || 12}
           style={{
-            background: `linear-gradient(transparent, #0f1214)`,
+            background: activityTheme === 'dark' ? '#0f1214' : '#fff',
           }}
           labels={{
             totalCount: activityData.countLabel

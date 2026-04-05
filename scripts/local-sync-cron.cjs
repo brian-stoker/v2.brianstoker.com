@@ -15,8 +15,10 @@ const SYNC_SECRET = process.env.SYNC_SECRET;
 const INTERVAL_HOURS = 1;
 
 if (!SYNC_SECRET) {
-  console.error('❌ SYNC_SECRET environment variable is required');
-  process.exit(1);
+  console.warn('SYNC_SECRET not set - skipping local sync cron (create .env to enable)');
+  // Stay alive so turbo (persistent: true) doesn't report a crash
+  setInterval(() => {}, 1 << 30);
+  return;
 }
 
 function callSyncEndpoint() {
@@ -114,4 +116,8 @@ process.on('SIGINT', () => {
 process.on('SIGTERM', () => {
   console.log('\n\n👋 Stopping local sync cron...');
   process.exit(0);
+});
+
+process.on('SIGHUP', () => {
+  // Ignore SIGHUP so turbo watch restarts don't kill us
 });

@@ -174,7 +174,7 @@ export function PdfDoc () {
   const WordSvg = () => (<svg viewBox="-0.12979372698077785 0 32.12979372698078 32" xmlns="http://www.w3.org/2000/svg" width="2500" height="2480"><path d="M30.667 2H9.333A1.333 1.333 0 0 0 8 3.333V9l12 3.5L32 9V3.333A1.333 1.333 0 0 0 30.667 2z" fill="#41a5ee"/><path d="M32 9H8v7l12 3.5L32 16z" fill="#2b7cd3"/><path d="M32 16H8v7l12 3.5L32 23z" fill="#185abd"/><path d="M32 23H8v5.667A1.333 1.333 0 0 0 9.333 30h21.334A1.333 1.333 0 0 0 32 28.667z" fill="#103f91"/><path d="M16.667 7H8v19h8.667A1.337 1.337 0 0 0 18 24.667V8.333A1.337 1.337 0 0 0 16.667 7z" opacity=".1"/><path d="M15.667 8H8v19h7.667A1.337 1.337 0 0 0 17 25.667V9.333A1.337 1.337 0 0 0 15.667 8z" opacity=".2"/><path d="M15.667 8H8v17h7.667A1.337 1.337 0 0 0 17 23.667V9.333A1.337 1.337 0 0 0 15.667 8z" opacity=".2"/><path d="M14.667 8H8v17h6.667A1.337 1.337 0 0 0 16 23.667V9.333A1.337 1.337 0 0 0 14.667 8z" opacity=".2"/><path d="M1.333 8h13.334A1.333 1.333 0 0 1 16 9.333v13.334A1.333 1.333 0 0 1 14.667 24H1.333A1.333 1.333 0 0 1 0 22.667V9.333A1.333 1.333 0 0 1 1.333 8z" fill="#185abd"/><path d="M11.95 21h-1.8l-2.1-6.9-2.2 6.9h-1.8l-2-10h1.8l1.4 7 2.1-6.8h1.5l2 6.8 1.4-7h1.7z" fill="#fff"/><path d="M0 0h32v32H0z" fill="none"/></svg>);
   const WordIconCustom = <SvgIcon component={WordSvg} inheritViewBox fontSize='small' />;
 
-  const WordButton = <Tooltip title={('Download Word')} enterDelay={300}>
+  const WordButton = <Tooltip title={('Download PDF')} enterDelay={300}>
               <IconButton
                 component={'a'}
                 target="_blank"
@@ -196,15 +196,15 @@ export function PdfDoc () {
                   boxShadow: 3,
                 }}
                 color="primary"
-                href={'/static/resume/brian-stoker-resume.docx'}
+                href={'https://cdn.stokedconsulting.com/personal/resume/brian-stoker-resume.pdf'}
                 download
                 rel="noopener"
                 data-ga-event-category="header"
-                data-ga-event-action="word"
+                data-ga-event-action="pdf-download"
               >
                 {WordIconCustom}
               </IconButton>
-            </Tooltip>    
+            </Tooltip>
   const PdfSvg = () => (
     <svg viewBox="0 0 40 40">
       <g id="SVGRepo_bgCarrier" strokeWidth="0" transform="matrix(5.286275, 0, 0, 5.286275, 165.441635, 117.065567)" ></g>
@@ -237,7 +237,7 @@ export function PdfDoc () {
                   boxShadow: 3,
                 }}
                 color="primary"
-                href={'/static/resume/brian-stoker-resume.pdf'}
+                href={'https://cdn.stokedconsulting.com/personal/resume/brian-stoker-resume.pdf'}
                 download
                 rel="noopener"
                 data-ga-event-category="header"
@@ -279,7 +279,7 @@ export function PdfDoc () {
        
 
         <StyledDoc
-          file={'/static/resume/brian-stoker-resume.pdf'}
+          file={'https://cdn.stokedconsulting.com/personal/resume/brian-stoker-resume.pdf'}
           onLoadSuccess={onDocumentLoadSuccess}
           options={options}
           >
@@ -291,7 +291,6 @@ export function PdfDoc () {
               width: '100%'
             }}
           >
-            {WordButton}
             {PdfButton}
           </Box>
         <ButtonGroup

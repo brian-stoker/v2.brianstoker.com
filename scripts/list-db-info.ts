@@ -26,7 +26,7 @@ async function listDatabaseInfo() {
     console.log('========================\n');
 
     for (const dbInfo of databasesList.databases) {
-      console.log(`📁 ${dbInfo.name} (${(dbInfo.sizeOnDisk / 1024 / 1024).toFixed(2)} MB)`);
+      console.log(`📁 ${dbInfo.name} (${((dbInfo.sizeOnDisk ?? 0) / 1024 / 1024).toFixed(2)} MB)`);
 
       // List collections for each database
       const db = client.db(dbInfo.name);

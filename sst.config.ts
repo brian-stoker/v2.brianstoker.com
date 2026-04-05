@@ -31,7 +31,7 @@ export default $config({
       ? `https://${domainInfo.domains[0]}`
       : "http://localhost:5040";
 
-    const githubSyncCron = createGithubSyncCron(siteUrl);
+    const githubSyncCron = createGithubSyncCron(siteUrl, domainInfo.dbName);
 
     return {
       ...web,

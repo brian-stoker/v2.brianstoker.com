@@ -5,6 +5,7 @@ export const createSite = (domainInfo: DomainInfo, extraEnv?: Record<string, str
   const { env } = process;
   const envVarKeys = [
     "NEXT_PUBLIC_WEB_URL",
+    "GITHUB_TOKEN",
     "MONGODB_URI",
     "MONGODB_USER",
     "MONGODB_PASS",
@@ -12,6 +13,7 @@ export const createSite = (domainInfo: DomainInfo, extraEnv?: Record<string, str
     "NEXTAUTH_SECRET",
     "GOOGLE_CLIENT_ID",
     "GOOGLE_CLIENT_SECRET",
+    "SYNC_SECRET",
   ];
   const envVars = pickProperties(env, envVarKeys);
   const validateEnvVars = Object.values(envVars).every((v) => v);
@@ -34,6 +36,7 @@ export const createSite = (domainInfo: DomainInfo, extraEnv?: Record<string, str
       : undefined,
     environment: {
       ...(envVars as Record<string, string>),
+      GITHUB_USERNAME: env.GITHUB_USERNAME || 'brian-stoker',
       MONGODB_NAME: domainInfo.dbName,
       NEXTAUTH_URL: `https://${domainInfo.domains[0]}`,
       ...extraEnv,
@@ -102,4 +105,3 @@ export const createSite = (domainInfo: DomainInfo, extraEnv?: Record<string, str
   });
   return nextJsSite;
 };
-

@@ -1,5 +1,6 @@
 import { SessionProvider } from "next-auth/react";
 import { DocsProvider } from "@stoked-ui/docs/DocsProvider";
+import '../styles/globals.css';
 
 const docsConfig = {
   LANGUAGES: ['en'],

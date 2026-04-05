@@ -1,6 +1,6 @@
 /// <reference path="../.sst/platform/config.d.ts" />
 
-export const createGithubSyncCron = (siteUrl: string) => {
+export const createGithubSyncCron = (siteUrl: string, dbName: string) => {
   // Create a cron job that runs every hour to sync GitHub events
   const syncEndpoint = `${siteUrl}/api/github/sync-events`;
 
@@ -12,6 +12,7 @@ export const createGithubSyncCron = (siteUrl: string) => {
       environment: {
         GITHUB_TOKEN: process.env.GITHUB_TOKEN!,
         GITHUB_USERNAME: process.env.GITHUB_USERNAME || 'brian-stoker',
+        MONGODB_NAME: dbName,
         MONGODB_URI: process.env.MONGODB_URI!,
         SYNC_SECRET: process.env.SYNC_SECRET!,
         SYNC_ENDPOINT: syncEndpoint

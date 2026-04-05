@@ -8,6 +8,9 @@ export default function GithubEventsShowcase({ showcaseContent }: { showcaseCont
     width: '100%',
     flexDirection: 'column',
     overflow: 'hidden',
+    maxHeight: '970px',
+    overflowY: 'auto',
+    alignSelf: 'flex-start',
     '& .react-activity-calendar': {
       backgroundColor: 'transparent !important',
     },

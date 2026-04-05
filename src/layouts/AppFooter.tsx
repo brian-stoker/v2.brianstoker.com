@@ -34,7 +34,7 @@ export default function AppFooter(props: AppFooterProps) {
           alignItems: 'flex-start',
           justifyContent: 'space-between',
           gap: 4,
-          gridTemplateColumns: { xs: '1fr', sm: '1fr', md: '1.75fr 1.75fr', lg: '1.75fr 1fr' },
+          gridTemplateColumns: { xs: '1fr', sm: '1fr', md: '1fr 1fr', lg: '1fr 1fr' },
           gridTemplateRows: 'auto',
           '& a:not(.MuiIconButton-root)': {
             pt: 0.5,
@@ -53,7 +53,7 @@ export default function AppFooter(props: AppFooterProps) {
           },
         }}
       >
-        <Box sx={{ justifyItems: 'center' }}>
+        <Box sx={{ justifyItems: 'start' }}>
           <Box sx={{ width: '350px', justifyContent: 'center', flexDirection: 'column' }}>
             <Box
               sx={{

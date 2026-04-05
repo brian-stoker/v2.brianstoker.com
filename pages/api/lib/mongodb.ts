@@ -1,6 +1,9 @@
 import { MongoClient, Db } from 'mongodb';
 
 const uri = process.env.MONGODB_URI || '';
+const mongoOptions = {
+  appName: 'brianstoker-pages-api',
+};
 if (!uri) {
   console.warn('MONGODB_URI is not defined - MongoDB features will be disabled');
 }
@@ -16,13 +19,13 @@ if (uri) {
     };
 
     if (!globalWithMongo._mongoClientPromise) {
-      client = new MongoClient(uri);
+      client = new MongoClient(uri, mongoOptions);
       globalWithMongo._mongoClientPromise = client.connect();
     }
     clientPromise = globalWithMongo._mongoClientPromise;
   } else {
     // In production mode
-    client = new MongoClient(uri);
+    client = new MongoClient(uri, mongoOptions);
     clientPromise = client.connect();
   }
 }

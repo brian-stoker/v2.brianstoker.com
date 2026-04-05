@@ -30,9 +30,9 @@ import MaterialShowcase from "./components/home/MaterialShowcase";
 import CoreShowcase from "./components/home/CoreShowcase";
 import BlogShowcase from "./components/home/BlogShowcase";
 import PdfShowcase from "./components/home/PdfShowcase";
-import VideoShowcase from"./components/home/VideoShowcase";
+import VideoShowcase from "./components/home/VideoShowcase";
 import ImageShowcase from "./components/home/ImageShowcase";
-import {BlogPost } from "../lib/sourcing";
+import { BlogPost } from "../lib/sourcing";
 import KeyIcon from "./components/icon/KeyIcon";
 import GithubEventsShowcase from "./components/home/GithubEventsShowcase";
 import ProductCarousel from './components/ProductSwitcher';
@@ -114,7 +114,7 @@ class Product {
   get cursor(): string {
     return this.data.cursor ?? 'default';
   }
-  get showcaseType(): React.ComponentType<{showcaseContent?: any}> {
+  get showcaseType(): React.ComponentType<{ showcaseContent?: any }> {
     return this.data.showcaseType;
   }
 
@@ -225,7 +225,7 @@ class Product {
       >
         {this.icon}
         <Box sx={{ flexGrow: 1 }}>
-          <Typography color="text.primary" sx={{ display: "flex", flexDirection: "row"}} variant="body2" fontWeight="700">
+          <Typography color="text.primary" sx={{ display: "flex", flexDirection: "row" }} variant="body2" fontWeight="700">
             {this.name}
           </Typography>
           <Typography color="text.secondary" variant="body2">
@@ -241,7 +241,7 @@ class Product {
       <Box
         component="li"
         role="none"
-        sx={{ p: 2, pr: 3}}
+        sx={{ p: 2, pr: 3 }}
       >
         {this.subMenuItem()}
         <Stack
@@ -280,7 +280,7 @@ class Product {
     )
   }
 
-   highlightedItem(productIndex: number, setProductIndex: React.Dispatch<React.SetStateAction<number>>, index: number, direction: 'row' | 'column', linkType?: LinkType, sx?: SxProps<Theme>) {
+  highlightedItem(productIndex: number, setProductIndex: React.Dispatch<React.SetStateAction<number>>, index: number, direction: 'row' | 'column', linkType?: LinkType, sx?: SxProps<Theme>) {
     return (<Highlighter
       key={this.id}
       disableBorder
@@ -304,7 +304,7 @@ class Product {
           flexDirection: 'row',
           alignItems: { md: 'center' },
           gap: 2.5,
-         
+
         }}
       >
         <span>{this.icon}</span>
@@ -355,7 +355,7 @@ class Product {
   }
 
   get icon() {
-    return <IconImage name={this.data.icon } width={24} height={24} />;
+    return <IconImage name={this.data.icon} width={24} height={24} />;
   }
 
   key(index: number, selected: number) {
@@ -427,13 +427,13 @@ type ProductStackProps = ProductsComponentProps & {
   inView?: boolean;
 }
 type SetSubMenuOpen = React.Dispatch<React.SetStateAction<SubMenuType>>;
-type ProductMenuProps =  {
+type ProductMenuProps = {
   products: Product[],
   type: SubMenuType,
   subMenuOpen?: SubMenuType,
   menuRef?: React.RefObject<HTMLButtonElement>,
-  setSubMenuOpenUndebounce?:  (value: SubMenuType) => () => void,
-  setSubMenuOpenDebounced?:  SetSubMenuOpen & Cancelable,
+  setSubMenuOpenUndebounce?: (value: SubMenuType) => () => void,
+  setSubMenuOpenDebounced?: SetSubMenuOpen & Cancelable,
   setSubMenuOpen?: SetSubMenuOpen,
   handleClickMenu?: (value: SubMenuType) => () => void
 } & ProductMenuItemProps;
@@ -629,18 +629,18 @@ function MobileProductCarousel_old(props: ProductSwitcherProps) {
                     }),
                     productIndex === index
                       ? (themeArg: Theme) => ({
-                          borderColor: `${alpha(themeArg.palette.primary.main, 0.8)} !important`,
-                          backgroundColor: alpha(themeArg.palette.primary.main, 0.08),
-                          color: themeArg.palette.primary.main,
-                          '&::before': {
-                            opacity: 0,
-                          },
-                          ...themeArg.applyDarkStyles({
-                            borderColor: `${alpha(themeArg.palette.primary.light, 0.8)} !important`,
-                            backgroundColor: alpha(themeArg.palette.primary.dark, 0.2),
-                            color: themeArg.palette.primary.light,
-                          }),
-                        })
+                        borderColor: `${alpha(themeArg.palette.primary.main, 0.8)} !important`,
+                        backgroundColor: alpha(themeArg.palette.primary.main, 0.08),
+                        color: themeArg.palette.primary.main,
+                        '&::before': {
+                          opacity: 0,
+                        },
+                        ...themeArg.applyDarkStyles({
+                          borderColor: `${alpha(themeArg.palette.primary.light, 0.8)} !important`,
+                          backgroundColor: alpha(themeArg.palette.primary.dark, 0.2),
+                          color: themeArg.palette.primary.light,
+                        }),
+                      })
                       : null,
                   ]}
                 >
@@ -756,7 +756,7 @@ function MobileProductCarousel_old(props: ProductSwitcherProps) {
 //   );
 // }
 
-function ProductsPreviews({ products, mostRecentPosts }: { products: Products, mostRecentPosts?: BlogPost[] } ) {
+function ProductsPreviews({ products, mostRecentPosts }: { products: Products, mostRecentPosts?: BlogPost[] }) {
   const [productIndex, setProductIndex] = React.useState(0);
   const { ref, inView } = useInView({
     triggerOnce: true,
@@ -765,7 +765,7 @@ function ProductsPreviews({ products, mostRecentPosts }: { products: Products, m
   });
   const Showcase = products.live[productIndex].showcaseType;
   const content = products.live[productIndex].name === '.plan' ? mostRecentPosts : products.live[productIndex]?.data?.showcaseContent;
-  const showcaseProps = { showcaseContent: content};
+  const showcaseProps = { showcaseContent: content };
 
   // Handle clicks on video showcase to allow controls to work without navigation
   const handleShowcaseClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
@@ -781,12 +781,12 @@ function ProductsPreviews({ products, mostRecentPosts }: { products: Products, m
 
   return (
     <Section
-     id="productPreviews"
-     bg="none"
-     ref={ref}
-     className="section-product"
-     sx={{ padding: 0, margin: '0 10px' }}
-     containerSx={{  width: { sx: '100%', md: '1144px' }, padding: '0!important', justifyItems: 'center' }}
+      id="productPreviews"
+      bg="none"
+      ref={ref}
+      className="section-product"
+      sx={{ padding: 0, margin: '0 10px' }}
+      containerSx={{ width: { sx: '100%', md: '1144px' }, padding: '0!important', justifyItems: 'center' }}
     >
       <Box
         id="grid-first"
@@ -794,8 +794,8 @@ function ProductsPreviews({ products, mostRecentPosts }: { products: Products, m
           display: 'flex',
           flexDirection: { xs: 'column', md: 'row' },
           gap: { xs: 0, md: '24px', lg: '24px' },
-          marginLeft: {xs: '10px', lg: 0 },
-          marginRight: {xs: '10px', lg: 0 },
+          marginLeft: { xs: '10px', lg: 0 },
+          marginRight: { xs: '10px', lg: 0 },
           width: '100%',
         }}
       >
@@ -826,9 +826,10 @@ function ProductsPreviews({ products, mostRecentPosts }: { products: Products, m
                 letterSpacing: { xs: '-0.01em', md: 0 },
                 mb: { xs: 1.75, sm: 2.5, md: 3, lg: 4 },
                 wordBreak: 'break-word',
+                color: 'text.primary',
               }}
             >
-              BRIAN <br/><GradientText>STOKER</GradientText>
+              BRIAN <br /><GradientText>STOKER</GradientText>
             </Typography>
           </Box>
           {products.switcher({ inView, productIndex, setProductIndex })}
@@ -839,7 +840,7 @@ function ProductsPreviews({ products, mostRecentPosts }: { products: Products, m
             display: 'flex',
             alignItems: 'center',
             minHeight: { xs: 'auto', md: '600px', lg: '700px' },
-            width: '100%'
+            width: '726px'
           }}
         >
           {inView ? (
@@ -860,7 +861,7 @@ function ProductsPreviews({ products, mostRecentPosts }: { products: Products, m
                   }),
                 })}
               >
-                <Showcase {...showcaseProps}/>
+                <Showcase {...showcaseProps} />
               </Box>
             ) : (
               <Box
@@ -892,7 +893,7 @@ function ProductsPreviews({ products, mostRecentPosts }: { products: Products, m
                   overflow: 'hidden',
                 }}
               >
-                <Showcase {...showcaseProps}/>
+                <Showcase {...showcaseProps} />
               </Box>
             )
           ) : (
@@ -913,7 +914,7 @@ class Products extends IndexObject<Product> {
       }
       return new Product(product);
     });
-     super('id',baseInput);
+    super('id', baseInput);
   }
 
   get products() {
@@ -931,14 +932,14 @@ class Products extends IndexObject<Product> {
   preview(params: { productId: string }) {
     const source = this.index[params.productId].preview;
     if (source.image) {
-      return <img src={source.image}  />
+      return <img src={source.image} />
     }
     if (source.video) {
-      return <video src={source.video}  />
+      return <video src={source.video} />
     }
   }
 
-  public previews({mostRecentPosts}: { mostRecentPosts?: BlogPost[]}) {
+  public previews({ mostRecentPosts }: { mostRecentPosts?: BlogPost[] }) {
     return <ProductsPreviews products={this} mostRecentPosts={mostRecentPosts} />;
   }
 
@@ -949,7 +950,7 @@ class Products extends IndexObject<Product> {
   getFeatureUrl(productId: string, featureId: string, type: LinkType = 'doc') {
     const product = this.index[productId];
     const feature = product.features.find((f: FEATURE) => f.id === featureId);
-    if ( !feature) {
+    if (!feature) {
       return '';
     }
     return product.url(type, feature.productId ?? feature.id);
@@ -959,23 +960,23 @@ class Products extends IndexObject<Product> {
     return (
       <React.Fragment>
 
-          {this.live.map((product: Product) => {
-            return  product.selectorItem(context);
-          })}
+        {this.live.map((product: Product) => {
+          return product.selectorItem(context);
+        })}
       </React.Fragment>
     )
   }
 
-  menu(props: Omit<ProductMenuProps, 'products'> ) {
+  menu(props: Omit<ProductMenuProps, 'products'>) {
     const menuProps = { ...props, products: this.live };
-    return <ProductMenu { ...menuProps } />
+    return <ProductMenu {...menuProps} />
   }
 
   stack(props: ProductStackProps) {
     const { productIndex, setProductIndex } = props;
-    return (<Stack spacing={1} sx={{ display: { xs: 'none', lg: 'flex' },  }}>
+    return (<Stack spacing={1} sx={{ display: { xs: 'none', lg: 'flex' }, }}>
       {this.live.map((product, index) => {
-        return product.highlightedItem(productIndex, setProductIndex, index, 'column' );
+        return product.highlightedItem(productIndex, setProductIndex, index, 'column');
       })}
     </Stack>)
   }
@@ -1226,7 +1227,7 @@ const drumsData: TProduct = {
   description: "\"I like to play\" - Garth",
   icon: "icon-diamonds",
   url: ROUTES.drums,
-  preview:{
+  preview: {
     video: 'https://cenv-public.s3.amazonaws.com/tell-me-mister-2.mp4'
   },
   showcaseType: VideoShowcase,
@@ -1241,7 +1242,7 @@ const drumsData: TProduct = {
 
 const drums = new Product(drumsData);
 
-        
+
 
 const workData: TProduct = {
   id: 'work',
@@ -1286,7 +1287,7 @@ const resumeData: TProduct = {
   description: "Keeping my eyes open for my next big project.",
   icon: "icon-rect",
   url: ROUTES.resume,
-  preview:{
+  preview: {
     image: 'https://cenv-public.s3.amazonaws.com/resume-preview.png'
   },
   showcaseType: PdfShowcase,

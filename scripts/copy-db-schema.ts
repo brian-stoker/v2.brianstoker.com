@@ -79,7 +79,6 @@ async function copyDatabaseSchema() {
         }
 
         try {
-          const indexSpec: any = {};
           const keys = index.key;
 
           // Remove internal fields from index options

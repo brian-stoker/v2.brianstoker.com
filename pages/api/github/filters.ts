@@ -18,19 +18,42 @@ export default async function handler(
 
     const eventsCollection = db.collection('github_events');
 
-    // Get unique repositories and event types
-    // These queries use the indexes we created, so they should be fast
-    const repositories = await eventsCollection.distinct('repo.name');
+    // Get repo stats (count + most recent event + recent event types) via aggregation
+    const repoAggregation = await eventsCollection.aggregate([
+      { $sort: { created_at: -1 } },
+      { $group: {
+        _id: '$repo.name',
+        count: { $sum: 1 },
+        lastEventDate: { $max: '$created_at' },
+        recentTypes: { $push: '$type' }
+      }},
+      { $project: {
+        count: 1,
+        lastEventDate: 1,
+        recentTypes: { $slice: ['$recentTypes', 8] }
+      }},
+      { $sort: { lastEventDate: -1 } }
+    ]).toArray();
+
     const eventTypes = await eventsCollection.distinct('type');
 
     // Transform event types (remove 'Event' suffix)
     const actionTypes = eventTypes.map((t: string) => t.replace('Event', '')).sort();
 
-    // Sort repositories
-    const sortedRepositories = repositories.sort();
+    // Repos sorted by most recent activity
+    const sortedRepositories = repoAggregation.map(r => r._id as string);
+
+    // Per-repo stats for mobile strip
+    const repositoryStats = repoAggregation.map(r => ({
+      name: r._id as string,
+      count: r.count as number,
+      lastEventDate: r.lastEventDate as string,
+      recentTypes: r.recentTypes as string[]
+    }));
 
     return res.status(200).json({
       repositories: sortedRepositories,
+      repositoryStats,
       actionTypes,
       lastUpdated: new Date().toISOString()
     });

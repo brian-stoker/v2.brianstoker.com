@@ -16,6 +16,19 @@ const nextConfig = withMDX({
   },
   output: 'standalone',
   transpilePackages: ['@stoked-ui/docs', '@mui/icons-material'],
+  // Turbopack config (used with next dev --turbopack)
+  turbopack: {
+    rules: {
+      '*.svg': {
+        loaders: ['@svgr/webpack'],
+        as: '*.js',
+      },
+    },
+    resolveAlias: {
+      '@mui/icons-material': '@mui/icons-material/esm',
+    },
+  },
+  // Webpack config (used for production builds)
   webpack: (config, { isServer }) => {
     if (!isServer) {
       config.resolve.alias = {
@@ -32,7 +45,6 @@ const nextConfig = withMDX({
 
     return config;
   },
-  // Any other config you need
 });
 
 export default nextConfig;

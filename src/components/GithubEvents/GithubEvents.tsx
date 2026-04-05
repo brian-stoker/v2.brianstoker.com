@@ -7,7 +7,7 @@ import Select from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import IconButton from '@mui/material/IconButton';
-import { format, parse, parseISO } from 'date-fns';
+import { format, formatDistanceToNow, parse, parseISO } from 'date-fns';
 import { toZonedTime } from 'date-fns-tz';
 import { enUS } from 'date-fns/locale';
 import { alpha, emphasize, styled, Theme, useTheme } from '@mui/material/styles';
@@ -31,6 +31,8 @@ import MergeTypeIcon from '@mui/icons-material/MergeType';
 import DeleteIcon from '@mui/icons-material/Delete';
 import AddBoxIcon from '@mui/icons-material/AddBox';
 import BugReportIcon from '@mui/icons-material/BugReport';
+import Chip from '@mui/material/Chip';
+import Avatar from '@mui/material/Avatar';
 import {
   getIndexCache,
   getDetailsCache,
@@ -42,6 +44,7 @@ import {
   clearAllCaches,
   addEventDetails
 } from '../../utils/eventCacheManager';
+import { replaceGithubEmoji } from '../../utils/githubEmoji';
 
 // Extend the EventDetails interface for internal component use
 interface DisplayEventDetails extends EventDetails {
@@ -79,6 +82,7 @@ export default function GithubEvents({ eventsPerPage = EVENT_PAGE_SIZE, hideMeta
   const [repoFilter, setRepoFilter] = React.useState<string>('');
   const [actionFilter, setActionFilter] = React.useState<string>('');
   const [repositories, setRepositories] = React.useState<string[]>([]);
+  const [repoStats, setRepoStats] = React.useState<Record<string, { count: number, lastEventDate: string, recentTypes: string[] }>>({});
   const [actionTypes, setActionTypes] = React.useState<string[]>([]);
   const [dateFilter, setDateFilter] = React.useState<string>('');
   const [descriptionFilter, setDescriptionFilter] = React.useState<string>('');
@@ -98,6 +102,54 @@ export default function GithubEvents({ eventsPerPage = EVENT_PAGE_SIZE, hideMeta
   const pendingEventSelection = React.useRef<string | null>(null);
   const isMobile = useMediaQuery(theme.breakpoints.down(900));
   const [allLoadedEvents, setAllLoadedEvents] = React.useState<DisplayEventDetails[]>([]);
+  // Group events by repo for mobile repo strip - uses ALL repos from filters API
+  // Sorted by most recent event, with accurate total counts from DB
+  const mobileRepoGroups = React.useMemo(() => {
+    const groups = repositories.map(repoName => {
+      const shortName = repoName.split('/')[1] || repoName;
+      const stats = repoStats[repoName];
+      return {
+        name: repoName,
+        shortName,
+        totalCount: stats?.count || 0,
+        lastEventDate: stats?.lastEventDate || '',
+        recentTypes: stats?.recentTypes || [],
+      };
+    });
+    // Sort by most recent event date (from DB stats)
+    return groups.sort((a, b) => {
+      if (a.lastEventDate && b.lastEventDate) {
+        return b.lastEventDate.localeCompare(a.lastEventDate);
+      }
+      if (a.lastEventDate) return -1;
+      if (b.lastEventDate) return 1;
+      return a.shortName.localeCompare(b.shortName);
+    });
+  }, [repositories, repoStats]);
+
+  // Events for mobile view - API handles repo filtering via repoFilter
+  const mobileFilteredEvents = React.useMemo(() => {
+    return isMobile ? allLoadedEvents : events;
+  }, [isMobile, allLoadedEvents, events]);
+
+  // Global total across all repos (from DB stats, not filtered page count)
+  const globalTotalEvents = React.useMemo(() => {
+    const statsTotal = Object.values(repoStats).reduce((sum, s) => sum + s.count, 0);
+    return statsTotal || totalCount;
+  }, [repoStats, totalCount]);
+
+  // Event type colors (matching Magic Patterns design)
+  const getEventColor = (actionType: string): string => {
+    switch (actionType) {
+      case 'PushEvent': return '#58a6ff';        // Blue
+      case 'PullRequestEvent': return '#a371f7';  // Purple
+      case 'IssuesEvent': return '#3fb950';        // Green
+      case 'IssueCommentEvent': return '#3fb950';  // Green
+      case 'CreateEvent': return '#d29922';        // Orange
+      case 'DeleteEvent': return '#f85149';        // Red
+      default: return '#8b949e';
+    }
+  };
 
 
   // Helper function to get action name from event type
@@ -129,10 +181,19 @@ export default function GithubEvents({ eventsPerPage = EVENT_PAGE_SIZE, hideMeta
     Create: <AddBoxIcon sx={{ fontSize: 20 }} />
   };
 
+  // Sync totalCount with authoritative DB total when no filters are active
+  // The filters API returns fresh per-repo counts from the DB, while totalCount
+  // may be stale from the localStorage index cache
+  React.useEffect(() => {
+    const hasFilters = repoFilter || actionFilter || dateFilter || descriptionFilter;
+    if (!hasFilters && globalTotalEvents > 0 && globalTotalEvents !== totalCount) {
+      setTotalCount(globalTotalEvents);
+    }
+  }, [globalTotalEvents, repoFilter, actionFilter, dateFilter, descriptionFilter]);
+
   // Calculate total pages
   const totalPages = React.useMemo(() => {
     const pages = Math.ceil(totalCount / eventsPerPage);
-    console.log('[GithubEvents] Pagination debug:', { totalCount, eventsPerPage, totalPages: pages });
     return pages;
   }, [totalCount, eventsPerPage]);
 
@@ -160,17 +221,28 @@ export default function GithubEvents({ eventsPerPage = EVENT_PAGE_SIZE, hideMeta
   const fetchAndCacheFilters = async () => {
     try {
       const response = await fetch('/api/github/filters');
-      if (!response.ok) throw new Error('Failed to fetch filters');
+      if (!response.ok) {
+        console.warn('Failed to fetch filters:', response.status);
+        return;
+      }
       const data = await response.json();
 
       // Update state
       setRepositories(data.repositories);
       setActionTypes(data.actionTypes);
+      if (data.repositoryStats) {
+        const statsMap: Record<string, { count: number, lastEventDate: string, recentTypes: string[] }> = {};
+        data.repositoryStats.forEach((r: { name: string, count: number, lastEventDate: string, recentTypes?: string[] }) => {
+          statsMap[r.name] = { count: r.count, lastEventDate: r.lastEventDate, recentTypes: r.recentTypes || [] };
+        });
+        setRepoStats(statsMap);
+      }
 
       // Cache in localStorage (separate from events cache)
       try {
         localStorage.setItem('github_filters', JSON.stringify({
           repositories: data.repositories,
+          repositoryStats: data.repositoryStats,
           actionTypes: data.actionTypes,
           lastFetched: Date.now()
         }));
@@ -192,6 +264,13 @@ export default function GithubEvents({ eventsPerPage = EVENT_PAGE_SIZE, hideMeta
         const parsedFilters = JSON.parse(cachedFilters);
         setRepositories(parsedFilters.repositories);
         setActionTypes(parsedFilters.actionTypes);
+        if (parsedFilters.repositoryStats) {
+          const statsMap: Record<string, { count: number, lastEventDate: string, recentTypes: string[] }> = {};
+          parsedFilters.repositoryStats.forEach((r: { name: string, count: number, lastEventDate: string, recentTypes?: string[] }) => {
+            statsMap[r.name] = { count: r.count, lastEventDate: r.lastEventDate, recentTypes: r.recentTypes || [] };
+          });
+          setRepoStats(statsMap);
+        }
 
         // Refresh filters in background if cache is older than 1 hour
         const hoursSinceLastFetch = (Date.now() - parsedFilters.lastFetched) / (1000 * 60 * 60);
@@ -213,17 +292,17 @@ export default function GithubEvents({ eventsPerPage = EVENT_PAGE_SIZE, hideMeta
       if (!events.length) return;
 
       if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
-         // Only handle keyboard navigation if the events container or its elements have focus
+        // Only handle keyboard navigation if the events container or its elements have focus
         // or if a modifier key is pressed (e.g., Shift, Ctrl, Alt)
         const activeElement = document.activeElement;
         const isTableFocused = activeElement?.closest('#events-table-container') !== null ||
-                              e.shiftKey || e.ctrlKey || e.altKey || e.metaKey;
+          e.shiftKey || e.ctrlKey || e.altKey || e.metaKey;
 
         // If table is not focused and no modifier keys, allow normal scrolling
         if (!isTableFocused) {
           return;
         }
-        
+
         e.preventDefault();
 
         let newIndex = selectedIndex;
@@ -369,25 +448,21 @@ export default function GithubEvents({ eventsPerPage = EVENT_PAGE_SIZE, hideMeta
   }, [events, page, isMobile]);
 
   // Add scroll listener for infinite scroll on mobile
+  // Uses window scroll since the timeline flows in the page naturally
   React.useEffect(() => {
     if (!isMobile) return;
 
     const handleScroll = () => {
-      const container = document.querySelector('#events-table-container');
-      if (!container) return;
-
-      const { scrollTop, scrollHeight, clientHeight } = container;
-      // Load more when user is 200px from bottom
-      if (scrollHeight - scrollTop - clientHeight < 200 && !loading && page < totalPages) {
+      const { scrollTop, scrollHeight } = document.documentElement;
+      const clientHeight = window.innerHeight;
+      // Load more when user is 400px from bottom of page
+      if (scrollHeight - scrollTop - clientHeight < 400 && !loading && page < totalPages) {
         setPage(prev => prev + 1);
       }
     };
 
-    const container = document.querySelector('#events-table-container');
-    if (container) {
-      container.addEventListener('scroll', handleScroll);
-      return () => container.removeEventListener('scroll', handleScroll);
-    }
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
   }, [isMobile, loading, page, totalPages]);
 
   // Helper function to handle event selection
@@ -591,9 +666,9 @@ export default function GithubEvents({ eventsPerPage = EVENT_PAGE_SIZE, hideMeta
     return rawEvents.map((event) => {
       const dateTime = toZonedTime(parseISO(event.created_at), 'America/Chicago');
       const date = format(dateTime, 'MM-dd-yyyy');
-      
+
       const formattedDate = format(dateTime, 'MMM d, yyyy h:mm a');
-      
+
       const eventDetails: DisplayEventDetails = {
         id: event.id,
         date: formattedDate,
@@ -631,28 +706,28 @@ export default function GithubEvents({ eventsPerPage = EVENT_PAGE_SIZE, hideMeta
           }
           eventDetails.commitsList = event.payload.commits
             ? event.payload.commits.map((commit: any) => {
-                const normalizedMessage =
-                  commit.message ||
-                  commit.commit?.message ||
-                  commit.payload?.commit?.message ||
-                  '';
-                const message = normalizedMessage || 'No commit message provided';
-                const authorName =
-                  commit.author?.name ||
-                  commit.commit?.author?.name ||
-                  commit.commit?.author?.email ||
-                  commit.commit?.committer?.name ||
-                  'Unknown author';
+              const normalizedMessage =
+                commit.message ||
+                commit.commit?.message ||
+                commit.payload?.commit?.message ||
+                '';
+              const message = replaceGithubEmoji(normalizedMessage || 'No commit message provided');
+              const authorName =
+                commit.author?.name ||
+                commit.commit?.author?.name ||
+                commit.commit?.author?.email ||
+                commit.commit?.committer?.name ||
+                'Unknown author';
 
-                return {
-                  message,
-                  sha: commit.sha,
-                  author: {
-                    name: authorName,
-                  },
-                  html_url: commit.html_url || `https://github.com/${event.repo.name}/commit/${commit.sha}`,
-                };
-              })
+              return {
+                message,
+                sha: commit.sha,
+                author: {
+                  name: authorName,
+                },
+                html_url: commit.html_url || `https://github.com/${event.repo.name}/commit/${commit.sha}`,
+              };
+            })
             : [];
           eventDetails.ref = event.payload.ref;
           break;
@@ -676,9 +751,9 @@ export default function GithubEvents({ eventsPerPage = EVENT_PAGE_SIZE, hideMeta
           description = '';
           link = `https://github.com/${event.repo.name}`;
       }
-      
+
       eventDetails.action = action;
-      eventDetails.description = description;
+      eventDetails.description = replaceGithubEmoji(description);
       eventDetails.url = link;
 
       return eventDetails;
@@ -920,6 +995,14 @@ export default function GithubEvents({ eventsPerPage = EVENT_PAGE_SIZE, hideMeta
     return format(parsed, 'h:mm a');
   }
 
+  const getRelativeTime = (isoDate: string) => {
+    try {
+      return formatDistanceToNow(parseISO(isoDate), { addSuffix: true });
+    } catch {
+      return '';
+    }
+  };
+
   const filters = <Box sx={{
     display: 'grid',
     gridTemplateColumns: '100px 1fr 150px',
@@ -974,7 +1057,7 @@ export default function GithubEvents({ eventsPerPage = EVENT_PAGE_SIZE, hideMeta
                 '& input': {
                   p: '2.5px 4px',
                   fontSize: '0.875rem'
-                 },
+                },
                 '& fieldset': {
                   borderColor: 'rgba(255, 255, 255, 0.23)'
                 }
@@ -1098,19 +1181,20 @@ export default function GithubEvents({ eventsPerPage = EVENT_PAGE_SIZE, hideMeta
       flexDirection: 'column',
       gap: 1,
       padding: 0,
-      maxWidth: { xs: '100%', lg: isMobile || alwaysColumn ? '100%' : 'calc(100vw - 20px)'},
+      maxWidth: { xs: '100%', lg: isMobile || alwaysColumn ? '100%' : 'calc(100vw - 20px)' },
       width: {
-        lg: alwaysColumn ?  '100%' : '1144px',
+        lg: alwaysColumn ? '100%' : '1144px',
         xs: '100%'
       },
+      minWidth: 0,
+      overflow: 'hidden',
       margin: alwaysColumn ? 0 : '0 10px'
     }}>
-      {!alwaysColumn && <Box sx={{ mb: 1, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <Box sx={{ 
-          display: 'flex', 
+      {!alwaysColumn && <Box sx={{ mb: 1, px: { xs: 1.5, lg: 0 }, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Box sx={{
+          display: 'flex',
           gap: 0,
           flexDirection: 'column',
-       
         }}>
           <Typography variant="subtitle1" fontWeight="semiBold">Work</Typography>
           {lastUpdated && (
@@ -1119,22 +1203,21 @@ export default function GithubEvents({ eventsPerPage = EVENT_PAGE_SIZE, hideMeta
             </Typography>
           )}
         </Box>
-        {totalCount > 0 && (
+        {globalTotalEvents > 0 && (
           <Box sx={{
-            display: 'flex', 
-            alignItems: { 
-              xs: undefined, 
+            display: 'flex',
+            alignItems: {
+              xs: undefined,
               lg: 'center'
-            }, 
-            alignSelf: { 
-              xs: 'end', 
-              lg: undefined 
-            }, 
+            },
+            alignSelf: {
+              xs: 'end',
+              lg: undefined
+            },
             gap: 0,
-            
           }}>
             <Typography variant="caption" color="text.secondary">
-              {totalCount} total events
+              {globalTotalEvents} total events
             </Typography>
             {!isMobile && !alwaysColumn && totalPages > 1 && (
               <Pagination
@@ -1153,219 +1236,646 @@ export default function GithubEvents({ eventsPerPage = EVENT_PAGE_SIZE, hideMeta
             )}
           </Box>
         )}
-      </Box> }
-      <Box sx={{
-        display: 'flex',
-        flexDirection: isMobile || alwaysColumn ? 'column-reverse' : 'row',
-        gap: '1px',
-        width: '100%',
-        border: 0,
-      }}>
-        <Box
-          sx={{
-            width: isMobile || alwaysColumn  ? '100%' : '460px',
-            flexShrink: 0,
-            display: 'flex',
-            flexDirection: 'column',
-            position: 'relative',
-            border: 0,
-            maxHeight: 'auto',
-          }}
-          className="master-container"
-        >
+      </Box>}
+      {/* === MOBILE LAYOUT: repo strip + timeline === */}
+      {(isMobile || alwaysColumn) ? (
+        <Box sx={{ width: '100%', minWidth: 0, display: 'flex', flexDirection: 'column' }}>
           {error && (
-            <Typography color="error" sx={{ mb: 2 }}>{error}</Typography>
+            <Typography color="error" sx={{ mb: 1, px: 1.5 }}>{error}</Typography>
           )}
-          {/* Filters - fixed position, don't scroll */}
-          {!alwaysColumn && filters}
 
-          {/* Scrollable events container */}
+          {/* Horizontal Repo Strip - sticky at top */}
+          <Box
+            sx={{
+              px: 1.5,
+              py: 1.5,
+              display: 'flex',
+              gap: 1,
+              overflowX: 'auto',
+              flexShrink: 0,
+              borderBottom: `1px solid ${theme.palette.divider}`,
+              '&::-webkit-scrollbar': { display: 'none' },
+              scrollbarWidth: 'none',
+              ...(!alwaysColumn && {
+                position: 'sticky',
+                top: 'var(--MuiDocs-header-height, 60px)',
+                zIndex: 10,
+              }),
+              bgcolor: 'rgba(255, 255, 255, 0.06)',
+            }}
+          >
+            {/* "All" repo card */}
+            <Box
+              onClick={() => setRepoFilter('')}
+              sx={{
+                minWidth: 130,
+                maxWidth: 130,
+                height: 80,
+                p: 1.5,
+                cursor: 'pointer',
+                borderRadius: 2,
+                border: `1px solid ${!repoFilter ? theme.palette.primary.main : theme.palette.divider}`,
+                bgcolor: !repoFilter
+                  ? alpha(theme.palette.primary.main, 0.08)
+                  : theme.palette.background.paper,
+                transition: 'all 0.2s ease',
+                display: 'flex',
+                flexDirection: 'column',
+                justifyContent: 'space-between',
+                flexShrink: 0,
+                '&:active': { transform: 'scale(0.97)' },
+              }}
+            >
+              <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                <Typography
+                  variant="body2"
+                  noWrap
+                  sx={{
+                    fontWeight: 600,
+                    color: !repoFilter ? 'primary.main' : 'text.primary',
+                    fontSize: '0.8rem',
+                  }}
+                >
+                  All Repos
+                </Typography>
+                <Chip
+                  label={globalTotalEvents}
+                  size="small"
+                  sx={{
+                    height: 16,
+                    fontSize: '0.6rem',
+                    fontWeight: 600,
+                    bgcolor: !repoFilter
+                      ? alpha(theme.palette.primary.main, 0.2)
+                      : alpha(theme.palette.text.secondary, 0.15),
+                    color: !repoFilter ? 'primary.main' : 'text.secondary',
+                  }}
+                />
+              </Box>
+              <Typography variant="caption" color="text.secondary" sx={{ fontSize: '0.7rem' }}>
+                {mobileRepoGroups[0]?.lastEventDate ? getRelativeTime(mobileRepoGroups[0].lastEventDate) : ''}
+              </Typography>
+            </Box>
+
+            {mobileRepoGroups.map((repo) => {
+              const isSelected = repoFilter === repo.name;
+              return (
+                <Box
+                  key={repo.name}
+                  onClick={() => setRepoFilter(repo.name)}
+                  sx={{
+                    minWidth: 150,
+                    maxWidth: 150,
+                    height: 80,
+                    p: 1.5,
+                    cursor: 'pointer',
+                    borderRadius: 2,
+                    border: `1px solid ${isSelected ? theme.palette.primary.main : theme.palette.divider}`,
+                    bgcolor: isSelected
+                      ? alpha(theme.palette.primary.main, 0.08)
+                      : theme.palette.background.paper,
+                    transition: 'all 0.2s ease',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    justifyContent: 'space-between',
+                    flexShrink: 0,
+                    '&:active': { transform: 'scale(0.97)' },
+                  }}
+                >
+                  <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                    <Typography
+                      variant="body2"
+                      noWrap
+                      sx={{
+                        fontWeight: 600,
+                        color: isSelected ? 'primary.main' : 'text.primary',
+                        fontSize: '0.8rem',
+                        maxWidth: 90,
+                      }}
+                    >
+                      {repo.shortName}
+                    </Typography>
+                    <Chip
+                      label={repo.totalCount}
+                      size="small"
+                      sx={{
+                        height: 16,
+                        fontSize: '0.6rem',
+                        fontWeight: 600,
+                        bgcolor: isSelected
+                          ? alpha(theme.palette.primary.main, 0.2)
+                          : alpha(theme.palette.text.secondary, 0.15),
+                        color: isSelected ? 'primary.main' : 'text.secondary',
+                      }}
+                    />
+                  </Box>
+
+                  {/* Event type icons from DB stats (persists across filter changes) */}
+                  <Box sx={{ display: 'flex', gap: 0.5, overflow: 'hidden' }}>
+                    {repo.recentTypes.map((eventType, i) => {
+                      const actionName = getActionName(eventType);
+                      return (
+                        <Box
+                          key={`${repo.name}-${eventType}-${i}`}
+                          sx={{
+                            color: getEventColor(eventType),
+                            opacity: 0.8,
+                            display: 'flex',
+                            '& .MuiSvgIcon-root': { fontSize: 16 },
+                          }}
+                        >
+                          {actionIcons[actionName] || null}
+                        </Box>
+                      );
+                    })}
+                  </Box>
+
+                  {repo.lastEventDate ? (
+                    <Typography variant="caption" color="text.secondary" sx={{ fontSize: '0.7rem' }}>
+                      {getRelativeTime(repo.lastEventDate)}
+                    </Typography>
+                  ) : (
+                    <Typography variant="caption" color="text.secondary" sx={{ fontSize: '0.7rem', opacity: 0.5 }}>
+                      &mdash;
+                    </Typography>
+                  )}
+                </Box>
+              );
+            })}
+          </Box>
+
+          {/* Vertical Timeline */}
           <Box
             id={'events-table-container'}
             sx={{
-              borderRadius: '0',
-              position: 'relative',
-              overflow: 'hidden',
-              borderTop: '0px',
-              border: 0,
-              backgroundColor: theme.palette.background.paper,
-              flex: isMobile || alwaysColumn ? '1 1 auto' : 'none',
-              minHeight: 0,
-              overflowY: isMobile || alwaysColumn ? 'auto' : 'visible',
-          }}>
+              overflowY: 'auto',
+              px: 2,
+              py: 2,
+              pb: 6,
+              '&::-webkit-scrollbar': { display: 'none' },
+              scrollbarWidth: 'none',
+            }}
+          >
+            {/* Repo header when filtered */}
+            {repoFilter && (
+              <Box sx={{ mb: 2.5, display: 'flex', alignItems: 'center', gap: 1.5 }}>
+                <Box>
+                  <Typography variant="subtitle1" sx={{ fontWeight: 600, color: 'primary.main', fontSize: '0.95rem' }}>
+                    {repoFilter}
+                  </Typography>
+                  <Typography variant="caption" color="text.secondary">
+                    {mobileFilteredEvents.length} events
+                  </Typography>
+                </Box>
+              </Box>
+            )}
+
+            {/* Timeline events */}
             <Box sx={{
-              cursor: 'pointer',
-              background: 'rgba(255,255,255,.1)',
-              overflowY: 'hidden'
+              position: 'relative',
+              pl: 2.5,
+              borderLeft: `2px solid ${theme.palette.divider}`,
             }}>
-              {(isMobile ? allLoadedEvents : events).map((event, index) => {
+              {mobileFilteredEvents.map((event, index) => {
                 const showDateRow = event.dateOnly !== latestDateDisplayed;
                 latestDateDisplayed = event.dateOnly;
+                const eventColor = getEventColor(event.actionType);
 
                 return (
-                  <React.Fragment key={index}>
+                  <React.Fragment key={event.id || index}>
                     {showDateRow && (
-                      <Box sx={{
-                        display: 'grid',
-                        gridTemplateColumns: '100px 1fr 150px',
-                        gap: 1,
-                        padding: '8px 10px',
-                        fontSize: '0.875rem',
-                        backgroundColor: theme.palette.mode === 'light' ?
-                          'color-mix(in oklab, rgba(0, 97, 194, 0.5) 25%, rgba(235, 235, 235, 0.5))' :
-                          'color-mix(in oklab, rgba(102, 179, 255, 0.5) 25%, rgba(31, 31, 31, 0.5))'
-                      }}>
-                        <Box sx={{ gridColumn: '1 / -1' }}>
-                          <Typography variant="subtitle2" fontWeight="semiBold" sx={{ fontSize: '0.875rem' }}>{event.dateOnly}</Typography>
-                        </Box>
+                      <Box sx={{ mb: 1, mt: index > 0 ? 2 : 0, ml: -0.5 }}>
+                        <Typography variant="caption" sx={{
+                          fontWeight: 600,
+                          color: 'text.secondary',
+                          fontSize: '0.75rem',
+                          textTransform: 'uppercase',
+                          letterSpacing: '0.05em',
+                        }}>
+                          {event.dateOnly}
+                        </Typography>
                       </Box>
                     )}
                     <Box
                       id={event.id}
-                      className={selectedEvent.id === event.id ? 'selected' : ''}
-                      sx={{
-                        display: 'grid',
-                        gridTemplateColumns: '100px 1fr 150px',
-                        gap: 1,
-                        padding: '0px 10px',
-                        fontSize: '0.875rem',
-                        cursor: 'pointer',
-                        backgroundColor: index % 2 === 0
-                          ? theme.palette.background.paper
-                          : emphasize(theme.palette.background.paper, 0.05),
-                        transition: 'all 0.3s ease',
-                        border: '1px solid transparent',
-                        boxSizing: 'border-box',
-                        '&.selected': {
-                          backgroundColor: 'hsla(210, 40%, 38%, 1.00)',
-                          transition: 'all 0.2s ease',
-                          color: '#FFF',
-                          borderColor: 'hsla(211, 70%, 75%, 1.00)',
-                          ...theme.applyDarkStyles({
-                            backgroundColor: 'hsla(210, 40%, 38%, 1.00)',
-                          }),
-                        },
-                        '&:not(.selected):hover': {
-                          backgroundColor: theme.palette.primary[50],
-                          transition: 'all 0.2s ease',
-                          ...theme.applyDarkStyles({
-                            backgroundColor: alpha(theme.palette.primary[900], 0.1),
-                          }),
-                        },
-                      }}
-                      onClick={(e) => {
-                        e.preventDefault();
-                        e.stopPropagation();
-                        const eventIndex = events.findIndex(evt => evt.id === event.id);
-                        if (eventIndex !== -1) {
-                          handleEventSelection(event, eventIndex);
-                        }
-                      }}
+                      sx={{ mb: 3, position: 'relative' }}
                     >
-                      <Box sx={{ display: 'flex', alignItems: 'center', fontSize: '0.875rem' }}>
-                        {getTimeOnly(event.date)}
+                      {/* Timeline dot */}
+                      <Box sx={{
+                        position: 'absolute',
+                        left: -26,
+                        top: 2,
+                        width: 14,
+                        height: 14,
+                        borderRadius: '50%',
+                        bgcolor: 'background.default',
+                        border: `2px solid ${eventColor}`,
+                        zIndex: 1,
+                      }} />
+
+                      {/* Event header: chip + time */}
+                      <Box sx={{ display: 'flex', alignItems: 'center', mb: 1, gap: 1 }}>
+                        <Chip
+                          icon={actionIcons[event.action] ? React.cloneElement(actionIcons[event.action], { sx: { fontSize: 14, color: `${eventColor} !important` } }) : undefined}
+                          label={event.action}
+                          size="small"
+                          sx={{
+                            height: 22,
+                            fontSize: '0.7rem',
+                            fontWeight: 600,
+                            bgcolor: alpha(eventColor, 0.12),
+                            color: eventColor,
+                            border: `1px solid ${alpha(eventColor, 0.25)}`,
+                            '& .MuiChip-icon': { ml: 0.5 },
+                          }}
+                        />
+                        <Typography variant="caption" color="text.secondary" sx={{ fontSize: '0.7rem' }}>
+                          {getTimeOnly(event.date)}
+                        </Typography>
                       </Box>
-                      <Box sx={{ display: 'flex', alignItems: 'center', fontSize: '0.875rem', justifyContent: 'center' }}>
-                        {event.repo.split('/')[1]}
-                      </Box>
-                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5, height: '38px', fontSize: '0.875rem' }}>
-                        {actionIcons[event.action] || null}
-                        <span>{event.action}</span>
+
+                      {/* Event content card */}
+                      <Box
+                        sx={{
+                          p: 2,
+                          bgcolor: theme.palette.background.paper,
+                          border: `1px solid ${theme.palette.divider}`,
+                          borderRadius: 2,
+                        }}
+                      >
+                        {/* Actor info */}
+                        {event.payload?.actor?.login && (
+                          <Box sx={{ display: 'flex', alignItems: 'center', mb: 1.5 }}>
+                            <Avatar
+                              src={event.payload?.actor?.avatar_url || event.avatarUrl || ''}
+                              sx={{ width: 20, height: 20, mr: 1 }}
+                            />
+                            <Typography variant="body2" sx={{ fontWeight: 600, color: 'text.primary', fontSize: '0.85rem' }}>
+                              {event.payload?.actor?.login || event.user || ''}
+                            </Typography>
+                          </Box>
+                        )}
+
+                        {/* Repo name (when showing all repos) */}
+                        {!repoFilter && (
+                          <Typography variant="caption" sx={{
+                            color: 'primary.main',
+                            fontWeight: 600,
+                            fontSize: '0.7rem',
+                            mb: 0.75,
+                            display: 'block',
+                          }}>
+                            {event.repo}
+                          </Typography>
+                        )}
+
+                        {/* === PUSH EVENT: branch + commits === */}
+                        {event.actionType === 'PushEvent' && (
+                          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
+                            {event.ref && (
+                              <Box sx={{ display: 'flex', alignItems: 'center', color: 'text.secondary' }}>
+                                <CodeIcon sx={{ fontSize: 14, mr: 0.75 }} />
+                                <Typography variant="caption" sx={{ fontFamily: 'monospace', fontSize: '0.8rem' }}>
+                                  {event.ref.replace('refs/heads/', '')}
+                                </Typography>
+                              </Box>
+                            )}
+                            {event.commitsList && event.commitsList.length > 0 ? (
+                              event.commitsList.map((commit: any) => (
+                                <Box key={commit.sha} sx={{ display: 'flex', gap: 1.5, alignItems: 'flex-start' }}>
+                                  <CodeIcon sx={{ fontSize: 14, mt: '2px', color: 'text.secondary' }} />
+                                  <Box>
+                                    <Typography variant="caption" sx={{
+                                      fontFamily: 'monospace',
+                                      color: 'primary.main',
+                                      fontSize: '0.8rem',
+                                      mr: 1,
+                                    }}>
+                                      {commit.sha.substring(0, 7)}
+                                    </Typography>
+                                    <Typography variant="body2" component="span" sx={{ fontSize: '0.8rem' }}>
+                                      {replaceGithubEmoji(commit.message.split('\n')[0])}
+                                    </Typography>
+                                  </Box>
+                                </Box>
+                              ))
+                            ) : (
+                              <Typography variant="body2" sx={{ fontSize: '0.85rem', color: 'text.primary' }}>
+                                {event.description}
+                              </Typography>
+                            )}
+                          </Box>
+                        )}
+
+                        {/* === PULL REQUEST / ISSUE EVENT: title, number, labels, body === */}
+                        {(event.actionType === 'PullRequestEvent' || event.actionType === 'IssuesEvent') && (
+                          <Box>
+                            <Typography variant="body1" sx={{ fontWeight: 600, fontSize: '0.9rem', mb: 0.5 }}>
+                              {event.payload?.pull_request?.title || event.payload?.issue?.title || event.description}
+                            </Typography>
+                            <Typography variant="caption" sx={{ color: 'text.secondary', display: 'block', mb: 1 }}>
+                              #{event.payload?.pull_request?.number || event.payload?.issue?.number || event.number}
+                            </Typography>
+                            {/* Labels */}
+                            {(event.payload?.pull_request?.labels || event.payload?.issue?.labels) && (
+                              <Box sx={{ display: 'flex', gap: 0.5, mb: 1.5, flexWrap: 'wrap' }}>
+                                {(event.payload?.pull_request?.labels || event.payload?.issue?.labels || []).map((label: any) => (
+                                  <Chip
+                                    key={typeof label === 'string' ? label : label.name}
+                                    label={typeof label === 'string' ? label : label.name}
+                                    size="small"
+                                    sx={{
+                                      height: 18,
+                                      fontSize: '0.65rem',
+                                      bgcolor: typeof label === 'string' ? '#21262d' : (label.color ? `#${label.color}` : '#21262d'),
+                                      color: 'text.secondary',
+                                    }}
+                                  />
+                                ))}
+                              </Box>
+                            )}
+                            {/* Body text */}
+                            {(event.payload?.pull_request?.body || event.payload?.issue?.body) && (
+                              <Typography variant="body2" sx={{
+                                color: 'text.secondary',
+                                fontSize: '0.8rem',
+                                whiteSpace: 'pre-wrap',
+                                overflow: 'hidden',
+                                display: '-webkit-box',
+                                WebkitLineClamp: 4,
+                                WebkitBoxOrient: 'vertical',
+                              }}>
+                                {event.payload?.pull_request?.body || event.payload?.issue?.body}
+                              </Typography>
+                            )}
+                          </Box>
+                        )}
+
+                        {/* === ISSUE COMMENT EVENT === */}
+                        {event.actionType === 'IssueCommentEvent' && (
+                          <Box>
+                            <Typography variant="body1" sx={{ fontWeight: 600, fontSize: '0.9rem', mb: 0.5 }}>
+                              {event.description}
+                            </Typography>
+                            {event.payload?.comment?.body && (
+                              <Typography variant="body2" sx={{
+                                color: 'text.secondary',
+                                fontSize: '0.8rem',
+                                whiteSpace: 'pre-wrap',
+                                overflow: 'hidden',
+                                display: '-webkit-box',
+                                WebkitLineClamp: 3,
+                                WebkitBoxOrient: 'vertical',
+                              }}>
+                                {event.payload.comment.body}
+                              </Typography>
+                            )}
+                          </Box>
+                        )}
+
+                        {/* === CREATE EVENT: branch/tag name === */}
+                        {event.actionType === 'CreateEvent' && (
+                          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                            <AddBoxIcon sx={{ fontSize: 16, color: eventColor }} />
+                            <Typography variant="body2" sx={{ fontFamily: 'monospace', fontSize: '0.85rem' }}>
+                              {event.payload?.ref || event.ref || event.description}
+                            </Typography>
+                          </Box>
+                        )}
+
+                        {/* === DELETE EVENT === */}
+                        {event.actionType === 'DeleteEvent' && (
+                          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                            <DeleteIcon sx={{ fontSize: 16, color: eventColor }} />
+                            <Typography variant="body2" sx={{ fontFamily: 'monospace', fontSize: '0.85rem' }}>
+                              {event.payload?.ref || event.ref || event.description}
+                            </Typography>
+                          </Box>
+                        )}
+
+                        {/* Fallback for other event types */}
+                        {!['PushEvent', 'PullRequestEvent', 'IssuesEvent', 'IssueCommentEvent', 'CreateEvent', 'DeleteEvent'].includes(event.actionType) && (
+                          <Typography variant="body2" sx={{ fontSize: '0.85rem', color: 'text.primary' }}>
+                            {event.description || `${event.action} in ${event.repo.split('/')[1]}`}
+                          </Typography>
+                        )}
                       </Box>
                     </Box>
                   </React.Fragment>
-                )
+                );
               })}
-              {(isMobile ? allLoadedEvents : events).length === 0 && !loading && (
-                <Box sx={{ padding: 2, textAlign: 'center' }}>
-                  No events found
+
+              {mobileFilteredEvents.length === 0 && !loading && (
+                <Box sx={{ py: 4, textAlign: 'center' }}>
+                  <Typography variant="body2" color="text.secondary">No events found</Typography>
                 </Box>
               )}
-              {/* Only show inline loading for mobile infinite scroll */}
-              {loading && isMobile && (
-                <Box sx={{ padding: 2, textAlign: 'center' }}>
-                  <CircularProgress size={40} />
+
+              {loading && (
+                <Box sx={{ py: 3, textAlign: 'center' }}>
+                  <CircularProgress size={32} />
                 </Box>
               )}
             </Box>
           </Box>
         </Box>
-        {!selectedEvent.id && (
+      ) : (
+        /* === DESKTOP LAYOUT: side-by-side === */
+        <Box sx={{
+          display: 'flex',
+          flexDirection: 'row',
+          gap: '1px',
+          width: '100%',
+          border: 0,
+          position: 'relative',
+        }}>
           <Box
-            id="detail-pane-temp"
             sx={{
+              width: '460px',
+              flexShrink: 0,
               display: 'flex',
               flexDirection: 'column',
               position: 'relative',
-              opacity: 0.3
-            }}>
-            <MetadataDisplay>
-              <PullRequestEvent event={selectedEvent} />
-            </MetadataDisplay>
-          </Box>
-        )}
-        {selectedEvent.id && (
-          <Box
-            id="detail-pane"
-            sx={{
-              display: 'flex',
-              flexDirection: 'column',
-              height: isMobile || alwaysColumn ? 'auto' : '100%',
-              position: 'relative',
-              maxWidth: isMobile ? '100%' : '726.8px',
-              width: '100%',
-              marginTop: 0,
-              overflow: 'hidden',
-            }}>
-            <MetadataDisplay
+              border: 0,
+            }}
+            className="master-container"
+          >
+            {error && (
+              <Typography color="error" sx={{ mb: 2 }}>{error}</Typography>
+            )}
+            {!alwaysColumn && filters}
+
+            <Box
+              id={'events-table-container'}
               sx={{
-                borderTopRightRadius: theme.shape.borderRadius,
-                // Default value for xs and up, then override at lg
-                borderTopLeftRadius: {
-                  xs: isMobile || alwaysColumn ? theme.shape.borderRadius : 0,  // xs and up (includes sm, md)
-                  lg: alwaysColumn ? theme.shape.borderRadius : 0                          // lg and up (includes xl)
-                },
-                // Default value for xs and up, then override at lg
-                borderBottomRightRadius: {
-                  xs: 0,                          // xs and up (includes sm, md)
-                  lg: alwaysColumn ? 0 : theme.shape.borderRadius   // lg and up (includes xl)
-                },
+                borderRadius: '0',
+                position: 'relative',
+                overflow: 'hidden',
+                border: 0,
+                backgroundColor: theme.palette.background.paper,
               }}>
-              {selectedEvent.actionType === 'PullRequestEvent' ? (
-                <PullRequestEvent event={selectedEvent} />
-              ) : selectedEvent.actionType === 'PushEvent' ? (
-                <PushEvent event={selectedEvent} />
-              ) : selectedEvent.actionType === 'DeleteEvent' ? (
-                <DeleteEvent event={selectedEvent} />
-              ) : selectedEvent.actionType === 'CreateEvent' ? (
-                <CreateEvent event={selectedEvent} />
-              ) : selectedEvent.actionType === 'IssuesEvent' ? (
-                <IssuesEvent event={selectedEvent} />
-              ) : selectedEvent.actionType === 'IssueCommentEvent' ? (
-                <IssueCommentEvent event={selectedEvent} />
-              ) : (
-              <ReactJson
-                src={selectedEvent}
-                name={false}
-                theme="monokai"
-                displayDataTypes={false}
-                enableClipboard={false}
-                displayObjectSize={false}
-                collapsed={1}
-                collapseStringsAfterLength={50}
-                style={{
-                  backgroundColor: 'red',
-                  fontSize: '0.875rem',
-                  fontFamily: 'monospace',
-                  padding: '8px',
-                  borderRadius: '4px',
-                  overflow: 'auto',
-                }}
-              />)}
-            </MetadataDisplay>
+              <Box sx={{
+                cursor: 'pointer',
+                background: 'rgba(255,255,255,.1)',
+                overflowY: 'hidden'
+              }}>
+                {events.map((event, index) => {
+                  const showDateRow = event.dateOnly !== latestDateDisplayed;
+                  latestDateDisplayed = event.dateOnly;
+
+                  return (
+                    <React.Fragment key={index}>
+                      {showDateRow && (
+                        <Box sx={{
+                          display: 'grid',
+                          gridTemplateColumns: '100px 1fr 150px',
+                          gap: 1,
+                          padding: '8px 10px',
+                          fontSize: '0.875rem',
+                          backgroundColor: theme.palette.mode === 'light' ?
+                            'color-mix(in oklab, rgba(0, 97, 194, 0.5) 25%, rgba(235, 235, 235, 0.5))' :
+                            'color-mix(in oklab, rgba(102, 179, 255, 0.5) 25%, rgba(31, 31, 31, 0.5))'
+                        }}>
+                          <Box sx={{ gridColumn: '1 / -1' }}>
+                            <Typography variant="subtitle2" fontWeight="semiBold" sx={{ fontSize: '0.875rem' }}>{event.dateOnly}</Typography>
+                          </Box>
+                        </Box>
+                      )}
+                      <Box
+                        id={event.id}
+                        className={selectedEvent.id === event.id ? 'selected' : ''}
+                        sx={{
+                          display: 'grid',
+                          gridTemplateColumns: '100px 1fr 150px',
+                          gap: 1,
+                          padding: '0px 10px',
+                          fontSize: '0.875rem',
+                          cursor: 'pointer',
+                          backgroundColor: index % 2 === 0
+                            ? theme.palette.background.paper
+                            : emphasize(theme.palette.background.paper, 0.05),
+                          transition: 'all 0.3s ease',
+                          border: '1px solid transparent',
+                          boxSizing: 'border-box',
+                          '&.selected': {
+                            backgroundColor: 'hsla(210, 40%, 38%, 1.00)',
+                            transition: 'all 0.2s ease',
+                            color: '#FFF',
+                            borderColor: 'hsla(211, 70%, 75%, 1.00)',
+                            ...theme.applyDarkStyles({
+                              backgroundColor: 'hsla(210, 40%, 38%, 1.00)',
+                            }),
+                          },
+                          '&:not(.selected):hover': {
+                            backgroundColor: theme.palette.primary[50],
+                            transition: 'all 0.2s ease',
+                            ...theme.applyDarkStyles({
+                              backgroundColor: alpha(theme.palette.primary[900], 0.1),
+                            }),
+                          },
+                        }}
+                        onClick={(e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          const eventIndex = events.findIndex(evt => evt.id === event.id);
+                          if (eventIndex !== -1) {
+                            handleEventSelection(event, eventIndex);
+                          }
+                        }}
+                      >
+                        <Box sx={{ display: 'flex', alignItems: 'center', fontSize: '0.875rem' }}>
+                          {getTimeOnly(event.date)}
+                        </Box>
+                        <Box sx={{ display: 'flex', alignItems: 'center', fontSize: '0.875rem', justifyContent: 'center' }}>
+                          {event.repo.split('/')[1]}
+                        </Box>
+                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5, height: '38px', fontSize: '0.875rem' }}>
+                          {actionIcons[event.action] || null}
+                          <span>{event.action}</span>
+                        </Box>
+                      </Box>
+                    </React.Fragment>
+                  )
+                })}
+                {events.length === 0 && !loading && (
+                  <Box sx={{ padding: 2, textAlign: 'center' }}>
+                    No events found
+                  </Box>
+                )}
+              </Box>
+            </Box>
           </Box>
-        )}
-      </Box>
+          {!selectedEvent.id && (
+            <Box
+              id="detail-pane-temp"
+              sx={{
+                display: 'flex',
+                flexDirection: 'column',
+                position: 'relative',
+                opacity: 0.3
+              }}>
+              <MetadataDisplay>
+                <PullRequestEvent event={selectedEvent} />
+              </MetadataDisplay>
+            </Box>
+          )}
+          {selectedEvent.id && (
+            <Box
+              id="detail-pane"
+              sx={{
+                display: 'flex',
+                flexDirection: 'column',
+                position: 'absolute',
+                top: 0,
+                right: 0,
+                bottom: 0,
+                left: '461px',
+                maxWidth: '726.8px',
+                overflow: 'auto',
+                marginTop: 0,
+              }}>
+              <MetadataDisplay
+                sx={{
+                  borderTopRightRadius: theme.shape.borderRadius,
+                  borderTopLeftRadius: 0,
+                  borderBottomRightRadius: theme.shape.borderRadius,
+                }}>
+                {selectedEvent.actionType === 'PullRequestEvent' ? (
+                  <PullRequestEvent event={selectedEvent} />
+                ) : selectedEvent.actionType === 'PushEvent' ? (
+                  <PushEvent event={selectedEvent} />
+                ) : selectedEvent.actionType === 'DeleteEvent' ? (
+                  <DeleteEvent event={selectedEvent} />
+                ) : selectedEvent.actionType === 'CreateEvent' ? (
+                  <CreateEvent event={selectedEvent} />
+                ) : selectedEvent.actionType === 'IssuesEvent' ? (
+                  <IssuesEvent event={selectedEvent} />
+                ) : selectedEvent.actionType === 'IssueCommentEvent' ? (
+                  <IssueCommentEvent event={selectedEvent} />
+                ) : (
+                  <ReactJson
+                    src={selectedEvent}
+                    name={false}
+                    theme="monokai"
+                    displayDataTypes={false}
+                    enableClipboard={false}
+                    displayObjectSize={false}
+                    collapsed={1}
+                    collapseStringsAfterLength={50}
+                    style={{
+                      backgroundColor: 'red',
+                      fontSize: '0.875rem',
+                      fontFamily: 'monospace',
+                      padding: '8px',
+                      borderRadius: '4px',
+                      overflow: 'auto',
+                    }}
+                  />)}
+              </MetadataDisplay>
+            </Box>
+          )}
+        </Box>
+      )}
 
       {/* Bottom Pagination - hide on mobile since we use infinite scroll */}
       {!isMobile && !alwaysColumn && totalPages > 1 && (

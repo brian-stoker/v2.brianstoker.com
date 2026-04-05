@@ -60,16 +60,21 @@ export default function SectionHeadline(props: SectionHeadlineProps) {
         </Typography>
       ) : (
         React.cloneElement(title, {
-          style: {
+          sx: (theme) => ({
             maxWidth: 500,
             ...(alwaysCenter && {
               maxWidth: '100%',
               textAlign: 'center',
             }),
-            ...(inverted && {
-              color: '#fff',
-            }),
-          },
+            ...(inverted
+              ? { color: '#fff' }
+              : {
+                  color: 'primaryDark.900',
+                  ...theme.applyDarkStyles({
+                    color: 'grey.100',
+                  }),
+                }),
+          }),
         })
       )}
       {description && (
