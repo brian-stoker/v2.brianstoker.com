@@ -12,8 +12,7 @@ export const authOptions = {
     async signIn({ account, profile }) {
       const allowedEmails = [
         "brianstoker@gmail.com",
-        "b@stokedconsulting.com",
-        "b@brianstoker.com",
+        "brian@stokd.cloud",
       ];
       
       if (account.provider === "google" && allowedEmails.includes(profile.email)) {

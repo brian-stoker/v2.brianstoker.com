@@ -37,7 +37,7 @@ export const createSite = (domainInfo: DomainInfo, extraEnv?: Record<string, str
     environment: {
       ...(envVars as Record<string, string>),
       GITHUB_USERNAME: env.GITHUB_USERNAME || 'brian-stoker',
-      MONGODB_NAME: domainInfo.dbName,
+      MONGODB_NAME: env.MONGODB_NAME || domainInfo.dbName,
       NEXTAUTH_URL: `https://${domainInfo.domains[0]}`,
       ...extraEnv,
     },

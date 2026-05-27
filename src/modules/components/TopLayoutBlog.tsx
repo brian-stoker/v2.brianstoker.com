@@ -355,10 +355,10 @@ export default function TopLayoutBlog(props: TopLayoutBlogProps): React.ReactEle
               publisher: {
                 '@type': 'Organization',
                 name: 'bstoked.plan',
-                url: 'https://brianstoker.com/bstoked.plan/',
+                url: 'https://brian.stokd.cloud/bstoked.plan/',
                 logo: {
                   '@type': 'ImageObject',
-                  url: 'https://brianstoker.com/static/icons/512x512.png',
+                  url: 'https://brian.stokd.cloud/static/icons/512x512.png',
                 },
               },
               author: {
@@ -373,7 +373,7 @@ export default function TopLayoutBlog(props: TopLayoutBlogProps): React.ReactEle
                 sameAs: [`https://github.com/${authors[headers.authors[0]].github}`],
               },
               headline: finalTitle,
-              url: `https://brianstoker.com${canonicalAsServer}`,
+              url: `https://brian.stokd.cloud${canonicalAsServer}`,
               datePublished: headers.date,
               dateModified: headers.date,
               image: {
@@ -386,7 +386,7 @@ export default function TopLayoutBlog(props: TopLayoutBlogProps): React.ReactEle
               description,
               mainEntityOfPage: {
                 '@type': 'WebPage',
-                '@id': 'https://brianstoker.com/.plan/',
+                '@id': 'https://brian.stokd.cloud/.plan/',
               },
             }),
           }}

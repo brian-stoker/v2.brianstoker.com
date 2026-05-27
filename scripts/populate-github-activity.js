@@ -42,7 +42,7 @@ const fetchAllGitHubEvents = async () => {
     const response = await fetch(`https://api.github.com/users/${githubUser}/events?page=${page}`, {
       headers: {
         Authorization: `Bearer ${githubToken}`,
-        'User-Agent': 'brianstoker.com-website',
+        'User-Agent': 'brian.stokd.cloud-website',
       },
     });
     

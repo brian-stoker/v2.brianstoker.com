@@ -40,7 +40,7 @@ export default async function handler(
       {
         headers: {
           Authorization: `token ${githubToken}`,
-          'User-Agent': 'brianstoker.com-website',
+          'User-Agent': 'brian.stokd.cloud-website',
         },
       }
     );

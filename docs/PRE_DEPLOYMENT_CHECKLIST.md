@@ -20,7 +20,7 @@ aws sts get-caller-identity
 ```
 
 ### Application Configuration
-- [ ] `ROOT_DOMAIN` - Your domain (e.g., brianstoker.com)
+- [ ] `ROOT_DOMAIN` - Your domain (e.g., brian.stokd.cloud)
 - [ ] `MONGODB_URI` - MongoDB connection string with auth
 - [ ] `MONGODB_USER` - MongoDB username
 - [ ] `MONGODB_PASS` - MongoDB password
@@ -179,8 +179,8 @@ If this is first deployment:
 
 ```bash
 # Check domain DNS records
-nslookup brianstoker.com
-dig brianstoker.com
+nslookup brian.stokd.cloud
+dig brian.stokd.cloud
 ```
 
 - [ ] Domain is registered
@@ -244,14 +244,14 @@ git diff main | grep -i "password\|secret\|key\|token"
 ### After Push to Main:
 
 1. **Monitor GitHub Actions**
-   - Go to: https://github.com/[username]/brianstoker.com/actions
+   - Go to: https://github.com/[username]/brian.stokd.cloud/actions
    - Watch the "Deploy to Production" workflow
    - Check for any errors in real-time
 
 2. **Verify Deployment**
    ```bash
    # Once workflow completes, test the site
-   curl -I https://brianstoker.com
+   curl -I https://brian.stokd.cloud
    ```
    - [ ] HTTP status is 200 OK
    - [ ] SSL certificate is valid
@@ -356,7 +356,7 @@ pnpm build
 pnpm deploy:build:prod
 
 # Monitor deployment
-# Go to: https://github.com/[username]/brianstoker.com/actions
+# Go to: https://github.com/[username]/brian.stokd.cloud/actions
 ```
 
 ---

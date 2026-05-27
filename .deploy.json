@@ -1,9 +1,9 @@
 {
   "aws": {
     "production": {
-      "account": "883859713095",
+      "account": "167217327520",
       "region": "us-east-1",
-      "preferredProfiles": ["stoked"]
+      "preferredProfiles": ["stokd-cloud"]
     }
   }
 }

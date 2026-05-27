@@ -4,8 +4,8 @@
 
 Please choose a topic below related to your inquiry:
 
-- [Help & Support](https://stokedconsulting.com/)
-- Email enquiries: [b@brianstoker.com](mailto:b@stokedconsulting.com)
+- [Help & Support](https://consulting.stokd.cloud/)
+- Email enquiries: [brian@stokd.cloud](mailto:brian@stokd.cloud)
 - Our address:<br /><br />
   **Stoked Consulting**<br />
   Austin TX<br />

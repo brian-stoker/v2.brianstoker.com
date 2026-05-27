@@ -81,8 +81,8 @@ export default function DiamondSponsors() {
       <NativeLink
         data-ga-event-category="sponsor"
         data-ga-event-action="docs-premium"
-        data-ga-event-label="brianstoker.com"
-        href="https://www.brianstoker.com/drums"
+        data-ga-event-label="brian.stokd.cloud"
+        href="https://brian.stokd.cloud/drums"
         rel="noopener sponsored"
         target="_blank"
       >
@@ -96,7 +96,7 @@ export default function DiamondSponsors() {
           loading="lazy"
           sx={(theme) =>
             theme.applyDarkStyles({
-              content: `url(https://stoked-ui.com/static/images/bs.logo.dark.svg)`,
+              content: `url(https://sui.stokd.cloud/static/images/bs.logo.dark.svg)`,
             })
           }
         />

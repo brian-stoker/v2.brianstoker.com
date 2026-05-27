@@ -129,7 +129,7 @@ async function sendVerificationEmail(email: string, verificationLink: string) {
       Source: `no-reply@${process.env.ROOT_DOMAIN}`, // Change this to your verified domain
       Destination: { ToAddresses: [email] },
       Message: {
-        Subject: { Data: "Subscribed to brianstoker.com" },
+        Subject: { Data: "Subscribed to brian.stokd.cloud" },
         Body: {
           Text: { Data: `Click the link to verify your email: ${verificationLink}` },
           Html: { Data: `<p>Click <a href="${verificationLink}">here</a> to verify your email.</p>` },

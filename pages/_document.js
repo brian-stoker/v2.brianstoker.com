@@ -34,8 +34,8 @@ export default class MyDocument extends Document {
                 media="(prefers-color-scheme: light)"/>
           <meta name="theme-color" content={getMetaThemeColor('dark')}
                 media="(prefers-color-scheme: dark)"/>
-          <link rel="canonical" href={`https://brianstoker.com${canonicalAsServer}`}/>
-          <link rel="alternate" href={`https://www.brianstoker.com${canonicalAsServer}`}
+          <link rel="canonical" href={`https://brian.stokd.cloud${canonicalAsServer}`}/>
+          <link rel="alternate" href={`https://brian.stokd.cloud${canonicalAsServer}`}
                 hrefLang="x-default"/>
 
           {/* Fonts */}

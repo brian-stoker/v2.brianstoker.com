@@ -60,7 +60,7 @@ export const createApi = (domainInfo: DomainInfo) => {
    // Add the subscribe function with SES permissions
    const subscribeFunction = new sst.aws.Function("Subscribe", {
      handler: "api/subscribe.subscribe", permissions: [{
-       actions: ["ses:SendEmail"], resources: ["arn:aws:ses:us-east-1:883859713095:identity/!*"]
+       actions: ["ses:SendEmail"], resources: ["arn:aws:ses:us-east-1:167217327520:identity/!*"]
      }], link: [mongoDbUri], environment: {
        ROOT_DOMAIN: domainInfo.domains[0],
        DB_NAME: domainInfo.dbName,
@@ -72,7 +72,7 @@ export const createApi = (domainInfo: DomainInfo) => {
    const verifyFunction = new sst.aws.Function("Verify", {
      handler: "api/subscribe.verify", permissions: [{
        actions: ["ses:SendEmail"],
-       resources: ["arn:aws:ses:us-east-1:883859713095:identity/!*"]
+       resources: ["arn:aws:ses:us-east-1:167217327520:identity/!*"]
      }], link: [mongoDbUri],
      environment: {
        ROOT_DOMAIN: domainInfo.domains[0],

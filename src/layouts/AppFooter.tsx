@@ -146,7 +146,7 @@ export default function AppFooter(props: AppFooterProps) {
             <a href={ROUTES.support} target="_blank" rel="noopener noreferrer">
               Support
             </a>
-            <a target="_blank" rel="noopener noreferrer" href="mailto:b@stokedconsulting.com">
+            <a target="_blank" rel="noopener noreferrer" href="mailto:brian@stokd.cloud">
               Contact us
             </a>
           </Box>

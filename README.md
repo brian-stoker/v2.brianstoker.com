@@ -123,7 +123,7 @@ The site automatically deploys to production when changes are pushed to the `mai
 - `AWS_ACCESS_KEY_ID` - AWS access key for deployment
 - `AWS_SECRET_ACCESS_KEY` - AWS secret access key
 - `AWS_REGION` - AWS region (default: us-east-1)
-- `ROOT_DOMAIN` - Your domain (e.g., brianstoker.com)
+- `ROOT_DOMAIN` - Your domain (e.g., brian.stokd.cloud)
 - `MONGODB_URI` - MongoDB connection string
 - `MONGODB_USER` - MongoDB username
 - `MONGODB_PASS` - MongoDB password

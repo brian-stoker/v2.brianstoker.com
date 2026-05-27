@@ -78,7 +78,7 @@ function orderedPages(pages, current = []) {
 }
 
 async function postFeedback(data) {
-  const env = window.location.host.indexOf('brianstoker.com') !== -1 ? 'prod' : 'dev';
+  const env = window.location.host.indexOf('brian.stokd.cloud') !== -1 ? 'prod' : 'dev';
   try {
     const response = await fetch(`${process.env.FEEDBACK_URL}/${env}/feedback`, {
       method: 'POST',
@@ -544,7 +544,7 @@ export default function AppLayoutDocsFooter(props) {
           spacing={{ xs: 3, sm: 1 }}
         >
           <Stack direction="row" alignItems="center" spacing={1.2} useFlexGap sx={{ flexGrow: 1 }}>
-            <Link href="https://stokedconsulting.com/" aria-label="Go to homepage">
+            <Link href="https://consulting.stokd.cloud/" aria-label="Go to homepage">
               <SvgSuiLogotype height={24} width={104} />
             </Link>
             <Typography color="grey.500" fontSize={13} sx={{ opacity: '70%' }}>

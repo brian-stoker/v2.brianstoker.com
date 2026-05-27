@@ -196,7 +196,7 @@ export function PdfDoc () {
                   boxShadow: 3,
                 }}
                 color="primary"
-                href={'https://cdn.stokedconsulting.com/personal/resume/brian-stoker-resume.pdf'}
+                href={'/static/resume/brian-stoker-resume.pdf'}
                 download
                 rel="noopener"
                 data-ga-event-category="header"
@@ -237,7 +237,7 @@ export function PdfDoc () {
                   boxShadow: 3,
                 }}
                 color="primary"
-                href={'https://cdn.stokedconsulting.com/personal/resume/brian-stoker-resume.pdf'}
+                href={'/static/resume/brian-stoker-resume.pdf'}
                 download
                 rel="noopener"
                 data-ga-event-category="header"
@@ -279,7 +279,7 @@ export function PdfDoc () {
        
 
         <StyledDoc
-          file={'https://cdn.stokedconsulting.com/personal/resume/brian-stoker-resume.pdf'}
+          file={'/static/resume/brian-stoker-resume.pdf'}
           onLoadSuccess={onDocumentLoadSuccess}
           options={options}
           >

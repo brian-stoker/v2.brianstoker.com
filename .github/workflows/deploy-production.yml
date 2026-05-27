@@ -54,11 +54,15 @@ jobs:
           MONGODB_URI=${{ secrets.MONGODB_URI }}
           MONGODB_USER=${{ secrets.MONGODB_USER }}
           MONGODB_PASS=${{ secrets.MONGODB_PASS }}
+          MONGODB_NAME=${{ secrets.MONGODB_NAME }}
           GITHUB_TOKEN=${{ secrets.GH_TOKEN }}
           GITHUB_USERNAME=${{ secrets.GH_USERNAME }}
           NEXT_PUBLIC_WEB_URL=${{ secrets.NEXT_PUBLIC_WEB_URL }}
           SYNC_ENDPOINT=${{ secrets.SYNC_ENDPOINT }}
           SYNC_SECRET=${{ secrets.SYNC_SECRET }}
+          GOOGLE_CLIENT_ID=${{ secrets.GOOGLE_CLIENT_ID }}
+          GOOGLE_CLIENT_SECRET=${{ secrets.GOOGLE_CLIENT_SECRET }}
+          NEXTAUTH_SECRET=${{ secrets.NEXTAUTH_SECRET }}
           SST_BUILD=1
           NEXT_SKIP_TYPECHECKING=1
           NEXT_SKIP_SERIALIZING_PROPS=1

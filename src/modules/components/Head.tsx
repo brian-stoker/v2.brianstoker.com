@@ -9,7 +9,7 @@ import localFont from 'next/font/local'
 // #major-version-switch
 const HOST = process.env.PULL_REQUEST_ID
   ? `https://deploy-preview-${process.env.PULL_REQUEST_ID}--${process.env.NETLIFY_SITE_NAME}.netlify.app`
-  : 'https://brianstoker.com';
+  : 'https://brian.stokd.cloud';
 
 interface HeadProps {
   card?: string;

@@ -1,6 +1,6 @@
 # GitHub Actions Deployment Setup Guide
 
-This guide will walk you through configuring GitHub Actions to automatically deploy brianstoker.com to AWS when changes are pushed to the `main` branch.
+This guide will walk you through configuring GitHub Actions to automatically deploy brian.stokd.cloud to AWS when changes are pushed to the `main` branch.
 
 ## Overview
 
@@ -38,7 +38,7 @@ Navigate to your GitHub repository and configure the following secrets:
 
 | Secret Name | Description | Example |
 |-------------|-------------|---------|
-| `ROOT_DOMAIN` | Your root domain name | `brianstoker.com` |
+| `ROOT_DOMAIN` | Your root domain name | `brian.stokd.cloud` |
 | `MONGODB_URI` | MongoDB connection string | `mongodb+srv://user:pass@cluster.mongodb.net/` |
 | `MONGODB_USER` | MongoDB username | `admin` |
 | `MONGODB_PASS` | MongoDB password | `your-secure-password` |
@@ -54,8 +54,8 @@ Navigate to your GitHub repository and configure the following secrets:
 
 | Secret Name | Description | Example | Default |
 |-------------|-------------|---------|---------|
-| `NEXT_PUBLIC_WEB_URL` | Public URL of your site | `https://brianstoker.com` | Computed from ROOT_DOMAIN |
-| `SYNC_ENDPOINT` | GitHub sync cron endpoint | `https://api.brianstoker.com/sync` | - |
+| `NEXT_PUBLIC_WEB_URL` | Public URL of your site | `https://brian.stokd.cloud` | Computed from ROOT_DOMAIN |
+| `SYNC_ENDPOINT` | GitHub sync cron endpoint | `https://api.brian.stokd.cloud/sync` | - |
 | `SYNC_SECRET` | Secret for sync endpoint authentication | `random-secret-string` | - |
 
 ## How to Get AWS Credentials
@@ -102,7 +102,7 @@ The GitHub token is used for syncing GitHub activity data (commits, repos, etc.)
 
 1. Go to GitHub Settings → Developer settings → Personal access tokens → Tokens (classic)
 2. Click "Generate new token (classic)"
-3. Give it a descriptive name: `brianstoker.com deployment`
+3. Give it a descriptive name: `brian.stokd.cloud deployment`
 4. Select scopes:
    - `repo` (Full control of private repositories)
    - `read:user` (Read user profile data)

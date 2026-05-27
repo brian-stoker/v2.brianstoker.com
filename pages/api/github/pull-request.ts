@@ -97,7 +97,7 @@ export default async function handler(
 
     const headers = {
       Authorization: `token ${githubToken}`,
-      'User-Agent': 'brianstoker.com-website',
+      'User-Agent': 'brian.stokd.cloud-website',
     };
 
     async function fetchWithRateLimit(url: string) {

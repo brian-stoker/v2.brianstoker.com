@@ -38,8 +38,8 @@ export function HomeView({ HomeMain, mostRecentPosts = [], noSection = false }: 
             '@context': 'https://schema.org',
             '@type': 'Organization',
             name: 'Stoked UI',
-            url: 'https://brianstoker.com/',
-            logo: 'https://brianstoker/static/logo.png'
+            url: 'https://brian.stokd.cloud/',
+            logo: 'https://brian.stokd.cloud/static/logo.png'
           }),
         }}
       />

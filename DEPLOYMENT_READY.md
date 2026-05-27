@@ -15,7 +15,7 @@ Your GitHub Actions deployment workflow is ready! Follow these steps to configur
 
 You **MUST** configure these secrets in your GitHub repository before pushing:
 
-**Navigate to:** `https://github.com/[your-username]/brianstoker.com/settings/secrets/actions`
+**Navigate to:** `https://github.com/[your-username]/brian.stokd.cloud/settings/secrets/actions`
 
 Click **"New repository secret"** for each of the following:
 
@@ -38,7 +38,7 @@ Value: us-east-1
 #### Application Configuration (Required)
 ```
 Name: ROOT_DOMAIN
-Value: brianstoker.com
+Value: brian.stokd.cloud
 ```
 
 ```
@@ -70,7 +70,7 @@ Value: [Your GitHub username]
 #### Optional Configuration
 ```
 Name: NEXT_PUBLIC_WEB_URL
-Value: https://brianstoker.com
+Value: https://brian.stokd.cloud
 (optional - can be computed from ROOT_DOMAIN)
 ```
 
@@ -119,7 +119,7 @@ Copy each value to its corresponding GitHub secret.
 Create a new token at: https://github.com/settings/tokens
 
 1. Click "Generate new token (classic)"
-2. Name it: `brianstoker.com deployment`
+2. Name it: `brian.stokd.cloud deployment`
 3. Select scopes:
    - ✅ `repo` (Full control of private repositories)
    - ✅ `read:user` (Read user profile data)
@@ -238,7 +238,7 @@ git push origin feature/github-actions-deployment
 
 Once you push to main:
 
-1. **Go to GitHub Actions**: https://github.com/[username]/brianstoker.com/actions
+1. **Go to GitHub Actions**: https://github.com/[username]/brian.stokd.cloud/actions
 2. **Watch the workflow**: Click on "Deploy to Production" workflow
 3. **Monitor progress**: Watch each step execute in real-time
 4. **Check for errors**: If any step fails, review the logs
@@ -260,7 +260,7 @@ After deployment completes:
 
 ```bash
 # Test the site is live
-curl -I https://brianstoker.com
+curl -I https://brian.stokd.cloud
 
 # Should return: HTTP/2 200
 ```

@@ -8,7 +8,7 @@ if (!process.env.ROOT_DOMAIN) {
 export default $config({
   app(input) {
     return {
-      name: "brianstoker-com",
+      name: "brian-stokd-cloud",
       /*removal: input?.stage === "production" ? "retain" : "remove",
       protect: ["production"].includes(input?.stage),*/
       home: "aws",

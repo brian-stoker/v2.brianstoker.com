@@ -12,7 +12,7 @@ export const createGithubSyncCron = (siteUrl: string, dbName: string) => {
       environment: {
         GITHUB_TOKEN: process.env.GITHUB_TOKEN!,
         GITHUB_USERNAME: process.env.GITHUB_USERNAME || 'brian-stoker',
-        MONGODB_NAME: dbName,
+        MONGODB_NAME: process.env.MONGODB_NAME || dbName,
         MONGODB_URI: process.env.MONGODB_URI!,
         SYNC_SECRET: process.env.SYNC_SECRET!,
         SYNC_ENDPOINT: syncEndpoint

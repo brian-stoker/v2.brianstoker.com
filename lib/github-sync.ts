@@ -44,7 +44,7 @@ const createSyncError = (
 const getGitHubHeaders = (githubToken: string) => ({
   Authorization: `token ${githubToken}`,
   Accept: 'application/vnd.github+json',
-  'User-Agent': 'brianstoker.com-website',
+  'User-Agent': 'brian.stokd.cloud-website',
   'X-GitHub-Api-Version': '2022-11-28',
 });
 
