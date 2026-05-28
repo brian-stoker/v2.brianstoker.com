@@ -1,13 +1,15 @@
 # SC_VIEWS.md
 
 View classification for the v2.brianstoker.com portfolio site.
-Meta version: 0.2.0 | Generated: 2026-03-21
+Meta version: 0.4.0 | Generated: 2026-05-26
 
 ---
 
 ## Overview
 
-This is a Next.js 15 Pages Router app. All page-level views are in `pages/`. Every page view shares a common shell composed of `AppHeader` + `AppFooter` from `src/layouts/`. The `HomeView` component (`pages/index.tsx:15`) is a reusable wrapper used by most pages; it injects the shared shell and accepts a `HomeMain` prop that swaps the body content.
+This is a Next.js 15 Pages Router app. All page-level views live under `pages/`. Every page view shares a common shell composed of `AppHeader` + `AppFooter` from `src/layouts/`. The `HomeView` wrapper (`pages/index.tsx:15`) injects the shared shell and accepts a `HomeMain` prop that swaps the body content; many pages re-use it.
+
+Product reference: `SC_PRODUCT_BRIANSTOKER_COM.md` (the only product doc). All views below belong to that product unless otherwise noted.
 
 ---
 
@@ -23,12 +25,12 @@ This is a Next.js 15 Pages Router app. All page-level views are in `pages/`. Eve
   - `ThemeModeToggle` — light/dark toggle (`src/components/header/ThemeModeToggle.tsx`)
 - **States:**
   - Desktop (md+): full nav bar + icon row visible
-  - Mobile (<md): dropdown only; nav bar hidden
+  - Mobile (<md): dropdown drawer only; nav bar hidden
 
 ### AppFooter
 - **Location:** `src/layouts/AppFooter.tsx`
 - **Regions:**
-  - Left column: `SvgBsLogotype`, `EmailSubscribe` newsletter form (`src/components/footer/EmailSubscribe.tsx`)
+  - Left column: `SvgBsLogotype` + `EmailSubscribe` newsletter form (`src/components/footer/EmailSubscribe.tsx`)
   - Right columns: two navigation columns — site links (Art, Photography, Drums, .plan, Work, Resume) and external links (Stoked Consulting, Stoked UI, LinkedIn, Discord, Slack)
   - Bottom bar: copyright + social icon strip (GitHub, RSS, Slack, LinkedIn, Discord, optional Stack Overflow)
 - **States:**
@@ -37,7 +39,12 @@ This is a Next.js 15 Pages Router app. All page-level views are in `pages/`. Eve
 
 ### AppHeaderBanner
 - **Location:** `src/components/banner/AppHeaderBanner.tsx`
-- **Usage:** Rendered only on the home page (`pages/index.tsx:8`), above the AppHeader.
+- **Usage:** Rendered only on the home page (`pages/index.tsx`), above the `AppHeader`.
+
+### NewsletterToast
+- **Location:** `src/components/home/NewsletterToast.tsx`
+- **Usage:** Bottom-left client-only toast wrapped in `NoSsr`; rendered on the home page.
+- **States:** Hidden by default; shown on mount with delay; dismissed via close button or after timeout.
 
 ---
 
@@ -49,13 +56,13 @@ This is a Next.js 15 Pages Router app. All page-level views are in `pages/`. Eve
 
 - **Route:** `/`
 - **Location:** `pages/index.tsx`, `src/components/home/HeroMain.tsx`, `src/products.tsx`
-- **Products referenced:** work, art, photography, drums, resume, .plan (all 6 live products in `PRODUCTS` list, `src/products.tsx:1300`)
+- **Products:** SC_PRODUCT_BRIANSTOKER_COM.md (all 6 live products in `PRODUCTS`: work, art, photography, drums, resume, .plan)
 
 **Regions:**
 - `AppHeaderBanner` — top banner strip
 - `AppHeader` — sticky header
 - `NewsletterToast` — client-only toast (NoSsr), bottom-left
-- **Hero body** (`src/products.tsx:759` `ProductsPreviews`):
+- **Hero body** (`src/products.tsx` `ProductsPreviews`):
   - Left panel: `BRIAN STOKER` headline + `ProductSwitcher` / `ProductCarousel` — vertical list of product items (desktop) or swipeable `MobileStepper` carousel (mobile); each item is a `Highlighter` button with product icon, name, description
   - Right panel: product showcase pane — renders the active product's `showcaseType` component inside a `Link` wrapper; width 726px on lg, flex-grow on md
 - `AppFooter`
@@ -75,7 +82,7 @@ This is a Next.js 15 Pages Router app. All page-level views are in `pages/`. Eve
 - **SSR / pre-hydration:** shell renders, `main` body is empty string (client guard `isClient` at `pages/index.tsx:18`)
 - **Client loaded, in-view=false:** product list visible, right showcase pane empty (intersection observer not triggered)
 - **Client loaded, in-view=true:** full showcase renders for active product
-- **Active product: Work** — `GithubEventsShowcase` with 10 events/page, alwaysColumn mode
+- **Active product: Work** — `GithubEventsShowcase` with 10 events/page, `alwaysColumn` mode
 - **Active product: Drums** — Plyr video autoplay (muted)
 - **Active product: .plan** — `BlogShowcase` renders up to 5 most recent `BlogPost` cards
 - **Mobile (<md):** swipeable carousel replaces vertical product list; `MobileStepper` dot nav shown
@@ -86,7 +93,7 @@ This is a Next.js 15 Pages Router app. All page-level views are in `pages/`. Eve
 
 - **Route:** `/work`
 - **Location:** `pages/work.tsx`, `src/components/GithubCalendar/GithubCalendar.tsx`, `src/components/GithubEvents/GithubEvents.tsx`
-- **Products referenced:** Work
+- **Products:** SC_PRODUCT_BRIANSTOKER_COM.md (Work product)
 
 **Regions:**
 - `AppHeader`
@@ -94,51 +101,51 @@ This is a Next.js 15 Pages Router app. All page-level views are in `pages/`. Eve
 - `GithubEvents` — paginated event list with filter controls + event detail panel
 - `AppFooter`
 
-**GithubCalendar sub-regions (`src/components/GithubCalendar/GithubCalendar.tsx`):**
+**`GithubCalendar` sub-regions:**
 - `ActivityCalendar` (react-activity-calendar) — SVG heatmap grid scrolled to most-recent week
 - `hbngha-overlay` — decorative image injected at the left of the scroll container
 - Month legend with year labels (`'21`, `'22`, etc.) replacing January ticks
 
-**GithubCalendar states:**
+**`GithubCalendar` states:**
 - **Loading:** skeleton placeholder shown via `loading` prop on `ActivityCalendar`
 - **Loaded, hidden:** scrolled to far right off-screen, `activityReady=false`
 - **Ready:** scroll snapped to latest week, revealed
 - **Hover:** month/day labels fade in after 200ms delay; `punch` fx triggers rect fly-out animations on hover
 - **Error:** falls back to `defaultActivityData` (empty contributions)
 
-**GithubEvents sub-regions (`src/components/GithubEvents/GithubEvents.tsx`):**
+**`GithubEvents` sub-regions:**
 - Filter bar: repo `Autocomplete`, action type `Select`, date `TextField`, description `TextField`
-- Event list: paginated 20/page, each row shows event type chip (color-coded), repo, date, message snippet
-- Metadata panel: sticky detail view for selected event (desktop: side-by-side; mobile: stacked)
-  - For `PullRequestEvent`: `PullRequestView` with Commits / Files changed tabs (`src/components/PullRequest/PullRequestView.tsx`)
-  - For `PushEvent`: commit list with `PushEvent` component (`src/components/GithubEvents/PushEvent.tsx`)
-  - Other event types: `CreateEvent`, `DeleteEvent`, `IssuesEvent`, `IssueCommentEvent`, `ForkEvent`, `ProjectsV2*` variants
+- Event list: paginated 20/page; each row shows event type chip (color-coded), repo, date, message snippet
+- Metadata panel: sticky detail view for selected event (desktop side-by-side; mobile stacked)
+  - `PullRequestEvent` → `PullRequestView` with Commits / Files-changed tabs (`src/components/PullRequest/PullRequestView.tsx`)
+  - `PushEvent` → commit list via `PushEvent` component (`src/components/GithubEvents/PushEvent.tsx`)
+  - Other types: `CreateEvent`, `DeleteEvent`, `IssuesEvent`, `IssueCommentEvent`, `ForkEvent`, `ProjectsV2*` variants
 - Mobile repo strip: horizontal scroll strip of repo chips sorted by most-recent event
 - `Pagination` control
 
-**GithubEvents states:**
+**`GithubEvents` states:**
 - **Loading:** `CircularProgress` shown, list empty
 - **Error:** error string displayed
 - **Populated (desktop, ≥900px):** two-column layout — event list left, metadata panel right (sticky)
 - **Populated (mobile, <900px):** single column — repo strip header, event list below; metadata panel stacked
 - **Filtered:** one or more of repo/action/date/description filters active; pagination resets to page 1
 - **Event selected:** metadata panel populates with full event JSON / PR tabs / commit info
-- **alwaysColumn mode:** forces single-column regardless of viewport (used in home showcase)
+- **`alwaysColumn` mode:** forces single-column regardless of viewport (used in home showcase)
 
 ---
 
-### 3. Resume (Primary)
+### 3. Resume (Primary PDF Viewer)
 
 - **Route:** `/resume`
-- **Location:** `pages/resume.tsx`, `pages/resume-new.tsx` (`PdfDoc` component reused), `src/components/home/PdfShowcase.tsx`
-- **Products referenced:** Resume
+- **Location:** `pages/resume.tsx`, `pages/resume-new.tsx` (shared `PdfDoc` component), `src/components/home/PdfShowcase.tsx`
+- **Products:** SC_PRODUCT_BRIANSTOKER_COM.md (Resume product)
 
 **Regions:**
 - `AppHeader`
 - Centered flex container with optional side icon column (visible ≥900px)
 - `PdfDoc` — responsive PDF viewer (`pages/resume-new.tsx:95`)
   - `StyledDoc` (react-pdf `Document`) with hover-reveal `ButtonGroup` page controls
-  - `Page` — single rendered PDF page canvas (AnnotationLayer + TextLayer)
+  - `Page` — single rendered PDF page canvas (`AnnotationLayer` + `TextLayer`)
   - Page controls: Prev `Fab`, `Page X of N` label, Next `Fab` (hover-only, bottom-center overlay)
 - `AppFooter`
 
@@ -155,9 +162,9 @@ This is a Next.js 15 Pages Router app. All page-level views are in `pages/`. Eve
 - **Route:** `/resume-scale`
 - **Location:** `pages/resume-scale.tsx`
 
-Same general structure as Resume but uses `useResizeObserver` from `@wojtekmaj/react-hooks` for container width instead of a manual `ResizeObserver`. Exported `PdfDoc` component is the same `pages/resume-new.tsx:95` shared component. This page appears to be an experimental/alternate implementation.
+Same shape as the Resume view but uses `useResizeObserver` from `@wojtekmaj/react-hooks` for container width instead of a manual `ResizeObserver`. Reuses the same `PdfDoc` component from `pages/resume-new.tsx:95`. Experimental/alternate implementation kept alongside the primary route.
 
-**States:** same as Resume view.
+**States:** identical to the Resume view.
 
 ---
 
@@ -165,7 +172,7 @@ Same general structure as Resume but uses `useResizeObserver` from `@wojtekmaj/r
 
 - **Route:** `/photography`
 - **Location:** `pages/photography.tsx`, `src/components/LightboxGallery/index.tsx`
-- **Products referenced:** Photography
+- **Products:** SC_PRODUCT_BRIANSTOKER_COM.md (Photography product)
 
 **Regions:**
 - `AppHeader`
@@ -173,18 +180,10 @@ Same general structure as Resume but uses `useResizeObserver` from `@wojtekmaj/r
 - `LightboxGallery` — full-screen modal overlay (closed by default)
 - `AppFooter`
 
-**LightboxGallery regions (`src/components/LightboxGallery/index.tsx`):**
-- `Backdrop` (90% opacity black) — click to close
-- Close `IconButton` (top-right)
-- Left click zone + `ArrowBackIosNewIcon` button (prev)
-- Media display: `<img>` (image type) or `<video controls autoPlay>` (video type)
-- Right click zone + `ArrowForwardIosIcon` button (next)
-
 **States:**
-- **Grid default:** masonry grid, no modal
+- **Grid default:** masonry grid visible, no modal
 - **Lightbox open:** modal visible; current item displayed; arrow buttons navigate; Escape key closes
-- **Arrow hover (left):** left arrow turns primary color
-- **Arrow hover (right):** right arrow turns primary color
+- **Arrow hover (left/right):** focused arrow turns primary color
 - **Background hover:** backdrop cursor becomes pointer; close icon tints primary
 
 ---
@@ -193,11 +192,11 @@ Same general structure as Resume but uses `useResizeObserver` from `@wojtekmaj/r
 
 - **Route:** `/art`
 - **Location:** `pages/art.tsx`, `src/components/LightboxGallery/index.tsx`
-- **Products referenced:** Art
+- **Products:** SC_PRODUCT_BRIANSTOKER_COM.md (Art product)
 
-Identical layout and behavior to Photography Gallery. Displays 12 artwork images in a 3-column masonry grid. Uses the same `LightboxGallery` component.
+Identical layout and behavior to the Photography Gallery. Displays 12 artwork images in a 3-column masonry grid. Uses the same `LightboxGallery` component.
 
-**States:** same as Photography Gallery.
+**States:** identical to the Photography Gallery.
 
 ---
 
@@ -205,7 +204,7 @@ Identical layout and behavior to Photography Gallery. Displays 12 artwork images
 
 - **Route:** `/drums`
 - **Location:** `pages/drums.tsx`, `src/components/video/videos.tsx`
-- **Products referenced:** Drums
+- **Products:** SC_PRODUCT_BRIANSTOKER_COM.md (Drums product)
 
 **Regions:**
 - `AppHeader`
@@ -222,16 +221,16 @@ Identical layout and behavior to Photography Gallery. Displays 12 artwork images
 
 ---
 
-### 8. Blog Index (bstoked.plan)
+### 8. Blog Index — `bstoked.plan`
 
 - **Route:** `/bstoked.plan`
 - **Location:** `pages/bstoked.plan.tsx`
-- **Products referenced:** .plan
+- **Products:** SC_PRODUCT_BRIANSTOKER_COM.md (.plan product)
 
 **Regions:**
 - `AppHeader`
-- **Hero section** (`Section bg="gradient"`): overline ".plan", h1 "notes, musings, and useless anecdotes" (GradientText)
-- **Featured posts overlay** (negative margin container): grid of the 2 most-recent `PostPreviewBox` cards (image + tags + title + description + author avatars + Read more button)
+- **Hero section** (`Section bg="gradient"`): overline `.plan`, h1 "notes, musings, and useless anecdotes" (GradientText)
+- **Featured posts overlay** (negative-margin container): grid of the 2 most-recent `PostPreviewBox` cards (image + tags + title + description + author avatars + Read more button)
 - **Main content area** (2-column grid on md+):
   - Left: post list (`PostPreview` items) with border separators + `Pagination`
   - Right sticky sidebar:
@@ -243,20 +242,20 @@ Identical layout and behavior to Photography Gallery. Displays 12 artwork images
 - **Unfiltered:** all posts (excluding top 2 featured) shown, paginated by 7
 - **Filtered by tag:** tag chip becomes filled + deletable; list narrows; `page` resets to 0; tag stored in URL query param `?tags=`
 - **Paginated:** `Pagination` navigates pages; scrolls `postListRef` into view on page change
-- **No posts:** empty list (no explicit empty state component, list simply renders nothing)
+- **No posts:** empty list (no explicit empty-state component; list simply renders nothing)
 
 ---
 
-### 9. Blog Post (.plan/[slug])
+### 9. Blog Post — `.plan/[slug]`
 
 - **Route:** `/.plan/[slug]`
-- **Location:** `pages/.plan/[slug].tsx`, `src/modules/components/TopLayoutBlog.tsx` (external from `@stoked-ui/docs`)
-- **Products referenced:** .plan
+- **Location:** `pages/.plan/[slug].tsx`, `src/modules/components/TopLayoutBlog.tsx` (from `@stoked-ui/docs`)
+- **Products:** SC_PRODUCT_BRIANSTOKER_COM.md (.plan product)
 
 **Regions:**
 - Rendered by `TopLayoutBlog` from the `@stoked-ui/docs` package
 - Receives `docs.en` (title, description, headers with authors/tags/date) and serialized MDX `source`
-- Typical blog post layout: header with metadata (title, date, authors, tags), rendered MDX body
+- Typical blog-post layout: metadata header (title, date, authors, tags), rendered MDX body
 
 **States:**
 - **Populated:** full MDX content rendered
@@ -264,11 +263,11 @@ Identical layout and behavior to Photography Gallery. Displays 12 artwork images
 
 ---
 
-### 10. Plan Index (/.plan)
+### 10. Plan Index — `/.plan`
 
 - **Route:** `/.plan`
 - **Location:** `pages/.plan/index.jsx`
-- **Products referenced:** .plan
+- **Products:** SC_PRODUCT_BRIANSTOKER_COM.md (.plan product)
 
 **Regions:**
 - `AppHeader`
@@ -294,7 +293,7 @@ Identical layout and behavior to Photography Gallery. Displays 12 artwork images
 - **Unauthenticated state:** centered `Box` with "Access Restricted" heading, description, `Sign In` button (calls `signIn()` from next-auth)
 - **Authenticated state:**
   - Header row: "HAL Logs" h4 + `Sign Out` button
-  - Optional fetch error message
+  - Optional fetch-error message
   - `Tabs` — "Logs" / "Errors" (Errors tab text turns `error.main` if errors exist)
   - `LogPanel` — dark monospace `<pre>` container (maxHeight 70vh, overflow auto) showing log or error text
 - `AppFooter`
@@ -351,7 +350,7 @@ Identical layout and behavior to Photography Gallery. Displays 12 artwork images
 
 ### 14. 404 Not Found
 
-- **Route:** `pages/404.tsx` (Next.js custom 404)
+- **Route:** Next.js custom 404 (`pages/404.tsx`)
 - **Location:** `pages/404.tsx`, `src/components/NotFoundHero.tsx`
 
 **Regions:**
@@ -371,7 +370,7 @@ Identical layout and behavior to Photography Gallery. Displays 12 artwork images
 ### PullRequestView
 
 - **Location:** `src/components/PullRequest/PullRequestView.tsx`
-- **Usage:** Rendered inside `GithubEvents` metadata panel when a `PullRequestEvent` is selected
+- **Usage:** Rendered inside the `GithubEvents` metadata panel when a `PullRequestEvent` is selected.
 
 **Regions:**
 - Optional title + PR number header
@@ -379,32 +378,32 @@ Identical layout and behavior to Photography Gallery. Displays 12 artwork images
 - **Commits tab:** `CommitsList` (`src/components/PullRequest/CommitsList.tsx`)
 - **Files changed tab:**
   - `StatsBox` — "Showing N changed files with X additions and Y deletions"
-  - `FileChanges` (`src/components/PullRequest/FileChanges.tsx`) — expandable file diff list
+  - `FileChanges` (`src/components/PullRequest/FileChanges.tsx`) — expandable file-diff list
 
 **States:**
 - **Tab 0 (Commits):** commit list rendered
-- **Tab 1 (Files):** stats bar + file diff view rendered
+- **Tab 1 (Files):** stats bar + file-diff view rendered
 
 ---
 
 ### LightboxGallery (Modal Overlay)
 
 - **Location:** `src/components/LightboxGallery/index.tsx`
-- **Usage:** Photography (`pages/photography.tsx`) and Art (`pages/art.tsx`) pages
+- **Usage:** Photography (`pages/photography.tsx`) and Art (`pages/art.tsx`) pages.
 
 **Regions:**
 - `Backdrop` (dark, 90% opacity)
 - Close `IconButton` (top-right)
 - Left/right transparent click zones (50% width each) for prev/next navigation
 - Left `ArrowBackIosNewIcon` button
-- Media: `<img>` or `<video>` (maxHeight 90vh, maxWidth 90vw)
+- Media: `<img>` (image type) or `<video controls autoPlay>` (video type) — maxHeight 90vh, maxWidth 90vw
 - Right `ArrowForwardIosIcon` button
 
 **States:**
 - **Closed:** `open={false}`, not rendered
 - **Open:** modal visible, current item displayed
-- **Left hover:** left arrow turns primary; cursor w-resize in left half
-- **Right hover:** right arrow turns primary; cursor e-resize in right half
+- **Left hover:** left arrow turns primary; cursor `w-resize` in left half
+- **Right hover:** right arrow turns primary; cursor `e-resize` in right half
 - **Background hover:** close icon tints primary; cursor pointer on backdrop
 
 ---
@@ -412,54 +411,60 @@ Identical layout and behavior to Photography Gallery. Displays 12 artwork images
 ### GithubEventsShowcase (Inline Showcase)
 
 - **Location:** `src/components/home/GithubEventsShowcase.tsx`
-- **Usage:** Home page showcase pane when "Work" product is active; also used in `workData.showcaseContent` with `{eventsPerPage: 10, alwaysColumn: true}`
+- **Usage:** Home showcase pane when the "Work" product is active; configured with `{eventsPerPage: 10, alwaysColumn: true}`.
 
 **Regions:**
 - Scrollable `Box` (maxHeight 970px, overflow-y auto)
 - `GithubEvents` component with `fx='highlight'` and `alwaysColumn=true`
 
-**States:** see GithubEvents states above; highlight fx adds rect-highlight CSS class on hover.
+**States:** see `GithubEvents` states above; `highlight` fx adds a rect-highlight CSS class on hover.
 
 ---
 
 ### BlogShowcase (Inline Showcase)
 
 - **Location:** `src/components/home/BlogShowcase.tsx`
-- **Usage:** Home page showcase pane when ".plan" product is active; receives `mostRecentPosts` (up to 5 posts)
+- **Usage:** Home showcase pane when the ".plan" product is active; receives `mostRecentPosts` (up to 5 posts).
 
 **Regions:**
-- `Stack` of `PostPreviewBox` cards (from `pages/bstoked.plan.tsx`)
+- `Stack` of `PostPreviewBox` cards (defined in `pages/bstoked.plan.tsx`)
 
 **States:**
 - **Populated:** post cards rendered
-- **Empty/no posts passed:** renders empty `Stack`
+- **Empty:** renders an empty `Stack` when no posts are passed
 
 ---
 
 ### PdfShowcase (Inline Showcase)
 
 - **Location:** `src/components/home/PdfShowcase.tsx`
-- **Usage:** Home page showcase pane when "Resume" product is active
+- **Usage:** Home showcase pane when the "Resume" product is active.
 
-Wraps `PdfDoc` inside `MediaShowcase` with overflow hidden. Same interactive states as the full Resume view (PDF renders once containerWidth measured, page navigation on hover).
+Wraps `PdfDoc` inside `MediaShowcase` with overflow hidden. Same interactive states as the full Resume view (PDF renders once `containerWidth` is measured; page navigation on hover).
 
 ---
 
 ### VideoShowcase (Inline Showcase)
 
 - **Location:** `src/components/home/VideoShowcase.tsx`
-- **Usage:** Home page showcase pane when "Drums" product is active
+- **Usage:** Home showcase pane when the "Drums" product is active.
 
-Wraps Plyr player (dynamically imported) inside `MediaShowcase`. Autoplay + muted. Shows poster until playback starts.
+Wraps a Plyr player (dynamically imported) inside `MediaShowcase`. Autoplay + muted. Shows poster until playback starts.
 
 ---
 
 ### ImageShowcase (Inline Showcase)
 
 - **Location:** `src/components/home/ImageShowcase.tsx`
-- **Usage:** Home page showcase pane for Art and Photography products
+- **Usage:** Home showcase pane for the Art and Photography products.
 
 Wraps a single `<img>` (objectFit cover, borderRadius 12px) inside `MediaShowcase`. No interaction.
+
+---
+
+## Terminal / CLI Output Views
+
+This project has no end-user CLI. The `scripts/` directory contains build, deploy, and data-sync utilities (`local-sync-cron.cjs`, `populate-github-activity.js`, `list-db-info.ts`, `reportBrokenLinks.js`, etc.) that emit progress and error messages to stdout/stderr using plain `console.log` / `console.error`. They are not interactive views and do not have formatted output panels worth classifying as views.
 
 ---
 

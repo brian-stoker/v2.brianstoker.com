@@ -1,539 +1,460 @@
+<!-- stokd-meta-version: 0.4.0 -->
 # SC_FLOWS.md
 
-User flow classification for the v2.brianstoker.com portfolio site.
-Meta version: 0.2.0 | Generated: 2026-03-21
+User-flow classification for the `v2.brianstoker.com` portfolio site.
+Meta version: 0.4.0 | Generated: 2026-05-26
+
+All flows belong to the single product `SC_PRODUCT_BRIANSTOKER_COM.md`. View references are the view names defined in `SC_VIEWS.md`.
 
 ---
 
-## Overview
+## Index
 
-This site has two actor classes: **Visitors** (anonymous public users) and the **Owner** (Brian Stoker, authenticated via Google OAuth). Flows are grouped by domain: portfolio browsing, GitHub activity, content, newsletter/subscription, and system/admin.
-
----
-
-## Flow Index
-
-| # | Flow Name | Actor | Domain |
-|---|-----------|-------|--------|
-| 1 | Portfolio Home Browse | Visitor | Portfolio |
-| 2 | Site Navigation | Visitor | Portfolio |
-| 3 | Theme Toggle | Visitor | Portfolio |
-| 4 | GitHub Activity Dashboard Browse | Visitor | GitHub Activity |
-| 5 | GitHub Event Detail Inspection | Visitor | GitHub Activity |
-| 6 | GitHub Events Filtering | Visitor | GitHub Activity |
-| 7 | Resume View | Visitor | Content |
-| 8 | Photography Gallery Lightbox | Visitor | Content |
-| 9 | Art Gallery Lightbox | Visitor | Content |
-| 10 | Drums Video Playback | Visitor | Content |
-| 11 | Blog Index Browse | Visitor | Content |
-| 12 | Blog Post Read | Visitor | Content |
-| 13 | Email Newsletter Subscribe | Visitor | Newsletter |
-| 14 | Email Verification (Subscription Confirm) | Visitor | Newsletter |
-| 15 | HAL Admin Sign-In | Owner | Admin |
-| 16 | HAL Log Inspection | Owner | Admin |
-| 17 | GitHub Events Sync (Scheduled/Automated) | System | Data Pipeline |
-| 18 | GitHub Events Sync (Manual) | Developer / Owner | Data Pipeline |
+| # | Flow | Actor | Primary Entry |
+|---|------|-------|---------------|
+| 1 | Product Discovery (Home Showcase) | Anonymous visitor | `GET /` |
+| 2 | Browse GitHub Activity | Anonymous visitor | `GET /work` or home → Work showcase |
+| 3 | Inspect Pull Request Detail | Anonymous visitor | Click PR row inside `GithubEvents` |
+| 4 | Read Resume (PDF) | Anonymous visitor | `GET /resume` or home → Resume showcase |
+| 5 | Browse Photography Gallery | Anonymous visitor | `GET /photography` |
+| 6 | Browse Art Gallery | Anonymous visitor | `GET /art` |
+| 7 | Watch Drum Videos | Anonymous visitor | `GET /drums` |
+| 8 | Browse Blog Index | Anonymous visitor | `GET /bstoked.plan` |
+| 9 | Read Blog Post | Anonymous visitor | Click post card / link → `GET /.plan/[slug]` |
+| 10 | Newsletter Subscribe | Anonymous visitor | `EmailSubscribe` form in `AppFooter` / `NewsletterToast` |
+| 11 | Verify Newsletter Email | Subscriber (via email link) | `GET /subscription?code=...` |
+| 12 | View HAL Logs (Admin) | Authenticated admin | `GET /hal` |
+| 13 | Hourly GitHub Event Sync | AWS EventBridge (system) | `rate(1 hour)` Cron |
+| 14 | Local GitHub Event Sync (dev) | Developer | `pnpm dev` / `pnpm dev:cron` |
+| 15 | Production Deploy | Developer / operator | `pnpm deploy:prod` |
+| 16 | Browse Components Index | Anonymous visitor | `GET /components` |
+| 17 | 404 Recovery | Anonymous visitor | Unknown route |
 
 ---
 
-## Flows
+## 1. Product Discovery (Home Showcase)
 
----
-
-### Flow 1 — Portfolio Home Browse
-
-**Actor:** Visitor (anonymous)
-
-**Goal:** Get an overview of Brian Stoker's work and navigate to a specific product area.
-
-**Entry points:**
-- Direct URL: `/`
-- External link / social media referral
-- Logo click from any page (via `AppHeader`)
+- **Actor:** Anonymous visitor
+- **Goal:** See the full product catalog at a glance and drill into the one that interests them.
+- **Entry points:**
+  - Direct navigation to `https://brianstoker.com/` → `pages/index.tsx`
+  - `AppHeader` logo link
+- **Products:** `SC_PRODUCT_BRIANSTOKER_COM.md`
 
 **Steps:**
-1. Visitor lands on `/`. Server renders static shell; `getStaticProps` provides up to 5 most-recent blog posts.
-2. `AppHeaderBanner` (top strip) renders above the header.
-3. `AppHeader` renders with logo, `HeaderNavBar` (desktop) or `HeaderNavDropdown` (mobile), GitHub icon link, `ThemeModeToggle`.
-4. `NewsletterToast` mounts client-side (NoSsr) — appears bottom-left after hydration.
-5. Client hydration completes; `isClient` guard at `pages/index.tsx:18` allows `HeroMain` to render.
-6. `ProductsPreviews` (`src/products.tsx`) renders:
-   - **Desktop:** Left panel with `ProductSwitcher` vertical list (6 products: Work, Art, Photography, Drums, Resume, .plan). Right panel shows active product's showcase.
-   - **Mobile:** `SwipeableViews` + `MobileStepper` carousel replaces vertical list.
-7. Active product defaults to "Work" — right pane renders `GithubEventsShowcase`.
-8. Visitor clicks/swipes to a different product (e.g., "Resume") — right pane swaps to `PdfShowcase`.
-9. Visitor clicks the active product's name or right-panel link — navigates to the product's dedicated page (e.g., `/resume`).
-10. `AppFooter` renders at bottom with `EmailSubscribe` form and site/social links.
+
+1. Visitor hits `/`; SSR ships shell. *View: **Home — Portfolio Showcase***.
+2. Client hydrates (`isClient` guard at `pages/index.tsx:18`), `ProductsPreviews` renders the left product list (desktop) or `MobileStepper` swipe carousel (mobile).
+3. Visitor scrolls the showcase into view → `react-intersection-observer` triggers; the right showcase pane renders the active product's `showcaseType`.
+4. Visitor hovers/clicks a product item (`Highlighter` button in `ProductSwitcher`) → active product index updates → right pane swaps to that product's showcase:
+   - **Work** → `GithubEventsShowcase` (queries `/api/github/events`).
+   - **Art / Photography** → `ImageShowcase`.
+   - **Drums** → `VideoShowcase` (Plyr autoplay, muted).
+   - **Resume** → `PdfShowcase` (renders `PdfDoc`).
+   - **.plan** → `BlogShowcase` (up to 5 `PostPreviewBox` cards from `getAllBlogPosts()`).
+5. Visitor clicks the showcase pane (wrapping `Link`) or the product item link → navigates to that product's dedicated page (continues into Flow 2, 4, 5, 6, 7, or 8).
+6. `NewsletterToast` appears bottom-left after delay (Flow 10 entry point).
 
 **Views used:**
-- `Home Portfolio Showcase` (`pages/index.tsx`)
-- `AppHeader` (shared shell)
-- `AppFooter` (shared shell)
-- `GithubEventsShowcase` (inline showcase, `src/components/home/GithubEventsShowcase.tsx`)
-- `PdfShowcase`, `VideoShowcase`, `ImageShowcase`, `BlogShowcase` (inline showcases, swapped per active product)
-
-**Products:** Work, Art, Photography, Drums, Resume, .plan
+- *Home — Portfolio Showcase* (sections: `AppHeaderBanner`, `AppHeader`, hero body, footer, `NewsletterToast`)
+- Sub-views: `GithubEventsShowcase`, `ImageShowcase`, `VideoShowcase`, `PdfShowcase`, `BlogShowcase`
 
 ---
 
-### Flow 2 — Site Navigation
+## 2. Browse GitHub Activity
 
-**Actor:** Visitor (anonymous)
-
-**Goal:** Navigate between the different sections of the site.
-
-**Entry points:**
-- `HeaderNavBar` nav links (desktop, `src/components/header/HeaderNavBar.tsx`)
-- `HeaderNavDropdown` hamburger drawer (mobile, `src/components/header/HeaderNavDropdown.tsx`)
-- `AppFooter` site-links column (Art, Photography, Drums, .plan, Work, Resume)
-- `AppFooter` external links column (Stoked Consulting, Stoked UI, LinkedIn, Discord, Slack)
-- `AppFooter` social icon strip (GitHub, RSS, Slack, LinkedIn, Discord)
+- **Actor:** Anonymous visitor
+- **Goal:** Explore Brian Stoker's recent open-source activity, filter by repo / event type / date / description, and inspect individual events.
+- **Entry points:**
+  - `AppHeader` nav → "Work"
+  - Home page → click "Work" product showcase
+  - Direct URL `/work` → `pages/work.tsx`
+  - `AppFooter` site-links column → "Work"
+- **Products:** `SC_PRODUCT_BRIANSTOKER_COM.md`
 
 **Steps:**
-1. Visitor clicks a nav link in `AppHeader` or `AppFooter`.
-2. Next.js client-side navigation routes to the target page.
-3. Target page view renders with shared `AppHeader` + `AppFooter` shell.
-4. On mobile, `HeaderNavDropdown` drawer opens on hamburger tap; visitor taps a link; drawer closes on navigation.
 
-**Views used:** Any page view; `AppHeader`, `AppFooter` (shared shell)
+1. Visitor lands on `/work`. *View: **Work — GitHub Activity Dashboard***.
+2. `GithubCalendar` mounts, fetches contribution data via `react-github-calendar` / API; renders SVG heatmap scrolled to the most recent week. *View region: `GithubCalendar`*.
+3. `GithubEvents` mounts; calls `GET /api/github/filters` for the repo/action option lists and `GET /api/github/events?page=1&limit=20` for the first page.
+4. Visitor narrows the result set via the filter bar (`Autocomplete` repo, `Select` action, date `TextField`, description `TextField`) → component re-queries `/api/github/events`; pagination resets to page 1.
+5. Visitor clicks an event row → metadata panel populates:
+   - `PullRequestEvent` → `PullRequestView` (Flow 3).
+   - `PushEvent` → `PushEvent` commit list (calls `/api/github/commit-files` per commit on expand).
+   - Other types → inline detail render.
+6. Visitor paginates via `Pagination` control → new page fetched.
+7. On mobile (<900px), repo strip + event list stacked; metadata panel displayed below selected event.
+
+**API calls:**
+- `GET /api/github/filters` (`pages/api/github/filters.ts`)
+- `GET /api/github/events` (`pages/api/github/events.ts`)
+- `GET /api/github/event/[id]` (`pages/api/github/event/[id].ts`) — direct event lookup
+
+**Views used:** *Work — GitHub Activity Dashboard* (`GithubCalendar`, `GithubEvents`, optional `PullRequestView` panel).
 
 ---
 
-### Flow 3 — Theme Toggle
+## 3. Inspect Pull Request Detail
 
-**Actor:** Visitor (anonymous)
-
-**Goal:** Switch between light and dark color modes.
-
-**Entry points:**
-- `ThemeModeToggle` button in `AppHeader` (`src/components/header/ThemeModeToggle.tsx`)
+- **Actor:** Anonymous visitor
+- **Goal:** Drill into a specific PR to view its commits and changed files.
+- **Entry points:**
+  - From Flow 2: select a `PullRequestEvent` row inside `GithubEvents`
+  - Home showcase (`GithubEventsShowcase`) — same selection mechanism
+- **Products:** `SC_PRODUCT_BRIANSTOKER_COM.md`
 
 **Steps:**
-1. Visitor clicks the sun/moon icon in the header.
-2. `BrandingCssVarsProvider` CSS variable mode toggles between `light` and `dark`.
-3. All MUI components re-render with the new palette; preference is stored in localStorage by the provider.
 
-**Views used:** All views (shared shell behavior)
+1. Visitor selects a PR event in the event list → `GithubEvents` swaps the metadata panel to `PullRequestView` (`src/components/PullRequest/PullRequestView.tsx`).
+2. `PullRequestView` requests PR data: `GET /api/github/pull-request?...` (`pages/api/github/pull-request.ts`) or `GET /api/github/pull-request/[number]` (`pages/api/github/pull-request/[number].ts`).
+3. Tabs render: **Commits (N)** by default → `CommitsList` (`src/components/PullRequest/CommitsList.tsx`).
+4. Visitor switches to **Files changed (N)** → `FileChanges` (`src/components/PullRequest/FileChanges.tsx`) requests file diffs via `GET /api/github/pull-request-files` (`pages/api/github/pull-request-files.ts`).
+5. `StatsBox` summarizes "Showing N changed files with X additions and Y deletions".
+6. Visitor expands a file entry → diff rendered; per-commit drill-down may call `GET /api/github/commit-files` (`pages/api/github/commit-files.ts`).
+
+**Views used:** Sub-views `PullRequestView`, `GithubEventsShowcase` (when entered from home), embedded within *Work — GitHub Activity Dashboard* or *Home — Portfolio Showcase*.
 
 ---
 
-### Flow 4 — GitHub Activity Dashboard Browse
+## 4. Read Resume (PDF)
 
-**Actor:** Visitor (anonymous)
-
-**Goal:** View Brian's GitHub contribution history and recent activity events.
-
-**Entry points:**
-- Direct URL: `/work`
-- "Work" nav link in `AppHeader` / `AppFooter`
-- Home page "Work" product link (`src/products.tsx` — `workData.url`)
+- **Actor:** Anonymous visitor
+- **Goal:** Read Brian's current resume directly in the browser, paginated.
+- **Entry points:**
+  - `AppFooter` site-links column → "Resume"
+  - Home → Resume showcase click-through
+  - Direct URL `/resume` (canonical, `pages/resume.tsx`) or `/resume-new` (`pages/resume-new.tsx`)
+  - `/resume-scale` (experimental variant) — `pages/resume-scale.tsx`
+- **Products:** `SC_PRODUCT_BRIANSTOKER_COM.md`
 
 **Steps:**
-1. Visitor navigates to `/work` (`pages/work.tsx`).
-2. `GithubCalendar` component (`src/components/GithubCalendar/GithubCalendar.tsx`) fetches `/api/github/events` (lightweight) to build contribution heatmap data.
-3. Calendar renders in `loading` skeleton state, then transitions to the SVG heatmap grid, auto-scrolled to the most-recent week.
-4. `GithubEvents` component (`src/components/GithubEvents/GithubEvents.tsx`) fetches `/api/github/events?page=1&per_page=20`.
-5. Event list populates: paginated rows showing event type chip (color-coded), repo name, date, message snippet.
-6. Visitor hovers over heatmap cells — `punch` fx triggers rect fly-out animation; month/day labels fade in.
-7. Visitor scrolls the event list; clicks `Pagination` to advance pages.
 
-**Views used:**
-- `Work GitHub Activity Dashboard` (`pages/work.tsx`)
-- `GithubCalendar` sub-view
-- `GithubEvents` sub-view (list only, no event selected)
+1. Visitor lands on `/resume`. *View: **Resume (Primary PDF Viewer)***.
+2. Container `ResizeObserver` measures viewport → sets `containerWidth`.
+3. `PdfDoc` (`react-pdf` `Document`) fetches `public/static/resume/brian-stoker-resume.pdf` and renders the first `Page`.
+4. Visitor hovers the document → `ButtonGroup` page controls reveal (Prev `Fab` / `Page X of N` label / Next `Fab`).
+5. Visitor advances pages via Fabs; `pageNumber` updates; Prev/Next disable at boundaries.
+6. (Optional) Visitor visits `/resume-scale` to evaluate the experimental container-width strategy (`useResizeObserver`), same `PdfDoc`.
 
-**Products:** Work
+**Views used:** *Resume (Primary PDF Viewer)*, *Resume Scale (Experimental)*.
 
 ---
 
-### Flow 5 — GitHub Event Detail Inspection
+## 5. Browse Photography Gallery
 
-**Actor:** Visitor (anonymous)
-
-**Goal:** Inspect the full details of a specific GitHub event (commits, PR diffs, etc.).
-
-**Entry points:**
-- Clicking an event row in the `GithubEvents` list (on `/work` or the home page showcase)
+- **Actor:** Anonymous visitor
+- **Goal:** View Brian's photography in a masonry grid; open any image full-screen.
+- **Entry points:**
+  - Home → Photography product showcase
+  - `AppFooter` → "Photography"
+  - Direct URL `/photography` → `pages/photography.tsx`
+- **Products:** `SC_PRODUCT_BRIANSTOKER_COM.md`
 
 **Steps:**
-1. Visitor clicks an event row in the `GithubEvents` list.
-2. Component fetches full event details from `/api/github/event/[id]` (or uses two-tier localStorage cache via `eventCacheManager`).
-3. Metadata panel populates:
-   - **PushEvent:** `PushEvent` component shows commit list with messages and SHAs (`src/components/GithubEvents/PushEvent.tsx`).
-   - **PullRequestEvent:** `PullRequestView` (`src/components/PullRequest/PullRequestView.tsx`) renders with two tabs:
-     - **Commits tab:** `CommitsList` (`src/components/PullRequest/CommitsList.tsx`)
-     - **Files changed tab:** `FileChanges` diff list (`src/components/PullRequest/FileChanges.tsx`) + stats bar
-   - **IssuesEvent / IssueCommentEvent / CreateEvent / DeleteEvent / ForkEvent / ProjectsV2\*:** matching event-type component renders.
-   - **Fallback:** `ReactJson` (react-json-view) renders raw event JSON.
-4. On desktop (≥900px): metadata panel is sticky, side-by-side with event list.
-5. On mobile (<900px): metadata panel stacks below the event list.
-6. Visitor clicks a different event row — metadata panel updates.
-7. For PR events, visitor clicks "Files changed" tab — diff view renders with additions/deletions.
 
-**Views used:**
-- `Work GitHub Activity Dashboard` (`pages/work.tsx`) or `GithubEventsShowcase` (home)
-- `GithubEvents` sub-view with metadata panel active
-- `PullRequestView` sub-panel (for PR events)
+1. Visitor lands on `/photography`; MUI `ImageList` renders the 3-column masonry grid (10 photos, lazy-loaded).
+2. Visitor hovers a tile → scale animation.
+3. Visitor clicks a tile → `LightboxGallery` opens (`open=true`); current image displayed full-screen.
+4. Visitor navigates via left/right arrow buttons or by clicking the left/right click-zone halves.
+5. Visitor closes via top-right close icon, the `Escape` key, or by clicking the backdrop.
 
-**API routes:** `GET /api/github/events`, `GET /api/github/event/[id]`, `GET /api/github/pull-request/[number]`, `GET /api/github/commit-files`, `GET /api/github/pull-request-files`
-
-**Products:** Work
+**Views used:** *Photography Gallery* + sub-view `LightboxGallery (Modal Overlay)`.
 
 ---
 
-### Flow 6 — GitHub Events Filtering
+## 6. Browse Art Gallery
 
-**Actor:** Visitor (anonymous)
+- **Actor:** Anonymous visitor
+- **Goal:** View Brian's artwork in a masonry grid; open any image full-screen.
+- **Entry points:**
+  - Home → Art product showcase
+  - `AppFooter` → "Art"
+  - Direct URL `/art` → `pages/art.tsx`
+- **Products:** `SC_PRODUCT_BRIANSTOKER_COM.md`
 
-**Goal:** Narrow the event list by repository, event type, date range, or description keyword.
+**Steps:** Identical to Flow 5, but with 12 artwork images. Same `LightboxGallery` modal.
 
-**Entry points:**
-- Filter bar controls at the top of `GithubEvents` (on `/work` page)
+**Views used:** *Art Gallery* + sub-view `LightboxGallery (Modal Overlay)`.
+
+---
+
+## 7. Watch Drum Videos
+
+- **Actor:** Anonymous visitor
+- **Goal:** Play the three drum performance videos.
+- **Entry points:**
+  - Home → Drums product showcase
+  - `AppFooter` → "Drums"
+  - Direct URL `/drums` → `pages/drums.tsx`
+- **Products:** `SC_PRODUCT_BRIANSTOKER_COM.md`
 
 **Steps:**
-1. Visitor is on `/work` with event list populated.
-2. Visitor types a repo name into the repo `Autocomplete` field — list narrows to events from that repo; pagination resets to page 1.
-3. Visitor selects an action type from the `Select` dropdown (e.g., "PushEvent") — list filters by event type.
-4. Visitor selects a date range from the date `TextField` (today / yesterday / week / month) — `created_at` filter applied server-side.
-5. Visitor types a description keyword into the description `TextField` — in-memory filter applied on the fetched page.
-6. Multiple filters may be active simultaneously.
-7. Visitor clears a filter — list re-fetches and expands back.
 
-**Views used:**
-- `Work GitHub Activity Dashboard` (`pages/work.tsx`)
-- `GithubEvents` sub-view (filter bar + list)
+1. Visitor lands on `/drums`; `VideoGallery` renders three `<video>` elements with poster images:
+   - "Normal Guy" (QuickTime)
+   - "Golden Stream" (MP4)
+   - "Tell Me Mister" (MP4)
+2. Visitor clicks Play; native controls drive playback. `playsInline` prevents iOS fullscreen auto-trigger.
+3. Visitor scrubs / pauses / resumes via native controls (Picture-in-Picture disabled).
 
-**API routes:** `GET /api/github/events?repo=&action=&date=&description=&page=&per_page=`
-
-**Products:** Work
+**Views used:** *Drums — Video Gallery*.
 
 ---
 
-### Flow 7 — Resume View
+## 8. Browse Blog Index
 
-**Actor:** Visitor (anonymous)
-
-**Goal:** View Brian's resume as a rendered PDF.
-
-**Entry points:**
-- Direct URL: `/resume`
-- "Resume" nav link in `AppHeader` / `AppFooter`
-- Home page "Resume" product link (`src/products.tsx`)
-- Home page `PdfShowcase` inline preview
+- **Actor:** Anonymous visitor
+- **Goal:** Find a blog post by browsing the index or filtering by tag.
+- **Entry points:**
+  - Home → ".plan" product showcase (`BlogShowcase`)
+  - `AppHeader` / `AppFooter` → ".plan"
+  - Direct URL `/bstoked.plan` (`pages/bstoked.plan.tsx`) — main index
+  - Direct URL `/.plan` (`pages/.plan/index.jsx`) — card grid variant
+- **Products:** `SC_PRODUCT_BRIANSTOKER_COM.md`
 
 **Steps:**
-1. Visitor navigates to `/resume` (`pages/resume.tsx`).
-2. `PdfDoc` component (`pages/resume-new.tsx:95`) is rendered; `ResizeObserver` measures container width.
-3. `react-pdf` `Document` loads `/static/resume/brian-stoker-resume.pdf` from the CDN.
-4. `Page` renders the PDF canvas at computed width (max 850px, minus padding).
-5. Visitor hovers over the PDF — page navigation `ButtonGroup` (Prev Fab / "Page X of N" / Next Fab) fades in at bottom center.
-6. For multi-page PDFs, visitor clicks Next/Prev Fabs to change pages.
-7. On narrow viewports (<900px), the optional side icon column is hidden; layout stacks vertically.
 
-**Views used:**
-- `Resume PDF Viewer` (`pages/resume.tsx`)
-- `PdfShowcase` inline sub-view (home only)
+1. Visitor lands on `/bstoked.plan`. *View: **Blog Index — `bstoked.plan`***.
+2. Hero section renders; the 2 most-recent posts populate the featured `PostPreviewBox` overlay.
+3. Remaining posts list paginated 7/page; sticky sidebar shows tag filter chips + social links.
+4. Visitor clicks a tag chip → query param `?tags=<tag>` set; list narrows; page resets to 0.
+5. Visitor clicks the active chip's delete affordance → tag cleared.
+6. Visitor paginates → `postListRef` scrolled into view.
+7. Visitor clicks any post `Read more` button or title → continues into Flow 9.
+8. (Alternative) Visitor visits `/.plan` to browse the card-grid variant; clicks a card → Flow 9.
 
-**Products:** Resume
+**Data:** `getAllBlogPosts()` from `lib/sourcing.ts` (MDX in `pages/home/*.mdx` and similar).
+
+**Views used:** *Blog Index — `bstoked.plan`*, *Plan Index — `/.plan`*.
 
 ---
 
-### Flow 8 — Photography Gallery Lightbox
+## 9. Read Blog Post
 
-**Actor:** Visitor (anonymous)
-
-**Goal:** Browse photography images in a masonry grid and view individual photos full-screen.
-
-**Entry points:**
-- Direct URL: `/photography`
-- "Photography" nav link in `AppHeader` / `AppFooter`
-- Home page "Photography" product link (`src/products.tsx`)
+- **Actor:** Anonymous visitor
+- **Goal:** Read a single MDX-authored blog post.
+- **Entry points:**
+  - Click a `PostPreviewBox` "Read more" or title link in Flow 8
+  - Home `BlogShowcase` post-card click
+  - Direct deep link `/.plan/<slug>` → `pages/.plan/[slug].tsx`
+- **Products:** `SC_PRODUCT_BRIANSTOKER_COM.md`
 
 **Steps:**
-1. Visitor navigates to `/photography` (`pages/photography.tsx`).
-2. 10 photos render in a 3-column MUI masonry `ImageList`; images lazy-load.
-3. Visitor hovers an image — it scales up (1.02x transform).
-4. Visitor clicks an image — `LightboxGallery` modal opens (`src/components/LightboxGallery/index.tsx`) with clicked image displayed.
-5. Visitor navigates using arrow buttons (left/right click zones, or `ArrowBackIosNew` / `ArrowForwardIos` icon buttons) to cycle through images.
-6. Visitor closes the lightbox by: clicking the X `IconButton`, clicking the `Backdrop`, or pressing Escape.
 
-**Views used:**
-- `Photography Gallery` (`pages/photography.tsx`)
-- `LightboxGallery` modal sub-view
+1. Next.js resolves the slug at build time via `getStaticPaths` (`fallback: false`) and serializes MDX via `getStaticProps`.
+2. *View: **Blog Post — `.plan/[slug]`*** renders via `TopLayoutBlog` from `@stoked-ui/docs`.
+3. Metadata header (title, date, authors, tags) renders above the rendered MDX body.
+4. Unknown slug → Next.js 404 (Flow 17).
 
-**Products:** Photography
+**Views used:** *Blog Post — `.plan/[slug]`*.
 
 ---
 
-### Flow 9 — Art Gallery Lightbox
+## 10. Newsletter Subscribe
 
-**Actor:** Visitor (anonymous)
-
-**Goal:** Browse artwork images and view them full-screen.
-
-**Entry points:**
-- Direct URL: `/art`
-- "Art" nav link in `AppHeader` / `AppFooter`
-- Home page "Art" product link (`src/products.tsx`)
-
-**Steps:** Identical to Flow 8 — Photography Gallery Lightbox. Displays 12 artwork images in the same masonry + lightbox layout.
-
-**Views used:**
-- `Art Gallery` (`pages/art.tsx`)
-- `LightboxGallery` modal sub-view
-
-**Products:** Art
-
----
-
-### Flow 10 — Drums Video Playback
-
-**Actor:** Visitor (anonymous)
-
-**Goal:** Watch Brian's drum performance videos.
-
-**Entry points:**
-- Direct URL: `/drums`
-- "Drums" nav link in `AppHeader` / `AppFooter`
-- Home page "Drums" product link; `VideoShowcase` inline preview on home page
+- **Actor:** Anonymous visitor
+- **Goal:** Subscribe to Brian's newsletter using their email address.
+- **Entry points:**
+  - `EmailSubscribe` form in `AppFooter` (every page) — `src/components/footer/EmailSubscribe.tsx`
+  - `NewsletterToast` (home page only, bottom-left, post-delay) — `src/components/home/NewsletterToast.tsx`
+- **Products:** `SC_PRODUCT_BRIANSTOKER_COM.md`
 
 **Steps:**
-1. Visitor navigates to `/drums` (`pages/drums.tsx`).
-2. Three videos render in `VideoGallery` container (`src/components/video/videos.tsx`): "Normal Guy" (QuickTime), "Golden Stream" (MP4), "Tell Me Mister" (MP4).
-3. Each video shows a poster image until play begins; native `<video controls>` UI is used.
-4. Visitor clicks the play button on a video — native browser video player begins playback.
-5. On the home page showcase (`VideoShowcase`): Plyr player (dynamically imported) autoplays muted on load.
 
-**Views used:**
-- `Drums Video Gallery` (`pages/drums.tsx`)
-- `VideoShowcase` inline sub-view (home only)
+1. Visitor sees the form (footer or toast).
+2. Visitor enters email → submits.
+3. Submission POSTs to the subscribe backend (external email/newsletter provider); a confirmation email is sent containing a `/subscription?code=...&token=...&email=...` link.
+4. Toast auto-dismisses or visitor closes the close button.
+5. Visitor opens email → continues into Flow 11.
 
-**Products:** Drums
+**Views used:** Shared shell regions `AppFooter` (`EmailSubscribe`) and `NewsletterToast`.
 
 ---
 
-### Flow 11 — Blog Index Browse
+## 11. Verify Newsletter Email
 
-**Actor:** Visitor (anonymous)
-
-**Goal:** Discover and filter blog posts on the `.plan` blog.
-
-**Entry points:**
-- Direct URL: `/bstoked.plan`
-- ".plan" nav link in `AppHeader` / `AppFooter`
-- Home page ".plan" product link; `BlogShowcase` inline preview on home page
+- **Actor:** Subscriber clicking a confirmation link from their inbox
+- **Goal:** Confirm email ownership and finalize subscription.
+- **Entry points:** Email-delivered link `https://brianstoker.com/subscription?code=<code>&token=<token>&email=<email>` → `pages/subscription.tsx`
+- **Products:** `SC_PRODUCT_BRIANSTOKER_COM.md`
 
 **Steps:**
-1. Visitor navigates to `/bstoked.plan` (`pages/bstoked.plan.tsx`). `getStaticProps` provides all blog posts; RSS feed regenerates.
-2. Hero section renders with gradient headline.
-3. Top 2 most-recent posts render as featured `PostPreviewBox` cards (image, tags, title, description, authors, "Read more" button).
-4. Remaining posts render in a paginated list (7/page) on the left; sticky sidebar on the right (desktop) with tag filter chips and social links.
-5. Visitor clicks a tag chip — chip becomes filled + deletable; post list filters to matching posts; `?tags=` query param updates in URL; pagination resets to page 0.
-6. Visitor clicks a filled tag chip's X — tag removed; list expands back.
-7. Visitor clicks `Pagination` to navigate pages — `postListRef` scrolls into view.
-8. Visitor clicks a post title or "Read more" — navigates to `/.plan/[slug]`.
 
-**Views used:**
-- `Blog Index` (`pages/bstoked.plan.tsx`)
-- `BlogShowcase` inline sub-view (home only)
+1. Subscriber clicks link → `/subscription` loads.
+2. Page reads `?code=` query param:
+   - **No code** → immediate redirect to `/404`.
+   - **200** → success alert "Email verified: {email}".
+   - **201** → "Email already verified: {email}".
+   - **401** → "Invalid token or Email".
+   - **404** → "Email not found: {email}".
+   - **402 / 500** → "System error occurred staff has been notified."
+3. Subscriber reads the result `Alert` and navigates elsewhere via shell links.
 
-**Products:** .plan
+**Views used:** *Subscription / Email Verification*.
 
 ---
 
-### Flow 12 — Blog Post Read
+## 12. View HAL Logs (Admin)
 
-**Actor:** Visitor (anonymous)
-
-**Goal:** Read a specific blog post article.
-
-**Entry points:**
-- Clicking post title / "Read more" from Blog Index (`/bstoked.plan`)
-- Direct URL: `/.plan/[slug]`
-- `BlogShowcase` post card on home page
-- RSS feed link (`/feed/.plan/rss.xml`)
+- **Actor:** Authenticated admin (Google OAuth identity matching the configured admin allow-list)
+- **Goal:** Inspect application logs / errors collected by the HAL log-shipping backend.
+- **Entry points:** Direct URL `/hal` → `pages/hal.js`
+- **Products:** `SC_PRODUCT_BRIANSTOKER_COM.md`
 
 **Steps:**
-1. Visitor navigates to `/.plan/[slug]` (`pages/.plan/[slug].tsx`).
-2. `getStaticProps` loads the MDX file from `data/blog/` matching the slug; `getStaticPaths` enumerates all known slugs at build time.
-3. `TopLayoutBlog` (from `@stoked-ui/docs`) renders: post header (title, date, tags, authors), then the serialized MDX body.
-4. Visitor reads the article; may click inline links.
-5. Visitor navigates back to blog index or uses header navigation.
 
-**Views used:**
-- `Blog Post (MDX)` (`pages/.plan/[slug].tsx`)
+1. Admin opens `/hal`. *View: **HAL Logs (Admin)*** — unauthenticated state shows "Access Restricted" with `Sign In` button.
+2. Admin clicks `Sign In` → NextAuth `signIn()` → Google OAuth handshake via `pages/api/auth/[...nextauth].js` → redirected back authenticated.
+3. View flips to authenticated state. `useEffect` fires `GET /api/hal/logs` (`pages/api/hal/logs.js`).
+4. Server reads from MongoDB (or S3 `HalBucket`, `stacks/bucket.ts`) and returns `{ logs, errors }`.
+5. **Logs** tab renders `logs` string in `LogPanel`; **Errors** tab renders `errors` (turning red if present).
+6. Admin toggles tabs to inspect output.
+7. Admin clicks `Sign Out` → NextAuth signs out → returns to the unauthenticated state.
 
-**Products:** .plan
+**Views used:** *HAL Logs (Admin)*.
 
 ---
 
-### Flow 13 — Email Newsletter Subscribe
+## 13. Hourly GitHub Event Sync (System)
 
-**Actor:** Visitor (anonymous)
-
-**Goal:** Subscribe to email updates from Brian Stoker.
-
-**Entry points:**
-- `EmailSubscribe` form in `AppFooter` (`src/components/footer/EmailSubscribe.tsx`) — present on all pages
-- `NewsletterToast` client-side toast on the home page (`src/components/home/NewsletterToast.tsx`)
+- **Actor:** AWS EventBridge scheduler (system, no human in the loop)
+- **Goal:** Keep MongoDB `github_events` and `sync_metadata` collections current with the latest events from the GitHub Events API.
+- **Entry points:** `sst.aws.Cron` created by `stacks/cron.ts` with schedule `rate(1 hour)` — calls `cron/github-sync.handler`.
+- **Products:** `SC_PRODUCT_BRIANSTOKER_COM.md`
 
 **Steps:**
-1. Visitor sees the `EmailSubscribe` form in the footer (or `NewsletterToast` on home).
-2. Visitor types their email address into the `InputBase` field.
-3. Visitor clicks "Subscribe" button (or presses Enter).
-4. Form sets status to `loading`; button disables.
-5. `POST https://api.<host>/subscribe` is called with `{ email }` (no-cors mode — external subscription API endpoint).
-6. On success: form status sets to `sent`; the form replaces with a success `Alert` — "Go to your email and open the confirmation email to confirm your subscription."
-7. On failure: `FormHelperText` error shown — "Oops! Something went wrong, please try again later."
-8. Visitor opens their email and clicks the confirmation link (leads to Flow 14).
 
-**Views used:**
-- `AppFooter` (shared shell, `src/layouts/AppFooter.tsx`)
-- `NewsletterToast` (home page only)
+1. EventBridge fires every 60 minutes.
+2. Lambda handler `cron/github-sync.ts` boots; reads env (`GITHUB_TOKEN`, `GITHUB_USERNAME`, `MONGODB_*`, `SYNC_SECRET`, `SYNC_ENDPOINT`).
+3. Handler invokes `syncGitHubEvents()` from `lib/github-sync.ts` (or POSTs `${SITE_URL}/api/github/sync-events` with `SYNC_SECRET`, per `stacks/cron.ts`).
+4. Sync logic paginates the GitHub Events API for `GITHUB_USERNAME`.
+5. Events upserted into the `github_events` collection in the per-stage MongoDB database (e.g. `brianstoker-production`); `sync_metadata` updated with cursor/timestamps.
+6. Lambda exits (5-minute timeout). Next visitor loading `/work` or the home Work showcase (Flow 2) receives the fresh data via `/api/github/events`.
+
+**Views used:** None (background system flow). Output surfaces in Flow 2 / Flow 1 (Work showcase).
 
 ---
 
-### Flow 14 — Email Verification (Subscription Confirm)
+## 14. Local GitHub Event Sync (Developer)
 
-**Actor:** Visitor (anonymous, arrived from email link)
-
-**Goal:** Confirm email subscription via a tokenized link from the confirmation email.
-
-**Entry points:**
-- Email link: `/subscription?code=<code>&token=<token>&email=<email>`
+- **Actor:** Developer running the app locally
+- **Goal:** Populate the local MongoDB (`brianstoker-local`) with fresh GitHub events so the dev UI has data to show.
+- **Entry points:**
+  - `pnpm dev` (runs `dev:nextjs` + `dev:cron` via Turbo)
+  - `pnpm dev:cron` directly (`scripts/local-sync-cron.cjs`)
+  - `pnpm sync-cron` — manual one-shot
+  - `pnpm populate:github` / `pnpm populate:github-history` — backfill scripts (`scripts/populate-github-activity*.js`)
 
 **Steps:**
-1. Visitor clicks the confirmation link in the subscription email.
-2. `/subscription` page (`pages/subscription.tsx`) loads; `useSearchParams` reads `code`, `token`, `email` from query string.
-3. `useEffect` evaluates the `code` param:
-   - **No `code`:** redirects to `/404`.
-   - **`200`:** success Alert — "Email verified: {email}"
-   - **`201`:** success Alert — "Email already verified: {email}"
-   - **`401`:** error Alert — "Invalid token or Email"
-   - **`404`:** error Alert — "Email not found: {email}"
-   - **`402` / `500`:** error Alert — "System error occurred staff has been notified."
-4. Alert renders with appropriate severity (`success` or `error`).
 
-**Views used:**
-- `Email Verification` (`pages/subscription.tsx`)
+1. Developer runs `pnpm dev`; Turbo starts `dev:nextjs` (Next on port 5040) and `dev:cron` concurrently.
+2. After ~10s warm-up, `scripts/local-sync-cron.cjs` POSTs `http://localhost:5040/api/github/sync-events` with the `SYNC_SECRET` from `.env`.
+3. `pages/api/github/sync-events.ts` validates the secret, then calls `syncGitHubEvents()`.
+4. Events written to `brianstoker-local` Atlas DB.
+5. Developer iterates against `/work` and `/` showcases (Flows 1, 2) with live data.
+6. (Backfill variant) Developer runs `pnpm populate:github-history` to seed the local DB with historical events.
+
+**Views used:** None (background developer flow).
 
 ---
 
-### Flow 15 — HAL Admin Sign-In
+## 15. Production Deploy
 
-**Actor:** Owner (Brian Stoker — email allowlist enforced)
-
-**Goal:** Authenticate to access the HAL log viewer.
-
-**Entry points:**
-- Direct URL: `/hal`
-- Unauthenticated state of `/hal` shows a "Sign In" button
+- **Actor:** Developer / operator with `AWS_PROFILE=stoked` credentials
+- **Goal:** Ship a new revision of the site, cron, and infra to AWS.
+- **Entry points:**
+  - `pnpm deploy:prod` → `scripts/aws-deploy.sh deploy`
+  - Direct `AWS_PROFILE=stoked senvn -f production npx sst deploy --stage production`
+  - Maintenance variants: `pnpm refresh:prod`, `pnpm unlock:prod`, `pnpm remove:prod`
 
 **Steps:**
-1. Owner navigates to `/hal` (`pages/hal.js`).
-2. `useSession` (next-auth) returns no session — unauthenticated state renders: "Access Restricted" + "Sign In" button.
-3. Owner clicks "Sign In" — `signIn()` from next-auth initiates the Google OAuth flow via `/api/auth/[...nextauth].js`.
-4. Owner authenticates with their Google account.
-5. NextAuth `signIn` callback checks `profile.email` against allowlist (`["brianstoker@gmail.com", "b@stokedconsulting.com", "b@brianstoker.com"]`).
-   - **Allowed:** session created; redirected back to `/hal`.
-   - **Denied:** sign-in rejected; error page shown by NextAuth.
-6. With active session, the authenticated state of `/hal` renders (see Flow 16).
 
-**Views used:**
-- `HAL Logs (Admin)` (`pages/hal.js`) — unauthenticated state
+1. Operator confirms branch state (`main`); ensures `.env.production` is populated.
+2. Runs `pnpm deploy:prod`.
+3. Script applies `fix-nextjs15.js` patches, then runs `pnpx @opennextjs/aws@latest build` to produce the Lambda bundle.
+4. `sst.config.ts.run()` wires resources via `stacks/`:
+   - `stacks/domains.ts` resolves domain + DB name for stage `production`.
+   - `stacks/bucket.ts` ensures `HalBucket` (S3).
+   - `stacks/site.ts` deploys the Next.js Lambda (validates required env vars, attaches `*:*` IAM, sets cache headers).
+   - `stacks/cron.ts` deploys the hourly GitHub-sync cron Lambda.
+5. SST prints output URL; operator validates `https://brianstoker.com/` smoke (Flow 1) and `/work` data freshness (Flow 2).
+6. If stuck, operator runs `pnpm unlock:prod` to release the SST lock.
 
-**API routes:** `GET/POST /api/auth/[...nextauth]` (NextAuth Google OAuth)
+**Views used:** None (operational flow). Verification touches Flows 1, 2, 12.
 
 ---
 
-### Flow 16 — HAL Log Inspection
+## 16. Browse Components Index
 
-**Actor:** Owner (authenticated)
-
-**Goal:** View application logs and errors stored in S3.
-
-**Entry points:**
-- `/hal` after successful authentication (Flow 15)
-- `/hal` with an active next-auth session
+- **Actor:** Anonymous visitor (typically internal / curious developer)
+- **Goal:** Discover component documentation pages exposed by the site.
+- **Entry points:** Direct URL `/components` → `pages/components.tsx`
+- **Products:** `SC_PRODUCT_BRIANSTOKER_COM.md`
 
 **Steps:**
-1. Owner arrives at `/hal` with an active session.
-2. Authenticated view renders: "HAL Logs" header + "Sign Out" button.
-3. `useEffect` fires on session presence — `GET /api/hal/logs` is called.
-4. API handler (`pages/api/hal/logs.js`) verifies the session via `getServerSession`; fetches `logs.txt` and `errors.txt` from S3 (`S3_BUCKET_NAME` env var).
-5. Response populates `logs` and `errors` state.
-6. `Tabs` render: "Logs" (tab 0) and "Errors" (tab 1). If errors are non-empty, "Errors" tab label turns `error.main` red.
-7. `LogPanel` (dark monospace `<pre>`, maxHeight 70vh, scrollable) displays the active tab's content.
-8. Owner switches to "Errors" tab — errors content renders in `LogPanel`.
-9. Owner clicks "Sign Out" — `signOut()` called; redirected to unauthenticated state.
 
-**Views used:**
-- `HAL Logs (Admin)` (`pages/hal.js`) — authenticated state
+1. Visitor lands on `/components`. *View: **Components Listing***.
+2. Page reads static data from `data/pages` and renders the responsive category grid.
+3. Each `ListItemButton` is a link to a component-specific page; visitor clicks to navigate.
 
-**API routes:** `GET /api/hal/logs` (server-side session check + S3 fetch)
+**Views used:** *Components Listing*.
 
 ---
 
-### Flow 17 — GitHub Events Sync (Scheduled / Automated)
+## 17. 404 Recovery
 
-**Actor:** System (AWS EventBridge cron)
-
-**Goal:** Keep the MongoDB `github_events` collection current by syncing from the GitHub Events API hourly.
-
-**Entry points:**
-- AWS EventBridge `rate(1 hour)` schedule (configured in `stacks/cron.ts` via `sst.aws.Cron`)
-- Local dev: `scripts/local-sync-cron.cjs` polls hourly via `setInterval`
+- **Actor:** Anonymous visitor
+- **Goal:** Recover gracefully from an unknown URL.
+- **Entry points:** Any unrouted URL — Next.js renders `pages/404.tsx`.
 
 **Steps:**
-1. EventBridge triggers the Lambda function defined in `cron/github-sync.ts:handler` on the `rate(1 hour)` schedule.
-2. Handler calls `syncGitHubEvents()` from `lib/github-sync.ts`.
-3. `syncGitHubEvents` reads `GITHUB_TOKEN` and `GITHUB_USERNAME` from env; connects to MongoDB via `getDatabase()`.
-4. **Incremental mode (default):** checks `sync_metadata` collection for last sync timestamp; fetches only pages of events newer than the last sync using the GitHub Events API (paginated, up to 10 pages).
-5. **Full refresh mode (`fullRefresh=true`):** clears existing events; fetches all available pages from GitHub.
-6. New events are upserted into `github_events` collection (duplicates skipped by GitHub event ID).
-7. `sync_metadata` document updated with `lastSync`, `eventCount`, `success=true`.
-8. Handler returns `{ statusCode: 200, newEventCount, duplicatesSkipped, totalEventsInDb, pagesChecked, lastSync }`.
-9. On error: handler catches `SyncGitHubEventsError`; returns error status code and message; `sync_metadata` records `success=false`.
 
-**API routes:** (internal) `lib/github-sync.ts` calls GitHub API directly; no Next.js HTTP hop in Lambda mode
+1. Next.js intercepts the missing route and renders `HomeView` with `NotFoundHero` (`src/components/NotFoundHero.tsx`).
+2. Visitor reads the "page not found" indicator and uses `AppHeader` / `AppFooter` shell links to return to a real page.
+
+**Views used:** *404 Not Found*.
 
 ---
 
-### Flow 18 — GitHub Events Sync (Manual)
+## Cross-Cutting Concerns
 
-**Actor:** Developer or Owner
+### Authentication
 
-**Goal:** Manually trigger a GitHub event sync — incremental or full refresh.
+NextAuth.js v4 + Google OAuth (`pages/api/auth/[...nextauth].js`) currently gates only the HAL Logs flow (Flow 12). No other end-user flow requires sign-in.
 
-**Entry points (dev):**
-- `pnpm sync-cron` (`scripts/local-sync-cron.cjs` runs once immediately)
-- Direct HTTP: `POST /api/github/sync-events` with `Authorization: Bearer <SYNC_SECRET>` header
+### Persistent Data
 
-**Entry points (production):**
-- `POST /api/github/sync-events?fullRefresh=true` with `Authorization: Bearer <SYNC_SECRET>` header
+All visitor-facing dynamic data (GitHub events, PRs, commits) is read from MongoDB Atlas — populated by Flow 13 (production) or Flow 14 (development). The site never hits the GitHub API in the user-request path; it reads cached records via `/api/github/*` handlers backed by `pages/api/lib/mongodb.ts`.
 
-**Steps:**
-1. Developer/owner sends `POST /api/github/sync-events` with the correct `Authorization` header.
-2. API handler (`pages/api/github/sync-events.ts`) verifies `Authorization: Bearer <SYNC_SECRET>` — returns 401 if missing/wrong.
-3. Calls `syncGitHubEvents({ fullRefresh: req.query.fullRefresh === 'true' })`.
-4. Same sync logic as Flow 17 executes.
-5. Returns `200` JSON result on success; `4xx/5xx` with error details on failure.
+### Static Content
 
-**API routes:** `POST /api/github/sync-events`
+Resume PDF, art, photography, and drum videos are static assets in `public/static/`. The MDX blog (`pages/home/*.mdx` + `lib/sourcing.ts`) is statically resolved at build time.
+
+### Navigation Backbone
+
+`AppHeader` (`HeaderNavBar` desktop / `HeaderNavDropdown` mobile) and `AppFooter` are rendered on every page-level view and serve as the secondary entry point into Flows 2, 4, 5, 6, 7, 8.
 
 ---
 
-## Cross-Flow Notes
+## Route → Flow Map
 
-### Client-side Event Cache
-`GithubEvents` (`src/components/GithubEvents/GithubEvents.tsx`) uses a two-tier localStorage cache (`src/utils/eventCacheManager`):
-- **Index cache:** up to 1000 lightweight entries (~200KB) for list display
-- **Details cache:** up to 150 full events with LRU eviction (~300KB)
-
-This cache is populated during Flows 4, 5, and 6 and reduces redundant API calls across page visits.
-
-### Static Generation
-`pages/bstoked.plan.tsx` and `pages/.plan/[slug].tsx` use `getStaticProps` / `getStaticPaths`. Blog content is baked at build time. The RSS feed (`/feed/.plan/rss.xml`) is regenerated at each build via `scripts/generateRSSFeed`.
-
-### `HomeView` wrapper
-All page-level views (except `pages/bstoked.plan.tsx`) delegate to the `HomeView` component (`pages/index.tsx:15`), which injects the shared `AppHeader` / `AppFooter` shell and accepts a `HomeMain` prop for the page body. This is not itself a user flow but is the structural entry point for every view.
+| Route | Page File | Flow(s) |
+|-------|-----------|---------|
+| `/` | `pages/index.tsx` | 1 (10 via toast) |
+| `/work` | `pages/work.tsx` | 2 (→ 3) |
+| `/resume`, `/resume-new`, `/resume-scale` | `pages/resume.tsx`, `pages/resume-new.tsx`, `pages/resume-scale.tsx` | 4 |
+| `/photography` | `pages/photography.tsx` | 5 |
+| `/art` | `pages/art.tsx` | 6 |
+| `/drums` | `pages/drums.tsx` | 7 |
+| `/bstoked.plan`, `/.plan` | `pages/bstoked.plan.tsx`, `pages/.plan/index.jsx` | 8 (→ 9) |
+| `/.plan/[slug]` | `pages/.plan/[slug].tsx` | 9 |
+| `/subscription` | `pages/subscription.tsx` | 11 |
+| `/hal` | `pages/hal.js` | 12 |
+| `/components` | `pages/components.tsx` | 16 |
+| `*` (404) | `pages/404.tsx` | 17 |
+| `/api/github/sync-events` | `pages/api/github/sync-events.ts` | 13, 14 |
+| `/api/github/events`, `/api/github/event/[id]`, `/api/github/filters` | `pages/api/github/*` | 2 |
+| `/api/github/pull-request`, `/api/github/pull-request/[number]`, `/api/github/pull-request-files`, `/api/github/commit-files` | `pages/api/github/*` | 3 |
+| `/api/auth/[...nextauth]` | `pages/api/auth/[...nextauth].js` | 12 |
+| `/api/hal/logs` | `pages/api/hal/logs.js` | 12 |
+| EventBridge `GithubSyncCron` | `cron/github-sync.ts` | 13 |

@@ -1,265 +1,241 @@
----
-meta_version: 0.2.0
-generated: 2026-03-21
-scope: full codebase
----
+<!-- stokd-meta-version: 0.4.0 -->
+# SC_RECOMMENDATIONS — brianstoker-com
 
-# SC_RECOMMENDATIONS
+Actionable recommendations for the `v2.brianstoker.com` codebase, grouped by category. Each item references the actual file paths it applies to so changes can be made directly. Items are ordered roughly by impact within each section.
 
-Actionable recommendations for `v2.brianstoker.com`. Organized by category, ordered by priority within each section.
+This document is **prescriptive, not exhaustive** — it focuses on issues whose remediation would noticeably improve correctness, maintainability, security, or performance. It is not a code-style nitpick list.
 
 ---
 
 ## 1. Security
 
-### 1.1 XSS via Unsanitized Markdown (CRITICAL)
+### 1.1 IAM permissions for the site Lambda are unconstrained — HIGH
 
-**Files:** `src/components/GithubEvents/PullRequestEvent.tsx:432`, `src/components/GithubEvents/IssueCommentEvent.tsx:190`, `src/components/GithubEvents/PushEvent.tsx:168`, `src/components/GithubEvents/IssuesEvent.tsx:174`
+`stacks/site.ts:44–49` grants the Next.js Lambda `{ actions: ["*"], resources: ["*"] }`. A successful application-layer RCE or SSRF would inherit full AWS privileges within the deploy account. Real needs are narrow:
 
-All four files render GitHub-sourced markdown directly into the DOM:
+- `s3:GetObject`, `s3:PutObject` on the `HalBucket` ARN (already exposed via `S3_BUCKET_NAME`).
+- Outbound HTTPS only (no AWS API access) for everything else.
 
-```tsx
-dangerouslySetInnerHTML={{ __html: renderMarkdown(prDetails.body) }}
-```
+**Action:** replace the wildcard policy in `stacks/site.ts:44–49` with an explicit list scoped to the `HalBucket` ARN. If additional AWS services are needed later (SES, SNS, Cognito), add them by name. The wildcard makes audit, blast-radius reasoning, and least-privilege impossible.
 
-`marked()` alone does not sanitize HTML. A malicious PR body, issue body, or commit message containing `<script>` tags or event handlers would execute in the browser. Add `dompurify` (or the server-side `isomorphic-dompurify`) and pipe `marked()` output through `DOMPurify.sanitize()` before rendering.
+### 1.2 `SYNC_SECRET` comparison is not constant-time — MEDIUM
 
-### 1.2 Overly Permissive IAM Role (HIGH)
+`pages/api/github/sync-events.ts:13–16` compares the bearer token with `!==`. The GitHub event sync endpoint is exposed to the public Lambda URL and is a tempting target for timing attacks. Use `crypto.timingSafeEqual(Buffer.from(headerToken), Buffer.from(expected))` after length-checking both buffers.
 
-**File:** `stacks/site.ts:44-48`
+### 1.3 `GITHUB_TOKEN` echoed through error paths — MEDIUM
 
-```ts
-permissions: [{ actions: ["*"], resources: ["*"] }]
-```
+`lib/github-sync.ts:148–164` and `pages/api/github/pull-request.ts:124–126` pass the raw `errorText` from the GitHub API straight into `console.error` and into `error.message`, which `pages/api/github/sync-events.ts:25–31` returns in the HTTP response body. GitHub does not include the bearer token in error bodies today, but it does sometimes include the request URL with query strings. Sanitize before returning to clients — return a generic error message and log the detailed one.
 
-The Lambda function backing the Next.js site has admin-level IAM permissions. Scope this to the specific services actually needed: S3 (for the HAL bucket), and nothing else for the website handler. The sync cron has its own permissions. Principle of least privilege prevents any SSRF or credential-exfiltration attack from escalating to full AWS account compromise.
+### 1.4 NextAuth session strategy / CSRF not documented — MEDIUM
 
-### 1.3 Unauthenticated GitHub Token Proxy (HIGH)
+`pages/api/auth/[...nextauth].js` is the auth entry point but the SC_OVERVIEW notes "Google OAuth" without specifying whether sessions are JWT or database-backed, whether the `NEXTAUTH_SECRET` rotation procedure exists, or whether the `redirect_uri` allowlist is reviewed before changing stage domains. **Action:** read the file, confirm session strategy, and add a short section to `SC_OVERVIEW.md` describing it.
 
-**Files:** `pages/api/github/pull-request.ts`, `pages/api/github/pull-request/[number].ts`, `pages/api/github/commit-files.ts`, `pages/api/github/pull-request-files.ts`
+### 1.5 Public S3 / OpenNext asset cache headers are immutable for unhashed files — LOW
 
-All four endpoints proxy requests to the GitHub API using the server's `GITHUB_TOKEN` with no authentication gate. Any anonymous visitor can call these endpoints and exhaust the GitHub API rate limit (5000 req/hr). They can also look up details on any repo accessible by the token. Add authorization (session check via `getServerSession`) or at minimum rate-limit these endpoints per IP.
+`stacks/site.ts:79–98` sets `immutable, max-age=31536000` on `*.png`, `*.jpg`, `*.svg`, `*.ico`, `*.json`, `*.txt`. Without a content hash in the filename, any update to a file under `public/static/` will be invisible to browsers for up to a year. **Action:** restrict immutable caching to hashed Next.js build outputs and use a shorter `max-age` (e.g., 1 hour with `must-revalidate`) for raw `public/` assets, or rename files when they change.
 
-### 1.4 No Rate Limiting on Public Read APIs (MEDIUM)
+### 1.6 No CSP, no HSTS, no security headers — LOW
 
-**Files:** `pages/api/github/events.ts`, `pages/api/github/filters.ts`
-
-Both endpoints hit MongoDB on every request with no throttling or HTTP cache headers. A bot or misconfigured client can issue unlimited requests. Add `Cache-Control: public, s-maxage=60, stale-while-revalidate=300` headers to `filters.ts` (data changes hourly at most) and `s-maxage=30` to `events.ts`. This also reduces MongoDB load significantly.
-
-### 1.5 Unvalidated Pagination Parameters (LOW)
-
-**File:** `pages/api/github/events.ts:102-104`
-
-`parseInt(page as string)` and `parseInt(per_page as string)` have no bounds checking. A request with `per_page=999999` would attempt a massive MongoDB scan. Add `Math.min(Math.max(perPage, 1), 100)` and similar for page to constrain inputs.
+There is no `headers()` block in `next.config.mjs` and no equivalent in `stacks/site.ts`. Add at minimum `Strict-Transport-Security`, `X-Content-Type-Options: nosniff`, `Referrer-Policy: strict-origin-when-cross-origin`, and a starter Content Security Policy.
 
 ---
 
 ## 2. Code Quality
 
-### 2.1 `renderMarkdown` Duplicated in Four Files
+### 2.1 Two near-duplicate MongoDB client modules — HIGH
 
-**Files:** `src/components/GithubEvents/PullRequestEvent.tsx:25`, `src/components/GithubEvents/IssueCommentEvent.tsx:13`, `src/components/GithubEvents/PushEvent.tsx:22`, `src/components/GithubEvents/IssuesEvent.tsx:16`
+`pages/api/lib/mongodb.ts` and `lib/mongodb.ts` are 95% identical. They diverge in three small ways:
+- `appName` (`brianstoker-pages-api` vs `brianstoker-site`).
+- `lib/mongodb.ts:3–5` **throws** at import time when `MONGODB_URI` is missing; `pages/api/lib/mongodb.ts:7–9` only `console.warn`s and returns `null` from `getDatabase()`.
+- The return type of `getDatabase()` is `Db | null` in one and `Db` in the other.
 
-Identical function copy-pasted verbatim. Extract to `src/utils/renderMarkdown.ts`. This also makes it easier to add sanitization in one place (see 1.1).
+Confusingly, `lib/github-sync.ts:2` (which is *imported by the cron Lambda*) imports the API-flavored client from `pages/api/lib/mongodb`. The cron is therefore tagged as `brianstoker-pages-api` on the Atlas dashboard, which contradicts the intent of commit `af5fa04` ("tag mongo clients for atlas attribution").
 
-### 2.2 Duplicate Pull Request API Routes
+**Action:**
+1. Consolidate into a single `lib/mongodb.ts` that accepts `appName` as a parameter (or reads from env).
+2. Update `lib/github-sync.ts:2` to import from `lib/mongodb` and pass `brianstoker-cron`.
+3. Update Pages API handlers to pass `brianstoker-pages-api`.
+4. Choose one error policy (warn-and-null vs throw) and apply consistently.
 
-**Files:** `pages/api/github/pull-request.ts` and `pages/api/github/pull-request/[number].ts`
+### 2.2 In-memory description filter breaks pagination correctness — HIGH
 
-Both routes fetch the same PR data (PR details + commits + files) from the GitHub API. They differ only in how the parameters arrive (`owner/repo/pull_number` query params vs. `[number]` + `repo` query param). One should be removed, or they should share a common implementation module.
+`pages/api/github/events.ts:115–130` applies the `description` filter **after** MongoDB has already sliced the page with `skip`/`limit`. The result is that:
+- `total` reported to the client (line 86–140) reflects pre-description-filter count, but `events.length` may be smaller, breaking the page-count math the UI uses to render pagination controls.
+- Pages can return zero events while `total_pages > 1`.
 
-### 2.3 Loose `any` Typing on GitHub Payloads
+**Action:** either move the description match into the Mongo query (PushEvent description is synthesized, but PR/issue titles are stored under `payload.pull_request.title` / `payload.issue.title` — those can be matched server-side with a `$or` of `$regex` clauses), or run the description filter *before* `skip`/`limit` and accept the perf cost. The current shape is the worst of both.
 
-**File:** `src/types/github.ts:18,26`
+### 2.3 PR enrichment block is a 100+ line nested loop — MEDIUM
 
-`payload: any` and `commitsList: any[]` cascade `any` throughout the GithubEvents component tree, disabling type safety for the most complex data in the app. Define discriminated union types per event type (at minimum `PushEventPayload`, `PullRequestEventPayload`, `IssuesEventPayload`) and narrow in the component switch/if chains.
+`lib/github-sync.ts:197–308` contains three nested fetch loops (PR detail → commits → files → push compare) with shared rate-limit short-circuit state. It is also where most of the GitHub API quota is spent. Symptoms:
+- Untestable without an end-to-end run.
+- `console.log` × 15 makes Lambda log volume non-trivial.
+- The `data.length = 0; data.push(...eventsToProcess)` mutation at `lib/github-sync.ts:191–192` is a footgun — it works but is the kind of thing that breaks during a future refactor.
 
-### 2.4 MongoDB `as any` Casts on `_id` Queries
+**Action:** extract `enrichPullRequest(event, githubToken)` and `enrichPushEvent(event, githubToken)` into small testable functions (return enriched event or rate-limit sentinel). Replace the array-mutation trick with an explicit assignment.
 
-**Files:** `lib/github-sync.ts:79`, `pages/api/github/event/[id].ts:25`, `pages/api/github/events.ts:39`
+### 2.4 `as any` casts hide schema bugs — MEDIUM
 
-Multiple `findOne({} as any)` and `{ _id: 'github_events_sync' } as any` casts hide potential type errors. Use the MongoDB driver's `WithId<Document>` and `Filter<Document>` types properly, or create typed collection wrappers.
+`pages/api/github/events.ts:39`, `:44`, `:112`, and several spots in `lib/github-sync.ts` (`{ _id: 'github_events_sync' } as any`, `{ sort: ... as any }`) suppress type errors that would otherwise expose the fact that `_id` is being used as a string discriminator but typed as ObjectId.
 
-### 2.5 TypeScript Dev Pre-release Version
+**Action:** define a typed `SyncMetadataDoc` and a typed `GithubEventDoc` (with `_id: string`), and use `db.collection<SyncMetadataDoc>('sync_metadata')` so the casts disappear. The driver's generic API supports this.
 
-**File:** `package.json:191`
+### 2.5 Verbose `console.log` in hot path — MEDIUM
 
-```json
-"typescript": "6.0.0-dev.20251014"
-```
+`lib/github-sync.ts` has 15 `console.log` calls and `pages/api/github/events.ts:132` logs every list request. In Lambda this is real money (CloudWatch ingestion + storage) for a personal site. **Action:** introduce a tiny `lib/logger.ts` wrapping `console` with a `LOG_LEVEL` env knob; default to `info` in prod, `debug` locally.
 
-Using a dev pre-release TypeScript build in production tooling is risky — compiler bugs and breaking API changes are expected. Downgrade to the latest stable `5.x` release.
+### 2.6 Mixed `.ts` / `.tsx` / `.js` in `pages/api` and `src/modules` — LOW
 
-### 2.6 Type Checking Skipped in Builds
+The `src/modules/components/` tree has multiple `.js` files (`ThemeContext.js`, `AppFrame.js`, `AppNavDrawer.js`, etc.) sitting alongside `.tsx`. `pages/api/auth/[...nextauth].js` and `pages/api/hal/logs.js` are also untyped. **Action:** convert one file per PR. Start with `pages/api/auth/[...nextauth].js` (security surface) and `src/modules/components/AppNavDrawer.js` (highest `TODO` count at 5).
 
-**File:** `package.json:11` (`NEXT_SKIP_TYPECHECKING=1`)
+### 2.7 Type checking explicitly disabled on build path — LOW
 
-Type errors are completely invisible during CI builds. Run `pnpm typescript` as a required pre-build step or in CI. Errors caught now in `src/types/github.ts` and API routes confirm this is masking real issues.
+`NEXT_SKIP_TYPECHECKING=1` in `package.json:11` and `next build --no-lint` in `build:sst`. The intent (speed) is reasonable but means deploys can ship broken types. **Action:** run `pnpm typescript` as a required pre-deploy step in `scripts/aws-deploy.sh` so type errors block deployment without slowing the bundler.
 
-### 2.7 `prop-types` Dependency
+### 2.8 Stale / backup files in repo — LOW
 
-**File:** `package.json:112`
-
-`prop-types` is a runtime validation library from the React 15 era, superseded by TypeScript. It adds ~6KB to the bundle with no benefit in a fully typed codebase. Remove it.
+`babel.config.js.bk`, `next.config.mjs.bak`, `src/modules/components/TopLayoutBlog.js.old`, `original.tsconfig.json`, `social-plus-logo-merged.xcf`, `social-plus-logo.xcf`, `mui-vale.zip` should be deleted (large binaries belong in Git LFS or `public/`). Audit `cost-log.json`, `autonomous-assignments.json`, `notifications.json` at repo root — if these are session artifacts they should be `.gitignore`d.
 
 ---
 
 ## 3. Architecture
 
-### 3.1 In-Memory Description Filter Breaks Pagination
+### 3.1 Public API routes proxy GitHub directly — HIGH
 
-**File:** `pages/api/github/events.ts:114-130`
+`pages/api/github/pull-request.ts`, `pull-request-files.ts`, and `commit-files.ts` proxy live GitHub API calls per request. Three issues:
 
-The description filter is applied **after** MongoDB skip/limit pagination. This means a page of 40 results can silently return fewer items when the filter eliminates matches, and total count reported to the client is wrong (it reflects unfiltered total). Either:
-- Add description as a MongoDB text-search filter (requires a text index on relevant fields), or
-- Document the limitation and fetch a larger page server-side before applying the in-memory filter
+1. **No caching.** Every PR view hits GitHub; rate-limit budget is consumed by visitors, not just by the cron.
+2. **No reuse of MongoDB data.** PR detail is already partially enriched and stored in `github_events.payload.pull_request` by `lib/github-sync.ts:197–272`. The proxy endpoints don't read from Mongo first.
+3. **Inconsistent enrichment.** The cron enriches PRs only on pages 1–2 (`lib/github-sync.ts:197`) — PRs visible via the proxy may have richer data than older PRs visible only via cached events.
 
-### 3.2 MongoDB Index Creation on Every Sync
+**Action:** introduce a thin cache layer: store fetched PR detail in a `github_pull_requests` collection keyed by `owner/repo/number` with a short TTL field, and have `pages/api/github/pull-request.ts` consult Mongo first. Drop the page-1/2-only enrichment cap when the live proxy can fill gaps on demand.
 
-**File:** `lib/github-sync.ts:70-73`
+### 3.2 No revalidation / ISR strategy for the home page — MEDIUM
 
-```ts
-await eventsCollection.createIndex({ created_at: -1 });
-await eventsCollection.createIndex({ id: 1 }, { unique: true });
-// ...
-```
+`pages/index.tsx` reads MDX via `getAllBlogPosts()` and the home page is rendered by Lambda on every request. Output should be `getStaticProps` + ISR with a short revalidate window so OpenNext serves cached HTML and the Lambda is invoked only at revalidation. **Action:** convert `pages/index.tsx` (and the resume / about pages) to `getStaticProps` with `revalidate: 300`.
 
-`createIndex` is called on every hourly sync. While MongoDB no-ops if the index exists, it still incurs a round-trip. Move index initialization to a one-time setup script (`scripts/`) or call it conditionally (e.g., only on full refresh or first run).
+### 3.3 No global error boundary or 5xx instrumentation — MEDIUM
 
-### 3.3 No HTTP Caching on Read-Only API Routes
+There is no `pages/_error.js` override and no client-side error tracking. The `pages/api/hal/logs.js` ship-to-private-backend setup (commit `afde04e`) handles server logs, but unhandled React errors and API 5xx responses are not aggregated. **Action:** add a minimal `pages/_error.tsx` that POSTs to `/api/hal/logs`, and wrap the App tree in a `<ErrorBoundary>` in `pages/_app.js`.
 
-**Files:** `pages/api/github/events.ts`, `pages/api/github/filters.ts`
+### 3.4 Inconsistent route convention — LOW
 
-Neither route sets `Cache-Control` response headers. CloudFront (via SST/OpenNext) cannot cache these responses, so every request hits Lambda + MongoDB. `filters.ts` data changes at most hourly; `events.ts` changes at most hourly. Adding `Cache-Control: public, s-maxage=60, stale-while-revalidate=300` would dramatically reduce cold-path load.
+`pages/api/github/event/`, `pages/api/github/pull-request/` directories coexist with sibling `pages/api/github/events.ts`, `pages/api/github/pull-request.ts` files — i.e., both a directory route and a flat file exist for `pull-request`. Confirm the directory variant is actually used or remove it; this is the kind of thing that bites during a Next.js major upgrade.
 
-### 3.4 Cron Job Calls HTTP Instead of Importing Sync Logic Directly
+### 3.5 Per-stage database name derived implicitly from domain — LOW
 
-**File:** `stacks/cron.ts:6` — cron calls `${siteUrl}/api/github/sync-events` via HTTP
-
-The Lambda cron invokes the sync by making an HTTP POST to the Next.js API, which requires the web layer to be running and reachable. For non-`production` stages (`siteUrl` falls back to `localhost:5040`), the cron will silently fail. The cron Lambda already imports `lib/github-sync.ts` indirectly — it could call `syncGitHubEvents()` directly, eliminating the HTTP hop and the secret-based auth requirement.
-
-### 3.5 Cold-Start MongoDB Connection in Production Lambda
-
-**File:** `pages/api/lib/mongodb.ts:23-27`
-
-In production mode, `new MongoClient(uri)` and `client.connect()` run on module load. Lambda reuses execution contexts between invocations but does not guarantee it, so each cold start pays full connection establishment time. Consider using `global` caching in all environments (same pattern as dev), or use MongoDB Atlas connection pooling with a short `maxPoolSize`.
+`stacks/domains.ts` derives `dbName` from domain subdomain segments. This couples a deploy-time identifier (DB name) to the human-readable URL. Renaming a stage domain silently switches the deploy to a new (empty) Mongo database. **Action:** make `MONGODB_NAME` an explicit per-stage env var; keep the derivation as a default but log a warning when the derived name differs from a prior deploy's name (a simple "create file in S3 with last-used name" check would do it).
 
 ---
 
 ## 4. Performance
 
-### 4.1 Images Completely Unoptimized
+### 4.1 PR enrichment is sequential, not parallel — HIGH
 
-**File:** `next.config.mjs:12`
+`lib/github-sync.ts:200–271` enriches PRs one at a time with three sequential GitHub API calls per PR (`/pulls/N`, `/pulls/N/commits`, `/pulls/N/files`). For 40 events × 3 calls × ~200ms = up to 24s of wall time. The 5-minute Lambda timeout (`stacks/cron.ts`) masks this but Atlas connection pool and rate-limit headroom both suffer.
 
-```js
-images: { unoptimized: true }
-```
+**Action:** for each PR, run the three fetches in `Promise.all`. Across PRs on a page, batch with bounded concurrency (e.g., `p-limit(5)`).
 
-Next.js image optimization is disabled globally. Large images (resume PDF previews, photography gallery, product icons) are served at full resolution to all devices. Removing this flag and using `<Image>` with `sizes` would cut bandwidth significantly for mobile users. If optimization infra is a concern, at minimum use Cloudfront + WebP conversion.
+### 4.2 `eventsCollection.createIndex` runs every sync — MEDIUM
 
-### 4.2 Verbose Cache Logging in Production Client Bundle
+`lib/github-sync.ts:70–73` calls `createIndex` four times on every cron invocation. MongoDB is idempotent here (it no-ops if the index exists) but the round trips add ~50–100ms per cold sync. **Action:** move index creation to a one-time bootstrap script under `scripts/` (call it from `scripts/aws-deploy.sh`), and drop it from the hot path.
 
-**File:** `src/utils/eventCacheManager.ts:50-54`
+### 4.3 Per-event `updateOne` instead of `bulkWrite` — MEDIUM
 
-`console.log()` calls fire on every localStorage read/write in production:
+`lib/github-sync.ts:311–323` upserts events one at a time inside a `for` loop. For 280 events (7 pages × 40) that's 280 round trips. Use `eventsCollection.bulkWrite([{ updateOne: { ... } }, ...], { ordered: false })` — typical speedup is 5–10x.
 
-```ts
-console.log(`[Cache] Saving ${key}: ${sizeKB.toFixed(2)} KB`);
-console.log(`[Cache] Successfully saved ${key}`);
-```
+### 4.4 `total` count duplicates the filter query — LOW
 
-This is shipped to all browsers. Guard with `process.env.NODE_ENV === 'development'` or remove.
+`pages/api/github/events.ts:86` runs `countDocuments(query)` then `find(query)` separately. With an index, this is fine; without a `created_at`/`type`/`repo.name` compound index covering common filter combos, it does two collection scans. Confirm the indexes from §4.2 cover the actual query shapes shown at lines 46–82, and add a `(repo.name, created_at)` compound if `repo` is filtered frequently.
 
-### 4.3 Sequential GitHub API Fetches During PR Enrichment
+### 4.5 Images not optimized — LOW
 
-**File:** `lib/github-sync.ts:205-270`
+`next.config.mjs` disables Next image optimization (per `SC_OVERVIEW.md` §4.3). The site uses many product showcase images. **Action:** investigate why optimization was disabled (likely OpenNext compatibility in 2024); revisit with OpenNext 3.x. If still incompatible, at least pre-generate WebP/AVIF variants in `scripts/buildIcons.js`-style preprocessing.
 
-For each `PullRequestEvent` on pages 1-2, the sync fetches PR details, then commits, then files — three sequential awaits per PR. With 40 events per page, worst case is 120 sequential GitHub API calls before any MongoDB writes. Use `Promise.all()` to parallelize the commits + files fetches after getting PR details.
+### 4.6 Large bundle from MUI + Tailwind + Emotion + styled-components — LOW
 
-### 4.4 `fullRefresh` Deletes All Events Before Refetch
-
-**File:** `lib/github-sync.ts:109`
-
-```ts
-await eventsCollection.deleteMany({});
-```
-
-Full refresh deletes every event, then re-fetches only 7 pages (280 events max). If the refetch fails mid-way, the collection is left empty. Use a shadow collection or mark records with a refresh ID, swapping atomically on completion.
+The dependency list pulls in **four** styling systems: MUI's Emotion, Tailwind, JSS (`jss`, `jss-rtl`), and `styled-components`. Run `pnpm dlx webpack-bundle-analyzer` (the dev dep is already there) and confirm tree-shaking actually drops the unused ones. If `styled-components` and `jss` aren't used by hot pages, remove them.
 
 ---
 
-## 5. Missing Tests
+## 5. Testing
 
-### 5.1 No Unit Tests
+### 5.1 No unit tests at all — HIGH
 
-The codebase has zero unit or integration tests. All testing is Playwright e2e. The following have the highest bug surface and most benefit from unit coverage:
+The repo has Playwright e2e (`e2e/smoke-tests.spec.ts`, `e2e/visual-regression.spec.ts`, `e2e/mobile/`) but no Jest/Vitest. The functions most in need of unit tests:
 
-- `lib/github-sync.ts` — sync logic with branching incremental/full-refresh paths, rate-limit handling, PR enrichment
-- `src/utils/eventCacheManager.ts` — LRU eviction, quota handling, version migration
-- `pages/api/github/events.ts` — filter/pagination logic, especially description filter behavior
+- `lib/github-sync.ts` — paging logic, rate-limit handling, enrichment branch selection, the array-mutation trick at line 191.
+- `pages/api/github/events.ts` — the date-filter switch at lines 58–79, description filter at 115–130.
+- `stacks/domains.ts` — domain → dbName derivation (regression bait when a stage is added).
 
-### 5.2 Weak Smoke Test Assertions
+**Action:** add `vitest` as a devDep, create `lib/__tests__/github-sync.test.ts` with `nock` or `msw` for the GitHub API, and target ≥70% coverage of `lib/github-sync.ts` first.
 
-**File:** `e2e/smoke-tests.spec.ts:169`
+### 5.2 No CI workflow visible — HIGH
 
-```ts
-expect(isVisible || true).toBeTruthy(); // always passes
-```
+There is no `.github/workflows/` directory referenced in the overview. Without CI:
+- `pnpm typescript`, `pnpm knip`, `pnpm link-check`, and Playwright tests are only run when humans remember.
+- `pnpm build:sst` not being verified means the deploy command is the only test of build correctness.
 
-Several test cases have conditional logic that skips the assertion if the element is absent, making them pass even when the feature is broken. Use `if (isVisible)` + a comment explaining why, or assert the element *must* be visible if the feature is required.
+**Action:** add `.github/workflows/ci.yml` that runs `pnpm install`, `pnpm typescript`, `pnpm knip`, and `pnpm test:smoke` on every PR.
 
-### 5.3 No API Route Tests
+### 5.3 Visual regression snapshots are checked in but not gated — MEDIUM
 
-`pages/api/github/` contains 7 route handlers with meaningful business logic (pagination, filtering, error handling) and zero test coverage. Use `next-test-api-route-handler` or direct handler invocation with mock `req`/`res` objects to test:
+`e2e/visual-regression.spec.ts-snapshots/` exists, but without CI those snapshots can drift silently. The `test:visual:update` script makes it easy to commit "fixes" that mask real visual breakage. **Action:** require visual regression runs on every PR (in CI from §5.2) and protect the `update-snapshots` flag behind a label-gated workflow.
 
-- Correct MongoDB query construction from filter params
-- Pagination boundary conditions (page 0, page beyond total, NaN inputs)
-- Auth checks on `sync-events`
-- Rate-limit error propagation
+### 5.4 No tests for the cron Lambda — MEDIUM
+
+`cron/github-sync.ts` is a thin wrapper but has no smoke test. Add one Playwright API spec that calls `/api/github/sync-events` with the test secret and asserts a 200/401 contract.
 
 ---
 
 ## 6. Documentation
 
-### 6.1 Cache Architecture Rationale Not Documented
+### 6.1 Decision rationale for build quirks not captured — MEDIUM
 
-**File:** `src/utils/eventCacheManager.ts`
+Multiple non-obvious workarounds need an explanation in-tree:
+- `fix-nextjs15.js` — what does it patch? Add a header comment with the original OpenNext issue link.
+- `NEXT_SKIP_TYPECHECKING=1` — why (speed) and when it's safe to enable typechecking again (post-`typescript@6` stable, currently on `6.0.0-dev.20251014`).
+- Tailwind preflight disabled — why MUI's `CssBaseline` is the chosen reset (`tailwind.config.js`).
 
-The two-tier index/details cache design (1000 index entries + 150 LRU detail entries) is non-obvious. Add a block comment at the top of the file explaining the capacity decisions, the reason for the version key (`CACHE_VERSION = '5.0'`), and migration behavior.
+### 6.2 No runbook for `unlock:prod` / `refresh:prod` — MEDIUM
 
-### 6.2 `SYNC_SECRET` Auth Mechanism Undocumented
+`pnpm unlock:prod` and `pnpm refresh:prod` exist in `package.json:28–29` but there's no documentation on when they're needed (SST state lock contention, drift detection). Add a short `docs/operations.md` with the symptoms that should make an on-caller reach for each.
 
-**File:** `pages/api/github/sync-events.ts`
+### 6.3 `DEPLOYMENT_READY.md` and `GITHUB_EVENTS_ANALYSIS.md` may be stale — LOW
 
-There's no documentation on how `SYNC_SECRET` is generated, rotated, or validated. Add a note in `CLAUDE.md` or a `docs/` file explaining the Bearer token pattern and how to rotate it in SST secrets.
+Top-level analysis docs exist (`DEPLOYMENT_READY.md`, `GITHUB_EVENTS_ANALYSIS.md`, `TESTING.md`). Confirm they reflect current behavior or move them under `docs/archive/` with a date stamp. Otherwise they will mislead future contributors.
 
-### 6.3 Missing `.env.example`
+### 6.4 `src/products.tsx` is undocumented — LOW
 
-There is no `.env.example` file. New contributors have no reference for required environment variables. The list is partially documented in `CLAUDE.md`, but a concrete `.env.example` with placeholder values is the standard approach and prevents missing-variable build failures.
+The product catalog drives the home page but has no header explaining how to add a product (which showcase component to create, where icons live, ordering rules). Add a 10-line block comment at the top.
 
 ---
 
-## 7. Dependency Hygiene
+## 7. Operability
 
-### 7.1 `react-swipeable-views` is Unmaintained
+### 7.1 No structured logs — MEDIUM
 
-**File:** `package.json:120` (`react-swipeable-views: ^0.14.1`)
+Lambda CloudWatch logs are line-oriented strings (e.g., `lib/github-sync.ts:83, :105, :122`). Without JSON structure they can't be parsed by log shipping (commit `afde04e` set up shipping to a private backend) for metrics/alerts. **Action:** emit JSON via the logger from §2.5: `{ event: 'sync_page', page, eventCount, rateRemaining }`.
 
-This package has been unmaintained since 2020, has no React 18 support guarantee, and is a known source of SSR issues. It is used in `src/products.tsx` (ProductSwitcher). Replace with `@mui/material/MobileStepper` + CSS transitions, `swiper`, or the MUI `Tabs` component.
+### 7.2 No alerting on sync failures — MEDIUM
 
-### 7.2 Redundant MUI Packages
+`lib/github-sync.ts:382–401` records `success: false` in `sync_metadata` on failure, but nothing watches that document. If the cron silently breaks, the home page will go stale without anyone noticing for days. **Action:** add a Cloudwatch alarm on Lambda errors for the `GithubSyncCron`, and a "stale events" check (e.g., a tiny `/api/github/health` route that returns 503 if `sync_metadata.lastSync` is older than 2 hours).
 
-The following are likely unused or duplicated based on the import patterns observed:
+### 7.3 GitHub rate-limit budget is not surfaced to humans — LOW
 
-- `@mui/styles` (legacy JSS-based styling, deprecated in MUI v5 — Emotion is already configured)
-- `@mui/internal-markdown` (internal MUI package not intended for external use)
-- `@stoked-ui/docs-markdown` (dev dependency, verify it's actually used at build)
+`github_rate_limits` collection is populated (`lib/github-sync.ts:140–144`) but never exposed in a UI or dashboard. Add a `/api/github/rate-limit` route that returns the latest doc; it's a 10-line handler and lets the developer eyeball headroom.
 
-Run `pnpm knip` and review its output to confirm and prune.
+---
 
-### 7.3 `@serverless-stack/cli` v1 in devDependencies
+## 8. Priority Triage
 
-**File:** `package.json:165` (`@serverless-stack/cli: ^1.18.4`)
+If only a handful of items get done, do these first:
 
-This is SST v1 CLI, while the project uses SST v3 (`sst: 3.9.7`). These are incompatible major versions. The v1 entry appears to be a leftover and should be removed.
+1. **§1.1** — narrow site Lambda IAM (security blast radius).
+2. **§2.1** — consolidate MongoDB clients (cron is mis-tagged in Atlas right now).
+3. **§2.2** — fix the description filter / pagination correctness bug (real user-visible bug).
+4. **§4.3** — switch sync to `bulkWrite` (cheap, large perf win).
+5. **§5.2** — add a CI workflow (everything else degrades silently without it).
+6. **§3.1** — cache PR proxy responses in Mongo (avoids quota burn from visitors).
+
+The remaining items are real but lower-urgency. Track them as separate Stokd tasks rather than batching into one large PR.

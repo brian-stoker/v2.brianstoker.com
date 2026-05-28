@@ -17,7 +17,14 @@ export default $config({
   async run() {
     // Apply our externals configuration to SST's build process
     process.env.SST_ESBUILD_CONFIG_TRANSFORMER = "addExternals";
-    const { createSite, createApi, getDomainInfo, createGithubSyncCron, createHalBucket } = await import("./stacks");
+    const {
+      createSite,
+      createApi,
+      getDomainInfo,
+      createGithubSyncCron,
+      createHalBucket,
+      createNextJsApiGateway
+    } = await import("./stacks");
     process.env.SST_STAGE = $app.stage || "local";
 
     const domainInfo = getDomainInfo(process.env.ROOT_DOMAIN!, $app.stage);
@@ -25,6 +32,10 @@ export default $config({
     const web = createSite(domainInfo, {
       S3_BUCKET_NAME: halBucket.name,
     });
+
+    // API Gateway disabled — .apply() resource creation causes Pulumi
+    // RangeError during deploy. Re-enable after rewriting stacks/apigateway.ts.
+    const apiGateway = undefined;
 
     // Build site URL for cron job
     const siteUrl = $app.stage === "production"
@@ -36,6 +47,10 @@ export default $config({
     return {
       ...web,
       cron: githubSyncCron.name,
+      ...(apiGateway && {
+        apiGatewayUrl: apiGateway.invokeUrl,
+        apiGatewayId: apiGateway.httpApi.id,
+      }),
     };
   },
 });

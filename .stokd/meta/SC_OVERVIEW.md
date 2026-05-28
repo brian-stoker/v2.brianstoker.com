@@ -1,386 +1,329 @@
-# SC_OVERVIEW.md
-<!-- meta-version: 0.2.0 -->
-<!-- generated: 2026-03-21 -->
+<!-- stokd-meta-version: 0.4.0 -->
+# SC_OVERVIEW — brianstoker-com
 
-## Repository Purpose
-
-Personal portfolio and product showcase site for Brian Stoker (`brianstoker.com`). The site serves as a living resume and engineering showcase, displaying GitHub activity, blog posts, product demos, photography, and a PDF resume. It is a Next.js 15 application deployed serverlessly to AWS via SST v3 with OpenNext.
+A comprehensive overview of the `v2.brianstoker.com` codebase. This document is the canonical entry point for understanding repository purpose, architecture, dependencies, technology choices, the development workflow, and the critical execution paths.
 
 ---
 
-## Architecture
+## 1. Repository Purpose
 
-### Runtime Stack
+`brianstoker-com` is the personal portfolio and product showcase site for **Brian Stoker** (https://brianstoker.com). It serves three primary functions:
 
-| Layer | Technology |
-|-------|-----------|
-| Framework | Next.js 15.3 (Pages Router, **not** App Router) |
-| UI | MUI v5 (Material Design) + Tailwind CSS + Emotion CSS-in-JS |
-| Database | MongoDB Atlas (native driver, no ORM) |
-| Auth | NextAuth.js v4, Google OAuth |
-| Deployment | SST 3.x → @opennextjs/aws → AWS Lambda + S3/CDN |
-| Package Manager | pnpm 10.28.2 |
-| Dev Server Port | **5040** |
-| Node Memory | 8 GB (`--max_old_space_size=8192`) |
+1. **Marketing surface** for a catalog of ~11 products defined in `src/products.tsx` (showcased via `ProductSwitcher` on the home page).
+2. **Living activity feed** that displays GitHub events (commits, PRs, issues, projects) pulled hourly from the GitHub Events API and persisted to MongoDB Atlas.
+3. **Static content surface** — resume (`pages/resume*.tsx`), photography, art, drums, blog (MDX in `pages/home/`), and ancillary single-purpose pages.
 
-### Router Style
+It is **not** a monorepo. It is a single Next.js application with sidecar SST infrastructure code (`stacks/`), a Lambda cron handler (`cron/`), and content/script directories.
 
-Pages Router (`pages/` directory). **No App Router.** All route files live under `pages/`.
+Repo root: `/opt/worktrees/v2.brianstoker.com/v2.brianstoker.com-main` (current branch: `main`).
 
 ---
 
-## Package Dependency Graph
+## 2. Architecture
 
-This is a single-package repository — no workspaces. All dependencies are declared in the root `package.json`.
-
-### Key Production Dependencies
+### 2.1 High-Level
 
 ```
-next@15.3.0
-react@18.3.1 + react-dom@18.3.1
-@mui/material@^5.18.0           — UI component library
-@emotion/react + styled          — CSS-in-JS runtime for MUI
-tailwindcss@^3.4.18              — utility CSS (Tailwind preflight disabled; MUI CssBaseline used)
-mongodb@^6.20.0                  — database driver
-next-auth@^4.24.13               — auth (Google OAuth)
-next-mdx-remote@^5.0.0           — MDX blog post rendering
-gray-matter@^4.0.3               — MDX front-matter parsing
-sst@3.9.7                        — infra-as-code (Pulumi-based)
-@opennextjs/aws@^3.1.3           — Lambda adapter for Next.js
-react-activity-calendar@2.7.10   — GitHub contribution calendar
-react-github-calendar@^4.5.11    — GitHub calendar wrapper
-date-fns@^4.1.0                  — date utilities
-culori@^4.0.2                    — color math (used in GithubEvents styling)
-@stoked-ui/docs@0.1.7            — internal docs/branding package
+┌─────────────────────────────────────────────────────────┐
+│  Browser                                                │
+│  ├── Pages (SSR/SSG via Next.js Pages Router)           │
+│  └── Client React (MUI 5 + Emotion + Tailwind)          │
+└───────────────────────┬─────────────────────────────────┘
+                        │
+                        ▼
+┌─────────────────────────────────────────────────────────┐
+│  AWS Lambda (OpenNext)         AWS Lambda (SST Cron)    │
+│  ├── pages/* SSR               └── cron/github-sync.ts  │
+│  ├── pages/api/* routes              hourly schedule    │
+│  └── NextAuth (Google OAuth)                            │
+└───────────────────┬─────────────┬───────────────────────┘
+                    │             │
+        ┌───────────▼──┐     ┌────▼────────┐
+        │  MongoDB     │     │  GitHub     │
+        │  Atlas       │     │  Events API │
+        │  (db named   │     └─────────────┘
+        │   by stage)  │
+        └──────────────┘
 ```
 
-### Key Dev Dependencies
+### 2.2 Runtime Topology
 
-```
-@playwright/test@^1.56.1  — e2e / visual regression tests
-turbo@^2.3.3              — monorepo task runner (used for parallel dev tasks)
-tsx@^4.20.6               — TypeScript script runner
-knip@^5.65.0              — dead code / unused dep detector
-typescript@6.0.0-dev      — type checking (skipped during builds via NEXT_SKIP_TYPECHECKING=1)
-@svgr/webpack             — SVG-as-React-component loader
-dotenvx                   — env var management (wraps dotenv)
-```
+| Layer | Mechanism | Source |
+|-------|-----------|--------|
+| Web app | `sst.aws.Nextjs` deployed via `@opennextjs/aws` | `stacks/site.ts` |
+| Hourly cron | `sst.aws.Cron` → Lambda handler | `stacks/cron.ts`, `cron/github-sync.ts` |
+| Object storage | `sst.aws.Bucket` named `HalBucket` | `stacks/bucket.ts` |
+| Domain routing | Stage-based domain resolver | `stacks/domains.ts` |
+| Persistence | MongoDB Atlas (per-stage database) | `pages/api/lib/mongodb.ts`, `lib/mongodb.ts` |
+| Auth | NextAuth.js v4 + Google OAuth | `pages/api/auth/[...nextauth].js` |
+
+### 2.3 Pages Router (not App Router)
+
+This project uses the **Next.js Pages Router** (`pages/`). API routes live under `pages/api/`. There is no `app/` directory. New pages must follow the Pages Router conventions and `_app.js` / `_document.js` (in `pages/`) are the global wrappers.
+
+### 2.4 SST Infrastructure (`stacks/`)
+
+`sst.config.ts` orchestrates the deployment. Its `run()` function dynamically imports `./stacks` and wires:
+
+- `getDomainInfo(ROOT_DOMAIN, stage)` → per-stage domain set, resource name, DB name (see `stacks/domains.ts`).
+- `createHalBucket()` → S3 bucket exposed to the Next.js Lambda via `S3_BUCKET_NAME` env.
+- `createSite(domainInfo, { S3_BUCKET_NAME })` → the Next.js site. Build command is `pnpx @opennextjs/aws@latest build`. Requires a strict env var set (see §6); throws on missing values. Grants `*:*` IAM permissions to the site Lambda.
+- `createGithubSyncCron(siteUrl, dbName)` → `rate(1 hour)` cron whose handler is `cron/github-sync.handler`, with 5-minute timeout. Calls `${siteUrl}/api/github/sync-events` via shared `SYNC_SECRET`.
+
+Per `stacks/domains.ts`:
+- Production stage → `[ROOT_DOMAIN, www.ROOT_DOMAIN]`.
+- Other stages → `[${stage}.ROOT_DOMAIN, *.${stage}.ROOT_DOMAIN]`.
+- DB name derived from the first domain’s subdomain segments + stage (e.g. `brianstoker-production`, `brianstoker-local`).
 
 ---
 
-## Key Technologies and Patterns
+## 3. Package Dependency Graph
 
-### Styling System
+This is a **single-package** repository (not a monorepo). `package.json` defines all dependencies. There are no workspace packages; `turbo` is used only to run `dev:nextjs` and `dev:cron` concurrently (`turbo.json`).
 
-- **Primary**: MUI v5 with Emotion CSS-in-JS (`sx` prop, `styled()`)
-- **Secondary**: Tailwind CSS for utility classes
-- **Tailwind preflight disabled** — MUI `CssBaseline` handles resets
-- SVGs imported as React components via `@svgr/webpack`
-- MUI icon aliases resolve to ESM path (`@mui/icons-material/esm`) for bundle size
+### 3.1 Primary Production Dependencies (grouped)
 
-### Data Fetching
+- **Framework / runtime:** `next@15.3.0`, `react@18.3.1`, `react-dom@18.3.1`, `sst@3.9.7`, `open-next@^3.1.3`.
+- **UI system:** `@mui/material@^5.18.0`, `@mui/icons-material@5.15.21`, `@mui/system`, `@mui/base@5.0.0-beta.70`, `@mui/styles`, `@mui/x-tree-view@^6.17.0`, `@stoked-ui/docs@0.1.7`.
+- **CSS/styling:** `@emotion/{cache,react,styled}`, `styled-components`, `jss`, `tailwindcss` (devDep) via `tailwind.config.js`, `autoprefixer`, `postcss`.
+- **Auth:** `next-auth@^4.24.13`.
+- **Data:** `mongodb@^6.20.0` (native driver, no ORM), `@aws-sdk/client-s3`.
+- **Content:** `@mdx-js/react`, `@next/mdx`, `next-mdx-remote`, `mui-markdown`, `marked`, `gray-matter`, `feed`, `@stoked-ui/docs-markdown`.
+- **Media:** `pdfjs-dist@4.8.69`, `react-pdf`, `plyr-react`, `react-activity-calendar`, `react-github-calendar`.
+- **Misc UX:** `react-swipeable-views`, `react-multi-carousel`, `react-intersection-observer`, `nprogress`, `clipboard-copy`, `clsx`, `date-fns`, `lodash`.
 
-- **Static**: `getStaticProps` for blog posts and home page
-- **Dynamic**: API routes under `pages/api/` for GitHub events, auth, and logs
-- **No SWR/React Query** — custom fetch + in-memory cache in `GithubEvents` component via `src/utils/eventCacheManager`
+### 3.2 Dev / Tooling
 
-### MDX Blog
+- **Build:** `@opennextjs/aws@^3.8.4`, `@babel/*`, `babel-loader`, `@svgr/webpack`, `cross-env`, `dotenv`/`dotenvx`.
+- **Testing:** `@playwright/test@^1.56.1` (e2e only — no unit test framework).
+- **Static analysis:** `typescript@6.0.0-dev.20251014` (early 6.x preview), `knip@^5.65.0`.
+- **Orchestration:** `turbo@^2.3.3`, `kill-port`, `tsx`.
 
-- Blog posts live in `data/.plan/*.mdx`
-- Parsed by `lib/sourcing.ts` using `gray-matter` + `next-mdx-remote`
-- Rendered via `pages/.plan/[slug].tsx`
+### 3.3 Internal Module Dependencies
 
-### Auth
+The application code is organized into these top-level source roots, with these relationships:
 
-- NextAuth.js v4 with Google OAuth
-- Config: `pages/api/auth/[...nextauth].js`
-- Session provided app-wide via `SessionProvider` in `pages/_app.js`
+```
+sst.config.ts ──► stacks/* ──► (AWS resources)
+                                  │
+cron/github-sync.ts ──► lib/github-sync.ts ──► lib/mongodb.ts ──► MongoDB Atlas
+                                                                       ▲
+pages/api/github/sync-events.ts ──► lib/github-sync.ts ────────────────┤
+pages/api/github/events.ts ──► pages/api/lib/mongodb.ts ───────────────┘
+pages/api/github/{filters,pull-request*,commit-files}.ts ──► (GitHub API + Mongo)
 
-### MongoDB Connection
+pages/* (UI) ──► src/components/* ──► src/layouts/*, src/modules/*, src/products.tsx
+                          │
+                          ├── src/components/GithubEvents/* ──► /api/github/events
+                          ├── src/components/PullRequest/* ──► /api/github/pull-request{,-files}
+                          └── src/components/home/* (showcases) ──► src/products.tsx
+```
 
-- Singleton pattern in `pages/api/lib/mongodb.ts`
-- Dev: global variable prevents hot-reload connection leaks
-- Prod: fresh connection per Lambda cold start
-- Helper: `getDatabase()` returns the correct DB by stage (`brianstoker-production` / `brianstoker-local`)
-- **Collections**: `github_events`, `sync_metadata`
+Note two separate MongoDB client modules exist: `pages/api/lib/mongodb.ts` (used by Pages API handlers, `appName: brianstoker-pages-api`) and `lib/mongodb.ts` (used by the cron Lambda and shared sync logic). Both target the same Atlas cluster but tag clients differently for Atlas attribution (per recent commit `af5fa04`).
 
 ---
 
-## Directory Structure
+## 4. Key Technologies & Patterns
 
-```
-/
-├── pages/                    # Next.js pages (Pages Router)
-│   ├── _app.js               # App shell: SessionProvider + DocsProvider
-│   ├── _document.js          # Custom HTML document
-│   ├── index.tsx             # Home page (getStaticProps → blog posts)
-│   ├── resume.tsx            # Resume page
-│   ├── resume-new.tsx        # Resume (redesign WIP)
-│   ├── work.tsx              # Work history
-│   ├── art.tsx               # Art/creative showcase
-│   ├── photography.tsx       # Photography gallery
-│   ├── drums.tsx             # Drums page
-│   ├── hal.js                # HAL dashboard
-│   ├── 404.tsx               # Custom 404
-│   ├── .plan/[slug].tsx      # Blog post page (dynamic route)
-│   └── api/
-│       ├── auth/[...nextauth].js         # NextAuth handler
-│       ├── github/
-│       │   ├── events.ts                 # GET paginated GitHub events from MongoDB
-│       │   ├── sync-events.ts            # POST trigger GitHub sync (Bearer-authenticated)
-│       │   ├── filters.ts                # GET filter options
-│       │   ├── event/[id].ts             # GET single event details
-│       │   ├── pull-request.ts           # GET PR details
-│       │   ├── pull-request/[number].ts  # GET PR by number
-│       │   ├── pull-request-files.ts     # GET PR file changes
-│       │   └── commit-files.ts           # GET commit file list
-│       ├── hal/logs.js                   # HAL log shipping endpoint
-│       └── lib/mongodb.ts                # MongoDB client singleton + getDatabase()
-│
-├── src/
-│   ├── products.tsx          # Product catalog (TProduct[]) — 11 products with showcases
-│   ├── route.ts              # ROUTES constant (navigation links)
-│   ├── layouts/
-│   │   ├── AppHeader.tsx     # Top navigation bar
-│   │   ├── AppFooter.tsx     # Footer with social links + email subscribe
-│   │   ├── Section.tsx       # Page section wrapper
-│   │   └── HeroContainer.tsx # Hero section layout
-│   ├── components/
-│   │   ├── GithubEvents/     # GitHub activity feed components
-│   │   │   ├── GithubEvents.tsx          # Main feed (fetch, cache, paginate, filter)
-│   │   │   ├── PushEvent.tsx             # Commit push event card
-│   │   │   ├── PullRequestEvent.tsx      # PR event card
-│   │   │   ├── CreateEvent.tsx           # Branch/tag create event
-│   │   │   ├── DeleteEvent.tsx           # Branch/tag delete event
-│   │   │   ├── IssuesEvent.tsx           # Issue event card
-│   │   │   ├── IssueCommentEvent.tsx     # Issue comment event card
-│   │   │   └── EventHeader.tsx           # Shared event card header
-│   │   ├── GithubCalendar/
-│   │   │   └── GithubCalendar.tsx        # Contribution calendar heatmap
-│   │   ├── home/             # Home page section components
-│   │   │   ├── HeroMain.tsx              # Hero / above-fold section
-│   │   │   ├── GithubEventsShowcase.tsx  # GitHub events in product switcher
-│   │   │   ├── BlogShowcase.tsx          # Recent blog posts
-│   │   │   ├── VideoShowcase.tsx         # Video demos
-│   │   │   ├── PdfShowcase.tsx           # PDF viewer
-│   │   │   ├── ImageShowcase.tsx         # Photography/image grid
-│   │   │   ├── MediaShowcase.tsx         # Media player
-│   │   │   ├── MaterialShowcase.tsx      # MUI component demos
-│   │   │   └── ...
-│   │   ├── ProductSwitcher.tsx           # Carousel switching between products
-│   │   ├── PullRequest/                  # PR detail view components
-│   │   └── ...
-│   ├── types/
-│   │   └── github.ts         # GitHubEvent, EventDetails, CachedData interfaces
-│   ├── modules/
-│   │   ├── components/       # Shared utility components (Head, DemoEditor, etc.)
-│   │   ├── sandbox/          # CodeSandbox/StackBlitz integration helpers
-│   │   └── utils/            # Clipboard, page-finding, code-copy utilities
-│   └── utils/
-│       ├── eventCacheManager.ts  # Client-side IndexedDB/memory cache for GitHub events
-│       └── githubEmoji.ts        # GitHub emoji shortcode → unicode replacer
-│
-├── lib/
-│   ├── github-sync.ts        # Core sync logic: GitHub API → MongoDB upsert
-│   ├── sourcing.ts           # Blog post MDX file reader/parser
-│   └── mongodb.ts            # (Duplicate of pages/api/lib/mongodb.ts — legacy location)
-│
-├── cron/
-│   └── github-sync.ts        # AWS Lambda handler for scheduled GitHub sync
-│
-├── stacks/                   # SST infrastructure definitions
-│   ├── index.ts              # Re-exports all stack modules
-│   ├── site.ts               # sst.aws.Nextjs site (OpenNext, domain, env vars)
-│   ├── cron.ts               # sst.aws.Cron (EventBridge, hourly, calls cron/github-sync.ts)
-│   ├── domains.ts            # Domain/DB name derivation logic
-│   ├── bucket.ts             # S3 bucket for HAL logs ("HalBucket")
-│   ├── api.ts                # API stack (if applicable)
-│   ├── secrets.ts            # SST secrets helpers
-│   └── envVars.ts            # Environment variable helpers
-│
-├── data/
-│   ├── .plan/*.mdx           # Blog posts (MDX with front-matter)
-│   ├── pages.ts              # Site page manifest
-│   └── ...
-│
-├── e2e/                      # Playwright tests
-│   ├── smoke-tests.spec.ts   # Cross-viewport smoke tests (5 viewports)
-│   ├── visual-regression.spec.ts  # Visual snapshot tests
-│   └── utils/viewport-helpers.ts  # Viewport constants + scroll helpers
-│
-├── scripts/
-│   ├── local-sync-cron.cjs   # Dev cron: polls /api/github/sync-events every hour
-│   ├── copy-db-schema.ts     # Copies MongoDB schema info
-│   ├── list-db-info.ts       # Inspects MongoDB collections
-│   └── aws-deploy.sh         # Production deploy shell script
-│
-├── public/
-│   ├── static/               # Static assets (icons, resume PDF, social previews)
-│   └── feed/.plan/rss.xml    # Blog RSS feed
-│
-├── sst.config.ts             # SST app entrypoint (wires site + cron + bucket)
-├── next.config.mjs           # Next.js config (MDX, SVG, standalone output, Turbopack)
-└── package.json              # Single-package manifest, all scripts
-```
+### 4.1 Stack Summary
+
+| Concern | Choice |
+|--------|--------|
+| Framework | Next.js 15.3 (Pages Router) with Turbopack dev server |
+| Language | TypeScript (mixed `.ts`/`.tsx`/`.js` — type checking skipped during `build:sst`) |
+| UI kit | MUI 5 (Material) + `@stoked-ui/docs` for branded primitives |
+| Styling | Emotion CSS-in-JS, MUI `sx`, Tailwind utility classes (preflight disabled), some `styled-components`/JSS legacy |
+| State | Local React state; no global store (no Redux/Zustand) |
+| Data store | MongoDB Atlas, native driver, no ORM |
+| Auth | NextAuth.js v4 (Google OAuth) |
+| Cloud | AWS via SST 3.x; OpenNext to produce the Lambda bundle |
+| Tests | Playwright e2e (mobile, tablet, desktop viewports) |
+| Package manager | pnpm 10.28.2 |
+
+### 4.2 Recurring Patterns
+
+- **Showcase pattern.** Each product in `src/products.tsx` provides a showcase component from `src/components/home/*Showcase.tsx` rendered through `src/components/ProductSwitcher.tsx`.
+- **Per-stage configuration via domain inference.** `stacks/domains.ts` derives resource names, DB names, and domain lists from `ROOT_DOMAIN` + stage, so adding a stage is mostly a name resolution exercise.
+- **Secret-protected sync.** The `/api/github/sync-events` endpoint is callable only with `SYNC_SECRET`, shared with the cron Lambda via env vars.
+- **Mongo client singleton.** Both Mongo modules cache the connect promise (`global._mongoClientPromise` in dev) to survive HMR.
+- **Strict env validation at deploy time.** `createSite` aborts deployment when any required env var is missing, rather than failing at runtime.
+- **Asset content-type/cache overrides.** `stacks/site.ts` explicitly sets `Cache-Control` and `Content-Type` for media (mp4/webm/mov/mp3/m4a) and immutable static assets; HTML is `no-store`.
+- **`fix-nextjs15.js` shim.** A pair of `apply` / `restore` scripts are wrapped around `open-next build` in `build:open-next` to patch Next 15 compatibility issues with OpenNext 2.x.
+
+### 4.3 Notable Build Quirks
+
+- `NEXT_SKIP_TYPECHECKING=1` is used in `build:next15` for speed.
+- `--max_old_space_size=8192` for all Next builds (memory-heavy MUI/MDX).
+- ESLint ignored during Next.js builds (per CLAUDE.md).
+- Images are unoptimized (Next image optimization disabled).
+- Standalone output mode for Lambda packaging.
+- Tailwind preflight disabled (MUI’s `CssBaseline` is the reset).
 
 ---
 
-## Data Flow: GitHub Events (Critical Path)
+## 5. Development Workflow & Build System
 
-```
-Production (hourly):
-  AWS EventBridge (rate 1 hour)
-    → cron/github-sync.ts (Lambda handler)
-    → lib/github-sync.ts::syncGitHubEvents()
-    → GitHub Events API (paginated, incremental or full refresh)
-    → MongoDB github_events collection (upsert by event id)
-    → MongoDB sync_metadata collection (last sync timestamp)
-
-Development (manual/polled):
-  scripts/local-sync-cron.cjs (Node process, every 1 hour)
-    → POST /api/github/sync-events (Bearer: SYNC_SECRET)
-    → pages/api/github/sync-events.ts
-    → lib/github-sync.ts::syncGitHubEvents()
-    → MongoDB
-
-On-demand (admin):
-  POST /api/github/sync-events?fullRefresh=true
-    → Full wipe + re-fetch all pages from GitHub
-
-Frontend display:
-  GithubEvents.tsx component
-    → GET /api/github/events?page=N&per_page=40&repo=...&action=...&date=...
-    → pages/api/github/events.ts
-    → MongoDB find() with filter, sort, skip/limit
-    → Client-side cache (eventCacheManager, IndexedDB/memory)
-    → Rendered as typed event cards (PushEvent, PullRequestEvent, etc.)
-```
-
-### MongoDB Indexes (github_events collection)
-
-| Field | Index Type |
-|-------|-----------|
-| `created_at` | Descending (sort) |
-| `id` | Unique (dedup) |
-| `repo.name` | Ascending (filter) |
-| `type` | Ascending (filter) |
-
----
-
-## Development Workflow
-
-### Starting Development
+### 5.1 Local Development
 
 ```bash
-pnpm dev           # Turbopack dev server (port 5040) + local sync cron (parallel via turbo)
-pnpm dev:nextjs    # Next.js only (no cron)
+pnpm dev          # turbo watch: starts dev:nextjs + dev:cron concurrently
+pnpm dev:nextjs   # Next dev server (Turbopack) on port 5040 — kills 5040 first
+pnpm dev:cron     # local cron driver: scripts/local-sync-cron.cjs (sleep 10s then run)
 ```
 
-The `pnpm dev` command uses `turbo watch` to run both `dev:nextjs` and `dev:cron` tasks concurrently. The cron process waits 10 seconds for Next.js to start before its first sync.
+`pnpm dev` runs `clean:cache` first (`rimraf .next .open-next`) and uses Turbo’s `tui` UI to multiplex the two persistent tasks defined in `turbo.json`. Env loaded via `dotenvx run`.
 
-### Build System
+### 5.2 Build Variants
 
-| Command | What it does |
-|---------|-------------|
-| `pnpm build` | Standard Next.js build (no lint, 8 GB RAM) |
-| `pnpm build:sst` | `next build --no-lint` for SST deployments |
-| `pnpm typescript` | Run `tsc` on both `tsconfig.json` and `scripts/tsconfig.json` |
-| `pnpm knip` | Detect unused code and dependencies |
+| Script | Purpose |
+|--------|--------|
+| `pnpm build` | Standard Next build with `--profile` and 8GB heap. |
+| `pnpm build:sst` | `next build --no-lint` — used by SST deploy. |
+| `pnpm build:next15` | Skips typechecking and prop serialization for speed. |
+| `pnpm build:open-next` | OpenNext 2.2.3 build wrapped in `fix-nextjs15` apply/restore. |
+| `pnpm build:open-next-standalone` | Wrapper script `open-next-build.js`. |
+| `pnpm build:sst-export` / `build:sst-standalone` | SST-specific export/standalone variants. |
+| `pnpm build:production` | `dotenvx run -- node scripts/build-prod.js`. |
 
-**Type checking is skipped during builds** via `NEXT_SKIP_TYPECHECKING=1`. Run `pnpm typescript` separately for type safety.
+### 5.3 Deploy
 
-**Output mode**: `standalone` (required for Lambda deployment).
-
-### Deploy
+Always set the AWS profile per project conventions (this project uses `AWS_PROFILE=stoked`; CLAUDE.md). Production deploy:
 
 ```bash
-# Always use --profile stoked for AWS CLI
 AWS_PROFILE=stoked senvn -f production npx sst deploy --stage production
-pnpm deploy:prod   # Shorthand (uses scripts/aws-deploy.sh)
+pnpm deploy:prod   # ./scripts/aws-deploy.sh deploy (wraps the above)
+pnpm refresh:prod  # senvn -f production sst refresh --stage production
+pnpm unlock:prod   # release stuck SST lock
+pnpm remove:prod   # ./scripts/aws-deploy.sh remove
 ```
 
-SST stage determines domain and DB:
-- `production` → `brianstoker.com` + `www.brianstoker.com`, DB: `brianstoker-production`
-- Other stages → `<stage>.brianstoker.com`, DB: `brianstoker-<stage>`
-
-### Environment Variables (Required)
-
-| Variable | Purpose |
-|----------|---------|
-| `ROOT_DOMAIN` | Site domain for SST domain derivation |
-| `GITHUB_TOKEN` | GitHub API authentication |
-| `GITHUB_USERNAME` | GitHub user to sync (default: `brian-stoker`) |
-| `MONGODB_URI` | MongoDB Atlas connection string |
-| `MONGODB_NAME` | Database name (derived from stage if unset) |
-| `SYNC_SECRET` | Bearer token for `/api/github/sync-events` |
-| `NEXTAUTH_SECRET` | NextAuth session signing key |
-| `GOOGLE_CLIENT_ID` / `GOOGLE_CLIENT_SECRET` | OAuth credentials |
-| `NEXT_PUBLIC_WEB_URL` | Public site URL |
-
-### Testing
+### 5.4 Testing
 
 ```bash
-pnpm test               # All Playwright e2e tests
-pnpm test:smoke         # smoke-tests.spec.ts (5 viewports: 320px–1280px)
-pnpm test:mobile        # e2e/mobile/ tests
-pnpm test:visual        # Visual regression snapshots
-pnpm test:visual:update # Update snapshots
+pnpm test            # full Playwright e2e suite
+pnpm test:smoke      # e2e/smoke-tests.spec.ts
+pnpm test:mobile     # e2e/mobile/
+pnpm test:visual     # e2e/visual-regression.spec.ts
+pnpm test:visual:update   # refresh snapshots
+pnpm test:ui|:headed|:debug|:report
 ```
 
-Smoke tests cover: page load, no horizontal scroll, header visibility, mobile menu, navigation, hero typography, product carousel, newsletter toast positioning, footer, keyboard navigation, and performance (<10s load on mobile).
+There is **no unit test runner** (no Jest/Vitest). Correctness is validated end-to-end through Playwright and through `pnpm typescript` (runs `tsc -p tsconfig.json && tsc -p scripts/tsconfig.json`).
+
+### 5.5 Utility Scripts (`scripts/`)
+
+- `local-sync-cron.cjs` — local-only cron loop calling the sync endpoint.
+- `list-db-info.ts`, `copy-db-schema.ts` — MongoDB introspection (`pnpm list-db-info`, `pnpm copy-db-schema`).
+- `populate-github-activity{,-history}.js` — backfill scripts.
+- `reportBrokenLinks.js` — `pnpm link-check`.
+- `buildIcons.js`, `buildServiceWorker.js` — asset pipeline.
+- `setupLogShipping.cjs` — `pnpm log:setup` (referenced by commit `afde04e`).
+- `aws-deploy.sh` — single deploy entry point.
 
 ---
 
-## Entry Points
+## 6. Environment Variables
 
-| Entry Point | Purpose |
-|------------|---------|
-| `pages/_app.js` | App root — wraps all pages with `SessionProvider` + `DocsProvider` |
-| `pages/index.tsx` | Home page — `HomeView` + `MainView` (HeroMain with blog posts) |
-| `sst.config.ts` | Infrastructure root — wires `createSite`, `createGithubSyncCron`, `createHalBucket` |
-| `cron/github-sync.ts` | Lambda cron entry point — calls `syncGitHubEvents()` |
-| `lib/github-sync.ts` | Core sync logic — GitHub API fetch + MongoDB upsert |
-| `pages/api/lib/mongodb.ts` | DB singleton — `getDatabase()` used by all API routes |
-
----
-
-## Products System
-
-`src/products.tsx` defines the `PRODUCTS` array (type `TProduct[]`). Each product has:
-- `id`, `name`, `fullName`, `description`
-- `icon` — React element or image path
-- `features` — array of feature descriptors
-- `url` — external product URL
-- `showcaseType` — React component rendered in `ProductSwitcher` carousel
-- `showcaseContent` — props passed to the showcase component
-
-The `ProductSwitcher` (`src/components/ProductSwitcher.tsx`) renders a swipeable carousel of products. On mobile it shows `react-swipeable-views`; on desktop it shows a side-by-side panel with navigation arrows.
-
-Showcase components include: `GithubEventsShowcase`, `MaterialShowcase`, `CoreShowcase`, `BlogShowcase`, `PdfShowcase`, `VideoShowcase`, `ImageShowcase`, `CustomerShowcase`.
-
----
-
-## Infrastructure (SST Stacks)
+Required by `createSite` (deploy aborts if any are missing):
 
 ```
-sst.config.ts
-  └── stacks/index.ts
-        ├── createSite()          → sst.aws.Nextjs (OpenNext Lambda + CloudFront CDN)
-        ├── createGithubSyncCron() → sst.aws.Cron (EventBridge, rate 1 hour)
-        │     └── handler: cron/github-sync.ts
-        └── createHalBucket()     → sst.aws.Bucket ("HalBucket" — S3 for HAL logs)
+NEXT_PUBLIC_WEB_URL
+GITHUB_TOKEN
+MONGODB_URI
+MONGODB_USER
+MONGODB_PASS
+SST_STAGE
+NEXTAUTH_SECRET
+GOOGLE_CLIENT_ID
+GOOGLE_CLIENT_SECRET
+SYNC_SECRET
 ```
 
-The `createSite` stack validates all required env vars at deploy time and configures aggressive CDN caching for static assets (1 year immutable) with no-cache for HTML.
+Additional resolved at deploy time: `GITHUB_USERNAME` (defaults `brian-stoker`), `MONGODB_NAME` (from `domainInfo.dbName`), `NEXTAUTH_URL` (`https://${domainInfo.domains[0]}`), `S3_BUCKET_NAME` (from `HalBucket`).
+
+Cron-specific (in `stacks/cron.ts`): inherits `GITHUB_TOKEN`, `GITHUB_USERNAME`, `MONGODB_NAME`, `MONGODB_URI`, `SYNC_SECRET`, `SYNC_ENDPOINT`.
+
+Local development reads `.env` / `.env.local` (declared as Turbo `globalDependencies`).
 
 ---
 
-## Critical Notes
+## 7. Entry Points & Critical Paths
 
-- **Next.js Pages Router only** — no App Router patterns apply
-- **`git stash` is forbidden** — commit uncommitted changes instead
-- **AWS profile** — always use `--profile stoked` for AWS CLI commands
-- **Type checking** — `tsc` is skipped during builds; run `pnpm typescript` separately
-- **Tailwind preflight** disabled — MUI `CssBaseline` owns global resets
-- **Images unoptimized** — `next/image` optimization is off; assets served from S3/CDN
-- **pnpm only** — not npm or yarn; `packageManager` is pinned to `pnpm@10.28.2`
+### 7.1 Entry Points
+
+| Type | Path |
+|------|------|
+| Infra root | `sst.config.ts` |
+| Stack registry | `stacks/index.ts` (re-exports `site`, `domains`, `api`, `cron`, `bucket`) |
+| Web app root | `pages/index.tsx` (renders `HomeView` with `BrandingCssVarsProvider`, `AppHeader`, `Section`, `AppFooter`) |
+| App shell | `pages/_app.js`, `pages/_document.js` |
+| Cron handler | `cron/github-sync.ts` → `handler` export |
+| MongoDB clients | `pages/api/lib/mongodb.ts` (API), `lib/mongodb.ts` (cron/lib) |
+| Auth | `pages/api/auth/[...nextauth].js` |
+| Product catalog | `src/products.tsx` |
+| Routes table | `src/route.ts` |
+
+### 7.2 Critical Path A — GitHub Events Sync
+
+1. **Trigger:** AWS EventBridge fires `GithubSyncCron` hourly (`stacks/cron.ts`).
+2. **Handler:** `cron/github-sync.ts` invokes `syncGitHubEvents()` from `lib/github-sync.ts`.
+3. **Fetch:** the sync function paginates GitHub Events API using `GITHUB_TOKEN` and `GITHUB_USERNAME`.
+4. **Persist:** events upserted into MongoDB collection `github_events`; `sync_metadata` updated with cursor/timestamps.
+5. **Local alternative:** `scripts/local-sync-cron.cjs` (started by `pnpm dev:cron`) calls `/api/github/sync-events` over HTTP, gated by `SYNC_SECRET`.
+
+### 7.3 Critical Path B — Home Page Render
+
+1. **Request** → Next.js Lambda (OpenNext) → `pages/index.tsx`.
+2. `getAllBlogPosts()` from `lib/sourcing.ts` resolves MDX blog posts (`pages/home/*.mdx`).
+3. `HomeView` mounts `BrandingCssVarsProvider`, `AppHeader`, `Hero` (`src/components/home/HeroMain.tsx`), product showcases via `src/products.tsx` + `ProductSwitcher`, and `GithubEventsShowcase` (which calls `/api/github/events`).
+4. `AppFooter` rendered last; `NewsletterToast` mounted client-only.
+
+### 7.4 Critical Path C — Pull Request Detail
+
+1. UI: `src/components/PullRequest/PullRequestView.tsx` (+ `CommitsList`, `FileChanges`).
+2. API: `pages/api/github/pull-request.ts`, `pull-request-files.ts`, `commit-files.ts` proxy GitHub.
+3. Storage: events that reference PRs are sourced from `github_events` (synced in Path A).
+
+### 7.5 Critical Path D — Auth
+
+1. `pages/api/auth/[...nextauth].js` configures Google provider using `GOOGLE_CLIENT_ID`/`GOOGLE_CLIENT_SECRET` and signs sessions with `NEXTAUTH_SECRET`.
+2. `NEXTAUTH_URL` is computed from the primary stage domain at deploy time (`stacks/site.ts`).
+
+---
+
+## 8. Directory Map (Top Level)
+
+| Path | Purpose |
+|------|---------|
+| `pages/` | Next.js Pages Router routes (UI + API). |
+| `pages/api/` | API routes: `github/` (sync, events, PRs, filters), `auth/[...nextauth].js`, `hal/logs.js`, `lib/mongodb.ts`. |
+| `src/components/` | React components (`GithubEvents/`, `PullRequest/`, `home/*Showcase.tsx`, `header/`, `footer/`, etc.). |
+| `src/layouts/` | `AppHeader`, `AppFooter`, `HeroContainer`, `Section`. |
+| `src/modules/` | Shared modules (components, sandbox, utils, constants). |
+| `src/products.tsx` | Product catalog driving home page showcases. |
+| `src/route.ts` | Centralized route constants. |
+| `stacks/` | SST infra: `site.ts`, `cron.ts`, `bucket.ts`, `domains.ts`, `api.ts`, `secrets.ts`, `envVars.ts`. |
+| `cron/` | Lambda cron handler (`github-sync.ts`). |
+| `lib/` | Shared server logic: `github-sync.ts`, `mongodb.ts`, `sourcing.ts` (MDX). |
+| `hooks/` | Tiny shared hooks (`useEventListener`, `useWindowSize`). |
+| `scripts/` | Build, deploy, and maintenance scripts. |
+| `data/` | MDX/JSON content (`about/`, `styles/`, `pages.ts`, `file-explorer-component-api-pages.ts`). |
+| `e2e/` | Playwright specs and snapshots. |
+| `public/` | Static assets (images, fonts, resume PDF at `public/static/resume/brian-stoker-resume.pdf`). |
+| `styles/` | Global stylesheets. |
+| `translations/` | i18n strings. |
+| `types/` | Ambient TypeScript declarations. |
+| `utils/` | Generic utilities (`pickProperties` used in stacks). |
+| `.stokd/meta/` | Stokd metadata (this overview, flows, views, recommendations, tests, config). |
+
+---
+
+## 9. Operational Notes & Conventions (from `CLAUDE.md`)
+
+- Dev server port is **5040** (not 3000).
+- All AWS CLI usage must include `--profile stoked`; deploys go through `senvn -f production`.
+- Type checking is intentionally skipped during the SST build path (`build:sst`).
+- Production DB: `brianstoker-production`; local DB: `brianstoker-local` (when `MONGODB_NAME` is not provided).
+- No App Router — Pages Router only.
+- pnpm 10.x is required (`packageManager` field). `onlyBuiltDependencies` whitelist gates native builds (`@parcel/watcher`, `aws-sdk`, `canvas`, `core-js`, `esbuild`, `sharp`).
+- Recent commits show ongoing work on Atlas attribution (`af5fa04`), log shipping for a private monitoring backend (`afde04e`), and main-page GitHub events sizing fixes (`240184e`).

@@ -103,9 +103,14 @@ export default async function handler(
     const perPage = parseInt(per_page as string);
     const skip = (pageNum - 1) * perPage;
 
-    // Get paginated events using MongoDB skip/limit for efficiency
+    // Get paginated events using MongoDB skip/limit for efficiency.
+    // Exclude payload.files: it holds full file diffs/patches (events can be >1MB
+    // each) that the feed never renders — file data is fetched on demand via
+    // /api/github/commit-files and the PR detail endpoint. Including it blew the
+    // Lambda's request timeout on monorepo push events.
     let paginatedEvents = await eventsCollection
       .find(query)
+      .project({ 'payload.files': 0 })
       .sort({ created_at: -1 })
       .skip(skip)
       .limit(perPage)

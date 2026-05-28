@@ -47,6 +47,13 @@ export const createSite = (domainInfo: DomainInfo, extraEnv?: Record<string, str
         resources: ["*"],
       },
     ],
+    transform: {
+      // Give the server function headroom over the API Gateway 30s ceiling for
+      // slow MongoDB Atlas (M0) reads.
+      server: {
+        timeout: "30 seconds",
+      },
+    },
     assets: {
       textEncoding: "utf-8",
       fileOptions: [

@@ -9,7 +9,7 @@ declare module "sst" {
       "name": string
       "type": "sst.aws.Bucket"
     }
-    "brianstokercomNextjsSite": {
+    "brianstokdcloudNextjsSite": {
       "type": "sst.aws.Nextjs"
       "url": string
     }

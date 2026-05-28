@@ -15,6 +15,8 @@ fi
 if [[ "$ACTION" == "deploy" ]]; then
   echo "Deploying to production..."
   senvn -f production npx sst deploy --stage production
+  echo "Repointing CloudFront origins at API Gateway (Function URLs are broken in this account)..."
+  AWS_PROFILE=stokd-cloud node scripts/update-cloudfront-origins.cjs
   echo "Setting up log shipping..."
   AWS_PROFILE=stokd-cloud node scripts/setupLogShipping.cjs || echo "Warning: Log shipping failed (non-fatal)"
 elif [[ "$ACTION" == "remove" ]]; then

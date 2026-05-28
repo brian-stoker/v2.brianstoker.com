@@ -1,375 +1,221 @@
-# SC_TEST — Testing Strategy: v2.brianstoker.com
+# SC_TEST.md — brianstoker.com
 
-**Package:** Monorepo root (`/`)
-**Priority:** Critical
-**Last updated:** 2026-03-21
+Testing strategy for the Next.js 15 portfolio + GitHub-activity site (Workspace-wide, priority: **critical**).
+Package root: `/opt/worktrees/v2.brianstoker.com/v2.brianstoker.com-main`.
 
----
+## 1. Current State
 
-## 1. Test Framework & Tooling
+| Layer | Tooling | Status |
+|-------|---------|--------|
+| E2E (browser) | Playwright 1.56 (`e2e/`) | Mature — 7 spec files, 9 viewport projects |
+| Visual regression | Playwright snapshots (`e2e/visual-regression.spec.ts`) | Baseline committed |
+| Unit / component tests | — | **None** |
+| API route tests | — | **None** |
+| Integration (DB + handlers) | — | **None** |
+| Type checking | `pnpm typescript` | Build bypasses TS (`NEXT_SKIP_TYPECHECKING=1`) |
+| Dead code | `pnpm knip` | Available |
+| Link validation | `pnpm link-check` | Available |
 
-### Current state
-- **Playwright** (`@playwright/test ^1.56.1`) — only test framework currently installed
-- **No unit/integration test runner** (Jest, Vitest, etc.) is present; `pnpm test` invokes Playwright exclusively
+The critical gap is the **server-side surface**: `pages/api/**`, `lib/github-sync.ts`, `pages/api/lib/mongodb.ts`, and the SST cron handler are completely untested despite being the only stateful, money-spending parts of the system.
 
-### Recommended additions
+## 2. What Must Be Tested
 
-| Layer | Tool | Rationale |
-|---|---|---|
-| Unit / Integration | **Vitest** | Zero-config TS support, same syntax as Jest, runs in Node without a browser — ideal for API handlers, `lib/github-sync.ts`, and pure utilities |
-| Component | **Vitest + React Testing Library** | Lightweight, no server needed, works with Next.js Pages Router |
-| API route | **Vitest + node-mocks-http** (or MSW) | Mock `NextApiRequest/Response` without spinning up the full server |
-| E2E (existing) | **Playwright** | Already configured; keep and expand |
+### 2.1 Critical paths (P0 — block release if red)
 
-Add to `devDependencies`:
-```
-vitest, @vitest/coverage-v8, @testing-library/react, @testing-library/user-event,
-@testing-library/jest-dom, msw, node-mocks-http
-```
+1. **GitHub event sync pipeline**
+   - `pages/api/github/sync-events.ts` — auth (Bearer `SYNC_SECRET`), method gating (POST only), `fullRefresh=true` branch, error envelope.
+   - `lib/github-sync.ts` — pagination, dedup against `github_events` collection, `sync_metadata` checkpoint write, GitHub 304/429/5xx handling.
+   - Cron entry (`cron/` + `stacks/`) — invokes the same code path Lambda will run.
+2. **Public event API**
+   - `pages/api/github/events.ts` — query filter parsing, MongoDB projection, pagination bounds, response shape.
+   - `pages/api/github/filters.ts` — distinct repo / type aggregation.
+   - `pages/api/github/pull-request.ts`, `pull-request-files.ts`, `commit-files.ts` — GitHub token fan-out, 404 pass-through.
+3. **Mongo client lifecycle** — `pages/api/lib/mongodb.ts` singleton must not leak connections in dev HMR; `getDatabase()` must pick the correct DB per `NODE_ENV`.
+4. **Auth boundary** — `pages/api/auth/[...nextauth].js` Google OAuth callback shape, session JWT not leaking server-only env.
+5. **Log shipping** — `pages/api/hal/logs.js` rate-limit + payload size guard (it accepts arbitrary client POSTs).
+6. **Mobile UX regressions already covered** — keep `e2e/mobile/*` green (see `TESTING.md`).
 
----
+### 2.2 Edge cases worth pinning
 
-## 2. Coverage Targets (Critical Priority)
+- Sync endpoint called without `SYNC_SECRET` env set → must 401, not 500.
+- `MONGODB_URI` missing → fail fast at module load with a readable error.
+- GitHub API returns empty page → checkpoint still advances; no infinite re-fetch.
+- Event with duplicate `id` arriving twice (GitHub retries) → upsert, not insert.
+- `/api/github/events` with `?limit=99999` → clamp, not OOM.
+- `pages/api/hal/logs.js` POST > 1 MB → reject.
+- NextAuth callback with unverified Google email → reject.
+- Products carousel with `prefers-reduced-motion` → no auto-advance.
+- Static export build (`pnpm build:static`) — pages with `getServerSideProps` must not silently fall back.
 
-| Layer | Target | Rationale |
-|---|---|---|
-| `lib/github-sync.ts` | **90 %** | Core data pipeline; bugs here silently corrupt the DB |
-| `pages/api/github/*.ts` | **85 %** | All API routes are public entry points |
-| `src/utils/githubEmoji.ts` | **100 %** | Pure function, trivial to cover |
-| `src/components/GithubEvents/` | **70 %** | UI components — render + interaction paths |
-| E2E smoke suite | all pages load, no horizontal scroll | Already in place |
-| E2E visual regression | key viewports per component | Already in place |
+### 2.3 Integration points
 
----
+- **MongoDB Atlas** (`brianstoker-local` / `brianstoker-production`)
+- **GitHub Events API** (`GITHUB_TOKEN`, `GITHUB_USERNAME`)
+- **Google OAuth** (NextAuth)
+- **SST cron → Lambda → API route**
+- **OpenNext build output** consumed by CloudFront
 
-## 3. What to Test — Critical Paths
+## 3. Recommended Framework & Tooling
 
-### 3.1 `lib/github-sync.ts` — `syncGitHubEvents()`
+| Concern | Pick | Why |
+|---------|------|-----|
+| Unit / component | **Vitest** + **@testing-library/react** + **jsdom** | Native ESM, fastest in the Next 15 + Turbopack ecosystem; no Babel config to maintain (`babel.config.js.bk` is already disabled). |
+| API route handlers | **Vitest** + **node-mocks-http** | Pages-Router handlers are plain `(req, res) => …` functions — trivially callable in-process. |
+| MongoDB integration | **`mongodb-memory-server`** | Spins an ephemeral mongod; matches the native driver already in use (no ORM mismatch). |
+| HTTP mocks (GitHub API) | **MSW (node)** | Intercepts `fetch`, survives Next's polyfill. |
+| E2E | **Keep Playwright** (already configured) | No reason to migrate. |
+| Coverage | **Vitest `--coverage` (v8 provider)** | Native, no Istanbul/Babel hop. |
+| Mutation (optional, P2) | **Stryker** on `lib/github-sync.ts` only | High value on the one piece of pure logic worth proving correct. |
 
-This is the highest-risk function: it calls GitHub, writes to MongoDB, handles pagination (max 7 pages), enriches PRs/pushes, and updates `sync_metadata`. Bugs here are silent and accumulate.
+> Do **not** add Jest. The project has no active Babel config (`babel.config.js.bk`); Jest would force one back. Vitest reads `tsconfig.json` directly.
 
-**Test cases to implement first:**
+### 3.1 Install footprint
 
-```
-tests/unit/github-sync.test.ts
-```
-
-| Case | What to assert |
-|---|---|
-| Missing `GITHUB_TOKEN` | throws `SyncGitHubEventsError` with `statusCode = 500` |
-| DB unavailable (`getDatabase` returns `null`) | throws with message `'Database not available'` |
-| Rate limit pre-check: `remaining <= 10` before sync | throws 429, body contains `resetAt` |
-| Incremental mode: all events on page 1 are older than `mostRecentEvent` | exits after page 1, `newEventCount = 0`, `duplicatesSkipped = N` |
-| Incremental mode: mix of new and old events on page 1 | stops after page 1, inserts only new events |
-| Full refresh: clears collection, inserts all fetched events | `deleteMany` called once, `mode = 'full_refresh'` |
-| GitHub returns 403 with `x-ratelimit-remaining: 0` | throws 429 |
-| GitHub returns non-OK, non-403 status | throws generic `SyncGitHubEventsError` |
-| GitHub returns empty array on page 1 | terminates immediately, `pagesChecked = 1`, `newEventCount = 0` |
-| `maxPages` cap (7 pages) | stops at page 7 even if more data exists |
-| PR enrichment on pages 1-2: enriches `PullRequestEvent` | fetch called for `/pulls/:number`, `/pulls/:number/commits`, `/pulls/:number/files` |
-| PR enrichment: 404 on PR | skips silently, event still stored |
-| PR enrichment: 403 rate limit mid-enrichment | sets `rateLimitHit`, stops further PR enrichment |
-| Push enrichment pages 1-2: no `payload.size` + compare API available | sets `payload.size` from `total_commits` |
-| Push enrichment pages 3+: no `payload.size` | sets `payload.size = 1`, does NOT call compare API |
-| `sync_metadata` written on success | `upsert` called with `success: true`, `totalEventCount` |
-| `sync_metadata` written on error | `upsert` called with `success: false`, `error` message |
-
-**Mock strategy:** Use `vi.stubGlobal('fetch', vi.fn())` for GitHub HTTP calls. Use an in-memory mock for MongoDB (`Collection` with a stub object satisfying the used methods: `createIndex`, `findOne`, `find`, `updateOne`, `deleteMany`, `countDocuments`, `aggregate`, `distinct`). Do NOT hit real MongoDB or GitHub in unit tests.
-
-### 3.2 API Route: `pages/api/github/events.ts`
-
-```
-tests/unit/api/events.test.ts
+```bash
+pnpm add -D vitest @vitest/coverage-v8 @testing-library/react \
+  @testing-library/jest-dom @testing-library/user-event jsdom \
+  node-mocks-http mongodb-memory-server msw
 ```
 
-| Case | Expected response |
-|---|---|
-| `GET` — happy path, no filters | 200 with `{ events, total, page, per_page, total_pages, syncMetadata }` |
-| `GET` with `?repo=owner/name` | MongoDB query contains `{ 'repo.name': 'owner/name' }` |
-| `GET` with `?action=PullRequest` | query contains `{ type: 'PullRequestEvent' }` |
-| `GET` with `?date=today` | `created_at.$gte` is today midnight ISO |
-| `GET` with `?date=week` | `created_at.$gte` is 7 days ago |
-| `GET` with `?date=yesterday` | `created_at.$gte` is yesterday midnight ISO |
-| `GET` with `?description=fix` | in-memory filter applied to matching events |
-| `GET` — `totalCount = 0` | 200 with `events: [], total: 0, total_pages: 0` |
-| Non-`GET` method (`POST`) | 405 |
-| DB unavailable | 500 with `{ message: 'Database not available' }` |
-| DB throws | 500 with `message: 'Error fetching GitHub events'` |
-| Pagination: `?page=2&per_page=10` | `skip = 10`, `limit = 10` passed to MongoDB |
+Add to `package.json` scripts:
 
-### 3.3 API Route: `pages/api/github/sync-events.ts`
-
-```
-tests/unit/api/sync-events.test.ts
+```jsonc
+"test:unit": "vitest run",
+"test:unit:watch": "vitest",
+"test:coverage": "vitest run --coverage",
+"test:e2e": "playwright test",   // rename existing "test"
+"test": "pnpm test:unit && pnpm test:e2e --grep @smoke"
 ```
 
-| Case | Expected response |
-|---|---|
-| `POST` + correct `Authorization: Bearer <SYNC_SECRET>` | calls `syncGitHubEvents()`, returns 200 |
-| `POST` + wrong/missing auth header | 401 |
-| Non-`POST` method | 405 |
-| `?fullRefresh=true` | calls `syncGitHubEvents({ fullRefresh: true })` |
-| `syncGitHubEvents` throws with `statusCode = 429` | returns 429 with error body |
-| `syncGitHubEvents` throws without `statusCode` | returns 500 |
-
-### 3.4 API Route: `pages/api/github/filters.ts`
+## 4. File Organization & Naming
 
 ```
-tests/unit/api/filters.test.ts
+src/
+  components/Foo/
+    Foo.tsx
+    Foo.test.tsx              ← colocated unit/component
+lib/
+  github-sync.ts
+  github-sync.test.ts         ← colocated pure-logic test
+pages/api/github/
+  events.ts
+  __tests__/events.test.ts    ← API handlers grouped (Pages Router files are routes; don't colocate)
+e2e/
+  smoke-tests.spec.ts         ← existing
+  mobile/*.spec.ts            ← existing
+  api/                        ← NEW: black-box HTTP tests against `pnpm dev`
+    sync-events.spec.ts
+    events.spec.ts
+test/
+  setup.ts                    ← jest-dom matchers, MSW server start
+  fixtures/
+    github-events.json        ← canned GitHub API payloads
+    mongo-events.ts           ← seed helpers
+  msw/
+    handlers.ts               ← GitHub API mock handlers
 ```
 
-| Case | Expected |
-|---|---|
-| `GET` — happy path | 200, response includes `repositories`, `repositoryStats`, `actionTypes`, `lastUpdated` |
-| `actionTypes` strips `Event` suffix | `'PushEvent'` becomes `'Push'` in output |
-| Non-`GET` method | 405 |
-| DB unavailable | 500 |
-
-### 3.5 Pure utility: `src/utils/githubEmoji.ts` — `replaceGithubEmoji()`
-
-```
-tests/unit/utils/githubEmoji.test.ts
-```
-
-| Case | Input | Expected output |
-|---|---|---|
-| Standard shortcode | `':rocket:'` | `'🚀'` |
-| Extra shortcode (EXTRA_EMOJI map) | `':pencil:'` | `'📝'` |
-| Extra shortcode | `':adhesive_bandage:'` | `'🩹'` |
-| Extra shortcode | `':monocle_face:'` | `'🧐'` |
-| Unknown shortcode | `':nonexistent:'` | `':nonexistent:'` (unchanged) |
-| Empty string | `''` | `''` |
-| No shortcodes | `'hello world'` | `'hello world'` |
-| Mixed text + shortcodes | `':pencil: fix typo'` | `'📝 fix typo'` |
-| Multiple shortcodes | `':rocket: :pencil:'` | `'🚀 📝'` |
-
-### 3.6 Component: `src/components/GithubEvents/PushEvent.tsx`
-
-```
-tests/components/PushEvent.test.tsx
-```
-
-| Case |
-|---|
-| Renders `null` when `event.date` is undefined |
-| Shows branch name stripped of `refs/heads/` prefix |
-| Shows commit count chip (`N commits`) |
-| Single commit uses commit message as summary (not "Pushed N commits") |
-| Multiple commits: summary is `"Pushed N commits to <branch>"` |
-| Commit row expands on first click when body exists |
-| Commit row navigates on second click when expanded |
-| Commit row navigates on first click when no body |
-| SHA copy button shows 7-char SHA, triggers clipboard write on click |
-| Falls back to `event.payload.commits` when `event.commitsList` is empty |
-
-### 3.7 Component: `src/components/GithubEvents/PullRequestEvent.tsx`
-
-```
-tests/components/PullRequestEvent.test.tsx
-```
-
-| Case |
-|---|
-| Renders `null` when `event.date` is undefined |
-| Renders `null` when `event.payload.pull_request` is missing |
-| Shows loading spinner while fetching PR details |
-| Uses pre-enriched data (`_enriched: true`) without making a fetch call |
-| Skips fetch for deleted/closed PRs, uses empty commits/files |
-| Fetches from `/api/github/pull-request` for open unenriched PRs |
-| Shows error state when fetch fails |
-| Renders PR title with link to `html_url` |
-| Head/base branch chips present |
-| Tab switch between Commits and Files changes visible content |
-| `handleCheckout` copies git checkout command to clipboard |
-
----
-
-## 4. Test File Organization
-
-```
-/
-├── e2e/                              <- Playwright (existing)
-│   ├── smoke-tests.spec.ts
-│   ├── visual-regression.spec.ts
-│   ├── mobile/
-│   │   ├── footer-responsive.spec.ts
-│   │   ├── header-navigation.spec.ts
-│   │   ├── newsletter-toast.spec.ts
-│   │   ├── product-carousel.spec.ts
-│   │   └── showcase-code-toggle.spec.ts
-│   └── utils/
-│       └── viewport-helpers.ts
-│
-└── tests/                            <- NEW (Vitest)
-    ├── vitest.config.ts
-    ├── setup.ts                      <- @testing-library/jest-dom + global mocks
-    ├── unit/
-    │   ├── github-sync.test.ts       <- lib/github-sync.ts (highest priority)
-    │   ├── utils/
-    │   │   └── githubEmoji.test.ts
-    │   └── api/
-    │       ├── events.test.ts
-    │       ├── sync-events.test.ts
-    │       └── filters.test.ts
-    └── components/
-        ├── PushEvent.test.tsx
-        └── PullRequestEvent.test.tsx
-```
-
-### Naming convention
-
-- Unit/integration: `<module-name>.test.ts`
-- Component: `<ComponentName>.test.tsx`
-- Playwright E2E: `<feature>.spec.ts` (existing convention, keep it)
-
----
+Conventions:
+- `*.test.ts(x)` → Vitest (unit/integration in-process).
+- `*.spec.ts` → Playwright (browser/HTTP).
+- One `describe` per exported symbol; test names start with a verb (`returns 401 when…`).
+- No snapshots in unit tests — they rot. Snapshots only for Playwright visual regression.
 
 ## 5. Mock / Stub Strategy
 
-### GitHub API (global fetch)
-```ts
-// tests/unit/github-sync.test.ts
-import { vi } from 'vitest';
+| Dependency | Strategy |
+|------------|----------|
+| `mongodb` driver | Real driver against `mongodb-memory-server` for sync/query tests. **Do not mock the driver itself** — past incidents in similar repos came from mocked queries that diverged from real behavior. |
+| GitHub REST API | MSW handlers in `test/msw/handlers.ts`. Fixtures captured from a real call, stripped of PII, committed under `test/fixtures/`. |
+| `process.env` | Use `vi.stubEnv()` per test; never mutate `process.env` directly. |
+| `next-auth` session | `vi.mock('next-auth/react')` returning canned `useSession` results. For server callbacks, build the JWT manually with the same secret. |
+| AWS SDK (`@aws-sdk/client-s3`) | `aws-sdk-client-mock` only when an API route actually calls S3 (currently rare). |
+| Network in unit tests | MSW intercepts everything; any unmocked outbound fetch should throw in test setup. |
+| Time | `vi.useFakeTimers()` for sync checkpoint / TTL logic. |
+| `console.error` / `console.warn` | Fail the test if any are emitted unexpectedly (helper in `test/setup.ts`). |
 
-const mockFetch = vi.fn();
-vi.stubGlobal('fetch', mockFetch);
+## 6. Coverage Targets
 
-// Per-test example:
-mockFetch.mockResolvedValueOnce({
-  ok: true,
-  status: 200,
-  headers: new Headers({
-    'x-ratelimit-remaining': '4999',
-    'x-ratelimit-limit': '5000',
-    'x-ratelimit-reset': '0',
-    'x-ratelimit-resource': 'core',
-  }),
-  json: () => Promise.resolve([] as GitHubEvent[]),
-  text: () => Promise.resolve(''),
-});
+Priority is **critical**, but coverage is not uniform — weight by blast radius:
+
+| Area | Line | Branch | Notes |
+|------|------|--------|-------|
+| `lib/github-sync.ts` | **90%** | 85% | Pure logic, easy + high-value. |
+| `pages/api/**` | **80%** | 75% | Every handler must have at least one happy-path + one auth-fail test. |
+| `pages/api/lib/mongodb.ts` | 70% | — | Singleton behavior + env selection. |
+| `src/components/**` (presentational) | 40% | — | Skip pure-MUI styling components; only test ones with logic (`GithubEvents`, `GithubCalendar`, `ProductSwitcher`, `NewsletterToast`). |
+| `src/products.tsx` | smoke only | — | Data file; type-check is enough. |
+| `pages/**` (non-API) | E2E only | — | Don't unit-test pages; Playwright covers them. |
+
+Fail CI under **70% overall line coverage** once unit tests exist; ratchet up by 5% each sprint.
+
+## 7. First Test Cases to Implement (in order)
+
+These are the highest-ROI tests to write first. Each is small enough to land in one PR.
+
+1. **`lib/github-sync.test.ts`** — `syncGitHubEvents()`
+   - returns checkpoint when GitHub returns 304
+   - upserts duplicate event ids without throwing
+   - respects `fullRefresh: true` (ignores stored checkpoint)
+   - propagates 429 as `SyncGitHubEventsError` with `statusCode: 429`
+2. **`pages/api/github/__tests__/sync-events.test.ts`**
+   - 405 on GET
+   - 401 when `Authorization` header missing or wrong
+   - 401 when `SYNC_SECRET` env unset (currently 500 — fix while adding the test)
+   - 200 with happy-path mocked `syncGitHubEvents`
+   - 500 with error envelope including `error.message`
+3. **`pages/api/github/__tests__/events.test.ts`** (against `mongodb-memory-server`)
+   - returns paginated events sorted by `created_at` desc
+   - `?type=PushEvent` filter narrows results
+   - `?limit=10000` clamps to documented max
+   - empty DB returns `{ events: [], total: 0 }`, not 500
+4. **`pages/api/lib/mongodb.test.ts`**
+   - reuses client across calls in dev (singleton)
+   - selects `brianstoker-production` when `NODE_ENV=production`
+   - throws readable error when `MONGODB_URI` is unset
+5. **`pages/api/hal/__tests__/logs.test.ts`**
+   - rejects payloads > size limit
+   - rejects non-POST
+   - sanitizes / size-bounds before write
+6. **`src/components/GithubEvents.test.tsx`**
+   - renders skeleton while loading
+   - renders empty state when API returns `events: []`
+   - groups events by repo
+7. **`e2e/api/sync-events.spec.ts`** (Playwright, real `pnpm dev`)
+   - smoke: POST with valid `SYNC_SECRET` returns 200 against the dev server
+8. **CI wiring** — add `pnpm test:unit` to the existing GitHub Actions workflow (`.github/workflows/mobile-ux-tests.yml`) **before** Playwright runs, so unit failures fail fast.
+
+## 8. CI Integration
+
+Extend `.github/workflows/mobile-ux-tests.yml`:
+
+```yaml
+- name: Unit tests
+  run: pnpm test:unit -- --reporter=github
+- name: Type check
+  run: pnpm typescript
+- name: Knip (dead code)
+  run: pnpm knip --reporter=compact
+- name: Playwright
+  run: pnpm test:e2e
 ```
 
-### MongoDB (in-memory stub — no real driver)
-Do NOT mock at the driver level. Create a lightweight stub object:
-```ts
-const makeCollection = (docs: any[] = []) => ({
-  createIndex: vi.fn().mockResolvedValue({}),
-  findOne: vi.fn().mockResolvedValue(docs[0] ?? null),
-  find: vi.fn().mockReturnValue({
-    sort: vi.fn().mockReturnThis(),
-    skip: vi.fn().mockReturnThis(),
-    limit: vi.fn().mockReturnThis(),
-    toArray: vi.fn().mockResolvedValue(docs),
-  }),
-  updateOne: vi.fn().mockResolvedValue({ upsertedCount: 1 }),
-  deleteMany: vi.fn().mockResolvedValue({}),
-  countDocuments: vi.fn().mockResolvedValue(docs.length),
-  aggregate: vi.fn().mockReturnValue({ toArray: vi.fn().mockResolvedValue([]) }),
-  distinct: vi.fn().mockResolvedValue([]),
-});
+Run unit tests on **every push**, not just PRs. Visual-regression baselines stay PR-only.
 
-// In the test module setup:
-vi.mock('../pages/api/lib/mongodb', () => ({
-  getDatabase: vi.fn().mockResolvedValue({
-    collection: vi.fn().mockImplementation((name: string) => makeCollection()),
-  }),
-}));
-```
+## 9. Acceptance Checks for This Plan
 
-### Next.js API routes (via `node-mocks-http`)
-```ts
-import { createMocks } from 'node-mocks-http';
+A future agent should consider this strategy applied when:
 
-const { req, res } = createMocks({
-  method: 'GET',
-  query: { repo: 'owner/name', action: 'PullRequest' },
-});
+- [ ] `pnpm test:unit` exists and runs ≥ 20 passing tests.
+- [ ] `lib/github-sync.ts` has ≥ 90% line coverage.
+- [ ] Every `pages/api/**` handler has at least one auth-failure and one happy-path test.
+- [ ] CI fails the build when `pnpm test:unit` or `pnpm typescript` reports errors.
+- [ ] The existing Playwright suite still passes unchanged.
+- [ ] `mongodb-memory-server` is used in tests; no test connects to Atlas.
 
-await handler(req as any, res as any);
+## 10. Explicit Non-Goals
 
-expect(res._getStatusCode()).toBe(200);
-const body = res._getJSONData();
-expect(body.events).toBeDefined();
-```
-
-### React components
-Use `@testing-library/react` with `render()`. Mock `navigator.clipboard.writeText` globally:
-```ts
-Object.defineProperty(navigator, 'clipboard', {
-  value: { writeText: vi.fn().mockResolvedValue(undefined) },
-  writable: true,
-});
-```
-Mock `fetch` for components that call `/api/github/...` via `vi.stubGlobal('fetch', vi.fn())`.
-
----
-
-## 6. Vitest Configuration
-
-```ts
-// tests/vitest.config.ts
-import { defineConfig } from 'vitest/config';
-import path from 'path';
-
-export default defineConfig({
-  test: {
-    globals: true,
-    environment: 'jsdom',           // component tests need DOM
-    setupFiles: ['./tests/setup.ts'],
-    coverage: {
-      provider: 'v8',
-      include: [
-        'lib/**/*.ts',
-        'pages/api/**/*.ts',
-        'src/utils/**/*.ts',
-        'src/components/GithubEvents/**/*.tsx',
-      ],
-      exclude: ['**/*.d.ts', '**/node_modules/**'],
-      thresholds: {
-        lines: 80,
-        functions: 80,
-        branches: 75,
-      },
-    },
-  },
-  resolve: {
-    alias: {
-      '@': path.resolve(__dirname, '../src'),
-    },
-  },
-});
-```
-
-Add scripts to `package.json`:
-```json
-"test:unit":          "vitest run --config tests/vitest.config.ts",
-"test:unit:watch":    "vitest --config tests/vitest.config.ts",
-"test:unit:coverage": "vitest run --config tests/vitest.config.ts --coverage"
-```
-
----
-
-## 7. E2E Gaps to Address (Playwright)
-
-The existing Playwright suite is solid for layout/responsive behaviour. These API-level and data-flow tests are currently missing:
-
-| Missing test | Suggested file |
-|---|---|
-| `/api/github/events` returns 200 with valid shape | `e2e/api/events-api.spec.ts` |
-| `/api/github/events?repo=X&action=Y&date=week` filters produce correct results | same |
-| `/api/github/filters` returns 200 with correct shape | `e2e/api/filters-api.spec.ts` |
-| Sync endpoint rejects request without `Authorization` header | `e2e/api/sync-auth.spec.ts` |
-| GitHub events section renders on homepage (non-empty) | `e2e/github-events.spec.ts` |
-
----
-
-## 8. Implement in This Order
-
-1. **`tests/unit/utils/githubEmoji.test.ts`** — zero dependencies, proves the runner works
-2. **`tests/unit/github-sync.test.ts`** — highest risk, most branching logic
-3. **`tests/unit/api/sync-events.test.ts`** — thin handler, fast to write
-4. **`tests/unit/api/events.test.ts`** — query-building and date-filter logic
-5. **`tests/unit/api/filters.test.ts`** — aggregation shape and `Event` suffix stripping
-6. **`tests/components/PushEvent.test.tsx`** — most render/interaction logic
-7. **`tests/components/PullRequestEvent.test.tsx`** — async fetch + tab state
-8. **E2E API tests** — run against `pnpm dev`, require a live DB connection
+- No Storybook. The MUI components are visually validated by Playwright snapshots already.
+- No E2E auth flow against real Google. Mock NextAuth at the boundary.
+- No load testing. The traffic profile (single-tenant portfolio) does not justify it.
+- No contract tests against GitHub's real API in CI — rate limits would flake.

@@ -25,6 +25,7 @@
     "deploy:build:stage": "dotenvx run -- pnpm deploy:stage",
     "deploy:build": "dotenvx run -- pnpm deploy",
     "deploy:prod": "./scripts/aws-deploy.sh deploy",
+    "deploy:apigateway": "./scripts/deploy-with-apigateway.sh",
     "refresh:prod": "senvn -f production sst refresh --stage production",
     "unlock:prod": "senvn -f production sst unlock --stage production",
     "deploy:stage": "dotenvx run -- sst deploy --stage ",

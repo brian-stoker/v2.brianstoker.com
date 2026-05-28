@@ -5,3 +5,5 @@ export * from './domains';
 export * from './api';
 export * from './cron';
 export * from './bucket';
+export * from './apigateway';
+export * from './authorizer';
