@@ -309,7 +309,7 @@ Local development reads `.env` / `.env.local` (declared as Turbo `globalDependen
 | `scripts/` | Build, deploy, and maintenance scripts. |
 | `data/` | MDX/JSON content (`about/`, `styles/`, `pages.ts`, `file-explorer-component-api-pages.ts`). |
 | `e2e/` | Playwright specs and snapshots. |
-| `public/` | Static assets (images, fonts, resume PDF at `public/static/resume/brian-stoker-resume.pdf`). |
+| `public/` | Static assets (images, fonts, resume PDF at `brian.stokd.cloud/brian-stoker-resume.pdf`). |
 | `styles/` | Global stylesheets. |
 | `translations/` | i18n strings. |
 | `types/` | Ambient TypeScript declarations. |

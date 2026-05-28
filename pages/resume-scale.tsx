@@ -187,7 +187,7 @@ export function PdfDoc () {
                }
              ]}>
         <StyledDoc
-          file={'/static/resume/brian-stoker-resume.pdf'}
+          file={'https://cdn.stokd.cloud/brian.stokd.cloud/brian-stoker-resume.pdf'}
           onLoadSuccess={onDocumentLoadSuccess}
           options={options}
           >

@@ -131,7 +131,7 @@ All flows belong to the single product `SC_PRODUCT_BRIANSTOKER_COM.md`. View ref
 
 1. Visitor lands on `/resume`. *View: **Resume (Primary PDF Viewer)***.
 2. Container `ResizeObserver` measures viewport → sets `containerWidth`.
-3. `PdfDoc` (`react-pdf` `Document`) fetches `public/static/resume/brian-stoker-resume.pdf` and renders the first `Page`.
+3. `PdfDoc` (`react-pdf` `Document`) fetches `brian.stokd.cloud/brian-stoker-resume.pdf` and renders the first `Page`.
 4. Visitor hovers the document → `ButtonGroup` page controls reveal (Prev `Fab` / `Page X of N` label / Next `Fab`).
 5. Visitor advances pages via Fabs; `pageNumber` updates; Prev/Next disable at boundaries.
 6. (Optional) Visitor visits `/resume-scale` to evaluate the experimental container-width strategy (`useResizeObserver`), same `PdfDoc`.
