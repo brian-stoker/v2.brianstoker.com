@@ -1228,12 +1228,12 @@ const drumsData: TProduct = {
   icon: "icon-diamonds",
   url: ROUTES.drums,
   preview: {
-    video: 'https://cenv-public.s3.amazonaws.com/tell-me-mister-2.mp4'
+    video: 'https://cdn.stokd.cloud/brian.stokd.cloud/drums/golden-streams.mp4'
   },
   showcaseType: VideoShowcase,
   showcaseContent: {
-    src: 'https://cenv-public.s3.amazonaws.com/tell-me-mister-2.mp4',
-    poster: '/static/photography/tell-me-mister.png',
+    src: 'https://cdn.stokd.cloud/brian.stokd.cloud/drums/golden-streams.mp4',
+    poster: 'https://cdn.stokd.cloud/brian.stokd.cloud/drums/golden-streams.png',
     title: 'Tell Me Mister'
   },
   live: true,

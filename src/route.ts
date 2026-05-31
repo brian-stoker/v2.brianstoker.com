@@ -51,6 +51,8 @@ const ROUTES: Routes = {
   coreRoadmap: '/material-ui/discover-more/roadmap/',
   vision: 'https://consulting.stokd.cloud/stoked-ui/discover-more/vision/',
   support: 'https://consulting.stokd.cloud/stoked-ui/docs/support/#professional-support-premium',
+  stokedProducts: 'https://consulting.stokd.cloud/products',
+  CDN: 'https://cdn.stokd.cloud',
   goldSponsor: '/material-ui/discover-more/backers/#gold-sponsors',
   // Base UI doc pages
   baseDocs: 'https://sui.stokd.cloud/base-ui/getting-started/',

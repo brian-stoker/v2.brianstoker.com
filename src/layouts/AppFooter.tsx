@@ -134,8 +134,8 @@ export default function AppFooter(props: AppFooterProps) {
                 Stoked Consulting
               </Typography>
             </a>
-            <a href={ROUTES.stokedUi} target="_blank" rel="noopener noreferrer">
-              Stoked UI
+            <a href={ROUTES.stokedProducts} target="_blank" rel="noopener noreferrer">
+              Products
             </a>
             <a href={ROUTES.about} target="_blank" rel="noopener noreferrer">
               About
@@ -145,6 +145,9 @@ export default function AppFooter(props: AppFooterProps) {
             </a>
             <a href={ROUTES.support} target="_blank" rel="noopener noreferrer">
               Support
+            </a>
+            <a href={ROUTES.CDN} target="_blank" rel="noopener noreferrer">
+              CDN
             </a>
             <a target="_blank" rel="noopener noreferrer" href="mailto:brian@stokd.cloud">
               Contact us

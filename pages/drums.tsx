@@ -8,11 +8,11 @@ export interface IMovie  { url: string, img: string, title: string }
 const videos = [
   {
     id: '0',
-    poster: 'https://cenv-public.s3.amazonaws.com/normal-guy.png',
-    thumb: 'https://cenv-public.s3.amazonaws.com/normal-guy.png',
+    poster: 'https://cdn.stokd.cloud/brian.stokd.cloud/drums/normal-guy.png',
+    thumb: 'https://cdn.stokd.cloud/brian.stokd.cloud/drums/normal-guy.png',
     title: 'Normal Guy',
     by: 'Chase, Anthony, and Brian Stoker',
-    src: 'https://cenv-public.s3.amazonaws.com/normal-guy.mov',
+    src: 'https://cdn.stokd.cloud/brian.stokd.cloud/drums/normal-guy.mp4',
     type: 'video/quicktime' ,
     attributes: {
       preload: 'metadata',
@@ -23,11 +23,11 @@ const videos = [
     },
   },{
     id: '1',
-    poster: 'https://cenv-public.s3.amazonaws.com/golden-stream.png',
-    thumb: 'https://cenv-public.s3.amazonaws.com/golden-stream.png',
+    poster: 'https://cdn.stokd.cloud/brian.stokd.cloud/drums/golden-streams.png',
+    thumb: 'https://cdn.stokd.cloud/brian.stokd.cloud/drums/golden-streams.png',
     title: 'Golden Stream',
     by: 'Chase, Anthony, and Brian Stoker',
-    src: 'https://cenv-public.s3.amazonaws.com/golden-stream.mp4',
+    src: 'https://cdn.stokd.cloud/brian.stokd.cloud/drums/golden-streams.mp4',
     type: 'video/mp4',
     attributes: {
       preload: 'metadata',
@@ -39,11 +39,11 @@ const videos = [
 
   },{
     id: '2',
-    poster: 'https://cenv-public.s3.amazonaws.com/tell-me-mister.png',
-    thumb: 'https://cenv-public.s3.amazonaws.com/tell-me-mister.png',
-    title: 'Tell Me Mister',
+    poster: 'https://cdn.stokd.cloud/brian.stokd.cloud/drums/train.png',
+    thumb: 'https://cdn.stokd.cloud/brian.stokd.cloud/drums/train.png',
+    title: 'Train',
     by: 'Chase, Anthony, and Brian Stoker',
-    src: 'https://cenv-public.s3.amazonaws.com/tell-me-mister-2.mp4',
+    src: 'https://cdn.stokd.cloud/brian.stokd.cloud/drums/train.mp4',
     type: 'video/mp4' ,
     attributes: {
       preload: 'metadata',
