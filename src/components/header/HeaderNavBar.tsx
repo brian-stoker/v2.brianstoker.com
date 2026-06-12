@@ -172,6 +172,7 @@ export default function HeaderNavBar() {
         <li><NextLink href={ROUTES.drums}>Drums</NextLink></li>
         <li><NextLink href={ROUTES.resume}>Resume</NextLink></li>
         <li><NextLink href={ROUTES.plan}>.plan</NextLink></li>
+        <li><NextLink href={ROUTES.bookTime}>Book Time</NextLink></li>
       </List>
     </Navigation>);
 }

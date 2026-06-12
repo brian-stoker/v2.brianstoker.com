@@ -1,7 +1,7 @@
 # SC_VIEWS.md
 
 View classification for the v2.brianstoker.com portfolio site.
-Meta version: 0.4.0 | Generated: 2026-05-26
+Meta version: 0.4.0 | Generated: 2026-05-26 | Refreshed: 2026-06-09
 
 ---
 
@@ -137,13 +137,14 @@ Product reference: `SC_PRODUCT_BRIANSTOKER_COM.md` (the only product doc). All v
 ### 3. Resume (Primary PDF Viewer)
 
 - **Route:** `/resume`
-- **Location:** `pages/resume.tsx`, `pages/resume-new.tsx` (shared `PdfDoc` component), `src/components/home/PdfShowcase.tsx`
+- **Location:** `pages/resume.tsx` (`PdfDocView` wrapper at `pages/resume.tsx:14`, rendered inside `HomeView`), `pages/resume-new.tsx` (defines and exports the shared `PdfDoc` component), `src/components/home/PdfShowcase.tsx`
 - **Products:** SC_PRODUCT_BRIANSTOKER_COM.md (Resume product)
 
 **Regions:**
 - `AppHeader`
-- Centered flex container with optional side icon column (visible ≥900px)
-- `PdfDoc` — responsive PDF viewer (`pages/resume-new.tsx:95`)
+- Centered flex container with optional side icon column (visible ≥`pdfMinWidth`, default 900px)
+- `PdfDoc` — responsive PDF viewer (`pages/resume-new.tsx:91`)
+  - PDF source is the remote CDN file `https://cdn.stokd.cloud/brian.stokd.cloud/brian-stoker-resume.pdf` (moved off a relative path in commit `37a0da7`); the same URL backs the download/open `href`s
   - `StyledDoc` (react-pdf `Document`) with hover-reveal `ButtonGroup` page controls
   - `Page` — single rendered PDF page canvas (`AnnotationLayer` + `TextLayer`)
   - Page controls: Prev `Fab`, `Page X of N` label, Next `Fab` (hover-only, bottom-center overlay)
@@ -157,14 +158,14 @@ Product reference: `SC_PRODUCT_BRIANSTOKER_COM.md` (the only product doc). All v
 
 ---
 
-### 4. Resume Scale (Experimental)
+### 4. Resume (Shell-less / Scale Variants)
 
-- **Route:** `/resume-scale`
-- **Location:** `pages/resume-scale.tsx`
+Two alternate resume routes exist alongside `/resume`. Both **default-export `PdfDoc` directly**, so neither renders the `AppHeader`/`AppFooter` shell — they show only the bare PDF viewer.
 
-Same shape as the Resume view but uses `useResizeObserver` from `@wojtekmaj/react-hooks` for container width instead of a manual `ResizeObserver`. Reuses the same `PdfDoc` component from `pages/resume-new.tsx:95`. Experimental/alternate implementation kept alongside the primary route.
+- **`/resume-new`** — `pages/resume-new.tsx`. The canonical home of the shared `PdfDoc` (`pages/resume-new.tsx:91`); `/resume` imports this same component but wraps it in `HomeView`. Visiting `/resume-new` renders the viewer with no shell.
+- **`/resume-scale`** (experimental) — `pages/resume-scale.tsx`. Defines its **own** copy of `PdfDoc` (`pages/resume-scale.tsx:95`) — it does **not** import `resume-new`'s. The copy additionally pulls in `useResizeObserver` from `@wojtekmaj/react-hooks` for container-width measurement (kept alongside a manual `ResizeObserver`). Experimental/alternate implementation.
 
-**States:** identical to the Resume view.
+**States:** the `PdfDoc` interaction states are identical to the Resume view (loading until `containerWidth` measured → loaded → multi-page nav); the difference is purely the absent header/footer shell.
 
 ---
 
@@ -475,7 +476,8 @@ This project has no end-user CLI. The `scripts/` directory contains build, deplo
 | `/` | Home Portfolio Showcase | `pages/index.tsx` |
 | `/work` | Work GitHub Dashboard | `pages/work.tsx` |
 | `/resume` | Resume PDF Viewer | `pages/resume.tsx` |
-| `/resume-scale` | Resume Scale (experimental) | `pages/resume-scale.tsx` |
+| `/resume-new` | Resume PDF Viewer (shell-less; shared `PdfDoc`) | `pages/resume-new.tsx` |
+| `/resume-scale` | Resume Scale (shell-less, experimental) | `pages/resume-scale.tsx` |
 | `/photography` | Photography Gallery | `pages/photography.tsx` |
 | `/art` | Art Gallery | `pages/art.tsx` |
 | `/drums` | Drums Video Gallery | `pages/drums.tsx` |

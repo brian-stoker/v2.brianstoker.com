@@ -86,7 +86,7 @@ export default function EmailSubscribe({ sx }: { sx?: SxProps<Theme> }) {
       >
         <InputBase
           id="email-subscribe"
-          name="email"
+          name="email-subscribe"
           type="email"
           placeholder="example@email.com"
           value={form.email}

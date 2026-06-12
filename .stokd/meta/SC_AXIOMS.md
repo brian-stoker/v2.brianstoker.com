@@ -13,13 +13,14 @@ to a repo-wide axiom requires concrete cross-cutting evidence in the metadata.
 
 ---
 
-## AX-REPO-AWS-PROFILE-DISCIPLINE: AWS access goes through the `stoked` profile or `senvn`
-Any code path or operator command that touches AWS APIs in this repo MUST acquire credentials through `AWS_PROFILE=stoked` (explicitly exported) or through `senvn -f <stage>` loading `.deploy.json`; ambient default-profile credentials MUST NOT be used because they may resolve to an unrelated customer account.
+## AX-REPO-AWS-PROFILE-DISCIPLINE: AWS access goes through the `stokd-cloud` profile or `senvn`
+Any code path or operator command that touches AWS APIs in this repo MUST acquire credentials through `AWS_PROFILE=stokd-cloud` (account `167217327520`, explicitly exported) or through `senvn -f <stage>` loading `.deploy.json`; ambient default-profile credentials MUST NOT be used because they may resolve to an unrelated customer account. (Refreshed 2026-06-09: corrected from the pre-migration `stoked` profile following the `stoked → stokd-cloud` account migration in commit `f1bd28b`; the invariant — never use ambient creds — is unchanged.)
 
 ### Acceptance Checks
-- `rg -n "AWS_PROFILE" scripts/ stacks/ .github/workflows/` shows every direct AWS invocation either sets `AWS_PROFILE=stoked` or is wrapped by `senvn -f production` / `senvn -f <stage>`.
+- `rg -n "AWS_PROFILE" scripts/ stacks/ .github/workflows/` shows every direct AWS invocation either sets `AWS_PROFILE=stokd-cloud` or is wrapped by `senvn -f production` / `senvn -f <stage>`.
+- `rg -n "AWS_PROFILE=stoked\b" scripts/ stacks/ .github/ package.json` returns no matches (the pre-migration profile name must not reappear).
 - `rg -n "senvn -f " scripts/aws-deploy.sh package.json` shows production SST commands are gated by `senvn`.
-- manual: a deploy attempted without `AWS_PROFILE=stoked` (and without `senvn`) is stopped before it reaches `sst deploy`.
+- manual: a deploy attempted without `AWS_PROFILE=stokd-cloud` (and without `senvn`) is stopped before it reaches `sst deploy`.
 
 ---
 
@@ -123,6 +124,41 @@ The `cenv-public` S3 bucket is owned outside this app and is publicly readable. 
 - manual: an HTTP `GET https://cenv-public.s3.amazonaws.com/brian-stoker-github-activity.json` returns only `{ data, lastUpdated }` with no embedded secrets.
 
 ---
+
+## AX-REPO-GITHUB-FEED-FROM-MONGO: The GitHub activity feed is served from MongoDB, never from GitHub in the request path
+The `/work` activity feed and its two feed read APIs (`pages/api/github/events.ts`, `pages/api/github/filters.ts`) MUST serve GitHub events exclusively from MongoDB via the `getDatabase()` singleton; `api.github.com` is contacted only by the sync path (`lib/github-sync.ts`, driven by the hourly cron `cron/github-sync.ts` or the secret-gated `pages/api/github/sync-events.ts` trigger). The on-demand PR/commit *detail* endpoints (`pages/api/github/pull-request*.ts`, `pages/api/github/commit-files.ts`) are the only sanctioned request-path callers of GitHub and MUST stay off the feed/page-render path, so a `/work` render never depends on GitHub's rate limit or uptime.
+
+### Acceptance Checks
+- `grep -RIlF "api.github.com" pages/api/github/events.ts pages/api/github/filters.ts` returns no matches (use `-F`: a regex dot otherwise false-matches the `/api/github/com…` path string that appears in comments).
+- `rg -n "getDatabase" pages/api/github/events.ts pages/api/github/filters.ts` shows both feed handlers read through the Mongo singleton.
+- manual: `pages/work.tsx` and the events feed render purely from the `github_events`/`sync_metadata` collections; only `pull-request*.ts` and `commit-files.ts` fetch `api.github.com` live, and only on explicit detail expansion.
+
+---
+
+## AX-REPO-CLOUDFRONT-APIGW-RECONVERGENCE: Every production deploy repoints CloudFront onto API Gateway
+Because Lambda Function URLs return 403 in AWS account `167217327520`, every production deploy MUST run `scripts/update-cloudfront-origins.cjs` after `sst deploy` to repoint CloudFront distribution `E1JN9JWBQ37JT2` (the `default` and `imageOptimizer` origins) off the broken Function URLs and onto the API Gateway HTTP APIs that proxy the OpenNext Lambdas. These origin overrides and HTTP APIs are NOT in SST state, so they MUST be reapplied on every deploy; skipping or reordering this step returns 403 site-wide for every view.
+
+### Acceptance Checks
+- `rg -n "update-cloudfront-origins.cjs" scripts/aws-deploy.sh` shows the reconvergence runs as step (b), after `senvn -f production npx sst deploy`.
+- `rg -n "E1JN9JWBQ37JT2" scripts/update-cloudfront-origins.cjs` shows the pinned distribution id, and `rg -n "default:|imageOptimizer:" scripts/update-cloudfront-origins.cjs` shows the two managed origins.
+- manual: after `pnpm deploy:prod`, `https://brian.stokd.cloud` returns 200 (not 403) once the `/*` invalidation propagates.
+
+---
+
+## AX-REPO-MONGO-DB-NAME-OVERRIDE: The live database name stays `brianstoker-{stage}` via MONGODB_NAME
+The effective MongoDB database name MUST remain `brianstoker-production` (prod) / `brianstoker-local` (dev), preserved across the `brian.stokd.cloud` migration by injecting the `MONGODB_NAME` env override in `stacks/site.ts` and `stacks/cron.ts`. The live connection singletons (`lib/mongodb.ts`, `pages/api/lib/mongodb.ts`) MUST read `process.env.MONGODB_NAME` first and only fall back to the `brianstoker-*` default; the domain-derived name produced by `stacks/domains.ts` (`brian-stokd-*`) MUST NOT silently become the live DB name. (The dormant `api/lib/mongodb.ts` selects its DB at the call site and is out of the live path.)
+
+### Acceptance Checks
+- `rg -n "MONGODB_NAME" lib/mongodb.ts pages/api/lib/mongodb.ts stacks/site.ts stacks/cron.ts` shows the override is read in the live singletons and injected by both stacks.
+- `rg -n "brianstoker-production|brianstoker-local" lib/mongodb.ts pages/api/lib/mongodb.ts` shows the `brianstoker-*` fallback defaults (never `brian-stokd-*`).
+- manual: in production `MONGODB_NAME=brianstoker-production` is set so the `stacks/domains.ts` domain-derived `brian-stokd-production` name is never the live DB.
+
+---
+
+<!--
+stokd-axiom-candidate (RESOLVED 2026-06-09)
+note: The `scripts/.axioms.md` AX-MOD-SCRIPTS-008 / AWS-profile reconciliation candidate ("reconcile to a single profile name and promote the global axiom") is now satisfied: AX-REPO-AWS-PROFILE-DISCIPLINE above was corrected from `stoked` to `stokd-cloud` (account 167217327520) in this refresh. Kept as a marker so future refreshes do not re-flag it.
+-->
 
 <!--
 stokd-axiom-candidate

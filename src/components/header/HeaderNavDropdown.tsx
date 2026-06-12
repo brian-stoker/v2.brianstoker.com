@@ -66,6 +66,7 @@ const navItems = [
   { href: ROUTES.drums, icon: 'icon-diamonds', label: 'Drums' },
   { href: ROUTES.resume, icon: 'icon-rect', label: 'Resume' },
   { href: ROUTES.plan, icon: 'icon-triangle', label: '.plan' },
+  { href: ROUTES.bookTime, icon: 'icon-hex', label: 'Book Time' },
 ];
 
 export default function HeaderNavDropdown() {

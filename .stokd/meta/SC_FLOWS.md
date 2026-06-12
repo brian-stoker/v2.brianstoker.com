@@ -2,9 +2,11 @@
 # SC_FLOWS.md
 
 User-flow classification for the `v2.brianstoker.com` portfolio site.
-Meta version: 0.4.0 | Generated: 2026-05-26
+Meta version: 0.4.0 | Generated: 2026-05-26 | Refreshed: 2026-06-09
 
 All flows belong to the single product `SC_PRODUCT_BRIANSTOKER_COM.md`. View references are the view names defined in `SC_VIEWS.md`.
+
+> **Production domain:** the site now serves from `https://brian.stokd.cloud` (migrated off `brianstoker.com` in commit `f1bd28b`; `ROOT_DOMAIN=brian.stokd.cloud`). AWS access uses the `stokd-cloud` profile / account `167217327520`. Lambda Function URLs are broken in that account, so production is served via API Gateway HTTP APIs that CloudFront origins are repointed at after every deploy (see Flow 15).
 
 ---
 
@@ -37,7 +39,7 @@ All flows belong to the single product `SC_PRODUCT_BRIANSTOKER_COM.md`. View ref
 - **Actor:** Anonymous visitor
 - **Goal:** See the full product catalog at a glance and drill into the one that interests them.
 - **Entry points:**
-  - Direct navigation to `https://brianstoker.com/` → `pages/index.tsx`
+  - Direct navigation to `https://brian.stokd.cloud/` → `pages/index.tsx`
   - `AppHeader` logo link
 - **Products:** `SC_PRODUCT_BRIANSTOKER_COM.md`
 
@@ -131,7 +133,7 @@ All flows belong to the single product `SC_PRODUCT_BRIANSTOKER_COM.md`. View ref
 
 1. Visitor lands on `/resume`. *View: **Resume (Primary PDF Viewer)***.
 2. Container `ResizeObserver` measures viewport → sets `containerWidth`.
-3. `PdfDoc` (`react-pdf` `Document`) fetches `brian.stokd.cloud/brian-stoker-resume.pdf` and renders the first `Page`.
+3. `PdfDoc` (`react-pdf` `Document`) fetches the remote CDN file `https://cdn.stokd.cloud/brian.stokd.cloud/brian-stoker-resume.pdf` (moved off a relative path in commit `37a0da7`; the same URL backs the download/open `href`s in `pages/resume-new.tsx`) and renders the first `Page`.
 4. Visitor hovers the document → `ButtonGroup` page controls reveal (Prev `Fab` / `Page X of N` label / Next `Fab`).
 5. Visitor advances pages via Fabs; `pageNumber` updates; Prev/Next disable at boundaries.
 6. (Optional) Visitor visits `/resume-scale` to evaluate the experimental container-width strategy (`useResizeObserver`), same `PdfDoc`.
@@ -263,7 +265,7 @@ All flows belong to the single product `SC_PRODUCT_BRIANSTOKER_COM.md`. View ref
 
 1. Visitor sees the form (footer or toast).
 2. Visitor enters email → submits.
-3. Submission POSTs to the subscribe backend (external email/newsletter provider); a confirmation email is sent containing a `/subscription?code=...&token=...&email=...` link.
+3. `EmailSubscribe` POSTs to `https://api.${window.location.host}/subscribe` (`src/components/footer/EmailSubscribe.tsx:35`) — i.e. `https://api.brian.stokd.cloud/subscribe` in production, the host-derived subscribe backend. A confirmation email is sent containing a `/subscription?code=...&token=...&email=...` link.
 4. Toast auto-dismisses or visitor closes the close button.
 5. Visitor opens email → continues into Flow 11.
 
@@ -275,7 +277,7 @@ All flows belong to the single product `SC_PRODUCT_BRIANSTOKER_COM.md`. View ref
 
 - **Actor:** Subscriber clicking a confirmation link from their inbox
 - **Goal:** Confirm email ownership and finalize subscription.
-- **Entry points:** Email-delivered link `https://brianstoker.com/subscription?code=<code>&token=<token>&email=<email>` → `pages/subscription.tsx`
+- **Entry points:** Email-delivered link `https://brian.stokd.cloud/subscription?code=<code>&token=<token>&email=<email>` → `pages/subscription.tsx`
 - **Products:** `SC_PRODUCT_BRIANSTOKER_COM.md`
 
 **Steps:**
@@ -326,8 +328,8 @@ All flows belong to the single product `SC_PRODUCT_BRIANSTOKER_COM.md`. View ref
 
 1. EventBridge fires every 60 minutes.
 2. Lambda handler `cron/github-sync.ts` boots; reads env (`GITHUB_TOKEN`, `GITHUB_USERNAME`, `MONGODB_*`, `SYNC_SECRET`, `SYNC_ENDPOINT`).
-3. Handler invokes `syncGitHubEvents()` from `lib/github-sync.ts` (or POSTs `${SITE_URL}/api/github/sync-events` with `SYNC_SECRET`, per `stacks/cron.ts`).
-4. Sync logic paginates the GitHub Events API for `GITHUB_USERNAME`.
+3. The handler calls `syncGitHubEvents()` from `lib/github-sync.ts` **directly in-process** (`cron/github-sync.ts:8`) — it does **not** POST to the HTTP `/api/github/sync-events` endpoint. `stacks/cron.ts` still injects `SYNC_ENDPOINT`/`SYNC_SECRET` so the cron Lambda can be repointed at the HTTP trigger if needed, but the current handler runs the sync inline.
+4. Sync logic paginates the GitHub Events API for `GITHUB_USERNAME` (`maxPages = 7`; throws `'GitHub token not configured'` / `'Database not available'` on missing prerequisites).
 5. Events upserted into the `github_events` collection in the per-stage MongoDB database (e.g. `brianstoker-production`); `sync_metadata` updated with cursor/timestamps.
 6. Lambda exits (5-minute timeout). Next visitor loading `/work` or the home Work showcase (Flow 2) receives the fresh data via `/api/github/events`.
 
@@ -360,25 +362,26 @@ All flows belong to the single product `SC_PRODUCT_BRIANSTOKER_COM.md`. View ref
 
 ## 15. Production Deploy
 
-- **Actor:** Developer / operator with `AWS_PROFILE=stoked` credentials
-- **Goal:** Ship a new revision of the site, cron, and infra to AWS.
+- **Actor:** Developer / operator. AWS credentials resolve to the `stokd-cloud` profile / account `167217327520`; `senvn -f production` verifies the target account from `.deploy.json`, and the post-deploy node steps set `AWS_PROFILE=stokd-cloud` explicitly.
+- **Goal:** Ship a new revision of the site, cron, and infra to AWS, and reconverge the CloudFront → API Gateway origin overrides that SST does not manage.
 - **Entry points:**
   - `pnpm deploy:prod` → `scripts/aws-deploy.sh deploy`
-  - Direct `AWS_PROFILE=stoked senvn -f production npx sst deploy --stage production`
-  - Maintenance variants: `pnpm refresh:prod`, `pnpm unlock:prod`, `pnpm remove:prod`
+  - Direct `senvn -f production npx sst deploy --stage production` (account verified by `senvn` via `.deploy.json`)
+  - Maintenance variants: `pnpm refresh:prod` (`sst refresh`), `pnpm unlock:prod` (`sst unlock`), `pnpm remove:prod` (`aws-deploy.sh remove`)
 
 **Steps:**
 
-1. Operator confirms branch state (`main`); ensures `.env.production` is populated.
-2. Runs `pnpm deploy:prod`.
-3. Script applies `fix-nextjs15.js` patches, then runs `pnpx @opennextjs/aws@latest build` to produce the Lambda bundle.
-4. `sst.config.ts.run()` wires resources via `stacks/`:
-   - `stacks/domains.ts` resolves domain + DB name for stage `production`.
-   - `stacks/bucket.ts` ensures `HalBucket` (S3).
-   - `stacks/site.ts` deploys the Next.js Lambda (validates required env vars, attaches `*:*` IAM, sets cache headers).
-   - `stacks/cron.ts` deploys the hourly GitHub-sync cron Lambda.
-5. SST prints output URL; operator validates `https://brianstoker.com/` smoke (Flow 1) and `/work` data freshness (Flow 2).
-6. If stuck, operator runs `pnpm unlock:prod` to release the SST lock.
+1. Operator confirms branch state (`main`); ensures `.env.production` is populated (`ROOT_DOMAIN=brian.stokd.cloud`, `MONGODB_*`, `GITHUB_TOKEN`, `SYNC_SECRET`, `GOOGLE_CLIENT_*`, `NEXTAUTH_*`, …).
+2. Runs `pnpm deploy:prod` → `scripts/aws-deploy.sh deploy`.
+3. Script runs `senvn -f production npx sst deploy --stage production`. SST's `sst.aws.Nextjs` construct builds the site via OpenNext internally — the deploy path does **not** invoke the separate `fix:nextjs15:apply/restore` recipe (that wraps the manual `build:open-next` flow only). `sst.config.ts.run()` wires resources via `stacks/`:
+   - `stacks/domains.ts` → `getDomainInfo()` resolves domains, `resourceName`, and the per-stage `dbName` for stage `production`.
+   - `stacks/bucket.ts` ensures `HalBucket` (S3, `createHalBucket`).
+   - `stacks/site.ts` deploys the Next.js Lambda (`createSite` validates required env vars, attaches IAM, sets cache headers).
+   - `stacks/cron.ts` deploys the hourly GitHub-sync cron Lambda (Flow 13).
+4. **Post-deploy CloudFront repoint (API Gateway workaround):** the script runs `AWS_PROFILE=stokd-cloud node scripts/update-cloudfront-origins.cjs`. Lambda Function URLs return 403 in account `167217327520`, so this idempotent script discovers/creates one HTTP API per server + image-optimizer Lambda, grants the apigateway invoke permission, repoints the CloudFront `default`/`imageOptimizer` origins at the APIs (OAC removed), and invalidates the cache. These API Gateways and origin overrides are **not** in SST state and must be reapplied after every `sst deploy`.
+5. **Log shipping:** the script runs `AWS_PROFILE=stokd-cloud node scripts/setupLogShipping.cjs` (non-fatal on failure) so HAL logs (Flow 12) keep flowing.
+6. Operator validates `https://brian.stokd.cloud/` smoke (Flow 1) and `/work` data freshness (Flow 2).
+7. If a prior deploy left a lock, operator runs `pnpm unlock:prod` before retrying.
 
 **Views used:** None (operational flow). Verification touches Flows 1, 2, 12.
 
@@ -452,7 +455,7 @@ Resume PDF, art, photography, and drum videos are static assets in `public/stati
 | `/hal` | `pages/hal.js` | 12 |
 | `/components` | `pages/components.tsx` | 16 |
 | `*` (404) | `pages/404.tsx` | 17 |
-| `/api/github/sync-events` | `pages/api/github/sync-events.ts` | 13, 14 |
+| `/api/github/sync-events` | `pages/api/github/sync-events.ts` | 14 (local dev cron + manual secret-gated trigger; Flow 13 cron runs `syncGitHubEvents()` in-process, not via this endpoint) |
 | `/api/github/events`, `/api/github/event/[id]`, `/api/github/filters` | `pages/api/github/*` | 2 |
 | `/api/github/pull-request`, `/api/github/pull-request/[number]`, `/api/github/pull-request-files`, `/api/github/commit-files` | `pages/api/github/*` | 3 |
 | `/api/auth/[...nextauth]` | `pages/api/auth/[...nextauth].js` | 12 |

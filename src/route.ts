@@ -15,6 +15,7 @@ const ROUTES: Routes = {
   about: 'https://consulting.stokd.cloud/about/',
   plan: '/bstoked.plan/',
   work: '/work/',
+  bookTime: '/book-time/',
   // Stoked Consulting
   home: 'https://brian.stokd.cloud/',
   stokedConsulting: 'https://consulting.stokd.cloud/',
