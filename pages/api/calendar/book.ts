@@ -1,5 +1,6 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import { getCalendarClient, CALENDAR_ID } from '../lib/google-calendar';
+import { BUSINESS_TIMEZONE } from '../lib/business-hours';
 
 interface BookingRequest {
   name?: string;
@@ -80,11 +81,11 @@ export default async function handler(
         description,
         start: {
           dateTime: startDate.toISOString(),
-          timeZone: 'America/Los_Angeles',
+          timeZone: BUSINESS_TIMEZONE,
         },
         end: {
           dateTime: endDate.toISOString(),
-          timeZone: 'America/Los_Angeles',
+          timeZone: BUSINESS_TIMEZONE,
         },
         attendees: [
           {

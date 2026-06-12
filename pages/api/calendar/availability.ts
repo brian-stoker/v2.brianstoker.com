@@ -1,11 +1,11 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import { getCalendarClient, CALENDAR_ID } from '../lib/google-calendar';
-
-const SLOT_START_HOUR = 10;
-const SLOT_START_MINUTE = 30; // 10:30 AM
-const SLOT_END_HOUR = 17;
-const SLOT_END_MINUTE = 30; // 5:30 PM
-const SLOT_DURATION = 30; // minutes
+import {
+  getBusinessHourSlots,
+  businessWallClockToUtc,
+  businessTodayDateStr,
+  SLOT_DURATION_MINUTES,
+} from '../lib/business-hours';
 
 type ResponseData = {
   slots?: string[];
@@ -27,37 +27,27 @@ export default async function handler(
   }
 
   try {
-    // Parse as local midnight to avoid UTC-vs-local timezone off-by-one
     const parts = date.match(/^(\d{4})-(\d{2})-(\d{2})$/);
     if (!parts) {
       return res.status(400).json({ error: 'Invalid date format (use YYYY-MM-DD)' });
     }
-    const selectedDate = new Date(Number(parts[1]), Number(parts[2]) - 1, Number(parts[3]));
-    if (isNaN(selectedDate.getTime())) {
-      return res.status(400).json({ error: 'Invalid date format (use YYYY-MM-DD)' });
-    }
 
-    // Skip if date is in the past
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-    if (selectedDate < today) {
+    // Past-date check by calendar date in the business timezone (server TZ irrelevant)
+    if (date < businessTodayDateStr()) {
       return res.status(400).json({ error: 'Cannot book in the past' });
     }
 
-    // Skip weekends
-    const dayOfWeek = selectedDate.getDay();
+    // Weekend check on the calendar date itself
+    const dayOfWeek = new Date(Date.UTC(Number(parts[1]), Number(parts[2]) - 1, Number(parts[3]))).getUTCDay();
     if (dayOfWeek === 0 || dayOfWeek === 6) {
       return res.status(400).json({ error: 'Weekend dates are not available' });
     }
 
     const calendar = getCalendarClient();
 
-    // Get all-day and timed events for the selected date
-    const startOfDay = new Date(selectedDate);
-    startOfDay.setHours(0, 0, 0, 0);
-
-    const endOfDay = new Date(selectedDate);
-    endOfDay.setHours(23, 59, 59, 999);
+    // Busy window spans the full business-timezone day
+    const startOfDay = businessWallClockToUtc(date, 0, 0);
+    const endOfDay = new Date(startOfDay.getTime() + 24 * 60 * 60 * 1000);
 
     const calendarResponse = await calendar.events.list({
       calendarId: CALENDAR_ID,
@@ -80,30 +70,20 @@ export default async function handler(
       }
     }
 
-    // Generate all 30-min slots from 10:30 AM to 5:30 PM
+    // Business-hour slot instants, filtered for busy overlap and already-started slots
     const now = new Date();
     const slots: string[] = [];
-    const slotDate = new Date(selectedDate);
-    slotDate.setHours(SLOT_START_HOUR, SLOT_START_MINUTE, 0, 0);
-    const endTime = new Date(selectedDate);
-    endTime.setHours(SLOT_END_HOUR, SLOT_END_MINUTE, 0, 0);
+    for (const iso of getBusinessHourSlots(date)) {
+      const slotStart = new Date(iso);
+      const slotEnd = new Date(slotStart.getTime() + SLOT_DURATION_MINUTES * 60 * 1000);
 
-    while (slotDate <= endTime) {
-      const slotStart = new Date(slotDate);
-        const slotEnd = new Date(slotDate);
-        slotEnd.setMinutes(slotEnd.getMinutes() + SLOT_DURATION);
+      const isOverlap = busyTimes.some(
+        (busy) => slotStart < busy.end && slotEnd > busy.start
+      );
 
-        // Check if slot overlaps with any busy time
-        const isOverlap = busyTimes.some(
-          (busy) => slotStart < busy.end && slotEnd > busy.start
-        );
-
-        // Exclude slots that have already started (matters for today)
-        if (!isOverlap && slotStart > now) {
-          slots.push(slotStart.toISOString());
-        }
-
-        slotDate.setMinutes(slotDate.getMinutes() + SLOT_DURATION);
+      if (!isOverlap && slotStart > now) {
+        slots.push(iso);
+      }
     }
 
     return res.status(200).json({ slots });

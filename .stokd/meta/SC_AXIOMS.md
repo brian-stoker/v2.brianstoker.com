@@ -145,6 +145,17 @@ Because Lambda Function URLs return 403 in AWS account `167217327520`, every pro
 
 ---
 
+## AX-REPO-BOOKING-TZ-SAFE-SLOTS: Booking slot instants are pinned to America/Chicago, independent of server and visitor timezones
+All booking availability slots MUST be generated as UTC instants corresponding to 10:30–17:30 wall-clock in `America/Chicago` via the pure helper `pages/api/lib/business-hours.ts` — no TZ-dependent Date constructors (`new Date(y,m,d,h)`, `setHours`) for slot math in the API, which silently shift business hours when the code runs on the UTC Lambda. The CalendarBooking client MUST treat server-provided ISO instants as the source of truth: it maps them to grid rows with `Intl.DateTimeFormat` in the business timezone and submits the server-provided instant when booking; it MUST NOT regenerate slot instants from visitor-local time. (Approved 2026-06-12 with `America/Los_Angeles` in the sanction; amended to `America/Chicago` during implementation because the operator's actual timezone — and the previously working local behavior — is Central; `pages/api/calendar/book.ts` event timeZone was aligned at the same time.)
+
+### Acceptance Checks
+- `rg -n "setHours|SLOT_START_HOUR" pages/api/calendar/availability.ts` shows no local-time slot construction; `rg -n "business-hours" pages/api/calendar/availability.ts pages/api/calendar/book.ts` shows both handlers import the helper.
+- `rg -n "America/Chicago" pages/api/lib/business-hours.ts` shows the pinned zone, and `rg -n "BUSINESS_TIMEZONE" pages/api/calendar/book.ts` shows the event timeZone uses it.
+- `npx playwright test e2e/book-time.spec.ts` passes, including the Central-wall-clock Intl assertion on API slots, the TZ=UTC subprocess helper test, and the `timezoneId: 'UTC'` visitor test.
+- manual: `curl "https://brian.stokd.cloud/api/calendar/availability?date=<next weekday>"` returns a first slot whose Central wall-clock time is 10:30 AM (15:30Z during CDT) regardless of server TZ.
+
+---
+
 ## AX-REPO-MONGO-DB-NAME-OVERRIDE: The live database name stays `brianstoker-{stage}` via MONGODB_NAME
 The effective MongoDB database name MUST remain `brianstoker-production` (prod) / `brianstoker-local` (dev), preserved across the `brian.stokd.cloud` migration by injecting the `MONGODB_NAME` env override in `stacks/site.ts` and `stacks/cron.ts`. The live connection singletons (`lib/mongodb.ts`, `pages/api/lib/mongodb.ts`) MUST read `process.env.MONGODB_NAME` first and only fall back to the `brianstoker-*` default; the domain-derived name produced by `stacks/domains.ts` (`brian-stokd-*`) MUST NOT silently become the live DB name. (The dormant `api/lib/mongodb.ts` selects its DB at the call site and is out of the live path.)
 

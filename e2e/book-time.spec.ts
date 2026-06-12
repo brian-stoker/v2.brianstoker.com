@@ -1,4 +1,16 @@
 import { test, expect, Page } from '@playwright/test';
+import { execFileSync } from 'child_process';
+
+const BUSINESS_TZ = 'America/Chicago';
+
+// Business-timezone wall-clock minutes-of-day for a UTC instant
+function businessMinutesOfDay(iso: string): number {
+  const parts = new Intl.DateTimeFormat('en-US', {
+    timeZone: BUSINESS_TZ, hour12: false, hour: '2-digit', minute: '2-digit',
+  }).formatToParts(new Date(iso));
+  const get = (t: string) => Number(parts.find(p => p.type === t)?.value);
+  return (get('hour') % 24) * 60 + get('minute');
+}
 
 // Next weekday from today (skips weekends)
 function nextWeekday(): string {
@@ -91,16 +103,34 @@ test.describe('Book Time page — real availability API', () => {
     expect(Array.isArray(body.slots)).toBe(true);
   });
 
-  test('all returned slots fall between 10:30 AM and 5:30 PM', async ({ request }) => {
+  test('all returned slots fall between 10:30 AM and 5:30 PM America/Chicago', async ({ request }) => {
     const date = nextWeekday();
     const res = await request.get(`/api/calendar/availability?date=${date}`);
     const { slots } = await res.json();
     for (const iso of slots as string[]) {
-      const d = new Date(iso);
-      const totalMinutes = d.getHours() * 60 + d.getMinutes();
-      expect(totalMinutes).toBeGreaterThanOrEqual(10 * 60 + 30); // 10:30 AM
-      expect(totalMinutes).toBeLessThanOrEqual(17 * 60 + 30);    // 5:30 PM
+      const totalMinutes = businessMinutesOfDay(iso);
+      expect(totalMinutes).toBeGreaterThanOrEqual(10 * 60 + 30); // 10:30 AM CT
+      expect(totalMinutes).toBeLessThanOrEqual(17 * 60 + 30);    // 5:30 PM CT
     }
+  });
+
+  test('business-hours helper emits Central-time instants regardless of server timezone', () => {
+    // Run the pure helper under TZ=UTC (what the prod Lambda runs in) and assert
+    // it still produces America/Chicago business hours. 2026-06-15 is CDT
+    // (UTC-5), so the first slot — 10:30 AM CT — is 15:30Z.
+    const script = [
+      "import { getBusinessHourSlots } from './pages/api/lib/business-hours';",
+      "const slots = getBusinessHourSlots('2026-06-15');",
+      'console.log(JSON.stringify(slots));',
+    ].join('\n');
+    const out = execFileSync('node_modules/.bin/tsx', ['--eval', script], {
+      env: { ...process.env, TZ: 'UTC' },
+      encoding: 'utf8',
+    });
+    const slots = JSON.parse(out.trim()) as string[];
+    expect(slots[0]).toBe('2026-06-15T15:30:00.000Z'); // 10:30 AM CDT
+    expect(slots[slots.length - 1]).toBe('2026-06-15T22:30:00.000Z'); // 5:30 PM CDT
+    expect(slots).toHaveLength(15);
   });
 
   test('availability for today never includes slots that have already passed', async ({ request }) => {
@@ -184,6 +214,33 @@ test.describe('Book Time page — real booking API', () => {
     expect(typeof body.eventId).toBe('string');
     expect(body.eventId.length).toBeGreaterThan(0);
     expect(typeof body.eventLink).toBe('string');
+  });
+});
+
+// ── Timezone independence: visitor in UTC must still see slots ───────────────
+
+test.describe('Book Time page — non-Pacific visitor', () => {
+  test.use({ timezoneId: 'UTC' });
+
+  test('a visitor in UTC sees every slot the API returns for a future weekday', async ({ page, request }) => {
+    const date = nextWeekday();
+    await gotoBookTime(page);
+    const d = parseInt(date.split('-')[2], 10);
+    await page.getByTestId('mini-calendar').getByText(String(d)).click();
+    await page.waitForTimeout(3000);
+
+    const column = page.locator(`[data-day-column="${date}"]`);
+    const gridSlotCount = await column.locator('[data-testid="time-slot"]').count();
+
+    // Fetch after render: parallel booking tests can only remove slots, so the
+    // grid must show at least as many slots as the API returns now. A
+    // visitor-local interpretation of the instants drops most of them.
+    const res = await request.get(`/api/calendar/availability?date=${date}`);
+    const { slots: apiSlots } = await res.json() as { slots: string[] };
+    test.skip(!apiSlots || apiSlots.length === 0, `No available slots on ${date}`);
+
+    expect(gridSlotCount).toBeGreaterThan(0);
+    expect(gridSlotCount).toBeGreaterThanOrEqual(apiSlots.length);
   });
 });
 

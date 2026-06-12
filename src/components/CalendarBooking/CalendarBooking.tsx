@@ -22,6 +22,30 @@ const TIME_SLOTS = [
 
 const GRID_HEIGHT = ROW_HEIGHT * TIME_SLOTS.length;
 
+// Slot instants from the API are pinned to the business timezone; map them to
+// grid rows in that zone so visitors in any timezone see the same grid.
+const BUSINESS_TIMEZONE = 'America/Chicago';
+
+const businessZoneFormatter = new Intl.DateTimeFormat('en-US', {
+  timeZone: BUSINESS_TIMEZONE,
+  hour12: false,
+  year: 'numeric', month: '2-digit', day: '2-digit',
+  hour: '2-digit', minute: '2-digit',
+});
+
+// Grid row index for a server slot instant, or -1 if it falls outside the
+// given calendar day / known time slots (in the business timezone)
+function slotRowForIso(iso: string, dateStr: string): number {
+  const parts: Record<string, string> = {};
+  for (const p of businessZoneFormatter.formatToParts(new Date(iso))) {
+    if (p.type !== 'literal') {parts[p.type] = p.value;}
+  }
+  if (`${parts.year}-${parts.month}-${parts.day}` !== dateStr) {return -1;}
+  const hour = Number(parts.hour) % 24;
+  const minute = Number(parts.minute);
+  return TIME_SLOTS.findIndex(s => s.hour === hour && s.minute === minute);
+}
+
 const WEEK_DAYS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'];
 
 const MONTH_NAMES = [
@@ -93,7 +117,7 @@ function MiniCalendar({ year, month, selectedDate, onDateClick, onPrevMonth, onN
   } as const;
 
   return (
-    <Box data-testid="mini-calendar" sx={{ width: 220, flexShrink: 0, userSelect: 'none' }}>
+    <Box data-testid="mini-calendar" sx={{ marginTop: 20, width: 220, flexShrink: 0, userSelect: 'none' }}>
       <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 1 }}>
         <Box component="button" onClick={onPrevMonth} sx={btnSx}>‹</Box>
         <Typography variant="caption" sx={{ fontWeight: 700 }}>
@@ -137,7 +161,7 @@ interface DayState {
   date: string;
   dayName: string;
   dayNum: number;
-  availableIsos: Set<string>; // ISO strings from API
+  slotIsoByRow: Map<number, string>; // grid row index → server slot instant (ISO)
   loading: boolean;
 }
 
@@ -170,17 +194,22 @@ export default function CalendarBooking({ apiBaseUrl = '', onSuccess, onError }:
   function buildWeekDays(ws: Date): DayState[] {
     return Array.from({ length: 5 }, (_, i) => {
       const date = addDays(ws, i);
-      return { date: toDateStr(date), dayName: WEEK_DAYS[i], dayNum: date.getDate(), availableIsos: new Set(), loading: date >= today };
+      return { date: toDateStr(date), dayName: WEEK_DAYS[i], dayNum: date.getDate(), slotIsoByRow: new Map(), loading: date >= today };
     });
   }
 
   async function fetchDay(day: DayState): Promise<DayState> {
-    if (!day.loading) return day; // past — skip
+    if (!day.loading) {return day;} // past — skip
     try {
       const res = await fetch(`${apiBaseUrl}/api/calendar/availability?date=${day.date}`);
-      if (!res.ok) return { ...day, loading: false };
+      if (!res.ok) {return { ...day, loading: false };}
       const data = await res.json();
-      return { ...day, loading: false, availableIsos: new Set(data.slots || []) };
+      const slotIsoByRow = new Map<number, string>();
+      for (const iso of (data.slots || []) as string[]) {
+        const row = slotRowForIso(iso, day.date);
+        if (row >= 0) {slotIsoByRow.set(row, iso);}
+      }
+      return { ...day, loading: false, slotIsoByRow };
     } catch {
       return { ...day, loading: false };
     }
@@ -193,21 +222,12 @@ export default function CalendarBooking({ apiBaseUrl = '', onSuccess, onError }:
     setSelectedTimeIndex(-1);
     setDuration(30);
     Promise.all(initial.map(fetchDay)).then(setDays);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+     
   }, [weekStart, apiBaseUrl]);
 
-  // Local Date for a given day + time-slot index
-  function slotDate(dateStr: string, idx: number): Date {
-    const [y, m, d] = dateStr.split('-').map(Number);
-    return new Date(y, m - 1, d, TIME_SLOTS[idx].hour, TIME_SLOTS[idx].minute, 0, 0);
-  }
-
-  function slotIso(dateStr: string, idx: number): string {
-    return slotDate(dateStr, idx).toISOString();
-  }
-
   function isAvailable(day: DayState, idx: number): boolean {
-    return day.availableIsos.has(slotIso(day.date, idx)) && slotDate(day.date, idx).getTime() > Date.now();
+    const iso = day.slotIsoByRow.get(idx);
+    return !!iso && new Date(iso).getTime() > Date.now();
   }
 
   function isPastDay(day: DayState): boolean {
@@ -233,7 +253,7 @@ export default function CalendarBooking({ apiBaseUrl = '', onSuccess, onError }:
     dragStartY.current = e.clientY;
     dragStartDuration.current = duration;
     const onMove = (ev: MouseEvent) => {
-      if (dragStartY.current === null) return;
+      if (dragStartY.current === null) {return;}
       const delta = ev.clientY - dragStartY.current;
       const snap = Math.round((delta * 0.5) / 15) * 15;
       setDuration(Math.max(30, Math.min(120, dragStartDuration.current + snap)));
@@ -256,7 +276,9 @@ export default function CalendarBooking({ apiBaseUrl = '', onSuccess, onError }:
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!selectedDay || selectedTimeIndex < 0) return;
+    if (!selectedDay || selectedTimeIndex < 0) {return;}
+    const startTime = days.find(d => d.date === selectedDay)?.slotIsoByRow.get(selectedTimeIndex);
+    if (!startTime) {return;}
     setSubmitting(true);
     setSubmitError('');
     try {
@@ -265,12 +287,12 @@ export default function CalendarBooking({ apiBaseUrl = '', onSuccess, onError }:
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           ...formData,
-          startTime: slotIso(selectedDay, selectedTimeIndex),
+          startTime,
           durationMinutes: duration,
         }),
       });
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error || 'Failed to book appointment');
+      if (!res.ok) {throw new Error(data.error || 'Failed to book appointment');}
       setSubmitSuccess(true);
       setSelectedDay(null);
       setSelectedTimeIndex(-1);
@@ -286,15 +308,15 @@ export default function CalendarBooking({ apiBaseUrl = '', onSuccess, onError }:
     }
   };
 
-  const prevMonth = () => { if (calMonth === 0) { setCalYear(y => y - 1); setCalMonth(11); } else setCalMonth(m => m - 1); };
-  const nextMonth = () => { if (calMonth === 11) { setCalYear(y => y + 1); setCalMonth(0); } else setCalMonth(m => m + 1); };
+  const prevMonth = () => { if (calMonth === 0) { setCalYear(y => y - 1); setCalMonth(11); } else {setCalMonth(m => m - 1);} };
+  const nextMonth = () => { if (calMonth === 11) { setCalYear(y => y + 1); setCalMonth(0); } else {setCalMonth(m => m + 1);} };
 
   const durationRows = duration / 30; // may be fractional (45 min = 1.5)
   const blockHeight = Math.max(ROW_HEIGHT, durationRows * ROW_HEIGHT);
 
   return (
     <Box sx={{ width: '100%', maxWidth: 1000, mx: 'auto' }}>
-      <Box sx={{ display: 'flex', gap: 3, flexWrap: 'wrap', alignItems: 'flex-start' }}>
+      <Box sx={{ display: 'flex', gap: 7, flexWrap: 'wrap', alignItems: 'flex-start' }}>
         {/* Left: mini calendar */}
         <MiniCalendar
           year={calYear} month={calMonth}
