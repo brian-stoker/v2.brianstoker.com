@@ -56,8 +56,10 @@ test.describe('Book Time page — layout', () => {
 
   test('today\'s column cells are highlighted, other columns are not', async ({ page }) => {
     const now = new Date();
-    test.skip(isWeekend(now), 'Today is a weekend — not shown in the Mon–Fri grid');
+    test.skip(isWeekend(now), 'Today is a weekend — not shown in the booking grid');
     await gotoBookTime(page);
+    const todayColumn = page.locator(`[data-day-column="${localDateStr(now)}"]`);
+    test.skip(await todayColumn.count() === 0, 'Today is past the last slot — not in the next-available window');
     const todayCells = page.locator(`[data-day-column="${localDateStr(now)}"] [data-today="true"]`);
     expect(await todayCells.count()).toBeGreaterThan(0);
     // No highlighted cells outside today's column
@@ -84,9 +86,8 @@ test.describe('Book Time page — layout', () => {
     await page.waitForTimeout(3000); // let availability load
 
     // The first slot of today (10:30 AM) has passed; it must not be a clickable time-slot.
-    const dayIndex = (now.getDay() + 6) % 7; // Mon=0 … Fri=4
-    const columns = page.locator('[data-testid="week-grid"] [data-day-column]');
-    const todayColumn = columns.nth(dayIndex);
+    const todayColumn = page.locator(`[data-day-column="${localDateStr(now)}"]`);
+    test.skip(await todayColumn.count() === 0, 'Today is past the last slot — not in the next-available window');
     const firstCell = todayColumn.locator('[data-testid="time-slot"], [data-testid="day-unavailable"]').first();
     await expect(firstCell).toHaveAttribute('data-testid', 'day-unavailable');
   });
@@ -357,7 +358,7 @@ test.describe('Book Time page — UI with real API', () => {
     await expect(page.getByTestId('duration-display')).toContainText('45');
   });
 
-  test('submit button disabled until name, email, phone filled', async ({ page }) => {
+  test('submit button disabled until name, email, phone, reason filled', async ({ page }) => {
     await gotoBookTime(page);
     const date = nextWeekday();
     const d = parseInt(date.split('-')[2], 10);
@@ -378,6 +379,10 @@ test.describe('Book Time page — UI with real API', () => {
     await expect(submit).toBeDisabled();
 
     await page.locator('input[name="phone"]').fill('555-1234');
+    // Reason is now required — still disabled without it
+    await expect(submit).toBeDisabled();
+
+    await page.locator('textarea[name="reason"]').first().fill('Discuss a project');
     await expect(submit).not.toBeDisabled();
   });
 
@@ -396,10 +401,96 @@ test.describe('Book Time page — UI with real API', () => {
     await page.locator('input[name="email"]').fill('brian@stokd.cloud');
     await page.locator('input[name="phone"]').fill('555-0000');
     await page.locator('input[name="company"]').fill('Stoked');
-    await page.locator('input[name="reason"]').fill('Automated e2e test — safe to delete');
+    await page.locator('textarea[name="reason"]').first().fill('Automated e2e test — safe to delete');
 
     await page.getByRole('button', { name: /book appointment/i }).click();
 
     await expect(page.getByTestId('booking-success')).toBeVisible({ timeout: 15000 });
+  });
+});
+
+// ── New "Meet" behaviors ──────────────────────────────────────────────────────
+
+test.describe('Book Time page — Meet title & active nav', () => {
+  test('page title and heading are "Meet" and the nav item is active', async ({ page }) => {
+    await gotoBookTime(page);
+    await expect(page).toHaveTitle(/Meet/);
+    await expect(page.getByRole('heading', { level: 1, name: 'Meet' })).toBeVisible();
+    // Desktop nav exposes the active route via aria-current
+    const active = page.locator('nav a[aria-current="page"]');
+    if (await active.count() > 0) {
+      await expect(active.first()).toHaveText('Meet');
+    }
+  });
+});
+
+test.describe('Book Time page — default selection & window', () => {
+  test('today is selected in the mini calendar on load', async ({ page }) => {
+    await gotoBookTime(page);
+    const selectedCells = page.locator('[data-testid="mini-cal-cell"][data-selected="true"]');
+    await expect(selectedCells).toHaveCount(1);
+  });
+
+  test('first day column is a weekday on or after today', async ({ page }) => {
+    await gotoBookTime(page);
+    const firstCol = page.locator('[data-day-column]').first();
+    const dateStr = await firstCol.getAttribute('data-day-column');
+    expect(dateStr).toBeTruthy();
+    const [y, m, d] = dateStr!.split('-').map(Number);
+    const dow = new Date(Date.UTC(y, m - 1, d)).getUTCDay();
+    expect(dow === 0 || dow === 6).toBe(false);
+  });
+});
+
+test.describe('Book Time page — modal booking form', () => {
+  test('booking form is a modal (in a dialog) with an invite-others chip field', async ({ page }) => {
+    await gotoBookTime(page);
+    const date = nextWeekday();
+    const d = parseInt(date.split('-')[2], 10);
+    await page.getByTestId('mini-calendar').getByText(String(d)).click();
+    await page.waitForTimeout(3000);
+
+    const slot = page.getByTestId('time-slot').first();
+    if (await slot.count() === 0) { test.skip(true, 'No slots'); return; }
+    await slot.click();
+
+    // The form lives inside a MUI Dialog
+    const dialog = page.getByRole('dialog');
+    await expect(dialog).toBeVisible();
+    await expect(dialog.getByTestId('booking-form')).toBeVisible();
+
+    // Add an invitee → chip appears
+    const invite = page.getByTestId('invite-input');
+    await invite.fill('guest@example.com');
+    await invite.press('Enter');
+    await expect(dialog.getByText('guest@example.com')).toBeVisible();
+
+    // "Change time" closes the modal
+    await page.getByTestId('change-time').click();
+    await expect(page.getByRole('dialog')).toHaveCount(0);
+  });
+});
+
+test.describe('Book Time page — availability cache', () => {
+  test('returning to the page within the TTL does not re-query availability', async ({ page }) => {
+    const availabilityRequests: string[] = [];
+    page.on('request', (req) => {
+      if (req.url().includes('/api/calendar/availability')) {
+        availabilityRequests.push(req.url());
+      }
+    });
+
+    await gotoBookTime(page);
+    await page.waitForTimeout(2000);
+    expect(availabilityRequests.length).toBeGreaterThan(0);
+    const firstCount = availabilityRequests.length;
+
+    // Leave the page, then return within the cache TTL (sessionStorage persists)
+    await page.goto('/');
+    await page.waitForLoadState('networkidle');
+    await gotoBookTime(page);
+    await page.waitForTimeout(2000);
+
+    expect(availabilityRequests.length).toBe(firstCount);
   });
 });

@@ -12,9 +12,18 @@ import Typography from '@mui/material/Typography';
 import GitHubIcon from '@mui/icons-material/GitHub';
 import SvgHamburgerMenu from 'src/icons/SvgHamburgerMenu';
 import NextLink from 'next/link';
+import { useRouter } from 'next/router';
 import ROUTES from 'src/route';
 import ThemeModeToggle from './ThemeModeToggle';
 import IconImage from '../icon/IconImage';
+
+// Normalize a path for active-route comparison (origin/query/hash/trailing-slash agnostic)
+function normalizePath(href: string): string | null {
+  if (/^https?:\/\//.test(href)) {return null;}
+  const path = href.split('?')[0].split('#')[0];
+  const trimmed = path.replace(/\/+$/, '');
+  return trimmed === '' ? '/' : trimmed;
+}
 
 const StyledLink = styled(NextLink)(
   ({ theme }) => [
@@ -66,10 +75,12 @@ const navItems = [
   { href: ROUTES.drums, icon: 'icon-diamonds', label: 'Drums' },
   { href: ROUTES.resume, icon: 'icon-rect', label: 'Resume' },
   { href: ROUTES.plan, icon: 'icon-triangle', label: '.plan' },
-  { href: ROUTES.bookTime, icon: 'icon-hex', label: 'Book Time' },
+  { href: ROUTES.bookTime, icon: 'icon-hex', label: 'Meet' },
 ];
 
 export default function HeaderNavDropdown() {
+  const router = useRouter();
+  const currentPath = normalizePath(router.asPath || '');
   const [open, setOpen] = React.useState(false);
   const hambugerRef = React.useRef<HTMLButtonElement>(null);
   const menuId = React.useId();
@@ -82,22 +93,42 @@ export default function HeaderNavDropdown() {
         width: '100%',
         pr: 2,
       }}>
-        {navItems.map((item) => (
-          <Tooltip key={item.href} title={item.label} arrow>
-            <IconButton
-              component={NextLink}
-              href={item.href}
-              color="primary"
-              aria-label={item.label}
-              disableRipple
-              sx={{
-                position: 'relative',
-              }}
-            >
-              <IconImage name={item.icon} width={20} height={20} />
-            </IconButton>
-          </Tooltip>
-        ))}
+        {navItems.map((item) => {
+          const itemPath = normalizePath(item.href);
+          const active = itemPath !== null && itemPath === currentPath;
+          return (
+            <Tooltip key={item.href} title={item.label} arrow>
+              <IconButton
+                component={NextLink}
+                href={item.href}
+                color="primary"
+                aria-label={item.label}
+                aria-current={active ? 'page' : undefined}
+                disableRipple
+                sx={{
+                  position: 'relative',
+                  borderRadius: 1,
+                  ...(active && {
+                    backgroundColor: (theme) => alpha(theme.palette.primary.main, 0.12),
+                    '&::after': {
+                      content: '""',
+                      position: 'absolute',
+                      bottom: 2,
+                      left: '50%',
+                      transform: 'translateX(-50%)',
+                      width: 16,
+                      height: 2,
+                      borderRadius: 1,
+                      backgroundColor: 'primary.main',
+                    },
+                  }),
+                }}
+              >
+                <IconImage name={item.icon} width={20} height={20} />
+              </IconButton>
+            </Tooltip>
+          );
+        })}
       </Box>
     </React.Fragment>
   );

@@ -10,6 +10,7 @@ interface BookingRequest {
   reason?: string;
   startTime?: string;
   durationMinutes?: number;
+  inviteEmails?: string[];
 }
 
 type ResponseData = {
@@ -26,12 +27,21 @@ export default async function handler(
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
-  const { name, email, phone, company, reason, startTime, durationMinutes } =
+  const { name, email, phone, company, reason, startTime, durationMinutes, inviteEmails } =
     req.body as BookingRequest;
 
   // Validate required fields
-  if (!name || !email || !phone) {
-    return res.status(400).json({ error: 'Missing required fields: name, email, phone' });
+  if (!name || !email || !phone || !reason) {
+    return res.status(400).json({ error: 'Missing required fields: name, email, phone, reason' });
+  }
+
+  // Validate any invitee emails before building the event
+  const emailRe = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  const invitees = Array.isArray(inviteEmails)
+    ? inviteEmails.map((e) => String(e).trim()).filter(Boolean)
+    : [];
+  if (invitees.some((e) => !emailRe.test(e))) {
+    return res.status(400).json({ error: 'One or more invite emails are invalid' });
   }
 
   if (!startTime || typeof startTime !== 'string') {
@@ -92,6 +102,9 @@ export default async function handler(
             email: email!,
             displayName: name || undefined,
           },
+          ...invitees
+            .filter((e) => e.toLowerCase() !== email!.toLowerCase())
+            .map((e) => ({ email: e })),
         ],
       },
     });

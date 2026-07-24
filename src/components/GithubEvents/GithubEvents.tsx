@@ -105,7 +105,9 @@ export default function GithubEvents({ eventsPerPage = EVENT_PAGE_SIZE, hideMeta
   // Group events by repo for mobile repo strip - uses ALL repos from filters API
   // Sorted by most recent event, with accurate total counts from DB
   const mobileRepoGroups = React.useMemo(() => {
-    const groups = repositories.map(repoName => {
+    const groups = repositories
+      .filter((repoName): repoName is string => typeof repoName === 'string' && repoName.length > 0)
+      .map(repoName => {
       const shortName = repoName.split('/')[1] || repoName;
       const stats = repoStats[repoName];
       return {
@@ -763,7 +765,7 @@ export default function GithubEvents({ eventsPerPage = EVENT_PAGE_SIZE, hideMeta
   const filterEvents = (events: GitHubEvent[]) => {
     return events.filter(event => {
       // Compare just the repo name without username
-      const repoName = event.repo.name.split('/')[1] || event.repo.name;
+      const repoName = event.repo?.name ? (event.repo.name.split('/')[1] || event.repo.name) : '';
       const matchesRepo = !repoFilter || repoName === repoFilter;
       const matchesAction = !actionFilter || event.type.replace('Event', '') === actionFilter;
 
@@ -1554,7 +1556,7 @@ export default function GithubEvents({ eventsPerPage = EVENT_PAGE_SIZE, hideMeta
                                       {commit.sha.substring(0, 7)}
                                     </Typography>
                                     <Typography variant="body2" component="span" sx={{ fontSize: '0.8rem' }}>
-                                      {replaceGithubEmoji(commit.message.split('\n')[0])}
+                                      {replaceGithubEmoji(commit.message?.split('\n')[0] || '')}
                                     </Typography>
                                   </Box>
                                 </Box>
@@ -1656,7 +1658,7 @@ export default function GithubEvents({ eventsPerPage = EVENT_PAGE_SIZE, hideMeta
                         {/* Fallback for other event types */}
                         {!['PushEvent', 'PullRequestEvent', 'IssuesEvent', 'IssueCommentEvent', 'CreateEvent', 'DeleteEvent'].includes(event.actionType) && (
                           <Typography variant="body2" sx={{ fontSize: '0.85rem', color: 'text.primary' }}>
-                            {event.description || `${event.action} in ${event.repo.split('/')[1]}`}
+                            {event.description || `${event.action} in ${event.repo?.split('/')[1] ?? ''}`}
                           </Typography>
                         )}
                       </Box>
@@ -1787,7 +1789,7 @@ export default function GithubEvents({ eventsPerPage = EVENT_PAGE_SIZE, hideMeta
                           {getTimeOnly(event.date)}
                         </Box>
                         <Box sx={{ display: 'flex', alignItems: 'center', fontSize: '0.875rem', justifyContent: 'center' }}>
-                          {event.repo.split('/')[1]}
+                          {event.repo?.split('/')[1]}
                         </Box>
                         <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5, height: '38px', fontSize: '0.875rem' }}>
                           {actionIcons[event.action] || null}
