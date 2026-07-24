@@ -17,14 +17,21 @@
  *     (custom https-only origin, OAC removed)
  *   - invalidates the cache
  *
+ * The target distribution id is resolved dynamically, never hardcoded:
+ *   1. process.env.DISTRIBUTION_ID (the SST deploy-time output, passed by
+ *      scripts/aws-deploy.sh), if set; otherwise
+ *   2. the distribution whose CloudFront Aliases include the site ROOT_DOMAIN.
+ * This keeps the target correct even if SST recreates the distribution (which
+ * changes its id) — a hardcoded id would silently invalidate a dead one.
+ *
  * Usage:
- *   AWS_PROFILE=stokd-cloud node scripts/update-cloudfront-origins.js
+ *   AWS_PROFILE=stokd-cloud ROOT_DOMAIN=brian.stokd.cloud \
+ *     node scripts/update-cloudfront-origins.cjs
  */
 
 const { execSync } = require('child_process');
 const fs = require('fs');
 
-const DISTRIBUTION_ID = 'E1JN9JWBQ37JT2';
 const AWS_PROFILE = process.env.AWS_PROFILE || 'stokd-cloud';
 const REGION = 'us-east-1';
 
@@ -59,6 +66,40 @@ function awsAllow(command) {
 
 function accountId() {
   return aws('sts get-caller-identity').Account;
+}
+
+// The site's CloudFront aliases: ROOT_DOMAIN (first entry if comma-separated)
+// plus its www. variant. Falls back to the production apex when unset.
+function siteDomains() {
+  const root = (process.env.ROOT_DOMAIN || 'brian.stokd.cloud').split(',')[0].trim();
+  return [root, `www.${root}`];
+}
+
+function listDistributions() {
+  const res = aws('cloudfront list-distributions');
+  return (res.DistributionList && res.DistributionList.Items) || [];
+}
+
+/**
+ * Resolve the target CloudFront distribution id. Pure and unit-tested.
+ *   - envId (e.g. the SST deploy-time `distributionId` output) wins if non-empty.
+ *   - otherwise return the distribution whose Aliases include any target domain.
+ *   - throw if nothing matches — never silently target the wrong distribution.
+ */
+function resolveDistributionId({ envId, distributions, domains } = {}) {
+  if (envId && String(envId).trim()) return String(envId).trim();
+  const targets = (domains || []).filter(Boolean);
+  const match = (distributions || []).find((d) =>
+    (((d.Aliases && d.Aliases.Items) || []).some((a) => targets.includes(a)))
+  );
+  if (!match) {
+    throw new Error(
+      `No CloudFront distribution found whose aliases include any of: ${
+        targets.join(', ') || '(none)'
+      }. Set DISTRIBUTION_ID or ROOT_DOMAIN.`
+    );
+  }
+  return match.Id;
 }
 
 function findLambda(pattern) {
@@ -99,16 +140,16 @@ function ensurePermission({ fnName, statementId, apiId, account }) {
   );
 }
 
-function getDistribution() {
-  const res = aws(`cloudfront get-distribution-config --id ${DISTRIBUTION_ID}`);
+function getDistribution(distributionId) {
+  const res = aws(`cloudfront get-distribution-config --id ${distributionId}`);
   return { config: res.DistributionConfig, etag: res.ETag };
 }
 
-function updateDistribution(config, etag) {
+function updateDistribution(distributionId, config, etag) {
   const tmp = '/tmp/cloudfront-config.json';
   fs.writeFileSync(tmp, JSON.stringify(config));
   aws(
-    `cloudfront update-distribution --id ${DISTRIBUTION_ID} --if-match ${etag} ` +
+    `cloudfront update-distribution --id ${distributionId} --if-match ${etag} ` +
       `--distribution-config file://${tmp}`
   );
   fs.unlinkSync(tmp);
@@ -116,6 +157,14 @@ function updateDistribution(config, etag) {
 
 function main() {
   console.log('🔄 Repointing CloudFront origins at API Gateway...\n');
+
+  // 0. Resolve the target distribution dynamically (SST output, else by domain).
+  const distributionId = resolveDistributionId({
+    envId: process.env.DISTRIBUTION_ID,
+    distributions: process.env.DISTRIBUTION_ID ? [] : listDistributions(),
+    domains: siteDomains(),
+  });
+  console.log(`Target CloudFront distribution: ${distributionId}\n`);
 
   // 1. Ensure an API Gateway exists for each origin, capture its domain.
   const account = accountId();
@@ -131,7 +180,7 @@ function main() {
   }
 
   // 2. Update the CloudFront origins.
-  const { config, etag } = getDistribution();
+  const { config, etag } = getDistribution(distributionId);
   let changed = false;
   for (const origin of config.Origins.Items) {
     if (!domains[origin.Id]) continue;
@@ -154,10 +203,14 @@ function main() {
     console.log('No matching origins found; nothing to update.');
     return;
   }
-  updateDistribution(config, etag);
+  updateDistribution(distributionId, config, etag);
   console.log('\n📤 CloudFront updated. Invalidating cache...');
-  aws(`cloudfront create-invalidation --distribution-id ${DISTRIBUTION_ID} --paths "/*"`);
+  aws(`cloudfront create-invalidation --distribution-id ${distributionId} --paths "/*"`);
   console.log('✅ Done. Changes take a few minutes to propagate.');
 }
 
-main();
+module.exports = { resolveDistributionId, siteDomains };
+
+if (require.main === module) {
+  main();
+}

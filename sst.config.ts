@@ -46,6 +46,9 @@ export default $config({
 
     return {
       ...web,
+      // Expose the CloudFront distribution id so scripts/aws-deploy.sh can pass it
+      // to the post-deploy origin-reconvergence step instead of hardcoding it.
+      distributionId: web.nodes?.cdn?.nodes?.distribution?.id,
       cron: githubSyncCron.name,
       ...(apiGateway && {
         apiGatewayUrl: apiGateway.invokeUrl,

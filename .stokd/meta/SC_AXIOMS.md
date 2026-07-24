@@ -135,13 +135,20 @@ The `/work` activity feed and its two feed read APIs (`pages/api/github/events.t
 
 ---
 
-## AX-REPO-CLOUDFRONT-APIGW-RECONVERGENCE: Every production deploy repoints CloudFront onto API Gateway
-Because Lambda Function URLs return 403 in AWS account `167217327520`, every production deploy MUST run `scripts/update-cloudfront-origins.cjs` after `sst deploy` to repoint CloudFront distribution `E1JN9JWBQ37JT2` (the `default` and `imageOptimizer` origins) off the broken Function URLs and onto the API Gateway HTTP APIs that proxy the OpenNext Lambdas. These origin overrides and HTTP APIs are NOT in SST state, so they MUST be reapplied on every deploy; skipping or reordering this step returns 403 site-wide for every view.
+## AX-REPO-CLOUDFRONT-APIGW-RECONVERGENCE: Every production deploy repoints CloudFront onto API Gateway on a dynamically-resolved distribution
+Enforcement: computational
+Because Lambda Function URLs return 403 in AWS account `167217327520`, every production deploy MUST run `scripts/update-cloudfront-origins.cjs` after `sst deploy` to repoint the site's CloudFront distribution (the `default` and `imageOptimizer` origins) off the broken Function URLs and onto the API Gateway HTTP APIs that proxy the OpenNext Lambdas, then invalidate that same distribution. The distribution id MUST NOT be hardcoded: the script resolves it at runtime via the pure `resolveDistributionId({ envId, distributions, domains })`, preferring the SST stack output `distributionId` (exposed from `sst.config.ts` and passed as the `DISTRIBUTION_ID` env var by `scripts/aws-deploy.sh`) and falling back to the distribution whose CloudFront Aliases include the site `ROOT_DOMAIN`. These origin overrides and HTTP APIs are NOT in SST state, so they MUST be reapplied on every deploy; skipping or reordering this step returns 403 site-wide for every view. (Amended 2026-07-24: de-hardcoded from the pinned id `E1JN9JWBQ37JT2` — a pinned id silently rots if SST recreates the distribution, invalidating a dead one while the live site serves stale/crashing code.)
+
+Why: A pinned distribution id silently rots — if SST recreates the distribution the id changes and the deploy would forever reconverge/invalidate a dead distribution while the live site serves stale, crashing code. Resolving from SST's own deploy-time output (or the live domain alias) keeps the target correct across recreations.
+
+How to apply: In `sst.config.ts`, expose `distributionId: web.nodes?.cdn?.nodes?.distribution?.id` from `run()`. In `scripts/aws-deploy.sh`, after `sst deploy`, read that output and run the reconvergence script under `senvn -f production` with `AWS_PROFILE=stokd-cloud` and `DISTRIBUTION_ID` exported. In `scripts/update-cloudfront-origins.cjs`, resolve via `resolveDistributionId(...)` and use the resolved id for get/update/invalidate.
 
 ### Acceptance Checks
-- `rg -n "update-cloudfront-origins.cjs" scripts/aws-deploy.sh` shows the reconvergence runs as step (b), after `senvn -f production npx sst deploy`.
-- `rg -n "E1JN9JWBQ37JT2" scripts/update-cloudfront-origins.cjs` shows the pinned distribution id, and `rg -n "default:|imageOptimizer:" scripts/update-cloudfront-origins.cjs` shows the two managed origins.
-- manual: after `pnpm deploy:prod`, `https://brian.stokd.cloud` returns 200 (not 403) once the `/*` invalidation propagates.
+- `! grep -q "E1JN9JWBQ37JT2" scripts/update-cloudfront-origins.cjs` — no hardcoded distribution id remains in the script.
+- `rg -n "resolveDistributionId" scripts/update-cloudfront-origins.cjs` shows the dynamic resolver, and `node scripts/__tests__/pick-distribution.test.cjs` passes.
+- `rg -n "distributionId" sst.config.ts` shows the SST output, and `rg -n "DISTRIBUTION_ID" scripts/aws-deploy.sh` shows it is captured and passed to the script.
+- `rg -n "update-cloudfront-origins.cjs" scripts/aws-deploy.sh` shows the reconvergence runs after `senvn -f production npx sst deploy`, and `rg -n "default:|imageOptimizer:" scripts/update-cloudfront-origins.cjs` shows the two managed origins.
+- manual: after `pnpm deploy:prod`, the script logs the resolved id and `https://brian.stokd.cloud` returns 200 (not 403) once the `/*` invalidation propagates.
 
 ---
 
