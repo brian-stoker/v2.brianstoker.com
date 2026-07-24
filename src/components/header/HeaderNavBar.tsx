@@ -2,10 +2,30 @@
 import * as React from 'react';
 import { styled, alpha } from '@mui/material/styles';
 import { unstable_debounce as debounce } from '@mui/utils';
+import { useRouter } from 'next/router';
 import ROUTES from 'src/route';
 import { PRODUCTS } from 'src/products';
 import NextLink from 'next/link';
 import List from "@mui/material/List";
+
+// Normalize a path for active-route comparison: drop origin, query, hash, and
+// any trailing slash. External (absolute) URLs return null and never match.
+function normalizePath(href: string): string | null {
+  if (/^https?:\/\//.test(href)) {return null;}
+  const path = href.split('?')[0].split('#')[0];
+  const trimmed = path.replace(/\/+$/, '');
+  return trimmed === '' ? '/' : trimmed;
+}
+
+const NAV_ITEMS: { href: string; label: string }[] = [
+  { href: ROUTES.work, label: 'Work' },
+  { href: ROUTES.art, label: 'Art' },
+  { href: ROUTES.photography, label: 'Photography' },
+  { href: ROUTES.drums, label: 'Drums' },
+  { href: ROUTES.resume, label: 'Resume' },
+  { href: ROUTES.plan, label: '.plan' },
+  { href: ROUTES.bookTime, label: 'Meet' },
+];
 
 const Navigation = styled('nav')(({ theme }) => [
   {
@@ -46,6 +66,11 @@ const Navigation = styled('nav')(({ theme }) => [
           outline: `3px solid ${alpha(theme.palette.primary[500], 0.5)}`,
           outlineOffset: '2px',
         },
+        '&[aria-current="page"]': {
+          color: theme.palette.primary[600],
+          backgroundColor: alpha(theme.palette.primary[500], 0.08),
+          borderColor: alpha(theme.palette.primary[500], 0.2),
+        },
       },
     },
   },
@@ -72,6 +97,11 @@ const Navigation = styled('nav')(({ theme }) => [
           backgroundColor: alpha(theme.palette.primaryDark[700], 0.8),
           borderColor: theme.palette.divider,
         },
+        '&[aria-current="page"]': {
+          color: theme.palette.primary[200],
+          backgroundColor: alpha(theme.palette.primaryDark[700], 0.8),
+          borderColor: theme.palette.divider,
+        },
       },
     },
   }),
@@ -82,6 +112,8 @@ const getProductIds = () => {
 }
 
 export default function HeaderNavBar() {
+  const router = useRouter();
+  const currentPath = normalizePath(router.asPath || '');
   const [subMenuOpen, setSubMenuOpen] = React.useState<null | 'products' | 'docs'>(null);
   const [subMenuIndex, setSubMenuIndex] = React.useState<number | null>(null);
   const navRef = React.useRef<HTMLUListElement | null>(null);
@@ -166,13 +198,17 @@ export default function HeaderNavBar() {
   return (
     <Navigation>
       <List sx={{}} ref={navRef} onKeyDown={handleKeyDown}>
-        <li><NextLink href={ROUTES.work}>Work</NextLink></li>
-        <li><NextLink href={ROUTES.art}>Art</NextLink></li>
-        <li><NextLink href={ROUTES.photography}>Photography</NextLink></li>
-        <li><NextLink href={ROUTES.drums}>Drums</NextLink></li>
-        <li><NextLink href={ROUTES.resume}>Resume</NextLink></li>
-        <li><NextLink href={ROUTES.plan}>.plan</NextLink></li>
-        <li><NextLink href={ROUTES.bookTime}>Book Time</NextLink></li>
+        {NAV_ITEMS.map((item) => {
+          const itemPath = normalizePath(item.href);
+          const active = itemPath !== null && itemPath === currentPath;
+          return (
+            <li key={item.href}>
+              <NextLink href={item.href} aria-current={active ? 'page' : undefined}>
+                {item.label}
+              </NextLink>
+            </li>
+          );
+        })}
       </List>
     </Navigation>);
 }

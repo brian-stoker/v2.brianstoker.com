@@ -166,6 +166,18 @@ The effective MongoDB database name MUST remain `brianstoker-production` (prod) 
 
 ---
 
+## AX-REPO-BOOKING-CALENDAR-MODAL: The /book-time "Meet" surface is a next-available rolling grid with a cached, modal booking form
+The booking UI rendered by `@stoked-ui/common`'s `CalendarBooking` (source at `/opt/worktrees/stoked-ui/stoked-ui-main/packages/sui-common/src/CalendarBooking`, consumed via the `file:` build dep — never pinned, rebuilt locally and never pushed without intent to publish) MUST: (1) render exactly **5 business-day columns** beginning at the **next available booking day** — today when it is a weekday and the business-timezone (`America/Chicago`) wall-clock now is before the last 5:30 PM slot start, otherwise the next weekday; Saturdays and Sundays are never shown as columns; (2) default-select **today** in the Sunday→Saturday mini-calendar, whose Saturday/Sunday columns are visually shaded; (3) cache `/api/calendar/availability` responses in `sessionStorage` under the `sui-availability:` key prefix with a **30-minute TTL**, reusing the cache on re-entry instead of re-querying; (4) present the booking form as a **MUI Dialog modal** (`data-testid="booking-form"`) triggered by a slot click, requiring Name/Email/Phone/Reason and accepting an `inviteEmails` chip field POSTed to `/api/calendar/book`; (5) be **responsive** — the mini-calendar and week grid stack below the `sm` breakpoint, the grid is horizontally scrollable, and the modal is full-screen on `xs`. Slot instants stay `America/Chicago`-pinned per [[ax-repo-booking-tz-safe-slots]]; `pages/api/calendar/book.ts` MUST require `reason` and add `inviteEmails` as additional Google Calendar attendees.
+
+### Acceptance Checks
+- `rg -n "firstAvailableDateStr|buildWindowDates|LAST_SLOT_MINUTES" /opt/worktrees/stoked-ui/stoked-ui-main/packages/sui-common/src/CalendarBooking/CalendarBooking.tsx` shows the next-available 5-business-day window logic; e2e asserts exactly 5 day-column headers and no Sat/Sun.
+- `rg -n "sui-availability:|CACHE_TTL_MS" /opt/worktrees/stoked-ui/stoked-ui-main/packages/sui-common/src/CalendarBooking/CalendarBooking.tsx` shows the 30-minute sessionStorage cache; e2e asserts no second availability request within the TTL.
+- `rg -n "Dialog|inviteEmails|formData.reason" /opt/worktrees/stoked-ui/stoked-ui-main/packages/sui-common/src/CalendarBooking/CalendarBooking.tsx` shows the modal form, reason-required submit gate, and invite chips; `rg -n "reason|inviteEmails|attendees" pages/api/calendar/book.ts` shows the server contract.
+- `rg -n "Meet" src/components/header/HeaderNavBar.tsx src/components/header/HeaderNavDropdown.tsx pages/book-time.tsx` shows the renamed nav item, active-route indicator, and page title.
+- `pnpm typescript` passes, the sui-common jest suite passes, and `npx playwright test e2e/book-time.spec.ts` passes against dev on 5040.
+
+---
+
 <!--
 stokd-axiom-candidate (RESOLVED 2026-06-09)
 note: The `scripts/.axioms.md` AX-MOD-SCRIPTS-008 / AWS-profile reconciliation candidate ("reconcile to a single profile name and promote the global axiom") is now satisfied: AX-REPO-AWS-PROFILE-DISCIPLINE above was corrected from `stoked` to `stokd-cloud` (account 167217327520) in this refresh. Kept as a marker so future refreshes do not re-flag it.
