@@ -13,6 +13,10 @@ const pages: MuiPage[] = [
     pathname: '/.plan/2025-02-21-launched-bstoked-plan.mdx',
     title: 'Launched BStoked Plan',
   },
+  {
+    pathname: '/.plan/2026-09-07-gdock-noise-and-governed-clis.mdx',
+    title: 'gdock noise and governed clis',
+  },
 ];
 
 export default pages;
