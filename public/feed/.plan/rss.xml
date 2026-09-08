@@ -4,7 +4,7 @@
         <title>bstoked.plan</title>
         <link>brian.stokd.cloud/blog</link>
         <description>Follow the SUI .plan to learn about new product features, latest advancements in UI development, and business initiatives.</description>
-        <lastBuildDate>Thu, 30 Jul 2026 10:17:29 GMT</lastBuildDate>
+        <lastBuildDate>Tue, 08 Sep 2026 11:46:30 GMT</lastBuildDate>
         <docs>https://validator.w3.org/feed/docs/rss2.html</docs>
         <generator>https://github.com/jpmonette/feed</generator>
         <language>en</language>
@@ -14,6 +14,22 @@
             <link>brian.stokd.cloud/blog</link>
         </image>
         <copyright>Copyright © 2026 brian.stokd.cloud</copyright>
+        <item>
+            <title><![CDATA[rebrand stokd-cloud to selfactor]]></title>
+            <link>https://brian.stokd.cloud/.plan/2026-09-08-rebrand-stokd-cloud-to-selfactor</link>
+            <guid>https://brian.stokd.cloud/.plan/2026-09-08-rebrand-stokd-cloud-to-selfactor</guid>
+            <pubDate>Tue, 08 Sep 2026 00:00:00 GMT</pubDate>
+            <description><![CDATA[collapsing into mono, gdock grid, and renaming stokd-cloud toward selfactor]]></description>
+            <category>.plan</category>
+        </item>
+        <item>
+            <title><![CDATA[gdock noise and governed clis]]></title>
+            <link>https://brian.stokd.cloud/.plan/2026-09-07-gdock-noise-and-governed-clis</link>
+            <guid>https://brian.stokd.cloud/.plan/2026-09-07-gdock-noise-and-governed-clis</guid>
+            <pubDate>Mon, 07 Sep 2026 00:00:00 GMT</pubDate>
+            <description><![CDATA[gdock banners behind triage, keepers to telegram, stokd shims reasserting governed clis]]></description>
+            <category>.plan</category>
+        </item>
         <item>
             <title><![CDATA[launched bstoked.plan (its what you are looking at right meow)]]></title>
             <link>https://brian.stokd.cloud/.plan/2025-02-21-launched-bstoked-plan</link>

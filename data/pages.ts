@@ -17,6 +17,10 @@ const pages: MuiPage[] = [
     pathname: '/.plan/2026-09-07-gdock-noise-and-governed-clis.mdx',
     title: 'gdock noise and governed clis',
   },
+  {
+    pathname: '/.plan/2026-09-08-rebrand-stokd-cloud-to-selfactor.mdx',
+    title: 'rebrand stokd-cloud to selfactor',
+  },
 ];
 
 export default pages;

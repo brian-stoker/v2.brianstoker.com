@@ -1,0 +1,18 @@
+---
+title: 'rebrand stokd-cloud to selfactor'
+description: 'collapsing into mono, gdock grid, and renaming stokd-cloud toward selfactor'
+date: '2026-09-08T00:00:00.000Z'
+authors: ['brianstoker']
+tags: ['.plan']
+manualCard: true
+---
+
+### 2026-09-08
+
+- started collapsing sgit, gdock, status, and agent into mono. submodules are still on main. landers spent the day fighting the merge.
+- moved the agent package toward apps/agent. started renaming stokd-agent to selfagent.
+- gdock grid was multiplying terminals on startup. landed a fix. 2x2 still doesn't enforce. session cards still wrong.
+- after the cutover, gdock-build --build wants a ghostty-dock worktree. cmux still overwrites governed shims. started cutting the cmux CLI over to a real gdock CLI.
+- project-start still fires heal on pnpm failures and burns tokens doing nothing.
+- eOne environment full deploys still take over an hour the stack plus a handful of connectors.. determined that its mostly due to azure just being much slower in general that i'm used to with aws and gcp
+- posted the first morning .plan. the .plan page footer is still wrong in dark and light.
