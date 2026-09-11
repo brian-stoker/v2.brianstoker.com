@@ -21,6 +21,18 @@ const pages: MuiPage[] = [
     pathname: '/.plan/2026-09-08-rebrand-stokd-cloud-to-selfactor.mdx',
     title: 'rebrand stokd-cloud to selfactor',
   },
+  {
+    pathname: '/.plan/2026-09-09-session-summaries-shims-and-a-self-icon.mdx',
+    title: 'session summaries, shims, and a self icon',
+  },
+  {
+    pathname: '/.plan/2026-09-10-collapsed-the-submodules.mdx',
+    title: 'collapsed the submodules',
+  },
+  {
+    pathname: '/.plan/2026-09-11-production-packaging-stranded-worktrees.mdx',
+    title: 'production packaging, stranded worktrees, ungoverned hooks',
+  },
 ];
 
 export default pages;

@@ -4,7 +4,7 @@
         <title>bstoked.plan</title>
         <link>brian.stokd.cloud/blog</link>
         <description>Follow the SUI .plan to learn about new product features, latest advancements in UI development, and business initiatives.</description>
-        <lastBuildDate>Tue, 08 Sep 2026 11:46:30 GMT</lastBuildDate>
+        <lastBuildDate>Fri, 11 Sep 2026 13:50:00 GMT</lastBuildDate>
         <docs>https://validator.w3.org/feed/docs/rss2.html</docs>
         <generator>https://github.com/jpmonette/feed</generator>
         <language>en</language>
@@ -14,6 +14,30 @@
             <link>brian.stokd.cloud/blog</link>
         </image>
         <copyright>Copyright © 2026 brian.stokd.cloud</copyright>
+        <item>
+            <title><![CDATA[production packaging, stranded worktrees, ungoverned hooks]]></title>
+            <link>https://brian.stokd.cloud/.plan/2026-09-11-production-packaging-stranded-worktrees</link>
+            <guid>https://brian.stokd.cloud/.plan/2026-09-11-production-packaging-stranded-worktrees</guid>
+            <pubDate>Fri, 11 Sep 2026 00:00:00 GMT</pubDate>
+            <description><![CDATA[sst packaging, stranded worktrees as unborn, and ungoverned planning-gate hooks]]></description>
+            <category>.plan</category>
+        </item>
+        <item>
+            <title><![CDATA[collapsed the submodules]]></title>
+            <link>https://brian.stokd.cloud/.plan/2026-09-10-collapsed-the-submodules</link>
+            <guid>https://brian.stokd.cloud/.plan/2026-09-10-collapsed-the-submodules</guid>
+            <pubDate>Thu, 10 Sep 2026 00:00:00 GMT</pubDate>
+            <description><![CDATA[remaining submodules collapsed into mono and gdock reapplied as a subtree]]></description>
+            <category>.plan</category>
+        </item>
+        <item>
+            <title><![CDATA[session summaries, shims, and a self icon]]></title>
+            <link>https://brian.stokd.cloud/.plan/2026-09-09-session-summaries-shims-and-a-self-icon</link>
+            <guid>https://brian.stokd.cloud/.plan/2026-09-09-session-summaries-shims-and-a-self-icon</guid>
+            <pubDate>Wed, 09 Sep 2026 00:00:00 GMT</pubDate>
+            <description><![CDATA[session summaries, governed shims, and packing the self icon into the cli]]></description>
+            <category>.plan</category>
+        </item>
         <item>
             <title><![CDATA[rebrand stokd-cloud to selfactor]]></title>
             <link>https://brian.stokd.cloud/.plan/2026-09-08-rebrand-stokd-cloud-to-selfactor</link>

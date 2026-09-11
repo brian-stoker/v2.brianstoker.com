@@ -1,0 +1,18 @@
+---
+title: 'session summaries, shims, and a self icon'
+description: 'session summaries, governed shims, and packing the self icon into the cli'
+date: '2026-09-09T00:00:00.000Z'
+authors: ['brianstoker']
+tags: ['.plan']
+manualCard: true
+---
+
+### 2026-09-09
+
+- slimmed the interactive new-session dump on the selfactor cli. less frontier context, more the actual job.
+- sessions now write summaries. first use is feeding the rest of the stack, not a log nobody reads.
+- added config for machine event sounds. starting with the alerts that actually fire on this box.
+- governance prompt should show the self icon, not a generic terminal glyph. packing the self bin and lockup assets into the cli.
+- checked whether a deploy overwrote the governed shims. vendor shim grew. still treating overwrites as a live risk.
+- submodule collapse is still not done. .gitmodules is still on main.
+- api was 500ing on the db connection pool. fixed that. wrote a couple of selfactor prds while i was in the docs.
