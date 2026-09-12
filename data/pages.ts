@@ -33,6 +33,10 @@ const pages: MuiPage[] = [
     pathname: '/.plan/2026-09-11-production-packaging-stranded-worktrees.mdx',
     title: 'production packaging, stranded worktrees, ungoverned hooks',
   },
+  {
+    pathname: '/.plan/2026-09-12-workspace-redesign-splash-on-every-shim.mdx',
+    title: 'workspace redesign, splash on every shim, the agent tui i\'ve never seen',
+  },
 ];
 
 export default pages;
