@@ -97,16 +97,20 @@ export function PostPreview({post, size = 'default' }: {post: BlogPost, size?: '
               }),
           ]}
         >
-          {(post.authors as Array<keyof typeof AUTHORS>).map((author) => (
+          {(post.authors as Array<keyof typeof AUTHORS>).map((author) => {
+            const rec = AUTHORS[author];
+            if (!rec) return null;
+            return (
             <Avatar
               key={author as string}
-              alt=""
-              src={`${AUTHORS[author].avatar}?s=${28}`}
-              srcSet={`${AUTHORS[author].avatar}?s=${28 * 2} 2x, ${AUTHORS[author].avatar}?s=${
+              alt={rec.name}
+              src={`${rec.avatar}?s=${28}`}
+              srcSet={`${rec.avatar}?s=${28 * 2} 2x, ${rec.avatar}?s=${
                 28 * 3
               } 3x`}
             />
-          ))}
+            );
+          })}
         </AvatarGroup>
       )}
       <Box
@@ -141,6 +145,23 @@ export function PostPreview({post, size = 'default' }: {post: BlogPost, size?: '
               { size === 'mini' ? new Date(post?.date).toLocaleDateString('en-US', { month: 'numeric', day: 'numeric', year: '2-digit' } ) : new Date(post?.date).toDateString()}
             </Typography>
           )}
+          {post?.authors?.slice(0, 1).map((userId) => {
+            const rec = AUTHORS[userId as keyof typeof AUTHORS];
+            if (!rec?.github) return null;
+            return (
+              <MuiLink
+                key={userId}
+                href={`https://github.com/${rec.github}`}
+                target="_blank"
+                rel="noopener"
+                variant="caption"
+                sx={{ display: 'flex', alignItems: 'center', gap: 0.5, mt: 0.5 }}
+              >
+                <GitHubIcon sx={{ fontSize: 14 }} />
+                {rec.github}
+              </MuiLink>
+            );
+          })}
         </Box>
         <Button
           component={NextLink}

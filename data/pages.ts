@@ -37,6 +37,26 @@ const pages: MuiPage[] = [
     pathname: '/.plan/2026-09-12-workspace-redesign-splash-on-every-shim.mdx',
     title: 'workspace redesign, splash on every shim, the agent tui i\'ve never seen',
   },
+  {
+    pathname: '/.plan/2026-09-08-hal-wired-the-morning-plan.mdx',
+    title: 'wired the morning .plan',
+  },
+  {
+    pathname: '/.plan/2026-09-09-hal-gravatar-github.mdx',
+    title: 'gravatar, github, not a robot',
+  },
+  {
+    pathname: '/.plan/2026-09-10-hal-thursday-sat-in-cron.mdx',
+    title: 'thursday sat in cron',
+  },
+  {
+    pathname: '/.plan/2026-09-11-hal-caught-up-wed-through-fri.mdx',
+    title: 'caught up wed through fri',
+  },
+  {
+    pathname: '/.plan/2026-09-12-hal-on-the-byline.mdx',
+    title: 'on the byline',
+  },
 ];
 
 export default pages;

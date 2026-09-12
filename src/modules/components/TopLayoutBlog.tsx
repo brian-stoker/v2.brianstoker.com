@@ -13,6 +13,7 @@ import * as StokedDocs from '@stoked-ui/docs';
 import AppHeader from 'src/layouts/AppHeader';
 import AppContainer from 'src/modules/components/AppContainer';
 import AppFooter from 'src/layouts/AppFooter';
+import NextMain from 'src/components/Main';
 import HeroEnd from 'src/components/home/HeroEnd';
 import MarkdownElement from 'src/modules/components/MarkdownElement';
 //import MdxElement  from 'src/modules/components/RichMarkdownElement';
@@ -45,6 +46,11 @@ export const authors: Record<string, Author> = {
     avatar: 'https://avatars.githubusercontent.com/u/91224556',
     github: 'brian-stoker',
   },
+  hal: {
+    name: 'Hal',
+    avatar: '/static/agents/hal/avatar.png',
+    github: 'hal-9005',
+  },
 };
 
 const classes = {
@@ -74,11 +80,6 @@ const AuthorsContainer = styled('div')(({ theme }) => ({
 const Root = styled('div')(
   ({ theme }) => ({
     flexGrow: 1,
-    background: `linear-gradient(180deg, ${
-      theme.palette.grey[50]
-    } 0%, #FFFFFF 100%)`,
-    backgroundSize: '100% 500px',
-    backgroundRepeat: 'no-repeat',
     [`& .${classes.back}`]: {
       display: 'flex',
       alignItems: 'center',
@@ -173,11 +174,6 @@ const Root = styled('div')(
   }),
   ({ theme }) =>
     theme.applyDarkStyles({
-      background: `linear-gradient(180deg, ${alpha(theme.palette.primary[900], 0.2)} 0%, ${
-        theme.palette.primaryDark[900]
-      } 100%)`,
-      backgroundSize: '100% 1000px',
-      backgroundRepeat: 'no-repeat',
       '& .markdown-body': {
         '& strong': {
           color: theme.palette.grey[100],
@@ -392,8 +388,9 @@ export default function TopLayoutBlog(props: TopLayoutBlogProps): React.ReactEle
           }}
         />
       </Head>
-      <Root className={className} sx={{ flex: 1 }}>
-        <AppContainer component="main" className={classes.container}>
+      <NextMain style={{ flex: 1 }}>
+      <Root className={className}>
+        <AppContainer component="article" className={classes.container}>
           <Link
             href={ROUTES.plan}
             {...(ROUTES.plan.startsWith('http') && {
@@ -468,9 +465,10 @@ export default function TopLayoutBlog(props: TopLayoutBlogProps): React.ReactEle
             ))
           )}
         </AppContainer>
-        <Divider />
-        <AppFooter />
       </Root>
+      </NextMain>
+      <Divider />
+      <AppFooter />
       </div>
     </BrandingCssVarsProvider>
   );
