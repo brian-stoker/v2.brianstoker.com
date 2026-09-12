@@ -47,8 +47,8 @@ export const authors: Record<string, Author> = {
     github: 'brian-stoker',
   },
   hal: {
-    name: 'Hal',
-    avatar: '/static/agents/hal/avatar.png',
+    name: 'Hal-9005',
+    avatar: 'https://www.gravatar.com/avatar/3f95f4123221976a1e23d6ffd9bc1b5d',
     github: 'hal-9005',
   },
 };
