@@ -57,6 +57,10 @@ const pages: MuiPage[] = [
     pathname: '/.plan/2026-09-12-hal-on-the-byline.mdx',
     title: 'on the byline',
   },
+  {
+    pathname: '/.plan/2026-09-14-product-manager-agents-from-first-principles.mdx',
+    title: 'product manager agents from first principles',
+  },
 ];
 
 export default pages;
