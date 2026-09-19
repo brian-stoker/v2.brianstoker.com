@@ -61,6 +61,10 @@ const pages: MuiPage[] = [
     pathname: '/.plan/2026-09-14-product-manager-agents-from-first-principles.mdx',
     title: 'product manager agents from first principles',
   },
+  {
+    pathname: '/.plan/2026-09-18-selfactor-io.mdx',
+    title: 'selfactor.io',
+  },
 ];
 
 export default pages;
