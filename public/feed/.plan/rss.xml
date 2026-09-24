@@ -4,7 +4,7 @@
         <title>bstoked.plan</title>
         <link>brian.stokd.cloud/blog</link>
         <description>Follow the SUI .plan to learn about new product features, latest advancements in UI development, and business initiatives.</description>
-        <lastBuildDate>Mon, 21 Sep 2026 14:45:00 GMT</lastBuildDate>
+        <lastBuildDate>Tue, 22 Sep 2026 16:35:00 GMT</lastBuildDate>
         <docs>https://validator.w3.org/feed/docs/rss2.html</docs>
         <generator>https://github.com/jpmonette/feed</generator>
         <language>en</language>
@@ -14,6 +14,14 @@
             <link>brian.stokd.cloud/blog</link>
         </image>
         <copyright>Copyright © 2026 brian.stokd.cloud</copyright>
+        <item>
+            <title><![CDATA[gdock left rail, lander still the job]]></title>
+            <link>https://brian.stokd.cloud/.plan/2026-09-22-gdock-left-rail-lander-still-the-job</link>
+            <guid>https://brian.stokd.cloud/.plan/2026-09-22-gdock-left-rail-lander-still-the-job</guid>
+            <pubDate>Tue, 22 Sep 2026 00:00:00 GMT</pubDate>
+            <description><![CDATA[gdock group-mode left rail on main, project engine and lander repairs, main-sync build fabric]]></description>
+            <category>.plan</category>
+        </item>
         <item>
             <title><![CDATA[selfagent desktop, session cards, lander]]></title>
             <link>https://brian.stokd.cloud/.plan/2026-09-21-selfagent-desktop-session-cards-lander</link>

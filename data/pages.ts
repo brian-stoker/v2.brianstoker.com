@@ -69,6 +69,10 @@ const pages: MuiPage[] = [
     pathname: '/.plan/2026-09-21-selfagent-desktop-session-cards-lander.mdx',
     title: 'selfagent desktop, session cards, lander',
   },
+  {
+    pathname: '/.plan/2026-09-22-gdock-left-rail-lander-still-the-job.mdx',
+    title: 'gdock left rail, lander still the job',
+  },
 ];
 
 export default pages;
