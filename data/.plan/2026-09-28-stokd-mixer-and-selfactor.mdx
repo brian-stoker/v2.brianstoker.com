@@ -1,0 +1,19 @@
+---
+title: 'stokd mixer & selfactor'
+description: 'lander landing again, gdock grid and roster, selfagents desktop round five, document work items, mixer output policy'
+date: '2026-09-28T00:00:00.000Z'
+authors: ['brianstoker']
+tags: ['.plan']
+manualCard: true
+---
+
+### 2026-09-28
+
+- lander: the prevent-forever fix landed and it cleared the queue on its own, including trees that were finished but never admitted. the hourly clog alarm was the instrument lying: timeouts far too small for a repo this size. it still wedged twice, once with its own desired state flipped off and nothing holding a claim. made the source probe timeout configurable and added a manual landing path to the worktree tui. it is landing again.
+- gdock: rail cards as their own panels, repo tree on main, repo-mode left rail headers fixed, a selfagents roster that mirrors the desktop, and dragging one grid segment moves the whole bar. lost scroll-up in interactive sessions and chased a crash I landed myself. the menu bar got its own mark, light and dark.
+- selfagents desktop: rounds four and five, with a pass from sam in between. dropped the os title bar, window controls own their corner, screens click through, accounting is its own surface. live conversation streaming is back behind the viewer gate. started a reliability project so this stops being whack-a-mole.
+- selfactor: `document` is a fourth first-order work item, so docs and prd-only work stop pretending to be tasks. `self design create` authors prds, starting with a systems design workload. some of my own prd edits went missing, so that path has a provenance hole. the plan gate got stricter: intent classification, a plan judge, and an adversarial reviewer for anyone trying to quit.
+- main-sync builds and installs gdock and selfagents when their source changes. it still wants to be a github local runner, not a daemon.
+- cli, shims, phone: mouse in the worktree list tui, gc and orphan backstop for leftover trees. the governed claude shim chains through gdock's wrapper, splash got its watermark. shipped two provider-neutral bundled skills, self-managed mcp install across every provider, and a phone app that talks to both cmux and gdock.
+- brain and evals: brain hardening delivers context from the real corpus with its api specs green. still no straight status on the eval implementations, so back to the judge model plan.
+- mixer: output device selection stopped snapping back to the mixer. it's a policy with tests now instead of a view deciding.

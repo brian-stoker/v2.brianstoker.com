@@ -73,6 +73,10 @@ const pages: MuiPage[] = [
     pathname: '/.plan/2026-09-22-gdock-left-rail-lander-still-the-job.mdx',
     title: 'gdock left rail, lander still the job',
   },
+  {
+    pathname: '/.plan/2026-09-28-stokd-mixer-and-selfactor.mdx',
+    title: 'stokd mixer & selfactor',
+  },
 ];
 
 export default pages;
