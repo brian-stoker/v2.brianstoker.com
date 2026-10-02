@@ -4,7 +4,7 @@
         <title>bstoked.plan</title>
         <link>brian.stokd.cloud/blog</link>
         <description>Follow the SUI .plan to learn about new product features, latest advancements in UI development, and business initiatives.</description>
-        <lastBuildDate>Mon, 28 Sep 2026 17:50:00 GMT</lastBuildDate>
+        <lastBuildDate>Fri, 02 Oct 2026 18:15:00 GMT</lastBuildDate>
         <docs>https://validator.w3.org/feed/docs/rss2.html</docs>
         <generator>https://github.com/jpmonette/feed</generator>
         <language>en</language>
@@ -14,6 +14,14 @@
             <link>brian.stokd.cloud/blog</link>
         </image>
         <copyright>Copyright © 2026 brian.stokd.cloud</copyright>
+        <item>
+            <title><![CDATA[selfactor.io: build fabric, deploy-main, and the lander]]></title>
+            <link>https://brian.stokd.cloud/.plan/2026-10-02-selfactor-io-build-fabric-deploy-main-and-the-lander</link>
+            <guid>https://brian.stokd.cloud/.plan/2026-10-02-selfactor-io-build-fabric-deploy-main-and-the-lander</guid>
+            <pubDate>Fri, 02 Oct 2026 00:00:00 GMT</pubDate>
+            <description><![CDATA[build fabric and deploy-main unblocked, lander unstick, gdock session cards, selfagents desktop, work items, model research]]></description>
+            <category>.plan</category>
+        </item>
         <item>
             <title><![CDATA[stokd mixer & selfactor]]></title>
             <link>https://brian.stokd.cloud/.plan/2026-09-28-stokd-mixer-and-selfactor</link>

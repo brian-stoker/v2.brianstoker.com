@@ -77,6 +77,10 @@ const pages: MuiPage[] = [
     pathname: '/.plan/2026-09-28-stokd-mixer-and-selfactor.mdx',
     title: 'stokd mixer & selfactor',
   },
+  {
+    pathname: '/.plan/2026-10-02-selfactor-io-build-fabric-deploy-main-and-the-lander.mdx',
+    title: 'selfactor.io: build fabric, deploy-main, and the lander',
+  },
 ];
 
 export default pages;
