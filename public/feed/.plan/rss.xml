@@ -4,7 +4,7 @@
         <title>bstoked.plan</title>
         <link>brian.stokd.cloud/blog</link>
         <description>Follow the SUI .plan to learn about new product features, latest advancements in UI development, and business initiatives.</description>
-        <lastBuildDate>Mon, 05 Oct 2026 17:50:23 GMT</lastBuildDate>
+        <lastBuildDate>Mon, 05 Oct 2026 18:26:02 GMT</lastBuildDate>
         <docs>https://validator.w3.org/feed/docs/rss2.html</docs>
         <generator>https://github.com/jpmonette/feed</generator>
         <language>en</language>
@@ -194,28 +194,22 @@
             <category>.plan</category>
         </item>
         <item>
-            <title><![CDATA[Stoked UI Releases Initial Versions of Its React Component Modules]]></title>
+            <title><![CDATA[first versions out]]></title>
             <link>https://brian.stokd.cloud/.plan/2025-02-20-initial-stoked-ui-release</link>
             <guid>https://brian.stokd.cloud/.plan/2025-02-20-initial-stoked-ui-release</guid>
             <pubDate>Thu, 20 Feb 2025 00:00:00 GMT</pubDate>
-            <description><![CDATA[Stoked UI modules are now available via pnpm, yarn, and npm.]]></description>
-            <category>Stoked UI</category>
-            <category>File Explorer</category>
-            <category>Timeline</category>
-            <category>Editor</category>
-            <category>Media Selector</category>
+            <description><![CDATA[stoked ui cuts real versions of every core module; installable from pnpm, yarn and npm; stoked-ui.com is live]]></description>
+            <category>.plan</category>
+            <enclosure url="https://brian.stokd.cloud/static/.plan/2025-02-20-initial-stoked-ui-release/hero.jpg" length="0" type="image/jpg"/>
         </item>
         <item>
-            <title><![CDATA[Stoked UI: Client-Side Video Editing React Components]]></title>
+            <title><![CDATA[cut in the browser]]></title>
             <link>https://brian.stokd.cloud/.plan/2024-08-28-introducing-stoked-ui</link>
             <guid>https://brian.stokd.cloud/.plan/2024-08-28-introducing-stoked-ui</guid>
             <pubDate>Wed, 28 Aug 2024 00:00:00 GMT</pubDate>
-            <description><![CDATA[Stoked UI enables fully client-side video editing in the browser, preserving privacy and efficiency.]]></description>
-            <category>Stoked UI</category>
-            <category>File Explorer</category>
-            <category>Timeline</category>
-            <category>Editor</category>
-            <category>Media Selector</category>
+            <description><![CDATA[stoked ui goes public: mit react components for client-side video editing, five modules, early alpha]]></description>
+            <category>.plan</category>
+            <enclosure url="https://brian.stokd.cloud/static/.plan/2024-08-28-introducing-stoked-ui/hero.jpg" length="0" type="image/jpg"/>
         </item>
     </channel>
 </rss>
