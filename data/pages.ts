@@ -15,15 +15,15 @@ const pages: MuiPage[] = [
   },
   {
     pathname: '/.plan/2026-09-07-gdock-noise-and-governed-clis.mdx',
-    title: 'gdock noise and governed clis',
+    title: 'quiet until it matters',
   },
   {
     pathname: '/.plan/2026-09-08-rebrand-stokd-cloud-to-selfactor.mdx',
-    title: 'rebrand stokd-cloud to selfactor',
+    title: 'many into one',
   },
   {
     pathname: '/.plan/2026-09-09-session-summaries-shims-and-a-self-icon.mdx',
-    title: 'session summaries, shims, and a self icon',
+    title: 'the shape of self',
   },
   {
     pathname: '/.plan/2026-09-10-collapsed-the-submodules.mdx',
@@ -31,11 +31,11 @@ const pages: MuiPage[] = [
   },
   {
     pathname: '/.plan/2026-09-11-production-packaging-stranded-worktrees.mdx',
-    title: 'production packaging, stranded worktrees, ungoverned hooks',
+    title: 'nothing left stranded',
   },
   {
     pathname: '/.plan/2026-09-12-workspace-redesign-splash-on-every-shim.mdx',
-    title: 'workspace redesign, splash on every shim, the agent tui i\'ve never seen',
+    title: 'the unseen screen',
   },
   {
     pathname: '/.plan/2026-09-08-hal-wired-the-morning-plan.mdx',
@@ -59,27 +59,35 @@ const pages: MuiPage[] = [
   },
   {
     pathname: '/.plan/2026-09-14-product-manager-agents-from-first-principles.mdx',
-    title: 'product manager agents from first principles',
+    title: 'first principles',
   },
   {
     pathname: '/.plan/2026-09-18-selfactor-io.mdx',
-    title: 'selfactor.io',
+    title: 'hands off the wheel',
   },
   {
     pathname: '/.plan/2026-09-21-selfagent-desktop-session-cards-lander.mdx',
-    title: 'selfagent desktop, session cards, lander',
+    title: 'the map and the territory',
   },
   {
     pathname: '/.plan/2026-09-22-gdock-left-rail-lander-still-the-job.mdx',
-    title: 'gdock left rail, lander still the job',
+    title: 'still the job',
   },
   {
     pathname: '/.plan/2026-09-28-stokd-mixer-and-selfactor.mdx',
-    title: 'stokd mixer & selfactor',
+    title: 'landing again',
   },
   {
     pathname: '/.plan/2026-10-02-selfactor-io-build-fabric-deploy-main-and-the-lander.mdx',
-    title: 'selfactor.io: build fabric, deploy-main, and the lander',
+    title: 'the loom wakes',
+  },
+  {
+    pathname: '/.plan/2026-10-04-the-gate-holds.mdx',
+    title: 'the gate holds',
+  },
+  {
+    pathname: '/.plan/2026-10-04-hal-one-source-of-order.mdx',
+    title: 'one source of order',
   },
 ];
 

@@ -13,6 +13,8 @@ import MuiLink from '@mui/material/Link';
 import * as StokedDocs from '@stoked-ui/docs';
 import AppHeader from 'src/layouts/AppHeader';
 import AppFooter from 'src/layouts/AppFooter';
+import NextMain from 'src/components/Main';
+import Divider from '@mui/material/Divider';
 
 const { BrandingCssVarsProvider } = StokedDocs;
 import {BlogPost, getAllBlogPosts} from "../../lib/sourcing";
@@ -42,7 +44,9 @@ export default function PlanIndex(props) {
           content="Plans, roadmaps, and thoughts about the future." 
         />
       </Head>
+      <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
       <AppHeader />
+      <NextMain style={{ flex: 1 }}>
       <Container maxWidth="lg" sx={{ py: 6 }}>
         <Box sx={{ mb: 6 }}>
           <Typography variant="h1" component="h1" gutterBottom>
@@ -124,7 +128,10 @@ export default function PlanIndex(props) {
           ))}
         </Grid>
       </Container>
+      </NextMain>
+      <Divider />
       <AppFooter />
+      </div>
     </BrandingCssVarsProvider>
   );
 } 

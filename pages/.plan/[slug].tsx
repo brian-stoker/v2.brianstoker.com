@@ -26,6 +26,8 @@ interface DocsHeader {
   authors?: string[];
   tags?: string[];
   date?: string;
+  image?: string | null;
+  imageAlt?: string | null;
 }
 
 interface LocalizedDoc {
@@ -70,6 +72,8 @@ export default function PlanPost({ source, frontMatter, slug }: MDXPost) {
       authors,
       tags,
       date: frontMatter.date ?? '',
+      image: frontMatter.image ?? null,
+      imageAlt: frontMatter.imageAlt ?? null,
     }
   }
   return <TopLayoutBlog docs={{en: localizedDocs}} source={source} />

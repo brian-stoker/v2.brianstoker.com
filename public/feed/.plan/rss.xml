@@ -4,7 +4,7 @@
         <title>bstoked.plan</title>
         <link>brian.stokd.cloud/blog</link>
         <description>Follow the SUI .plan to learn about new product features, latest advancements in UI development, and business initiatives.</description>
-        <lastBuildDate>Fri, 02 Oct 2026 18:15:00 GMT</lastBuildDate>
+        <lastBuildDate>Mon, 05 Oct 2026 08:00:00 GMT</lastBuildDate>
         <docs>https://validator.w3.org/feed/docs/rss2.html</docs>
         <generator>https://github.com/jpmonette/feed</generator>
         <language>en</language>
@@ -15,7 +15,23 @@
         </image>
         <copyright>Copyright © 2026 brian.stokd.cloud</copyright>
         <item>
-            <title><![CDATA[selfactor.io: build fabric, deploy-main, and the lander]]></title>
+            <title><![CDATA[one source of order]]></title>
+            <link>https://brian.stokd.cloud/.plan/2026-10-04-hal-one-source-of-order</link>
+            <guid>https://brian.stokd.cloud/.plan/2026-10-04-hal-one-source-of-order</guid>
+            <pubDate>Sun, 04 Oct 2026 12:00:00 GMT</pubDate>
+            <description><![CDATA[the board moved into the desktop app, sleep picks work from the workflow only, the landing queue unwedged, agents can be assigned work.]]></description>
+            <category>.plan</category>
+        </item>
+        <item>
+            <title><![CDATA[the gate holds]]></title>
+            <link>https://brian.stokd.cloud/.plan/2026-10-04-the-gate-holds</link>
+            <guid>https://brian.stokd.cloud/.plan/2026-10-04-the-gate-holds</guid>
+            <pubDate>Sun, 04 Oct 2026 00:00:00 GMT</pubDate>
+            <description><![CDATA[gates on the planning pipeline, the artifacts project, lander truth, build fabric, read-only gdock, selfagents desktop, rr back up locally]]></description>
+            <category>.plan</category>
+        </item>
+        <item>
+            <title><![CDATA[the loom wakes]]></title>
             <link>https://brian.stokd.cloud/.plan/2026-10-02-selfactor-io-build-fabric-deploy-main-and-the-lander</link>
             <guid>https://brian.stokd.cloud/.plan/2026-10-02-selfactor-io-build-fabric-deploy-main-and-the-lander</guid>
             <pubDate>Fri, 02 Oct 2026 00:00:00 GMT</pubDate>
@@ -23,7 +39,7 @@
             <category>.plan</category>
         </item>
         <item>
-            <title><![CDATA[stokd mixer & selfactor]]></title>
+            <title><![CDATA[landing again]]></title>
             <link>https://brian.stokd.cloud/.plan/2026-09-28-stokd-mixer-and-selfactor</link>
             <guid>https://brian.stokd.cloud/.plan/2026-09-28-stokd-mixer-and-selfactor</guid>
             <pubDate>Mon, 28 Sep 2026 00:00:00 GMT</pubDate>
@@ -31,7 +47,7 @@
             <category>.plan</category>
         </item>
         <item>
-            <title><![CDATA[gdock left rail, lander still the job]]></title>
+            <title><![CDATA[still the job]]></title>
             <link>https://brian.stokd.cloud/.plan/2026-09-22-gdock-left-rail-lander-still-the-job</link>
             <guid>https://brian.stokd.cloud/.plan/2026-09-22-gdock-left-rail-lander-still-the-job</guid>
             <pubDate>Tue, 22 Sep 2026 00:00:00 GMT</pubDate>
@@ -39,7 +55,7 @@
             <category>.plan</category>
         </item>
         <item>
-            <title><![CDATA[selfagent desktop, session cards, lander]]></title>
+            <title><![CDATA[the map and the territory]]></title>
             <link>https://brian.stokd.cloud/.plan/2026-09-21-selfagent-desktop-session-cards-lander</link>
             <guid>https://brian.stokd.cloud/.plan/2026-09-21-selfagent-desktop-session-cards-lander</guid>
             <pubDate>Mon, 21 Sep 2026 00:00:00 GMT</pubDate>
@@ -47,7 +63,7 @@
             <category>.plan</category>
         </item>
         <item>
-            <title><![CDATA[selfactor.io]]></title>
+            <title><![CDATA[hands off the wheel]]></title>
             <link>https://brian.stokd.cloud/.plan/2026-09-18-selfactor-io</link>
             <guid>https://brian.stokd.cloud/.plan/2026-09-18-selfactor-io</guid>
             <pubDate>Fri, 18 Sep 2026 00:00:00 GMT</pubDate>
@@ -55,7 +71,7 @@
             <category>.plan</category>
         </item>
         <item>
-            <title><![CDATA[product manager agents from first principles]]></title>
+            <title><![CDATA[first principles]]></title>
             <link>https://brian.stokd.cloud/.plan/2026-09-14-product-manager-agents-from-first-principles</link>
             <guid>https://brian.stokd.cloud/.plan/2026-09-14-product-manager-agents-from-first-principles</guid>
             <pubDate>Mon, 14 Sep 2026 00:00:00 GMT</pubDate>
@@ -71,7 +87,7 @@
             <category>.plan</category>
         </item>
         <item>
-            <title><![CDATA[workspace redesign, splash on every shim, the agent tui i've never seen]]></title>
+            <title><![CDATA[the unseen screen]]></title>
             <link>https://brian.stokd.cloud/.plan/2026-09-12-workspace-redesign-splash-on-every-shim</link>
             <guid>https://brian.stokd.cloud/.plan/2026-09-12-workspace-redesign-splash-on-every-shim</guid>
             <pubDate>Sat, 12 Sep 2026 00:00:00 GMT</pubDate>
@@ -87,7 +103,7 @@
             <category>.plan</category>
         </item>
         <item>
-            <title><![CDATA[production packaging, stranded worktrees, ungoverned hooks]]></title>
+            <title><![CDATA[nothing left stranded]]></title>
             <link>https://brian.stokd.cloud/.plan/2026-09-11-production-packaging-stranded-worktrees</link>
             <guid>https://brian.stokd.cloud/.plan/2026-09-11-production-packaging-stranded-worktrees</guid>
             <pubDate>Fri, 11 Sep 2026 00:00:00 GMT</pubDate>
@@ -119,7 +135,7 @@
             <category>.plan</category>
         </item>
         <item>
-            <title><![CDATA[session summaries, shims, and a self icon]]></title>
+            <title><![CDATA[the shape of self]]></title>
             <link>https://brian.stokd.cloud/.plan/2026-09-09-session-summaries-shims-and-a-self-icon</link>
             <guid>https://brian.stokd.cloud/.plan/2026-09-09-session-summaries-shims-and-a-self-icon</guid>
             <pubDate>Wed, 09 Sep 2026 00:00:00 GMT</pubDate>
@@ -135,7 +151,7 @@
             <category>.plan</category>
         </item>
         <item>
-            <title><![CDATA[rebrand stokd-cloud to selfactor]]></title>
+            <title><![CDATA[many into one]]></title>
             <link>https://brian.stokd.cloud/.plan/2026-09-08-rebrand-stokd-cloud-to-selfactor</link>
             <guid>https://brian.stokd.cloud/.plan/2026-09-08-rebrand-stokd-cloud-to-selfactor</guid>
             <pubDate>Tue, 08 Sep 2026 00:00:00 GMT</pubDate>
@@ -143,7 +159,7 @@
             <category>.plan</category>
         </item>
         <item>
-            <title><![CDATA[gdock noise and governed clis]]></title>
+            <title><![CDATA[quiet until it matters]]></title>
             <link>https://brian.stokd.cloud/.plan/2026-09-07-gdock-noise-and-governed-clis</link>
             <guid>https://brian.stokd.cloud/.plan/2026-09-07-gdock-noise-and-governed-clis</guid>
             <pubDate>Mon, 07 Sep 2026 00:00:00 GMT</pubDate>

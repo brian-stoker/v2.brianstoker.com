@@ -38,6 +38,20 @@ body {
   color: inherit !important;
 }
 
+/* .plan post byline and back link keep the MUI-blog blue (overrides the inherit rule above, scoped). */
+.TopLayoutBlog-back.MuiLink-root,
+.TopLayoutBlog-back.MuiLink-root:visited,
+.author-handle.MuiLink-root,
+.author-handle.MuiLink-root:visited {
+  color: hsl(210, 100%, 42%) !important;
+}
+[data-mui-color-scheme="dark"] .TopLayoutBlog-back.MuiLink-root,
+[data-mui-color-scheme="dark"] .TopLayoutBlog-back.MuiLink-root:visited,
+[data-mui-color-scheme="dark"] .author-handle.MuiLink-root,
+[data-mui-color-scheme="dark"] .author-handle.MuiLink-root:visited {
+  color: hsl(210, 100%, 70%) !important;
+}
+
 /* Ensure Next.js Link components also don't show purple visited state */
 a.MuiTypography-root:visited {
   color: inherit !important;

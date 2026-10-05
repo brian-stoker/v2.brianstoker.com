@@ -72,14 +72,52 @@ const AuthorsContainer = styled('div')(({ theme }) => ({
     paddingBottom: theme.spacing(2),
     paddingRight: theme.spacing(3),
     '& .MuiAvatar-root': {
-      marginRight: theme.spacing(1),
+      marginRight: theme.spacing(1.5),
     },
   },
+  // Match the MUI blog byline: semibold name, primary-colored handle, tight 13px stack.
+  '& .author-name': {
+    ...theme.typography.body2,
+    fontWeight: theme.typography.fontWeightMedium ?? 500,
+    lineHeight: 1.5,
+    color: theme.palette.text.primary,
+  },
+  '& .author-handle': {
+    ...theme.typography.body2,
+    fontWeight: theme.typography.fontWeightMedium ?? 500,
+    lineHeight: 1.5,
+    color: theme.palette.primary[600] ?? theme.palette.primary.main,
+    textDecoration: 'none',
+    '&:hover': { textDecoration: 'underline' },
+  },
+  ...(theme.applyDarkStyles
+    ? theme.applyDarkStyles({
+        '& .author-name': { color: theme.palette.grey[100] },
+        '& .author-handle': { color: theme.palette.primary[300] ?? theme.palette.primary.light },
+      })
+    : {}),
+}));
+
+// Per-post hero image: frontmatter `image` (path under /static/.plan/...). Framed like MUI's release card.
+const Hero = styled('figure')(({ theme }) => ({
+  margin: 0,
+  marginBottom: theme.spacing(4),
+  borderRadius: 12,
+  overflow: 'hidden',
+  border: '1px solid',
+  borderColor: theme.palette.grey[200],
+  '& img': { display: 'block', width: '100%', height: 'auto' },
+  ...(theme.applyDarkStyles
+    ? theme.applyDarkStyles({ borderColor: alpha(theme.palette.primaryDark[600], 0.5) })
+    : {}),
 }));
 
 const Root = styled('div')(
   ({ theme }) => ({
     flexGrow: 1,
+    background: `linear-gradient(180deg, ${theme.palette.grey[50]} 0%, #FFFFFF 100%)`,
+    backgroundSize: '100% 500px',
+    backgroundRepeat: 'no-repeat',
     [`& .${classes.back}`]: {
       display: 'flex',
       alignItems: 'center',
@@ -174,6 +212,14 @@ const Root = styled('div')(
   }),
   ({ theme }) =>
     theme.applyDarkStyles({
+      background: `linear-gradient(180deg, ${alpha(theme.palette.primary[900], 0.2)} 0%, ${
+        theme.palette.primaryDark[900]
+      } 100%)`,
+      backgroundSize: '100% 1000px',
+      backgroundRepeat: 'no-repeat',
+      [`& .${classes.time}`]: {
+        color: theme.palette.grey[400],
+      },
       '& .markdown-body': {
         '& strong': {
           color: theme.palette.grey[100],
@@ -276,6 +322,8 @@ interface DocsHeader {
   authors: string[];
   tags: string[];
   date: string;
+  image?: string;
+  imageAlt?: string;
 }
 
 interface LocalizedDoc {
@@ -399,6 +447,7 @@ export default function TopLayoutBlog(props: TopLayoutBlogProps): React.ReactEle
             color="primary"
             variant="body2"
             className={classes.back}
+            sx={{ fontWeight: 600 }}
           >
             <ChevronLeftRoundedIcon fontSize="small" sx={{ mr: 0.5 }} />
             {/* eslint-disable-next-line material-ui/no-hardcoded-labels */}
@@ -417,6 +466,7 @@ export default function TopLayoutBlog(props: TopLayoutBlogProps): React.ReactEle
                   year: 'numeric',
                   month: 'short',
                   day: 'numeric',
+                  timeZone: 'UTC',
                 }).format(new Date(headers.date))}
               </time>
                 <h1>{headers.title}</h1>
@@ -432,16 +482,14 @@ export default function TopLayoutBlog(props: TopLayoutBlogProps): React.ReactEle
                       }?s=${36 * 3} 3x`}
                     />
                     <div>
-                      <Typography variant="body2" fontWeight="500">
+                      <Typography component="div" className="author-name">
                         {authors[author].name}
                       </Typography>
                       <Link
                         href={`https://github.com/${authors[author].github}`}
                         target="_blank"
                         rel="noopener"
-                        color="primary"
-                        variant="body2"
-                        sx={{ fontWeight: 500 }}
+                        className="author-handle"
                       >
                         @{authors[author].github}
                       </Link>
@@ -449,6 +497,11 @@ export default function TopLayoutBlog(props: TopLayoutBlogProps): React.ReactEle
                   </div>
                 ))}
               </AuthorsContainer>
+              {headers.image ? (
+                <Hero>
+                  <img src={headers.image} alt={headers.imageAlt || headers.title} />
+                </Hero>
+              ) : null}
             </React.Fragment>
           ) : null}
           {source ? (
