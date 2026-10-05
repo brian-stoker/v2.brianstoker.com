@@ -32,7 +32,8 @@ export default function generateRssFeed(allBlogPosts: Array<BlogPost>) {
 
     feed.addItem({
       title: post.title,
-      image: post.image || undefined, // Convert null to undefined for RSS feed compatibility
+      // feed's enclosure needs an absolute URL; frontmatter images are site-relative.
+      image: post.image ? new URL(post.image, siteUrl).toString() : undefined,
       id: postLink,
       link: postLink,
       description: post.description,
