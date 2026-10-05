@@ -192,3 +192,10 @@ svg {
 }
 
 /* Removed CSS scaling for react-pdf - using ResizeObserver instead per documentation */
+
+/* .plan post body links: MUI-blog link blue (scoped override of the inherit rule above). */
+.markdown-body .MuiLink-root,
+.markdown-body .MuiLink-root:visited {
+  color: rgb(102, 179, 255) !important;
+  font-weight: 500;
+}

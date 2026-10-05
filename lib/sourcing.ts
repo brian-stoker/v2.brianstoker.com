@@ -40,6 +40,7 @@ export interface BlogPostMeta {
    title: string;
   description: string;
   image?: string | null;
+  imageAlt?: string | null;
   tags: Array<string>;
   authors?: Array<string>;
   date?: string | null;
@@ -77,6 +78,7 @@ async function getBlogPost(entry: BlogFileEntry): Promise<BlogPost> {
     title: meta.title || slug,
     description: meta.description || '',
     image: meta.image || null,
+    imageAlt: meta.imageAlt || null,
     tags,
     authors: Array.isArray(meta.authors) ? meta.authors : meta.authors ? [meta.authors] : [],
     date: meta.date || null,

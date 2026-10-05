@@ -4,7 +4,7 @@
         <title>bstoked.plan</title>
         <link>brian.stokd.cloud/blog</link>
         <description>Follow the SUI .plan to learn about new product features, latest advancements in UI development, and business initiatives.</description>
-        <lastBuildDate>Mon, 05 Oct 2026 15:55:11 GMT</lastBuildDate>
+        <lastBuildDate>Mon, 05 Oct 2026 17:50:23 GMT</lastBuildDate>
         <docs>https://validator.w3.org/feed/docs/rss2.html</docs>
         <generator>https://github.com/jpmonette/feed</generator>
         <language>en</language>
@@ -21,6 +21,7 @@
             <pubDate>Sun, 04 Oct 2026 12:00:00 GMT</pubDate>
             <description><![CDATA[the board moved into the desktop app, sleep picks work from the workflow only, the landing queue unwedged, agents can be assigned work.]]></description>
             <category>.plan</category>
+            <enclosure url="https://brian.stokd.cloud/static/.plan/2026-10-04-hal-one-source-of-order/hero.jpg" length="0" type="image/jpg"/>
         </item>
         <item>
             <title><![CDATA[the gate holds]]></title>

@@ -6,6 +6,7 @@ import Box from '@mui/material/Box';
 import Container from '@mui/material/Container';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
+import CardMedia from '@mui/material/CardMedia';
 import Chip from '@mui/material/Chip';
 import Grid from '@mui/material/Grid';
 import NextLink from 'next/link';
@@ -49,7 +50,7 @@ export default function PlanIndex(props) {
       <NextMain style={{ flex: 1 }}>
       <Container maxWidth="lg" sx={{ py: 6 }}>
         <Box sx={{ mb: 6 }}>
-          <Typography variant="h1" component="h1" gutterBottom>
+          <Typography variant="h1" component="h1" gutterBottom sx={{ color: 'rgb(246,247,248)' }}>
             The Plan
           </Typography>
           <Typography variant="h5" component="p" color="text.secondary">
@@ -72,12 +73,23 @@ export default function PlanIndex(props) {
                   }
                 }}
               >
+                {post.image ? (
+                  <MuiLink component={NextLink} href={`/.plan/${post.slug}`}>
+                    <CardMedia
+                      component="img"
+                      image={post.image}
+                      alt={post.imageAlt || post.title}
+                      sx={{ aspectRatio: '2 / 1', objectFit: 'cover', borderRadius: '8px', border: '1px solid rgba(48, 56, 64, 0.5)' }}
+                    />
+                  </MuiLink>
+                ) : null}
                 <CardContent sx={{ flexGrow: 1, display: 'flex', flexDirection: 'column' }}>
                   <Typography variant="overline" color="text.secondary">
                     {new Date(post.date).toLocaleDateString('en-US', {
                       year: 'numeric',
                       month: 'long',
                       day: 'numeric',
+                      timeZone: 'UTC',
                     })}
                   </Typography>
                   

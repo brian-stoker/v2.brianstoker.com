@@ -11,11 +11,11 @@ imageAlt: 'A lone stone gate on a dark misty plain, cold blue light glowing thro
 
 ### selfactor
 
-- governance: put real gates on the planning pipeline. an intent classifier keeps planning read-only, a judge only promotes a plan once it is actually good enough to start coding, and an adversarial reviewer runs down agents that try to quit a task early. retired two repo-wide identity gates that were blocking the wrong work.
-- project engine: drove the selfactor artifacts project toward feature complete. its PRD went through contract review, artifact management and charter review landed, then hosted, versioned, sandboxed artifacts with session feedback, producer-only writes, and a guard against the write race. the repo-hosted project view is back, and i audited a 39-day-old project that had auto-prioritized itself.
-- landing: main is protected with explicit refspecs so a lander branch cannot move it, completion evidence for dev-complete and landing is verified in the api and the cli, and the lander stopped misreporting a work item it never finished. ported the truth into it too: exact-head trailers, force-release for unknowns, a read-only explain, heartbeat stop, and a re-entry guard on finished work. it still stalled often enough that i unstuck it by hand more than once.
-- build fabric: made the machine-wide build opt-in and went after why build steps rebuild more than they should. also fixed a deploy-main break where the artifacts spec imported a constant across a boundary it should not have.
-- cli and install: a standalone gh-axi installer, vendored skill versions resolved from the latest release, legacy env vars stopped leaking into agent sessions, quieter menubar accounting rows, and provider launches over stdin transport fixed.
+- **governance:** put real gates on the planning pipeline. an intent classifier keeps planning read-only, a judge only promotes a plan once it is actually good enough to start coding, and an adversarial reviewer runs down agents that try to quit a task early. retired two repo-wide identity gates that were blocking the wrong work.
+- **project engine:** drove the selfactor artifacts project toward feature complete. its PRD went through contract review, artifact management and charter review landed, then hosted, versioned, sandboxed artifacts with session feedback, producer-only writes, and a guard against the write race. the repo-hosted project view is back, and i audited a 39-day-old project that had auto-prioritized itself.
+- **landing:** main is protected with explicit refspecs so a lander branch cannot move it, completion evidence for dev-complete and landing is verified in the api and the cli, and the lander stopped misreporting a work item it never finished. ported the truth into it too: exact-head trailers, force-release for unknowns, a read-only explain, heartbeat stop, and a re-entry guard on finished work. it still stalled often enough that i unstuck it by hand more than once.
+- **build fabric:** made the machine-wide build opt-in and went after why build steps rebuild more than they should. also fixed a deploy-main break where the artifacts spec imported a constant across a boundary it should not have.
+- **cli and install:** a standalone gh-axi installer, vendored skill versions resolved from the latest release, legacy env vars stopped leaking into agent sessions, quieter menubar accounting rows, and provider launches over stdin transport fixed.
 
 ### gdock
 
@@ -23,8 +23,8 @@ imageAlt: 'A lone stone gate on a dark misty plain, cold blue light glowing thro
 
 ### selfagents
 
-- desktop: refined the pane layout and participant typeahead, a corrected round-7 mockup, and corrected the hermes integration after it had landed the wrong way.
+- **desktop:** refined the pane layout and participant typeahead, a corrected round-7 mockup, and corrected the hermes integration after it had landed the wrong way.
 
 ### rr
 
-- back up and running locally again: isolated snapshot setup, trusted local https, signed dev sessions, session refresh fixed, media records repaired and placeholder junk cleared, search regressions run, and an isolated local runner for deploys.
+- **back up and running locally again:** isolated snapshot setup, trusted local https, signed dev sessions, session refresh fixed, media records repaired and placeholder junk cleared, search regressions run, and an isolated local runner for deploys.

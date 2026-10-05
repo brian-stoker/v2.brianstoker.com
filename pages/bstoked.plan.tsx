@@ -39,7 +39,13 @@ export const getStaticProps = async () => {
   };
 };
 
-export function PostPreview({post, size = 'default' }: {post: BlogPost, size?: 'default' | 'mini'}) {
+// Post dates are stored as UTC midnight; show that calendar day in every timezone.
+function utcDate(date: string) {
+  const d = new Date(date);
+  return new Date(d.getTime() + d.getTimezoneOffset() * 60000);
+}
+
+export function PostPreview({post, size = 'default', showImage = false }: {post: BlogPost, size?: 'default' | 'mini', showImage?: boolean}) {
   return (
     <React.Fragment>
       <Box sx={{ display: 'flex', gap: 0.5, mb: 1.5, flexWrap: 'wrap'  }} id={'chip-container'}>
@@ -69,9 +75,27 @@ export function PostPreview({post, size = 'default' }: {post: BlogPost, size?: '
             {post?.title}
         </NextLink>
       </Typography>
-      <Typography color="text.secondary" sx={{ mb: 'auto' }}>
+      <Typography color="text.secondary" sx={{ mb: showImage && post?.image ? 2 : 'auto' }}>
         {post?.description}
       </Typography>
+      {showImage && post?.image && (
+        <Box
+          component="img"
+          src={post.image}
+          alt={post.imageAlt || post.title}
+          sx={(theme) => ({
+            aspectRatio: '16 / 9',
+            width: '100%',
+            height: 'auto',
+            objectFit: 'cover',
+            borderRadius: '8px',
+            border: '1px solid',
+            borderColor: theme.palette.grey[200],
+            mb: 'auto',
+            ...theme.applyDarkStyles({ borderColor: alpha(theme.palette.primaryDark[600], 0.5) }),
+          })}
+        />
+      )}
       {post?.authors && (
         <AvatarGroup
           sx={[
@@ -142,26 +166,9 @@ export function PostPreview({post, size = 'default' }: {post: BlogPost, size?: '
           )}
           {post?.date && (
             <Typography variant="caption" fontWeight="regular" color="text.tertiary">
-              { size === 'mini' ? new Date(post?.date).toLocaleDateString('en-US', { month: 'numeric', day: 'numeric', year: '2-digit' } ) : new Date(post?.date).toDateString()}
+              { size === 'mini' ? new Date(post?.date).toLocaleDateString('en-US', { month: 'numeric', day: 'numeric', year: '2-digit', timeZone: 'UTC' } ) : utcDate(post.date).toDateString()}
             </Typography>
           )}
-          {post?.authors?.slice(0, 1).map((userId) => {
-            const rec = AUTHORS[userId as keyof typeof AUTHORS];
-            if (!rec?.github) return null;
-            return (
-              <MuiLink
-                key={userId}
-                href={`https://github.com/${rec.github}`}
-                target="_blank"
-                rel="noopener"
-                variant="caption"
-                sx={{ display: 'flex', alignItems: 'center', gap: 0.5, mt: 0.5 }}
-              >
-                <GitHubIcon sx={{ fontSize: 14 }} />
-                {rec.github}
-              </MuiLink>
-            );
-          })}
         </Box>
         <Button
           component={NextLink}
@@ -243,20 +250,7 @@ export function PostPreviewBox({post, size = 'default' }: {post: BlogPost, size?
       }),
     }), ...(Array.isArray(sx) ? sx : [sx])]}
   >
-    {post?.image && (
-      <Box
-        component="img"
-        src={post?.image}
-        sx={{
-          aspectRatio: '16 / 9',
-          width: '100%',
-          height: 'auto',
-          objectFit: 'cover',
-          borderRadius: '4px',
-        }}
-      />
-    )}
-    <PostPreview post={post} size={size} />
+    <PostPreview post={post} size={size} showImage={size !== 'mini'} />
   </Paper>
 }
 

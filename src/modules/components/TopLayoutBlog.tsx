@@ -102,7 +102,7 @@ const AuthorsContainer = styled('div')(({ theme }) => ({
 const Hero = styled('figure')(({ theme }) => ({
   margin: 0,
   marginBottom: theme.spacing(4),
-  borderRadius: 12,
+  borderRadius: 8,
   overflow: 'hidden',
   border: '1px solid',
   borderColor: theme.palette.grey[200],
@@ -111,6 +111,29 @@ const Hero = styled('figure')(({ theme }) => ({
     ? theme.applyDarkStyles({ borderColor: alpha(theme.palette.primaryDark[600], 0.5) })
     : {}),
 }));
+
+// .plan post typography: matches the MUI v9 blog post (Brian's restyle, 2026-10-05).
+const HEADING_FONT = '"General Sans", -apple-system, "system-ui", "Segoe UI", Roboto, sans-serif';
+const BODY_FONT = '"IBM Plex Sans", -apple-system, "system-ui", "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif';
+const planPostTypography = {
+  [`& .${classes.container} h1`]: {
+    fontFamily: HEADING_FONT, fontSize: 36, fontWeight: 600, lineHeight: '44px',
+    letterSpacing: '-0.2px', color: 'rgb(246,247,248)', margin: '10px 0 24px',
+  },
+  '& .markdown-body': {
+    fontFamily: BODY_FONT, fontSize: 16, lineHeight: 1.7, color: 'rgb(182,190,201)',
+    '& h2, & h3': {
+      fontFamily: HEADING_FONT, fontSize: 26, fontWeight: 600, lineHeight: '39px',
+      letterSpacing: '0.1px', color: 'rgb(246,247,248)', margin: '40px 0 4px',
+    },
+    '& ul': { paddingLeft: 30, margin: '0 0 16px' },
+    '& li': { fontWeight: 400, color: 'rgb(182,190,201)', lineHeight: 1.7, marginBottom: 4 },
+    '& p': { color: 'rgb(182,190,201)', margin: '0 0 16px' },
+    '& strong': { fontWeight: 700, color: 'rgb(232,234,238)' },
+    '& a': { color: 'rgb(102,179,255)', fontWeight: 500 },
+    '& img': { borderRadius: 8, border: '1px solid rgba(48,56,64,.5)' },
+  },
+};
 
 const Root = styled('div')(
   ({ theme }) => ({
@@ -220,10 +243,9 @@ const Root = styled('div')(
       [`& .${classes.time}`]: {
         color: theme.palette.grey[400],
       },
+      ...planPostTypography,
       '& .markdown-body': {
-        '& strong': {
-          color: theme.palette.grey[100],
-        },
+        ...planPostTypography['& .markdown-body'],
         '& summary': {
           color: theme.palette.grey[300],
         },
@@ -249,12 +271,8 @@ const mdxComponents = {
   h1: (props: any) => (
     <Typography component="h1" variant="h3" sx={{ mt: 6, mb: 2 }} {...props} />
   ),
-  h2: (props: any) => (
-    <Typography component="h2" variant="h4" sx={{ mt: 4, mb: 2 }} {...props} />
-  ),
-  h3: (props: any) => (
-    <Typography component="h3" variant="h5" sx={{ mt: 3, mb: 1.5 }} {...props} />
-  ),
+  h2: (props: any) => <h2 {...props} />,
+  h3: (props: any) => <h3 {...props} />,
   h4: (props: any) => (
     <Typography component="h4" variant="h6" sx={{ mt: 2, mb: 1 }} {...props} />
   ),
@@ -264,19 +282,13 @@ const mdxComponents = {
   h6: (props: any) => (
     <Typography component="h6" variant="subtitle2" sx={{ mt: 2, mb: 1 }} {...props} />
   ),
-  p: (props: any) => (
-    <Typography variant="body1" component="p" sx={{ my: 2 }} {...props} />
-  ),
-  a: (props: any) => (
-    <Link {...props} color="primary" />
-  ),
-  ul: (props: any) => (
-    <ul {...props} style={{ marginBottom: 16 }} />
-  ),
+  p: (props: any) => <p {...props} />,
+  a: (props: any) => <Link {...props} />,
+  ul: (props: any) => <ul {...props} />,
   ol: (props: any) => (
     <ol {...props} style={{ marginBottom: 16 }} />
   ),
-  li: (props: any) => <li {...props} style={{ marginBottom: 8 }} />,
+  li: (props: any) => <li {...props} />,
   blockquote: (props: any) => (
     <Typography
       component="blockquote"
