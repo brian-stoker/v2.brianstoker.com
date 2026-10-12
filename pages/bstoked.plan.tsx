@@ -75,9 +75,6 @@ export function PostPreview({post, size = 'default', showImage = false }: {post:
             {post?.title}
         </NextLink>
       </Typography>
-      <Typography color="text.secondary" sx={{ mb: showImage && post?.image ? 2 : 'auto' }}>
-        {post?.description}
-      </Typography>
       {showImage && post?.image && (
         <Box
           component="img"
@@ -91,11 +88,14 @@ export function PostPreview({post, size = 'default', showImage = false }: {post:
             borderRadius: '8px',
             border: '1px solid',
             borderColor: theme.palette.grey[200],
-            mb: 'auto',
+            mb: 2,
             ...theme.applyDarkStyles({ borderColor: alpha(theme.palette.primaryDark[600], 0.5) }),
           })}
         />
       )}
+      <Typography color="text.secondary" sx={{ mb: 'auto' }}>
+        {post?.description}
+      </Typography>
       {post?.authors && (
         <AvatarGroup
           sx={[
