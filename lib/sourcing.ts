@@ -94,6 +94,11 @@ const ALLOWED_TAGS = [
   'Guide',
   'Product',
   // Product tags
+  // bstoked.plan products (mechanical: /opt/agents/hal/scripts/plan_tags.py)
+  'selfactor',
+  'selfagent',
+  'gdock',
+  'sgit',
   'Stoked UI',
   'MUI X',
   'Material UI',
