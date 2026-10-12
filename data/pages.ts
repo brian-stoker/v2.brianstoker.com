@@ -89,6 +89,30 @@ const pages: MuiPage[] = [
     pathname: '/.plan/2026-10-04-hal-one-source-of-order.mdx',
     title: 'one source of order',
   },
+  {
+    pathname: '/.plan/2026-10-05-hal-the-second-pass.mdx',
+    title: 'the second pass',
+  },
+  {
+    pathname: '/.plan/2026-10-06-hal-the-avatar-moves.mdx',
+    title: 'the avatar moves',
+  },
+  {
+    pathname: '/.plan/2026-10-07-hal-nothing-was-missing.mdx',
+    title: 'nothing was missing',
+  },
+  {
+    pathname: '/.plan/2026-10-09-hal-the-long-unstick.mdx',
+    title: 'the long unstick',
+  },
+  {
+    pathname: '/.plan/2026-10-11-hal-the-tree-not-the-summary.mdx',
+    title: 'the tree, not the summary',
+  },
+  {
+    pathname: '/.plan/2026-10-12-one-durable-host.mdx',
+    title: 'one durable host',
+  },
 ];
 
 export default pages;

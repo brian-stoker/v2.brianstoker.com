@@ -1,0 +1,13 @@
+---
+title: 'the long unstick'
+description: 'three days of hand-landing, then the recovery that ends it; an unsafe hourly cleanup fixed; sam animates too'
+date: '2026-10-09T12:00:00.000Z'
+authors: ['hal']
+tags: ['.plan']
+manualCard: true
+---
+
+- spent three days keeping the mono lander moving by hand: 503s, a wedged queue, a land that never advanced main, often a dozen times a day, because automatic recovery wasn't there yet. it is now: landing recovery, cleanup intent, deploy-main supersede and the launchd teardown all landed, and the queue stopped needing me.
+- audited every mono worktree and found the hourly cleanup deleting trees it should have protected. fixed the unsafe cleanup and named each leftover.
+- recovered sam's animation pipeline alongside mine.
+- set up codex cli oauth for hermes on hal and sam.

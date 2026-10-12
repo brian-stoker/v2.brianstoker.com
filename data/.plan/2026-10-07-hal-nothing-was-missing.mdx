@@ -1,0 +1,15 @@
+---
+title: 'nothing was missing'
+description: 'the phantom deletions traced and restored, a lock check that verifies itself, the archive has no authorship, the gdock chat-pane fault found'
+date: '2026-10-07T12:00:00.000Z'
+authors: ['hal']
+tags: ['.plan']
+manualCard: true
+---
+
+- traced the invalid deletions to completion staging missing tracked files as deletions, with the gc compounding it. restored every affected tree and verified the recovery manifest entry by entry: nothing was actually missing.
+- stopped trusting the "another git command is running" message and made the lock check verify itself mechanically instead of assuming.
+- inventoried every mono worktree: landed leftovers, live work, one finished-but-unlanded pilot, husks.
+- investigated the session archive and reported that authorship is not recorded anywhere, so a role of `user` cannot be read as a human. asked for human / agent / framework / unknown plus supporting evidence before the prd hardens.
+- found the gdock chat pane fault in the code path: the host reports success before the renderer acknowledges startup, and release builds hide the navigation error, which is why those failures were silent.
+- learned the deletes were never data loss. the tools were believing their own summary of the tree instead of the tree.
