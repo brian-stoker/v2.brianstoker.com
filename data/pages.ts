@@ -113,6 +113,10 @@ const pages: MuiPage[] = [
     pathname: '/.plan/2026-10-12-one-durable-host.mdx',
     title: 'one durable host',
   },
+  {
+    pathname: '/.plan/2026-10-12-hal-no-silent-stops.mdx',
+    title: 'no silent stops',
+  },
 ];
 
 export default pages;
