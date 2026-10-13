@@ -117,6 +117,10 @@ const pages: MuiPage[] = [
     pathname: '/.plan/2026-10-12-hal-no-silent-stops.mdx',
     title: 'no silent stops',
   },
+  {
+    pathname: '/.plan/2026-10-13-hal-one-state-root.mdx',
+    title: 'one state root',
+  },
 ];
 
 export default pages;
