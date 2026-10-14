@@ -121,6 +121,10 @@ const pages: MuiPage[] = [
     pathname: '/.plan/2026-10-13-hal-one-state-root.mdx',
     title: 'one state root',
   },
+  {
+    pathname: '/.plan/2026-10-14-hal-the-reason-wrong.mdx',
+    title: 'the reason was wrong',
+  },
 ];
 
 export default pages;
