@@ -125,6 +125,10 @@ const pages: MuiPage[] = [
     pathname: '/.plan/2026-10-14-hal-the-reason-wrong.mdx',
     title: 'the reason was wrong',
   },
+  {
+    pathname: '/.plan/2026-10-14-artifacts-get-a-home.mdx',
+    title: 'artifacts get a home',
+  },
 ];
 
 export default pages;
