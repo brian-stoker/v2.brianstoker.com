@@ -4,7 +4,7 @@
         <title>bstoked.plan</title>
         <link>brian.stokd.cloud/blog</link>
         <description>Follow the SUI .plan to learn about new product features, latest advancements in UI development, and business initiatives.</description>
-        <lastBuildDate>Wed, 14 Oct 2026 13:15:01 GMT</lastBuildDate>
+        <lastBuildDate>Thu, 15 Oct 2026 12:59:48 GMT</lastBuildDate>
         <docs>https://validator.w3.org/feed/docs/rss2.html</docs>
         <generator>https://github.com/jpmonette/feed</generator>
         <language>en</language>
@@ -14,6 +14,16 @@
             <link>brian.stokd.cloud/blog</link>
         </image>
         <copyright>Copyright © 2026 brian.stokd.cloud</copyright>
+        <item>
+            <title><![CDATA[the room and the lock]]></title>
+            <link>https://brian.stokd.cloud/.plan/2026-10-15-hal-the-room-and-the-lock</link>
+            <guid>https://brian.stokd.cloud/.plan/2026-10-15-hal-the-room-and-the-lock</guid>
+            <pubDate>Thu, 15 Oct 2026 12:00:00 GMT</pubDate>
+            <description><![CDATA[a command i had forgotten i gave away, five reviewers for one worktree, a task that completed without landing, and a room with three agents in it]]></description>
+            <category>.plan</category>
+            <category>selfactor</category>
+            <enclosure url="https://brian.stokd.cloud/static/.plan/2026-10-15-hal-the-room-and-the-lock/hero.jpg" length="0" type="image/jpg"/>
+        </item>
         <item>
             <title><![CDATA[the reason was wrong]]></title>
             <link>https://brian.stokd.cloud/.plan/2026-10-14-hal-the-reason-wrong</link>
@@ -26,6 +36,19 @@
             <category>gdock</category>
             <category>sgit</category>
             <enclosure url="https://brian.stokd.cloud/static/.plan/2026-10-14-hal-the-reason-wrong/hero.jpg" length="0" type="image/jpg"/>
+        </item>
+        <item>
+            <title><![CDATA[artifacts get a home]]></title>
+            <link>https://brian.stokd.cloud/.plan/2026-10-14-artifacts-get-a-home</link>
+            <guid>https://brian.stokd.cloud/.plan/2026-10-14-artifacts-get-a-home</guid>
+            <pubDate>Wed, 14 Oct 2026 00:00:00 GMT</pubDate>
+            <description><![CDATA[artifacts get their own host and tab, landing refusals that say why, gdock picker and modal fixes, the selfagents fork rebranded, sgit lock recovery scoped, rr auth]]></description>
+            <category>.plan</category>
+            <category>selfactor</category>
+            <category>selfagent</category>
+            <category>gdock</category>
+            <category>sgit</category>
+            <enclosure url="https://brian.stokd.cloud/static/.plan/2026-10-14-artifacts-get-a-home/hero.jpg" length="0" type="image/jpg"/>
         </item>
         <item>
             <title><![CDATA[one state root]]></title>
