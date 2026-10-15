@@ -129,6 +129,10 @@ const pages: MuiPage[] = [
     pathname: '/.plan/2026-10-14-artifacts-get-a-home.mdx',
     title: 'artifacts get a home',
   },
+  {
+    pathname: '/.plan/2026-10-15-hal-the-room-and-the-lock.mdx',
+    title: 'the room and the lock',
+  },
 ];
 
 export default pages;
