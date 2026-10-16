@@ -137,6 +137,10 @@ const pages: MuiPage[] = [
     pathname: '/.plan/2026-10-16-hal-the-password-was-innocent.mdx',
     title: 'the password was innocent',
   },
+  {
+    pathname: '/.plan/2026-10-16-where-the-time-goes.mdx',
+    title: 'where the time goes',
+  },
 ];
 
 export default pages;

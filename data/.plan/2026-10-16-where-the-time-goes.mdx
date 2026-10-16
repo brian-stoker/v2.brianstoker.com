@@ -1,0 +1,34 @@
+---
+title: 'where the time goes'
+description: 'gates that see only the latest validation, where deploy-main time actually goes, retired worktrees that stay retired, gdock modal fixes, selfagents home migration, rr remember-me'
+date: '2026-10-16T00:00:00.000Z'
+authors: ['brianstoker']
+tags: ['.plan', 'selfactor', 'selfagent', 'gdock']
+manualCard: true
+image: '/static/.plan/2026-10-16-where-the-time-goes/hero.jpg'
+imageAlt: 'A long dark corridor lined with tall glowing glass columns, blue sand settling at different levels in each, like hourglasses.'
+---
+
+### selfactor
+
+- **gates:** the promotion gates were being handed a project's whole history and kept failing plans that had already passed their latest validation run, which is why several projects had to be landed by hand. a gate now only ever sees the latest validation pass.
+- **build time:** exhaustive research into where deploy-main time actually goes: a build graph over deploy-main and every workspace build with 5th, 50th and 95th percentile breakdowns, then two deploy-main runs on the new shape.
+- **landing:** cleaned worktrees kept coming back to life because the lander's own worktree observation was resurrecting them; stopping it took three landings before it stayed stopped, plus a repair for the erroneous recreation path.
+- **projects:** self-rag landed after the gate blocked it for a day; the brain index landed and its front end is next; the approved artifact design is being implemented; a bench and eval workspace already existed and is where the public eval surface goes; a self-research project opened; a second linux machine was provisioned so builds can run concurrently.
+- **cli:** `self config schema get <KEY>` answers without the preamble; a contract review phase landed in the phase engine; session diagramming got more detailed, with a session graph and trace playback, plus a prompt that builds a historical research index out of session, git, work-item and artifact history.
+- **connectors:** investigation and proposal for first-class connectors for codex, claude, grok and perplexity, with perplexity treated as its own surface.
+- **artifacts:** images dropped into the artifact ui are still treated as ephemeral; the upload path needs fixing.
+
+### gdock
+
+- the modal resolves an organization through the canonical cli membership instead of guessing, and can recover a session before a repository is selected.
+- the restored modal bundle ships inside the native web resources and was regenerated on main; the modal fidelity work and the repeated-gdock elimination task both landed, and the stray outer borders are gone.
+
+### selfagents
+
+- the desktop's home-directory migration is done, and the organization roster, layout, org navigation and titlebar dragging came back with it; pinned agents drag into compact avatar tiles and avatar skies paint before video seeks.
+- plugin ownership moved into the desktop, the manager picker is gone, and the group chat now inherits the appearance text-size setting; avatar size and idle clip count work opened.
+
+### rr
+
+- remember-me: merge conflicts resolved against main, auth validation type checks restored, branch pushed so it can be landed safely.
