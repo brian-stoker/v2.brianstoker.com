@@ -141,6 +141,10 @@ const pages: MuiPage[] = [
     pathname: '/.plan/2026-10-16-where-the-time-goes.mdx',
     title: 'where the time goes',
   },
+  {
+    pathname: '/.plan/2026-10-17-hal-the-read-was-the-fault.mdx',
+    title: 'the read was the fault',
+  },
 ];
 
 export default pages;
