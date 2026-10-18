@@ -7,18 +7,18 @@ export default function generateRssFeed(allBlogPosts: Array<BlogPost>) {
   if (process.env.NODE_ENV !== 'production') {
     return;
   }
-  const siteUrl = 'https://brian.stokd.cloud';
+  const siteUrl = 'https://brianstoker.com';
 
   const feed = new Feed({
     title: 'bstoked.plan',
     description:
-      'Follow the SUI .plan to learn about new product features, latest advancements in UI development, and business initiatives.',
+      'Notes, musings, and ignorable anecdotes: what was built, fixed and measured.',
     id: `${siteUrl}/bstoked.plan`,
-    link: `brian.stokd.cloud/blog`,
+    link: `${siteUrl}/bstoked.plan`,
     language: 'en',
     image: `${siteUrl}/static/logo.svg`,
     favicon: `${siteUrl}/favicon.ico`,
-    copyright: `Copyright © ${new Date().getFullYear()} brian.stokd.cloud`,
+    copyright: `Copyright © ${new Date().getFullYear()} Brian Stoker`,
     feedLinks: {
       rss2: `${siteUrl}/public${ROUTES.rssFeed}`,
     },
