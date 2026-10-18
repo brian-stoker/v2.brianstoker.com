@@ -139,7 +139,7 @@ const Root = styled('div')(
   ({ theme }) => ({
     flexGrow: 1,
     background: `linear-gradient(180deg, ${theme.palette.grey[50]} 0%, #FFFFFF 100%)`,
-    backgroundSize: '100% 500px',
+    backgroundSize: '100% 100%',
     backgroundRepeat: 'no-repeat',
     [`& .${classes.back}`]: {
       display: 'flex',
@@ -238,7 +238,7 @@ const Root = styled('div')(
       background: `linear-gradient(180deg, ${alpha(theme.palette.primary[900], 0.2)} 0%, ${
         theme.palette.primaryDark[900]
       } 100%)`,
-      backgroundSize: '100% 1000px',
+      backgroundSize: '100% 100%',
       backgroundRepeat: 'no-repeat',
       [`& .${classes.time}`]: {
         color: theme.palette.grey[400],
