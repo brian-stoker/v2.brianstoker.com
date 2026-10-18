@@ -149,6 +149,10 @@ const pages: MuiPage[] = [
     pathname: '/.plan/2026-10-18-hal-written-down-once.mdx',
     title: 'written down once',
   },
+  {
+    pathname: '/.plan/2026-10-18-the-shape-of-the-gate.mdx',
+    title: 'the shape of the gate',
+  },
 ];
 
 export default pages;
