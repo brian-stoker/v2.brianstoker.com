@@ -392,7 +392,7 @@ export default function TopLayoutBlog(props: TopLayoutBlogProps): React.ReactEle
       <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
         <AppHeader />
         <Head
-        title={`${finalTitle} - SUI`}
+        title={`${finalTitle} - bstoked.plan`}
         description={description}
         largeCard
         disableAlternateLocale

@@ -465,7 +465,7 @@ export default function Blog(props: InferGetStaticPropsType<typeof getStaticProp
                       Want to hear more from us?
                     </Typography>
                     <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
-                      Get up to date with everything SUI-related through our social media:
+                      Follow along on:
                     </Typography>
                     <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 2, '* > svg': { mr: 1 } }}>
                       <MuiLink href="https://github.com/brian-stoker" target="_blank" fontSize={14}>
