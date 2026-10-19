@@ -241,11 +241,13 @@ export function PostPreviewBox({post, size = 'default' }: {post: BlogPost, size?
       p: 2,
       display: 'flex',
       flexDirection: 'column',
-      backgroundImage: theme.palette.gradients.radioSubtle,
+      backgroundImage: ((theme as any).vars || theme).palette.gradients.radioSubtle,
       boxShadow: '0 4px 12px rgba(170, 180, 190, 0.2)',
       ...theme.applyDarkStyles({
         background: theme.palette.primaryDark[900],
-        backgroundImage: theme.palette.gradients.radioSubtle,
+        // theme.palette is the light palette here; the CSS var switches per scheme,
+        // otherwise dark cards get the light blue wash and turn grey.
+        backgroundImage: ((theme as any).vars || theme).palette.gradients.radioSubtle,
         boxShadow: '0 4px 12px rgba(0, 0, 0, 0.4)',
       }),
     }), ...(Array.isArray(sx) ? sx : [sx])]}
