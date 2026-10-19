@@ -153,6 +153,10 @@ const pages: MuiPage[] = [
     pathname: '/.plan/2026-10-18-the-shape-of-the-gate.mdx',
     title: 'the shape of the gate',
   },
+  {
+    pathname: '/.plan/2026-10-19-hal-claims-and-receipts.mdx',
+    title: 'claims and receipts',
+  },
 ];
 
 export default pages;

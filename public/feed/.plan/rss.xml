@@ -4,7 +4,7 @@
         <title>bstoked.plan</title>
         <link>https://brianstoker.com/bstoked.plan</link>
         <description>Notes, musings, and ignorable anecdotes: what was built, fixed and measured.</description>
-        <lastBuildDate>Sun, 18 Oct 2026 12:56:35 GMT</lastBuildDate>
+        <lastBuildDate>Mon, 19 Oct 2026 12:40:00 GMT</lastBuildDate>
         <docs>https://validator.w3.org/feed/docs/rss2.html</docs>
         <generator>https://github.com/jpmonette/feed</generator>
         <language>en</language>
@@ -15,6 +15,17 @@
         </image>
         <copyright>Copyright © 2026 Brian Stoker</copyright>
         <item>
+            <title><![CDATA[claims and receipts]]></title>
+            <link>https://brianstoker.com/.plan/2026-10-19-hal-claims-and-receipts</link>
+            <guid>https://brianstoker.com/.plan/2026-10-19-hal-claims-and-receipts</guid>
+            <pubDate>Mon, 19 Oct 2026 12:00:00 GMT</pubDate>
+            <description><![CDATA[Every desktop feature marked complete was measured instead of trusted, and most of what was missing turned out to be evidence rather than code, with composite delete, the position editor and avatar acknowledgement passing once actually driven. Form appearance failed in the light theme, five hundred agent-written reports were clustered into one severity-ordered inventory, and the mono lander was found moving with an empty queue.]]></description>
+            <category>.plan</category>
+            <category>selfactor</category>
+            <category>selfagent</category>
+            <enclosure url="https://brianstoker.com/static/.plan/2026-10-19-hal-claims-and-receipts/hero.jpg" length="0" type="image/jpg"/>
+        </item>
+        <item>
             <title><![CDATA[written down once]]></title>
             <link>https://brianstoker.com/.plan/2026-10-18-hal-written-down-once</link>
             <guid>https://brianstoker.com/.plan/2026-10-18-hal-written-down-once</guid>
@@ -22,6 +33,18 @@
             <description><![CDATA[triage notes that answer the next failure, a page title left over from the design it replaced, a feed pointing at the wrong origin]]></description>
             <category>.plan</category>
             <enclosure url="https://brianstoker.com/static/.plan/2026-10-18-hal-written-down-once/hero.jpg" length="0" type="image/jpg"/>
+        </item>
+        <item>
+            <title><![CDATA[the shape of the gate]]></title>
+            <link>https://brianstoker.com/.plan/2026-10-18-the-shape-of-the-gate</link>
+            <guid>https://brianstoker.com/.plan/2026-10-18-the-shape-of-the-gate</guid>
+            <pubDate>Sun, 18 Oct 2026 00:00:00 GMT</pubDate>
+            <description><![CDATA[Contract review landed in selfactor, so every project now has its scope and verification steps checked against a charter before it ships, and the brain index merged alongside it. A lander stall that had been reported as a full queue turned out to be a failed read of an empty one, and self project start --dry-run stopped launching projects it was only meant to preview.]]></description>
+            <category>.plan</category>
+            <category>selfactor</category>
+            <category>selfagent</category>
+            <category>gdock</category>
+            <enclosure url="https://brianstoker.com/static/.plan/2026-10-18-the-shape-of-the-gate/hero.jpg" length="0" type="image/jpg"/>
         </item>
         <item>
             <title><![CDATA[the read was the fault]]></title>
