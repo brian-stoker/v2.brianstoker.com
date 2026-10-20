@@ -157,6 +157,10 @@ const pages: MuiPage[] = [
     pathname: '/.plan/2026-10-19-hal-claims-and-receipts.mdx',
     title: 'claims and receipts',
   },
+  {
+    pathname: '/.plan/2026-10-20-hal-permission-not-the-queue.mdx',
+    title: 'permission, not the queue',
+  },
 ];
 
 export default pages;
