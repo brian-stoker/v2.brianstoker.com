@@ -161,6 +161,10 @@ const pages: MuiPage[] = [
     pathname: '/.plan/2026-10-20-hal-permission-not-the-queue.mdx',
     title: 'permission, not the queue',
   },
+  {
+    pathname: '/.plan/2026-10-21-hal-drawn-somewhere-else.mdx',
+    title: 'drawn somewhere else',
+  },
 ];
 
 export default pages;
