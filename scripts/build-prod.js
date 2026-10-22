@@ -53,7 +53,7 @@ function runBuild() {
     // Pinned: @latest can change the build gate unattended. The flag is needed
     // because Next 15 is past the vendor's two-year major support window.
     const result = spawnSync('pnpx', [
-        '@opennextjs/aws@4.1.12',
+        '@opennextjs/aws@4.1.11',
         'build',
         '--dangerously-use-unsupported-next-version'
     ], {
