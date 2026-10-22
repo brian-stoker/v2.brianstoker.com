@@ -33,7 +33,7 @@ export const createSite = (domainInfo: DomainInfo, extraEnv?: Record<string, str
     // vendor's two-year major support window (Next 15.0 shipped 2024-10-21);
     // OpenNext exits 1 without it. Drop the flag when the site moves to Next 16.
     buildCommand:
-      "pnpx @opennextjs/aws@4.1.11 build --dangerously-use-unsupported-next-version",
+      "pnpx @opennextjs/aws@4.1.8 build --dangerously-use-unsupported-next-version",
     domain: !$dev
       ? {
           name: domainInfo.domains[0],
