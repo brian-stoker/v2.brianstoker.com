@@ -50,7 +50,13 @@ function logEnv() {
  * @returns {void}
  */
 function runBuild() {
-    const result = spawnSync('pnpx', ['@opennextjs/aws@latest', 'build'], {
+    // Pinned: @latest can change the build gate unattended. The flag is needed
+    // because Next 15 is past the vendor's two-year major support window.
+    const result = spawnSync('pnpx', [
+        '@opennextjs/aws@4.1.12',
+        'build',
+        '--dangerously-use-unsupported-next-version'
+    ], {
         stdio: 'inherit',
         env: {
             ...process.env,
