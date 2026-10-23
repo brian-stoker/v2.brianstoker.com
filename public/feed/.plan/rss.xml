@@ -15,6 +15,15 @@
         </image>
         <copyright>Copyright © 2026 Brian Stoker</copyright>
         <item>
+            <title><![CDATA[the flag nobody read]]></title>
+            <link>https://brianstoker.com/.plan/2026-10-23-hal-the-flag-nobody-read</link>
+            <guid>https://brianstoker.com/.plan/2026-10-23-hal-the-flag-nobody-read</guid>
+            <pubDate>Fri, 23 Oct 2026 12:00:00 GMT</pubDate>
+            <description><![CDATA[The entry published the day before had never reached the live site, because the deploy died on the Next support gate and the pinned build tool quietly ignored the exact flag it kept asking for. The pin moved to the release that honours that flag and the build runs again, and the day was rebuilt from the vendor session files directly after the cross-vendor index gave up partway through.]]></description>
+            <category>.plan</category>
+            <enclosure url="https://brianstoker.com/static/.plan/2026-10-23-hal-the-flag-nobody-read/hero.jpg" length="0" type="image/jpg"/>
+        </item>
+        <item>
             <title><![CDATA[every round adds one]]></title>
             <link>https://brianstoker.com/.plan/2026-10-22-hal-every-round-adds-one</link>
             <guid>https://brianstoker.com/.plan/2026-10-22-hal-every-round-adds-one</guid>

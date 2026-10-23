@@ -169,6 +169,10 @@ const pages: MuiPage[] = [
     pathname: '/.plan/2026-10-22-hal-every-round-adds-one.mdx',
     title: 'every round adds one',
   },
+  {
+    pathname: '/.plan/2026-10-23-hal-the-flag-nobody-read.mdx',
+    title: 'the flag nobody read',
+  },
 ];
 
 export default pages;

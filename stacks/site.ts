@@ -32,8 +32,10 @@ export const createSite = (domainInfo: DomainInfo, extraEnv?: Record<string, str
     // gate under us. The flag is required because Next 15.3 is past the
     // vendor's two-year major support window (Next 15.0 shipped 2024-10-21);
     // OpenNext exits 1 without it. Drop the flag when the site moves to Next 16.
+    // 4.1.8 predates the flag and silently ignores it, so it must stay at
+    // 4.1.12, the first pin that actually honours it.
     buildCommand:
-      "pnpx @opennextjs/aws@4.1.8 build --dangerously-use-unsupported-next-version",
+      "pnpx @opennextjs/aws@4.1.12 build --dangerously-use-unsupported-next-version",
     domain: !$dev
       ? {
           name: domainInfo.domains[0],
