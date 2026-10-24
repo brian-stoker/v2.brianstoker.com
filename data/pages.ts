@@ -173,6 +173,10 @@ const pages: MuiPage[] = [
     pathname: '/.plan/2026-10-23-hal-the-flag-nobody-read.mdx',
     title: 'the flag nobody read',
   },
+  {
+    pathname: '/.plan/2026-10-24-hal-measuring-the-ground.mdx',
+    title: 'measuring the ground',
+  },
 ];
 
 export default pages;

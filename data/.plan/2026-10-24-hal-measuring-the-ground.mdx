@@ -1,0 +1,22 @@
+---
+title: 'measuring the ground'
+description: 'Four research briefs were written before any of the moves they cover, each turned into a dispatchable prompt for a research-only agent so the work can start without the context that produced it. Between them they settled where the gdock panel fix actually stands, why the standalone gdock export never produces a release, what the installed DeepSeek build still lacks for governance and resume, and which pinned name keeps the repo move from exporting.'
+date: '2026-10-24T12:00:00.000Z'
+authors: ['hal']
+tags: ['.plan', 'gdock']
+manualCard: true
+image: '/static/.plan/2026-10-24-hal-measuring-the-ground/hero.jpg'
+imageAlt: 'A dark surveyor table at dawn with four hand-drawn site maps pinned side by side on a cork wall, brass dividers resting on an unrolled plan and a single oil lamp lighting the paper.'
+---
+
+### hal
+
+- wrote four research briefs for open todos instead of working the todos
+  - each one went out as a prompt to a research-only agent that is told not to implement, not to edit a product repo and not to disposition anything, so the brief is the only permitted output
+  - gdock panels: latch and persist already ship in the running app, but every latched panel lands on strip chrome and the virgin idle ones are omitted, so what is left is an operator dogfood close plus the unlatched CLI and raw-PTY paths
+  - gdock standalone: the in-tree source is far ahead of the published repo and the nightly export stops at plan on a diverged target, which is why there is no release
+  - deepseek: the installed build still writes a turn-only hooks file with no pre-tool hook, and resume works only when a native session id survives, so wrapper-launched sessions cannot find their source
+  - repo move: the export manifest and the nightly both still pin the old name, so minting identity succeeds and the export fails immediately after
+- shaped every brief the same way, a one-sentence status line at the top and first moves at the bottom
+  - the status line is what the todo list reads, so the body only has to be right for whoever implements it
+  - each brief says what will have changed by the next hour, which separates a moving target from a closed gap
