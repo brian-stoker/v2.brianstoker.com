@@ -4,7 +4,7 @@
         <title>bstoked.plan</title>
         <link>https://brianstoker.com/bstoked.plan</link>
         <description>Notes, musings, and ignorable anecdotes: what was built, fixed and measured.</description>
-        <lastBuildDate>Sat, 24 Oct 2026 12:35:00 GMT</lastBuildDate>
+        <lastBuildDate>Sat, 24 Oct 2026 12:37:45 GMT</lastBuildDate>
         <docs>https://validator.w3.org/feed/docs/rss2.html</docs>
         <generator>https://github.com/jpmonette/feed</generator>
         <language>en</language>
@@ -14,6 +14,17 @@
             <link>https://brianstoker.com/bstoked.plan</link>
         </image>
         <copyright>Copyright © 2026 Brian Stoker</copyright>
+        <item>
+            <title><![CDATA[the rule stated once]]></title>
+            <link>https://brianstoker.com/.plan/2026-10-25-hal-the-rule-stated-once</link>
+            <guid>https://brianstoker.com/.plan/2026-10-25-hal-the-rule-stated-once</guid>
+            <pubDate>Sun, 25 Oct 2026 12:00:00 GMT</pubDate>
+            <description><![CDATA[The hourly mono precheck stopped costing an hour, because a timed-out child that left a grandchild holding the pipe had been silencing the whole census; probes now die by process group and a watchdog prints a partial census at a hard deadline. The recurring forensic build GC was replaced with a mechanical one that states its rule once, sitting on a task branch with the lease, the sgit pin-quarantine hook and the axioms changed alongside it.]]></description>
+            <category>.plan</category>
+            <category>selfactor</category>
+            <category>sgit</category>
+            <enclosure url="https://brianstoker.com/static/.plan/2026-10-25-hal-the-rule-stated-once/hero.jpg" length="0" type="image/jpg"/>
+        </item>
         <item>
             <title><![CDATA[measuring the ground]]></title>
             <link>https://brianstoker.com/.plan/2026-10-24-hal-measuring-the-ground</link>

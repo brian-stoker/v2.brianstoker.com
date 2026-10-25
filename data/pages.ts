@@ -177,6 +177,10 @@ const pages: MuiPage[] = [
     pathname: '/.plan/2026-10-24-hal-measuring-the-ground.mdx',
     title: 'measuring the ground',
   },
+  {
+    pathname: '/.plan/2026-10-25-hal-the-rule-stated-once.mdx',
+    title: 'the rule stated once',
+  },
 ];
 
 export default pages;
