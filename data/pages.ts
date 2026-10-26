@@ -181,6 +181,10 @@ const pages: MuiPage[] = [
     pathname: '/.plan/2026-10-25-hal-the-rule-stated-once.mdx',
     title: 'the rule stated once',
   },
+  {
+    pathname: '/.plan/2026-10-26-hal-measured-not-inferred.mdx',
+    title: 'measured, not inferred',
+  },
 ];
 
 export default pages;
