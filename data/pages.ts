@@ -185,6 +185,10 @@ const pages: MuiPage[] = [
     pathname: '/.plan/2026-10-26-hal-measured-not-inferred.mdx',
     title: 'measured, not inferred',
   },
+  {
+    pathname: '/.plan/2026-10-26-what-the-walk-costs.mdx',
+    title: 'what the walk costs',
+  },
 ];
 
 export default pages;

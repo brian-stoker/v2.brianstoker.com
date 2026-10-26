@@ -1,0 +1,68 @@
+---
+title: 'what the walk costs'
+description: 'Software catalog discovery turned into a working scan of the whole org, qualified by language and package manager and pinned to exact revisions, while fourteen mono releases carried the day''s fixes out. The mono lander was measured down to its real cost, a directory walk inside the admission loop, and gdock got its native Self chat context display back with a test behind it.'
+date: '2026-10-26T12:00:00.000Z'
+authors: ['brianstoker']
+tags: ['.plan', 'selfactor', 'selfagent', 'gdock']
+manualCard: true
+image: '/static/.plan/2026-10-26-what-the-walk-costs/hero.jpg'
+imageAlt: 'A dark archive aisle of tall shelving stacked with identical boxes, one lit shelf glowing cold blue and throwing a long beam across the floor, dust hanging in the light.'
+---
+
+### selfactor
+
+#### catalog
+
+- software catalog discovery became a system rather than a doc: the org is classified down to suites, products, apps and libraries, so a work item can name where it belongs before anything is planned
+  - discovery built out for Go modules and source-backed commands, literal Python packages, and npm, pnpm and Cargo workspaces, each qualified independently rather than trusted
+  - frozen scans that resume from coverage receipts, so a stopped scan continues instead of starting over
+  - every entry bound to an exact revision instead of a branch name
+  - canonical read commands and API views, with typed product families and contracts over them
+- queued a configurable periodic competitive read, where the same catalog feeds a regular look at what comparable open and closed systems are doing
+
+#### lander
+
+- mono shipped fourteen releases, 0.2.359 through 0.2.373, through the day and the night
+- the lander stopped advancing at 0.2.373; the queue was empty by morning, and later work sits on branches rather than main
+- the wedge measured to a directory walk inside the admission loop, plus an expired workload token whose remint would not decode
+  - re-validation after a squash also dies at a lint script that has not been on that path since the move into mono
+- the status and readiness symmetry project ran all afternoon in the engine and failed to land on a 600 second validation timeout
+  - it sits in attention rather than retrying, and its branch is intact
+
+#### governance
+
+- DeepSeek eligibility fixed, so judging routes to a model that can serve it, with a smoke script that fails when it cannot
+- malformed task validation repaired, so a record that cannot be saved is rejected at write time instead of at land time
+- the contract now sits beside its hash and its validation status files in the ceremony directory
+
+#### daemon
+
+- the daemon watches config and machine config instead of polling them, and takes mailbox pushes on the same event path
+
+#### design
+
+- one design system across every selfactor.io surface: the design spec and the token file rewritten together, with a rendered suite page to hold them side by side
+
+#### brand
+
+- public brand kit rebuilt for all four products with fresh download bundles, and the site loading logo moved to its new light and dark pair
+
+### gdock
+
+- the native Self chat context consumption display came back, with a webview test that fails when the context bundle is missing
+- session card hover panel rebuilt against the sidebar review mockup, pane cycler shortcut fixed, and the inspection host covered by tests
+- the right sidebar collapsed to a single reorder path that persists the stacked layout, panel cards name the pane's work item, and the org icon is gone from repo nodes
+- the models workloads override ceiling moved from 4 to 10, tested in the workloads tab
+
+### selfagent
+
+- bounded acceptance on four desktop features: composite delete, position editor and avatar acknowledgement passed end to end; form appearance failed on light-theme borders and focus
+- the realtime voice backend drove one real turn, and the returned audio was retranscribed to confirm the words
+- side chats collapsed into the agent row and fold when inactive, with agent details on hover and the Selfactor integration settings
+
+### rr
+
+- the session read is cookie-only now, so an authenticated read no longer rewrites or clears the cookie on its way to the page
+  - two genuine red regressions were captured first, against the real handler and the installed response merger, and both pass
+  - 132 tests green across eleven suites; the change is on a task, not committed
+- remembered sessions still drop after about an hour, so that work restarted from what is already in rather than patching over it, and the primary domain is back
