@@ -77,7 +77,7 @@ importers:
         version: 6.17.0(@emotion/react@11.14.0(@types/react@19.1.0)(react@18.3.1))(@emotion/styled@11.14.1(@emotion/react@11.14.0(@types/react@19.1.0)(react@18.3.1))(@types/react@19.1.0)(react@18.3.1))(@mui/material@5.18.0(@emotion/react@11.14.0(@types/react@19.1.0)(react@18.3.1))(@emotion/styled@11.14.1(@emotion/react@11.14.0(@types/react@19.1.0)(react@18.3.1))(@types/react@19.1.0)(react@18.3.1))(@types/react@19.1.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(@mui/system@5.18.0(@emotion/react@11.14.0(@types/react@19.1.0)(react@18.3.1))(@emotion/styled@11.14.1(@emotion/react@11.14.0(@types/react@19.1.0)(react@18.3.1))(@types/react@19.1.0)(react@18.3.1))(@types/react@19.1.0)(react@18.3.1))(@types/react@19.1.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@stoked-ui/common':
         specifier: file:/opt/worktrees/stoked-ui/stoked-ui-main/packages/sui-common/build
-        version: file:../../stoked-ui/stoked-ui-main/packages/sui-common/build(770b54590c73e9f5510759497f2b3e1f)
+        version: file:../../../stoked-ui/stoked-ui-main/packages/sui-common/build(770b54590c73e9f5510759497f2b3e1f)
       '@stoked-ui/docs':
         specifier: 0.1.7
         version: 0.1.7(faee4fcb88b2214e0cabbbb23e378d7d)
@@ -3230,8 +3230,8 @@ packages:
     resolution: {integrity: sha512-4aUIteuyxtBUhVdiQqcDhKFitwfd9hqoSDYY2KRXiWtgoWJ9Bmise+KfEPDiVHWeJepvF8xJO9/9+WDIciMFFw==}
     engines: {node: '>=18.0.0'}
 
-  '@stoked-ui/common@file:../../stoked-ui/stoked-ui-main/packages/sui-common/build':
-    resolution: {directory: ../../stoked-ui/stoked-ui-main/packages/sui-common/build, type: directory}
+  '@stoked-ui/common@file:../../../stoked-ui/stoked-ui-main/packages/sui-common/build':
+    resolution: {directory: ../../../stoked-ui/stoked-ui-main/packages/sui-common/build, type: directory}
     engines: {node: '>=14.0.0'}
     peerDependencies:
       '@emotion/react': ^11.9.0
@@ -6202,6 +6202,7 @@ packages:
 
   plyr@3.8.3:
     resolution: {integrity: sha512-0+iI5uw0WRvtKBpgPCkmQQv7ucHVQKTEo6UFJjgJ8cy/JZhy0dQqshHQVitHXV6l2O3MzhgnuvQ95VSkWcWeSw==}
+    deprecated: 'Plyr is deprecated and receives security updates only. Use Video.js 10 for new projects. Migration guide: https://videojs.org/docs/framework/html/guides/migrate-from-plyr'
 
   possible-typed-array-names@1.1.0:
     resolution: {integrity: sha512-/+5VFTchJDoVj3bhoqi6UeymcD00DAwb1nJwamzPvHEszJ4FpF6SNNbUbOS8yI56qHzdV8eK0qEfOSiodkTdxg==}
@@ -11497,7 +11498,7 @@ snapshots:
     dependencies:
       tslib: 2.8.1
 
-  '@stoked-ui/common@file:../../stoked-ui/stoked-ui-main/packages/sui-common/build(770b54590c73e9f5510759497f2b3e1f)':
+  '@stoked-ui/common@file:../../../stoked-ui/stoked-ui-main/packages/sui-common/build(770b54590c73e9f5510759497f2b3e1f)':
     dependencies:
       '@emotion/react': 11.14.0(@types/react@19.1.0)(react@18.3.1)
       '@emotion/styled': 11.14.1(@emotion/react@11.14.0(@types/react@19.1.0)(react@18.3.1))(@types/react@19.1.0)(react@18.3.1)
@@ -16398,7 +16399,7 @@ snapshots:
 
   wide-align@1.1.5:
     dependencies:
-      string-width: 1.0.2
+      string-width: 4.2.3
 
   wrap-ansi@6.2.0:
     dependencies:

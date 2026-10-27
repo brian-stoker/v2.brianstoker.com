@@ -4,7 +4,7 @@
         <title>bstoked.plan</title>
         <link>https://brianstoker.com/bstoked.plan</link>
         <description>Notes, musings, and ignorable anecdotes: what was built, fixed and measured.</description>
-        <lastBuildDate>Tue, 27 Oct 2026 12:30:00 GMT</lastBuildDate>
+        <lastBuildDate>Tue, 27 Oct 2026 12:47:46 GMT</lastBuildDate>
         <docs>https://validator.w3.org/feed/docs/rss2.html</docs>
         <generator>https://github.com/jpmonette/feed</generator>
         <language>en</language>
@@ -25,18 +25,6 @@
             <enclosure url="https://brianstoker.com/static/.plan/2026-10-27-hal-the-registry-was-mine/hero.jpg" length="0" type="image/jpg"/>
         </item>
         <item>
-            <title><![CDATA[what the walk costs]]></title>
-            <link>https://brianstoker.com/.plan/2026-10-26-what-the-walk-costs</link>
-            <guid>https://brianstoker.com/.plan/2026-10-26-what-the-walk-costs</guid>
-            <pubDate>Mon, 26 Oct 2026 12:00:00 GMT</pubDate>
-            <description><![CDATA[Software catalog discovery turned into a working scan of the whole org, qualified by language and package manager and pinned to exact revisions, while fourteen mono releases carried the day's fixes out. The mono lander was measured down to its real cost, a directory walk inside the admission loop, and gdock got its native Self chat context display back with a test behind it.]]></description>
-            <category>.plan</category>
-            <category>selfactor</category>
-            <category>selfagent</category>
-            <category>gdock</category>
-            <enclosure url="https://brianstoker.com/static/.plan/2026-10-26-what-the-walk-costs/hero.jpg" length="0" type="image/jpg"/>
-        </item>
-        <item>
             <title><![CDATA[measured, not inferred]]></title>
             <link>https://brianstoker.com/.plan/2026-10-26-hal-measured-not-inferred</link>
             <guid>https://brianstoker.com/.plan/2026-10-26-hal-measured-not-inferred</guid>
@@ -47,6 +35,18 @@
             <category>selfagent</category>
             <category>gdock</category>
             <enclosure url="https://brianstoker.com/static/.plan/2026-10-26-hal-measured-not-inferred/hero.jpg" length="0" type="image/jpg"/>
+        </item>
+        <item>
+            <title><![CDATA[what the walk costs]]></title>
+            <link>https://brianstoker.com/.plan/2026-10-26-what-the-walk-costs</link>
+            <guid>https://brianstoker.com/.plan/2026-10-26-what-the-walk-costs</guid>
+            <pubDate>Mon, 26 Oct 2026 12:00:00 GMT</pubDate>
+            <description><![CDATA[Software catalog discovery turned into a working scan of the whole org, qualified by language and package manager and pinned to exact revisions, while fourteen mono releases carried the day's fixes out. The mono lander was measured down to its real cost, a directory walk inside the admission loop, and gdock got its native Self chat context display back with a test behind it.]]></description>
+            <category>.plan</category>
+            <category>selfactor</category>
+            <category>selfagent</category>
+            <category>gdock</category>
+            <enclosure url="https://brianstoker.com/static/.plan/2026-10-26-what-the-walk-costs/hero.jpg" length="0" type="image/jpg"/>
         </item>
         <item>
             <title><![CDATA[the rule stated once]]></title>
