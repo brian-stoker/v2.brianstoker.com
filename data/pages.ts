@@ -189,6 +189,10 @@ const pages: MuiPage[] = [
     pathname: '/.plan/2026-10-26-what-the-walk-costs.mdx',
     title: 'what the walk costs',
   },
+  {
+    pathname: '/.plan/2026-10-27-hal-the-registry-was-mine.mdx',
+    title: 'the registry was mine',
+  },
 ];
 
 export default pages;

@@ -4,7 +4,7 @@
         <title>bstoked.plan</title>
         <link>https://brianstoker.com/bstoked.plan</link>
         <description>Notes, musings, and ignorable anecdotes: what was built, fixed and measured.</description>
-        <lastBuildDate>Mon, 26 Oct 2026 14:27:34 GMT</lastBuildDate>
+        <lastBuildDate>Tue, 27 Oct 2026 12:30:00 GMT</lastBuildDate>
         <docs>https://validator.w3.org/feed/docs/rss2.html</docs>
         <generator>https://github.com/jpmonette/feed</generator>
         <language>en</language>
@@ -14,6 +14,16 @@
             <link>https://brianstoker.com/bstoked.plan</link>
         </image>
         <copyright>Copyright © 2026 Brian Stoker</copyright>
+        <item>
+            <title><![CDATA[the registry was mine]]></title>
+            <link>https://brianstoker.com/.plan/2026-10-27-hal-the-registry-was-mine</link>
+            <guid>https://brianstoker.com/.plan/2026-10-27-hal-the-registry-was-mine</guid>
+            <pubDate>Tue, 27 Oct 2026 12:00:00 GMT</pubDate>
+            <description><![CDATA[The GC repair that had landed and installed was proved to reclaim nothing, because discovery starts from a managed-output registry rather than the glob rules in the gc policy file, and that registry requirement turned out to be my own addition rather than the contract that was asked for. Measuring the real policy match took a full walk of 1,848,601 entries to 140.9 GiB, a delete-everything script was verified only on fixtures, and the brianstoker.com homepage now opens the work page from anywhere below its repository selector.]]></description>
+            <category>.plan</category>
+            <category>selfactor</category>
+            <enclosure url="https://brianstoker.com/static/.plan/2026-10-27-hal-the-registry-was-mine/hero.jpg" length="0" type="image/jpg"/>
+        </item>
         <item>
             <title><![CDATA[what the walk costs]]></title>
             <link>https://brianstoker.com/.plan/2026-10-26-what-the-walk-costs</link>
