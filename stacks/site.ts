@@ -14,6 +14,7 @@ export const createSite = (domainInfo: DomainInfo, extraEnv?: Record<string, str
     "GOOGLE_CLIENT_ID",
     "GOOGLE_CLIENT_SECRET",
     "SYNC_SECRET",
+    "PLAN_API_KEY",
     "GOOGLE_CALENDAR_SERVICE_ACCOUNT",
   ];
   const envVars = pickProperties(env, envVarKeys);

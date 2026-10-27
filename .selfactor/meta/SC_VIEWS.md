@@ -222,65 +222,25 @@ Identical layout and behavior to the Photography Gallery. Displays 12 artwork im
 
 ---
 
-### 8. Blog Index — `bstoked.plan`
+### 8. Legacy Blog Index
 
-- **Route:** `/bstoked.plan`
-- **Location:** `pages/bstoked.plan.tsx`
-- **Products:** SC_PRODUCT_BRIANSTOKER_COM.md (.plan product)
+- **Route:** `/bstoked.plan` permanently redirects to `/.plan`.
+- **Location:** `pages/bstoked.plan.tsx`.
 
-**Regions:**
-- `AppHeader`
-- **Hero section** (`Section bg="gradient"`): overline `.plan`, h1 "notes, musings, and useless anecdotes" (GradientText)
-- **Featured posts overlay** (negative-margin container): grid of the 2 most-recent `PostPreviewBox` cards (image + tags + title + description + author avatars + Read more button)
-- **Main content area** (2-column grid on md+):
-  - Left: post list (`PostPreview` items) with border separators + `Pagination`
-  - Right sticky sidebar:
-    - Tag filter paper: `Chip` list for filtering (filled = active, outlined = inactive, deletable when active)
-    - Social links paper: GitHub, Slack, Discord, LinkedIn links
-- `AppFooter`
+### 9. Plan Articles
 
-**States:**
-- **Unfiltered:** all posts (excluding top 2 featured) shown, paginated by 7
-- **Filtered by tag:** tag chip becomes filled + deletable; list narrows; `page` resets to 0; tag stored in URL query param `?tags=`
-- **Paginated:** `Pagination` navigates pages; scrolls `postListRef` into view on page change
-- **No posts:** empty list (no explicit empty-state component; list simply renders nothing)
+- **Routes:** historical `/.plan/<slug>`; API entries `/.plan/<author>/<id>`.
+- **Location:** `pages/plan/[slug].tsx`, `pages/plan/[slug]/[postId].tsx`, reached through the public `/.plan` rewrite.
+- Historical MDX renders through `TopLayoutBlog`; new API text renders literally through `PlanFeed`, with author/date and optional uploaded image. No submitted MDX executes.
+- Unknown article returns 404. Storage outages return 503 for new articles.
 
----
+### 10. Shared and Author Plan Feeds
 
-### 9. Blog Post — `.plan/[slug]`
-
-- **Route:** `/.plan/[slug]`
-- **Location:** `pages/.plan/[slug].tsx`, `src/modules/components/TopLayoutBlog.tsx` (from `@stoked-ui/docs`)
-- **Products:** SC_PRODUCT_BRIANSTOKER_COM.md (.plan product)
-
-**Regions:**
-- Rendered by `TopLayoutBlog` from the `@stoked-ui/docs` package
-- Receives `docs.en` (title, description, headers with authors/tags/date) and serialized MDX `source`
-- Typical blog-post layout: metadata header (title, date, authors, tags), rendered MDX body
-
-**States:**
-- **Populated:** full MDX content rendered
-- **Not found:** `getStaticPaths` uses `fallback: false`; unknown slugs yield Next.js 404
-
----
-
-### 10. Plan Index — `/.plan`
-
-- **Route:** `/.plan`
-- **Location:** `pages/.plan/index.jsx`
-- **Products:** SC_PRODUCT_BRIANSTOKER_COM.md (.plan product)
-
-**Regions:**
-- `AppHeader`
-- Title block: "The Plan" h1 + subtitle
-- `Grid` of `Card` components — one per blog post, sorted by date descending
-  - Each card: date overline, title link, description, tag `Chip`s (first 3 + overflow chip)
-  - Hover: `translateY(-4px)` lift + elevated shadow
-- `AppFooter`
-
-**States:**
-- **Populated:** card grid rendered with all posts
-- **Empty:** renders empty grid (no posts)
+- **Routes:** `/.plan`, `/.plan/bstoked`, `/.plan/hal`, `/.plan/<author>`.
+- **Location:** `pages/plan/index.tsx`, `pages/plan/[slug].tsx`, `src/components/plan/PlanFeed.tsx`.
+- Existing MUI header/footer and image-card grid; heading, author navigation, author/date bylines, descriptions, tags, and pagination (20 per page).
+- Authors are discovered from persisted posts and historical metadata. New handles need no source changes.
+- States: shared feed, author feed, paginated, empty, unknown author (404), storage unavailable (visible warning plus archived entries).
 
 ---
 
@@ -488,3 +448,12 @@ This project has no end-user CLI. The `scripts/` directory contains build, deplo
 | `/subscription` | Email Verification | `pages/subscription.tsx` |
 | `/components` | Components Listing | `pages/components.tsx` |
 | `*` (404) | Not Found | `pages/404.tsx` |
+
+
+## Data-driven .plan (2026-10-27)
+
+- `/.plan` is the shared, request-rendered feed; `/.plan/<author>` filters editorial attribution. `/.plan/bstoked` and `/.plan/hal` are supported, with additional handles discovered from persisted posts. `/bstoked.plan` permanently redirects to `/.plan`. Historical `/.plan/<slug>` MDX articles remain readable.
+- `POST /api/plan` authenticates trusted publishers with `PLAN_API_KEY` and accepts text plus optional base64 PNG/JPEG/WebP image. MongoDB `plan_posts` stores the entry and image atomically through the existing `getDatabase()` singleton. Authors are attribution within the single operator site, not tenants or login accounts.
+- `GET /api/plan` merges persisted entries and bundled historical metadata, supports author/page filters, and returns 20 entries per page. `/.plan/<author>/<id>` reads new entries without a build; `/api/plan/images/<id>` serves persisted images. Submitted text is rendered literally, never compiled as MDX. The home showcase fetches the live feed. The existing `/feed/.plan/rss.xml` URL rewrites to the live `/api/plan/rss` feed. Public dot-prefixed routes rewrite to `pages/plan/**` so browser JavaScript chunks are served correctly.
+- Shared UI: `src/components/plan/PlanFeed.tsx`. Storage/read contracts: `lib/plan-store.ts`, `lib/plan-feed-props.ts`, `lib/plan.ts`. Pages fall back to a clearly labeled archive when storage is unavailable; writes fail with 503.
+- Publishing contract, environment setup and isolated local validation: `docs/plan-publishing.md`. Regression coverage: `e2e/api/plan.spec.ts`.

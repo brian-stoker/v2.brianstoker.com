@@ -13,7 +13,7 @@ const ROUTES: Routes = {
   careers: '/careers/',
   pricing: '/pricing/',
   about: 'https://consulting.stokd.cloud/about/',
-  plan: '/bstoked.plan/',
+  plan: '/.plan/',
   work: '/work/',
   bookTime: '/book-time/',
   // Stoked Consulting

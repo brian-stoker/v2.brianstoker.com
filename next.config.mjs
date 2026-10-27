@@ -15,6 +15,12 @@ const nextConfig = withMDX({
     ignoreDuringBuilds: true,
   },
   output: 'standalone',
+  outputFileTracingIncludes: {
+    '/plan': ['./data/.plan/**/*.mdx', './pages/home/**/*.mdx'],
+    '/plan/*': ['./data/.plan/**/*.mdx', './pages/home/**/*.mdx'],
+    '/api/plan': ['./data/.plan/**/*.mdx', './pages/home/**/*.mdx'],
+    '/api/plan/rss': ['./data/.plan/**/*.mdx', './pages/home/**/*.mdx'],
+  },
   transpilePackages: ['@stoked-ui/docs', '@mui/icons-material'],
   // Turbopack config (used with next dev --turbopack)
   turbopack: {
@@ -27,6 +33,12 @@ const nextConfig = withMDX({
     resolveAlias: {
       '@mui/icons-material': '@mui/icons-material/esm',
     },
+  },
+  async rewrites() {
+    return { beforeFiles: [
+      { source: '/.plan/:path*', destination: '/plan/:path*' },
+      { source: '/feed/.plan/rss.xml', destination: '/api/plan/rss' },
+    ] };
   },
   // Webpack config (used for production builds)
   webpack: (config, { isServer }) => {

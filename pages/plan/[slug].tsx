@@ -1,5 +1,9 @@
 import * as React from 'react';
-import type { GetStaticPaths, GetStaticProps } from 'next';
+import type { GetServerSideProps, GetStaticProps } from 'next';
+import PlanFeed from '../../src/components/plan/PlanFeed';
+import type { PlanFeedProps } from '../../src/components/plan/PlanFeed';
+import { authorPattern } from '../../lib/plan';
+import { planFeedProps } from '../../lib/plan-feed-props';
 import type { MDXRemoteSerializeResult } from 'next-mdx-remote';
 import { serialize } from 'next-mdx-remote/serialize';
 import fs from 'fs';
@@ -19,34 +23,19 @@ interface MDXPost {
   slug: string;
 }
 
-interface DocsHeader {
-  title: string;
-  manualCard?: string;
-  cardTitle?: string;
-  authors?: string[];
-  tags?: string[];
-  date?: string;
-  image?: string | null;
-  imageAlt?: string | null;
-}
-
-interface LocalizedDoc {
-  description: string;
-  rendered: string[];
-  title?: string;
-  headers: DocsHeader;
-}
-
-interface Docs {
-  en: LocalizedDoc;
-}
+type LocalizedDoc = React.ComponentProps<typeof TopLayoutBlog>['docs']['en'];
 
 const planContentDirs = [
   path.join(process.cwd(), 'data', '.plan'),
   path.join(process.cwd(), 'pages', 'home'),
 ];
 
-export default function PlanPost({ source, frontMatter, slug }: MDXPost) {
+export default function PlanRoute(props: MDXPost | PlanFeedProps) {
+  if ('posts' in props) return <PlanFeed {...props} />;
+  return <LegacyPlanPost {...props} />;
+}
+
+function LegacyPlanPost({ source, frontMatter, slug }: MDXPost) {
   const authors = Array.isArray(frontMatter.authors)
     ? frontMatter.authors
     : frontMatter.authors
@@ -67,46 +56,20 @@ export default function PlanPost({ source, frontMatter, slug }: MDXPost) {
       manualCard:
         typeof frontMatter.manualCard === 'boolean'
           ? String(frontMatter.manualCard)
-          : frontMatter.manualCard,
+          : frontMatter.manualCard || 'false',
       cardTitle: frontMatter.cardTitle,
       authors,
       tags,
       date: frontMatter.date ?? '',
-      image: frontMatter.image ?? null,
-      imageAlt: frontMatter.imageAlt ?? null,
+      image: frontMatter.image ?? undefined,
+      imageAlt: frontMatter.imageAlt ?? undefined,
     }
   }
   return <TopLayoutBlog docs={{en: localizedDocs}} source={source} />
 }
 
-// This function gets called at build time to generate the paths
-export const getStaticPaths: GetStaticPaths = async () => {
-  const slugs = new Set<string>();
-
-  planContentDirs.forEach((dir) => {
-    if (!fs.existsSync(dir)) {
-      return;
-    }
-
-    fs.readdirSync(dir)
-      .filter((filename) => filename.endsWith('.mdx'))
-      .forEach((filename) => {
-        slugs.add(filename.replace(/\.mdx$/, ''));
-      });
-  });
-
-  const paths = Array.from(slugs).map((slug) => ({
-    params: { slug },
-  }));
-
-  return {
-    paths,
-    fallback: false, // Show 404 for paths not returned by getStaticPaths
-  };
-};
-
 // This function gets called at build time on server-side
-export const getStaticProps: GetStaticProps = async ({ params }) => {
+const getLegacyProps: GetStaticProps = async ({ params }) => {
   const slug = params?.slug as string;
   const mdxDir = planContentDirs.find((dir) =>
     fs.existsSync(path.join(dir, `${slug}.mdx`)),
@@ -155,4 +118,23 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
       slug,
     },
   };
+};
+
+export const getServerSideProps: GetServerSideProps = async (context) => {
+  const slug = context.params?.slug as string;
+  context.res.setHeader('Cache-Control', 'no-store');
+  if (!/^[A-Za-z0-9][A-Za-z0-9_-]{0,199}$/.test(slug)) return { notFound: true };
+  // Historical article URLs take precedence over author handles.
+  if (planContentDirs.some((dir) => fs.existsSync(path.join(dir, `${slug}.mdx`)))) {
+    return getLegacyProps(context);
+  }
+  if (!authorPattern.test(slug)) return { notFound: true };
+  const page = Number(context.query.page || 1);
+  if (!Number.isInteger(page) || page < 1 || page > 1000) return { notFound: true };
+  const props = await planFeedProps(slug, page);
+  if (!props.authors.includes(slug)) {
+    if (props.unavailable) context.res.statusCode = 503;
+    else return { notFound: true };
+  }
+  return { props };
 };

@@ -58,6 +58,7 @@ jobs:
           NEXT_PUBLIC_WEB_URL=${{ secrets.NEXT_PUBLIC_WEB_URL }}
           SYNC_ENDPOINT=${{ secrets.SYNC_ENDPOINT }}
           SYNC_SECRET=${{ secrets.SYNC_SECRET }}
+          PLAN_API_KEY=${{ secrets.PLAN_API_KEY }}
           GOOGLE_CLIENT_ID=${{ secrets.GOOGLE_CLIENT_ID }}
           GOOGLE_CLIENT_SECRET=${{ secrets.GOOGLE_CLIENT_SECRET }}
           NEXTAUTH_SECRET=${{ secrets.NEXTAUTH_SECRET }}

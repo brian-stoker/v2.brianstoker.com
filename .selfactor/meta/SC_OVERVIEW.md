@@ -298,7 +298,7 @@ end-to-end through Playwright and through `pnpm typescript` (runs
 - `setupLogShipping.cjs` — `pnpm log:setup`; ships logs to a private monitoring backend (commit `afde04e`).
 - `list-db-info.ts`, `copy-db-schema.ts` — MongoDB introspection (`pnpm list-db-info`, `pnpm copy-db-schema`).
 - `populate-github-activity{,-history}.js` — backfill scripts; sole sanctioned writers of `s3://cenv-public/brian-stoker-github-activity.json` (repo axiom `AX-REPO-CENV-PUBLIC-NO-SECRETS`).
-- `reportBrokenLinks.js` — `pnpm link-check`.
+- `reportBrokenLinks.cjs` — `pnpm link-check`.
 - `buildIcons.js`, `buildServiceWorker.js` — asset pipeline (`pnpm icons`, `pnpm build-sw`).
 
 ---
@@ -437,3 +437,12 @@ Notable top-level pages: `index.tsx`, `work.tsx`, `resume.tsx`, `resume-new.tsx`
 - Git safety: never `git stash`, switch branches, `git reset --hard`, or `git restore .` in this worktree; use `git worktree add` (repo axiom `AX-REPO-NO-GIT-STASH-OR-CHECKOUT`).
 - pnpm 10.x is required (`packageManager: pnpm@10.28.2`). `onlyBuiltDependencies` whitelist gates native builds (`@parcel/watcher`, `aws-sdk`, `canvas`, `core-js`, `esbuild`, `sharp`).
 - Recent direction (git log): API Gateway prod serving + GitHub events payload trim (`aea03b2`), resume PDF moved to `cdn.stokd.cloud` (`37a0da7`), AWS-account + domain migration to `stokd-cloud` / `brian.stokd.cloud` (`f1bd28b`), Mongo Atlas attribution tags (`af5fa04`), and log shipping to a private monitoring backend (`afde04e`).
+
+
+## Data-driven .plan (2026-10-27)
+
+- `/.plan` is the shared, request-rendered feed; `/.plan/<author>` filters editorial attribution. `/.plan/bstoked` and `/.plan/hal` are supported, with additional handles discovered from persisted posts. `/bstoked.plan` permanently redirects to `/.plan`. Historical `/.plan/<slug>` MDX articles remain readable.
+- `POST /api/plan` authenticates trusted publishers with `PLAN_API_KEY` and accepts text plus optional base64 PNG/JPEG/WebP image. MongoDB `plan_posts` stores the entry and image atomically through the existing `getDatabase()` singleton. Authors are attribution within the single operator site, not tenants or login accounts.
+- `GET /api/plan` merges persisted entries and bundled historical metadata, supports author/page filters, and returns 20 entries per page. `/.plan/<author>/<id>` reads new entries without a build; `/api/plan/images/<id>` serves persisted images. Submitted text is rendered literally, never compiled as MDX. The home showcase fetches the live feed. The existing `/feed/.plan/rss.xml` URL rewrites to the live `/api/plan/rss` feed. Public dot-prefixed routes rewrite to `pages/plan/**` so browser JavaScript chunks are served correctly.
+- Shared UI: `src/components/plan/PlanFeed.tsx`. Storage/read contracts: `lib/plan-store.ts`, `lib/plan-feed-props.ts`, `lib/plan.ts`. Pages fall back to a clearly labeled archive when storage is unavailable; writes fail with 503.
+- Publishing contract, environment setup and isolated local validation: `docs/plan-publishing.md`. Regression coverage: `e2e/api/plan.spec.ts`.

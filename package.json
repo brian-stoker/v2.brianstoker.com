@@ -38,7 +38,7 @@
     "icons": "rimraf --glob public/static/icons/* && node ./scripts/buildIcons.js",
     "kill-port": "kill-port 5040",
     "knip": "knip",
-    "link-check": "node ./scripts/reportBrokenLinks.js",
+    "link-check": "node ./scripts/reportBrokenLinks.cjs",
     "list-db-info": "tsx scripts/list-db-info.ts",
     "prebuild": "rimraf export",
     "release": "sst deploy",

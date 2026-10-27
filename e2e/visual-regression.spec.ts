@@ -136,6 +136,8 @@ test.describe('Visual Regression - Footer Component', () => {
   test.beforeEach(async ({ page }) => {
     await page.goto('/');
     await page.waitForLoadState('networkidle');
+    // Isolate the footer from fixed overlays when its height exceeds the viewport.
+    await page.addStyleTag({ content: 'header, a[href="#main-content"] { visibility: hidden !important; }' });
     await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight));
     await page.waitForTimeout(300);
   });
