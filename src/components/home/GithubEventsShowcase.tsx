@@ -15,7 +15,7 @@ export default function GithubEventsShowcase({ showcaseContent }: { showcaseCont
       backgroundColor: 'transparent !important',
     },
   }}>
-    <GithubEvents {...showcaseContent} fx='highlight' />
+    <GithubEvents {...showcaseContent} alwaysColumn workPreview />
   </Box>
 }
 

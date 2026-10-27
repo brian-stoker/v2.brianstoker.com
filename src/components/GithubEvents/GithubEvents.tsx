@@ -74,7 +74,7 @@ const MetadataDisplay = styled(Box)(({ theme }: { theme: Theme }) => ({
 // - Details cache: 150 full events with LRU eviction (~300KB)
 const EVENT_PAGE_SIZE = 20;
 
-export default function GithubEvents({ eventsPerPage = EVENT_PAGE_SIZE, hideMetadata = false, alwaysColumn = false }: { eventsPerPage?: number, hideMetadata?: boolean, alwaysColumn?: boolean }) {
+export default function GithubEvents({ eventsPerPage = EVENT_PAGE_SIZE, hideMetadata = false, alwaysColumn = false, workPreview = false }: { eventsPerPage?: number, hideMetadata?: boolean, alwaysColumn?: boolean, workPreview?: boolean }) {
   const router = useRouter();
   const [events, setEvents] = React.useState<DisplayEventDetails[]>([]);
   const [loading, setLoading] = React.useState<boolean>(true);
@@ -288,8 +288,9 @@ export default function GithubEvents({ eventsPerPage = EVENT_PAGE_SIZE, hideMeta
     }
   }, []);
 
-  // Handle keyboard navigation
+  // The homepage preview uses native link keyboard behavior, not event selection.
   React.useEffect(() => {
+    if (workPreview) return;
     const handleKeyDown = (e: KeyboardEvent) => {
       if (!events.length) return;
 
@@ -350,7 +351,7 @@ export default function GithubEvents({ eventsPerPage = EVENT_PAGE_SIZE, hideMeta
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [events, selectedIndex, page, totalPages]);
+  }, [events, selectedIndex, page, totalPages, workPreview]);
 
   // Handle URL query parameters for direct links - only on initial load
   React.useEffect(() => {
@@ -1406,10 +1407,24 @@ export default function GithubEvents({ eventsPerPage = EVENT_PAGE_SIZE, hideMeta
             })}
           </Box>
 
-          {/* Vertical Timeline */}
+          {/* This timeline contains display-only cards (no nested links or controls).
+              Keep the repository strip above it independent of preview navigation. */}
           <Box
+            component={workPreview ? 'a' : 'div'}
+            href={workPreview ? '/work' : undefined}
+            aria-label={workPreview ? 'View all work activity' : undefined}
             id={'events-table-container'}
             sx={{
+              ...(workPreview && {
+                display: 'block',
+                color: 'inherit',
+                textDecoration: 'none',
+                cursor: 'pointer',
+                '&:focus-visible': {
+                  outline: `2px solid ${theme.palette.primary.main}`,
+                  outlineOffset: -2,
+                },
+              }),
               overflowY: 'auto',
               px: 2,
               py: 2,

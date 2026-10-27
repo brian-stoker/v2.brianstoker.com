@@ -54,7 +54,7 @@ export default function AppFooter(props: AppFooterProps) {
         }}
       >
         <Box sx={{ justifyItems: 'start' }}>
-          <Box sx={{ width: '350px', justifyContent: 'center', flexDirection: 'column' }}>
+          <Box sx={{ width: '100%', maxWidth: '350px', justifyContent: 'center', flexDirection: 'column' }}>
             <Box
               sx={{
                 display: 'inline-flex',
@@ -89,7 +89,7 @@ export default function AppFooter(props: AppFooterProps) {
         <Box
           sx={{
             display: 'grid',
-            gridTemplateColumns: '150px 150px',
+            gridTemplateColumns: 'repeat(2, minmax(0, 150px))',
             justifyContent: 'center',
             gridAutoColumns: '1fr 1fr',
             gap: '40px',
