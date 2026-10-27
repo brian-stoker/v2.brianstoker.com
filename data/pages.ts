@@ -193,6 +193,10 @@ const pages: MuiPage[] = [
     pathname: '/.plan/2026-10-27-hal-the-registry-was-mine.mdx',
     title: 'the registry was mine',
   },
+  {
+    pathname: '/.plan/2026-10-27-called-by-its-name.mdx',
+    title: 'called by its name',
+  },
 ];
 
 export default pages;
