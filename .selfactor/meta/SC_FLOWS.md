@@ -203,52 +203,15 @@ All flows belong to the single product `SC_PRODUCT_BRIANSTOKER_COM.md`. View ref
 
 ---
 
-## 8. Browse Blog Index
+## 8. Browse Plan Feeds
 
-- **Actor:** Anonymous visitor
-- **Goal:** Find a blog post by browsing the index or filtering by tag.
-- **Entry points:**
-  - Home → ".plan" product showcase (`BlogShowcase`)
-  - `AppHeader` / `AppFooter` → ".plan"
-  - Direct URL `/bstoked.plan` (`pages/bstoked.plan.tsx`) — main index
-  - Direct URL `/.plan` (`pages/.plan/index.jsx`) — card grid variant
-- **Products:** `SC_PRODUCT_BRIANSTOKER_COM.md`
+Anonymous visitors reach `/.plan` from navigation or the home showcase. `/bstoked.plan` redirects there. Author links select `/.plan/bstoked`, `/.plan/hal`, or another discovered handle. Request-rendered feeds merge MongoDB entries with historical metadata, newest first, 20 per page. The home showcase refreshes its latest entries through `GET /api/plan`.
 
-**Steps:**
+## 9. Publish and Read a Plan
 
-1. Visitor lands on `/bstoked.plan`. *View: **Blog Index — `bstoked.plan`***.
-2. Hero section renders; the 2 most-recent posts populate the featured `PostPreviewBox` overlay.
-3. Remaining posts list paginated 7/page; sticky sidebar shows tag filter chips + social links.
-4. Visitor clicks a tag chip → query param `?tags=<tag>` set; list narrows; page resets to 0.
-5. Visitor clicks the active chip's delete affordance → tag cleared.
-6. Visitor paginates → `postListRef` scrolled into view.
-7. Visitor clicks any post `Read more` button or title → continues into Flow 9.
-8. (Alternative) Visitor visits `/.plan` to browse the card-grid variant; clicks a card → Flow 9.
+Trusted automation POSTs author/text and an optional base64 image to `/api/plan` using `PLAN_API_KEY`. Validation and authentication precede the atomic MongoDB write. The 201 response supplies a readable `/.plan/<author>/<id>` URL; no source edit/build/deploy is involved. Uploaded images are served by `/api/plan/images/<id>`. RSS subscribers receive new entries at the existing feed URL.
 
-**Data:** `getAllBlogPosts()` from `lib/sourcing.ts` (MDX in `pages/home/*.mdx` and similar).
-
-**Views used:** *Blog Index — `bstoked.plan`*, *Plan Index — `/.plan`*.
-
----
-
-## 9. Read Blog Post
-
-- **Actor:** Anonymous visitor
-- **Goal:** Read a single MDX-authored blog post.
-- **Entry points:**
-  - Click a `PostPreviewBox` "Read more" or title link in Flow 8
-  - Home `BlogShowcase` post-card click
-  - Direct deep link `/.plan/<slug>` → `pages/.plan/[slug].tsx`
-- **Products:** `SC_PRODUCT_BRIANSTOKER_COM.md`
-
-**Steps:**
-
-1. Next.js resolves the slug at build time via `getStaticPaths` (`fallback: false`) and serializes MDX via `getStaticProps`.
-2. *View: **Blog Post — `.plan/[slug]`*** renders via `TopLayoutBlog` from `@stoked-ui/docs`.
-3. Metadata header (title, date, authors, tags) renders above the rendered MDX body.
-4. Unknown slug → Next.js 404 (Flow 17).
-
-**Views used:** *Blog Post — `.plan/[slug]`*.
+Anonymous readers follow a feed card to the new article or a preserved historical `/.plan/<slug>` article. Public dot-prefixed paths rewrite to `pages/plan/**`. New text renders literally; trusted historical MDX uses `TopLayoutBlog`. Missing articles return 404; storage outages fail writes and new article reads with 503, while feeds show archived entries with a warning.
 
 ---
 
@@ -449,8 +412,8 @@ Resume PDF, art, photography, and drum videos are static assets in `public/stati
 | `/photography` | `pages/photography.tsx` | 5 |
 | `/art` | `pages/art.tsx` | 6 |
 | `/drums` | `pages/drums.tsx` | 7 |
-| `/bstoked.plan`, `/.plan` | `pages/bstoked.plan.tsx`, `pages/.plan/index.jsx` | 8 (→ 9) |
-| `/.plan/[slug]` | `pages/.plan/[slug].tsx` | 9 |
+| `/bstoked.plan`, `/.plan` | `pages/bstoked.plan.tsx`, `pages/plan/index.tsx` | 8 (→ 9) |
+| `/.plan/[slug]` | `pages/plan/[slug].tsx` | 9 |
 | `/subscription` | `pages/subscription.tsx` | 11 |
 | `/hal` | `pages/hal.js` | 12 |
 | `/components` | `pages/components.tsx` | 16 |
@@ -461,3 +424,12 @@ Resume PDF, art, photography, and drum videos are static assets in `public/stati
 | `/api/auth/[...nextauth]` | `pages/api/auth/[...nextauth].js` | 12 |
 | `/api/hal/logs` | `pages/api/hal/logs.js` | 12 |
 | EventBridge `GithubSyncCron` | `cron/github-sync.ts` | 13 |
+
+
+## Data-driven .plan (2026-10-27)
+
+- `/.plan` is the shared, request-rendered feed; `/.plan/<author>` filters editorial attribution. `/.plan/bstoked` and `/.plan/hal` are supported, with additional handles discovered from persisted posts. `/bstoked.plan` permanently redirects to `/.plan`. Historical `/.plan/<slug>` MDX articles remain readable.
+- `POST /api/plan` authenticates trusted publishers with `PLAN_API_KEY` and accepts text plus optional base64 PNG/JPEG/WebP image. MongoDB `plan_posts` stores the entry and image atomically through the existing `getDatabase()` singleton. Authors are attribution within the single operator site, not tenants or login accounts.
+- `GET /api/plan` merges persisted entries and bundled historical metadata, supports author/page filters, and returns 20 entries per page. `/.plan/<author>/<id>` reads new entries without a build; `/api/plan/images/<id>` serves persisted images. Submitted text is rendered literally, never compiled as MDX. The home showcase fetches the live feed. The existing `/feed/.plan/rss.xml` URL rewrites to the live `/api/plan/rss` feed. Public dot-prefixed routes rewrite to `pages/plan/**` so browser JavaScript chunks are served correctly.
+- Shared UI: `src/components/plan/PlanFeed.tsx`. Storage/read contracts: `lib/plan-store.ts`, `lib/plan-feed-props.ts`, `lib/plan.ts`. Pages fall back to a clearly labeled archive when storage is unavailable; writes fail with 503.
+- Publishing contract, environment setup and isolated local validation: `docs/plan-publishing.md`. Regression coverage: `e2e/api/plan.spec.ts`.

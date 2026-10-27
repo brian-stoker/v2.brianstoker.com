@@ -25,7 +25,7 @@ The rest of the repo (`pages/`, `src/`, `cron/`, `lib/`, `stacks/`, `data/`, `pu
 
 1. **Catalog & cross-link the operator's offerings.** A ~11-product catalog (`src/products.tsx`) is presented through `ProductSwitcher` on the home page, with each entry drilling into a dedicated page (Work, Resume, Art, Photography, Drums, .plan blog, Components index, etc.).
 2. **Surface the operator's open-source activity as a living credential.** Hourly cron syncs the GitHub Events API into MongoDB Atlas; the site reads from Mongo (never directly from GitHub in the request path) and renders an activity calendar, filterable event list, and PR/commit detail panes.
-3. **Distribute static content under one identity.** Resume PDF, photography, art, drum performance videos, MDX blog (`pages/home/*.mdx`), RSS feed, and an admin-only HAL log viewer all live behind the same shell (`AppHeader` / `AppFooter`), so the operator has one canonical web presence rather than a sprawl of point sites.
+3. **Distribute content under one operator.** Resume PDF, photography, art, drum performance videos, the data-driven `.plan` feed (plus bundled historical MDX), live RSS feed, and an admin-only HAL log viewer all live behind the same shell (`AppHeader` / `AppFooter`), so the operator has one canonical web presence rather than a sprawl of point sites.
 
 Although the catalog showcases products, those products are not separate SC_PRODUCT entries — they are content/surfaces inside this single product. There is one product because there is one user-facing offering ("brian.stokd.cloud") served through one Next.js app to one audience.
 
@@ -55,7 +55,7 @@ There is no multi-tenant model. All authenticated functionality is for a single 
 | `/photography` | `pages/photography.tsx` | Masonry grid + `LightboxGallery` (`/static/photography/*`) |
 | `/art` | `pages/art.tsx` | Masonry grid + `LightboxGallery` (`/static/art/*`) |
 | `/drums` | `pages/drums.tsx` | `VideoGallery` (Plyr); media served from `https://cdn.stokd.cloud/brian.stokd.cloud/drums/*` |
-| `/bstoked.plan`, `/.plan`, `/.plan/[slug]` | `pages/bstoked.plan.tsx`, `pages/.plan/*` | Blog index and post |
+| `/.plan`, `/.plan/<author>`, `/.plan/<author>/<id>` | `pages/plan/**` behind public rewrite; `/bstoked.plan` redirects | Shared/author feeds, API-published articles, preserved historical links |
 | `/subscription` | `pages/subscription.tsx` | Newsletter verification landing (reads `?code=`) |
 | `/hal` | `pages/hal.js` | Admin log viewer (NextAuth gated) |
 | `/components` | `pages/components.tsx` | Components listing / dev surface |
@@ -110,8 +110,8 @@ This product supports every flow defined in `.stokd/meta/SC_FLOWS.md` — that d
 | 5 | Browse Photography Gallery | `/photography` |
 | 6 | Browse Art Gallery | `/art` |
 | 7 | Watch Drum Videos | `/drums` |
-| 8 | Browse Blog Index | `/bstoked.plan`, `/.plan` |
-| 9 | Read Blog Post | `/.plan/[slug]` |
+| 8 | Browse Plan Feeds | `/.plan`, `/.plan/<author>` |
+| 9 | Publish/Read Plan | `/api/plan`, `/.plan/<author>/<id>`, historical `/.plan/<slug>` |
 | 10 | Newsletter Subscribe | `EmailSubscribe` footer + `NewsletterToast` |
 | 11 | Verify Newsletter Email | `/subscription?code=…` |
 | 12 | View HAL Logs (Admin) | `/hal` (NextAuth gated) |

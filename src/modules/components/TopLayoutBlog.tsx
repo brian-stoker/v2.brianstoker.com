@@ -384,7 +384,7 @@ export default function TopLayoutBlog(props: TopLayoutBlogProps): React.ReactEle
       <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
         <AppHeader />
         <Head
-        title={`${finalTitle} - bstoked.plan`}
+        title={`${finalTitle} - .plan`}
         description={description}
         largeCard
         disableAlternateLocale
@@ -402,8 +402,8 @@ export default function TopLayoutBlog(props: TopLayoutBlogProps): React.ReactEle
               '@type': 'Article',
               publisher: {
                 '@type': 'Organization',
-                name: 'bstoked.plan',
-                url: 'https://brian.stokd.cloud/bstoked.plan/',
+                name: '.plan',
+                url: 'https://brian.stokd.cloud/.plan/',
                 logo: {
                   '@type': 'ImageObject',
                   url: 'https://brian.stokd.cloud/static/icons/512x512.png',

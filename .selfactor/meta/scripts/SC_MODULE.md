@@ -24,14 +24,14 @@ There is no shared library or runtime exported from `scripts/`. Each file is an 
 
 ## Public Interfaces / Entry Points
 
-All entry points are scripts (`node`, `tsx`, or `bash`) invoked from `package.json` at the repo root or directly from the shell. There is no programmatic surface area consumed by other TypeScript modules; the only `module.exports` is the diagnostic helper pair `parseDocFolder` / `getAnchor` in `reportBrokenLinks.js`, and `generateRSSFeed.ts` exports a `default` function imported by the build pipeline.
+All entry points are scripts (`node`, `tsx`, or `bash`) invoked from `package.json` at the repo root or directly from the shell. There is no programmatic surface area consumed by other TypeScript modules; the only `module.exports` is the diagnostic helper pair `parseDocFolder` / `getAnchor` in `reportBrokenLinks.cjs`, and `generateRSSFeed.ts` exports a `default` function imported by the build pipeline.
 
 | Entry point | Invoked as | Purpose |
 |---|---|---|
 | `build-prod.js` | `pnpm build:production` | Sets `NODE_ENV=production` and shells `pnpx @opennextjs/aws@latest build` from the repo root. |
 | `buildServiceWorker.js` | `pnpm build-sw` | Copies `src/sw.js` to `export/sw.js` and prepends a build-time UUID comment. |
 | `buildIcons.js` | `pnpm icons` | Uses GraphicsMagick (`gm`) to resize `public/static/logo.png` into seven PWA icon sizes under `public/static/icons/`. |
-| `reportBrokenLinks.js` | `pnpm link-check` | Walks `pages/`, parses MDX imports tagged `?muiMarkdown`, and writes `.link-check-errors.txt` listing internal links with no resolving page or anchor. Also `module.exports` `{ parseDocFolder, getAnchor }`. |
+| `reportBrokenLinks.cjs` | `pnpm link-check` | Walks `pages/`, parses MDX imports tagged `?muiMarkdown`, and writes `.link-check-errors.txt` listing internal links with no resolving page or anchor. Also `module.exports` `{ parseDocFolder, getAnchor }`. |
 | `generateRSSFeed.ts` | imported (not a CLI) | Exports `default function generateRssFeed(allBlogPosts)` that writes `public${ROUTES.rssFeed}` using the `feed` package. Site URL is `https://brian.stokd.cloud`. Hard-guards on `NODE_ENV !== 'production'` and returns early (no-op) otherwise. |
 | `fix-next-lambda.cjs` | invoked manually (legacy) | Reinstalls `caniuse-lite@latest`, copies it into each candidate standalone build dir, injects a `browserslist-loader` shim, and prepends a loader-require to `server.js`/`index.js`/`app.js`. Not wired into the current `package.json` flow but kept as a recovery tool. |
 | `local-sync-cron.cjs` | `pnpm dev:cron`, `pnpm sync-cron` | Local-only cron driver. POSTs `${SYNC_ENDPOINT}/api/github/sync-events` with `Authorization: Bearer ${SYNC_SECRET}` immediately and then every `INTERVAL_HOURS=1`. Supports `FULL_REFRESH=true` to append `?fullRefresh=true`. Stays alive on missing `SYNC_SECRET` so `turbo watch` does not treat it as a crash; ignores `SIGHUP` for the same reason. |
@@ -76,7 +76,7 @@ It does, however, **materially shape** the following data backings and delivery 
 |---|---|---|
 | `pnpx @opennextjs/aws@latest` | `build-prod.js` | Executed from repo root with `NODE_ENV=production`. |
 | `gm` (GraphicsMagick) | `buildIcons.js` | Native binary must be available on the host. |
-| `@stoked-ui/docs-markdown`, `marked` | `reportBrokenLinks.js` | Markdown rendering for link extraction. |
+| `@stoked-ui/docs-markdown`, `marked` | `reportBrokenLinks.cjs` | Markdown rendering for link extraction. |
 | `feed` package | `generateRSSFeed.ts` | RSS2 serialization. |
 | `mongodb` driver | `copy-db-schema.ts`, `list-db-info.ts` | Reads `MONGODB_URI` directly via `dotenv`. **No** dependency on `pages/api/lib/mongodb.ts` — scripts hold their own short-lived `MongoClient`. |
 | `@aws-sdk/client-s3` | `populate-github-activity*.js`, `setupLogShipping.cjs` | Region pinned to `us-east-1`. Bucket targets are public (`cenv-public`) or environment-driven (`S3_BUCKET_NAME`). |
@@ -96,7 +96,7 @@ It does, however, **materially shape** the following data backings and delivery 
 | `export/sw.js` | Produced by `buildServiceWorker.js`; shipped with the static export. |
 | `public${ROUTES.rssFeed}` | RSS2 XML produced by `generateRSSFeed.ts`. |
 | `s3://cenv-public/brian-stoker-github-activity.json` | Populated by `populate-github-activity{,-history}.js`. Public, read by any front-end calendar component that fetches it directly. |
-| `.link-check-errors.txt` | Written by `reportBrokenLinks.js`; read by developers / CI checks. |
+| `.link-check-errors.txt` | Written by `reportBrokenLinks.cjs`; read by developers / CI checks. |
 | CloudFront distribution `E1JN9JWBQ37JT2` + API Gateway HTTP APIs (`brian-stokd-cloud-nextjs-proxy`, `brian-stokd-cloud-imageopt-proxy`) | Created/reconverged by `update-cloudfront-origins.cjs`. **Not** managed by SST — they must be re-applied after every `sst deploy`. |
 | Secrets Manager `CloudFrontSecret` + SST secret of the same name | Managed by `deploy-with-apigateway.sh`. |
 | AWS deploy artifacts (`.next/standalone`, `open-next/standalone`) | Modified in-place by `fix-next-lambda.cjs` when invoked. |
@@ -124,7 +124,7 @@ It does, however, **materially shape** the following data backings and delivery 
 | `scripts/copy-db-schema.ts` | Encodes assumptions about which Mongo collections must exist locally. Drift between this list and the application's actual collections is the most common cause of "works in prod, fails locally" sync bugs. |
 | `scripts/populate-github-activity-history.js` | The only script in the repo that uses the GitHub **GraphQL** API (everything else uses REST events). It carries `includePrivateContributions: true`, so the token's scope materially affects the output. |
 | `scripts/setupLogShipping.cjs` | Final step of every production deploy. The source filenames (`gateway.log`, `gateway.err.log`) and key names (`logs.txt`, `errors.txt`) are the contract with whatever consumes the shipped logs. |
-| `scripts/reportBrokenLinks.js` | The only static-analysis pass against documentation routing. Its exported `parseDocFolder` / `getAnchor` are referenced by external link-check tooling per the inline comment. |
+| `scripts/reportBrokenLinks.cjs` | The only static-analysis pass against documentation routing. Its exported `parseDocFolder` / `getAnchor` are referenced by external link-check tooling per the inline comment. |
 | `scripts/configure-github-secrets.sh` | The repo's only on-ramp for GitHub Actions deployment credentials. Renaming or removing any secret here without updating the workflow files will break CI. |
 
 ## Change Impact
@@ -141,7 +141,7 @@ When this module changes, validate the following — most failures are silent at
 | `build-prod.js` or `build:production` | Run `pnpm build:production` end-to-end against a clean `.next/`; confirm the OpenNext build emits `open-next/` and the standalone Lambda boots locally. |
 | `buildIcons.js` | `pnpm icons` regenerates all seven sizes; check `public/static/icons/*.png` exist and PWA manifest references resolve. |
 | `buildServiceWorker.js` | `pnpm build-sw`; verify `export/sw.js` exists and starts with a fresh `// uuid:` line. |
-| `reportBrokenLinks.js` | `pnpm link-check`; `.link-check-errors.txt` is regenerated; confirm exported `{parseDocFolder, getAnchor}` shape is unchanged. |
+| `reportBrokenLinks.cjs` | `pnpm link-check`; `.link-check-errors.txt` is regenerated; confirm exported `{parseDocFolder, getAnchor}` shape is unchanged. |
 | `fix-next-lambda.cjs` | Run after a build with a known-broken `caniuse-lite` cold start; verify `node_modules/caniuse-lite` appears under every detected standalone build dir and `browserslist-loader` is prepended exactly once. |
 | `populate-github-activity*.js` | Run with a scoped `GITHUB_TOKEN`; verify the S3 object at `s3://cenv-public/brian-stoker-github-activity.json` contains `{ data: […], lastUpdated: ISOString }` and `level` values stay within `0..4`. |
 | `copy-db-schema.ts` | `pnpm copy-db-schema` against a *separate* test cluster (never your shared dev cluster) and reconcile the GitHub collections list against `pages/api/lib/mongodb.ts` consumers. |

@@ -34,7 +34,7 @@ export default function AppFooter(props: AppFooterProps) {
           alignItems: 'flex-start',
           justifyContent: 'space-between',
           gap: 4,
-          gridTemplateColumns: { xs: '1fr', sm: '1fr', md: '1fr 1fr', lg: '1fr 1fr' },
+          gridTemplateColumns: { xs: 'minmax(0, 1fr)', md: 'repeat(2, minmax(0, 1fr))' },
           gridTemplateRows: 'auto',
           '& a:not(.MuiIconButton-root)': {
             pt: 0.5,
@@ -54,7 +54,7 @@ export default function AppFooter(props: AppFooterProps) {
         }}
       >
         <Box sx={{ justifyItems: 'start' }}>
-          <Box sx={{ width: '350px', justifyContent: 'center', flexDirection: 'column' }}>
+          <Box sx={{ width: '350px', maxWidth: '100%', justifyContent: 'center', flexDirection: 'column' }}>
             <Box
               sx={{
                 display: 'inline-flex',
@@ -89,10 +89,10 @@ export default function AppFooter(props: AppFooterProps) {
         <Box
           sx={{
             display: 'grid',
-            gridTemplateColumns: '150px 150px',
+            gridTemplateColumns: { xs: 'repeat(2, minmax(0, 1fr))', sm: '150px 150px' },
             justifyContent: 'center',
             gridAutoColumns: '1fr 1fr',
-            gap: '40px',
+            gap: { xs: 2, sm: 5 },
             width: '100%',
           }}
         >
@@ -115,7 +115,7 @@ export default function AppFooter(props: AppFooterProps) {
               Drums
             </NextLink>
             <NextLink prefetch={false} href={ROUTES.plan}>
-              bstoked.plan
+              .plan
             </NextLink>
             <NextLink prefetch={false} href={ROUTES.work}>
               Work
