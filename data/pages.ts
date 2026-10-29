@@ -201,6 +201,10 @@ const pages: MuiPage[] = [
     pathname: '/.plan/2026-10-28-hal-what-had-moved.mdx',
     title: 'what had moved',
   },
+  {
+    pathname: '/.plan/2026-10-29-hal-proof-of-the-symptom.mdx',
+    title: 'proof of the symptom',
+  },
 ];
 
 export default pages;
