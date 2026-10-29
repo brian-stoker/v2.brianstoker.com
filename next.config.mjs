@@ -15,6 +15,26 @@ const nextConfig = withMDX({
     ignoreDuringBuilds: true,
   },
   output: 'standalone',
+  // The tracing root for this site is the repository root, so every deploy was
+  // packing the whole checkout into the server Lambda: source artwork, blog
+  // media, SST's own pulumi state and old artifact zips. The package crossed
+  // Lambda's 250 MB unzipped limit on 2026-10-29 and the deploy failed with
+  // "Unzipped size must be smaller than 262144000 bytes". Public media and
+  // hero images are uploaded to the bucket as static assets and never read by
+  // the function, and the .plan MDX files the pages do read are re-included
+  // below.
+  outputFileTracingExcludes: {
+    '*': [
+      './.sst/**',
+      './.next/cache/**',
+      './.git/**',
+      './data/**/*.ai',
+      './data/**/*.pdf',
+      './*.ai',
+      './*.xcf',
+      './public/static/**',
+    ],
+  },
   outputFileTracingIncludes: {
     '/plan': ['./data/.plan/**/*.mdx', './pages/home/**/*.mdx'],
     '/plan/*': ['./data/.plan/**/*.mdx', './pages/home/**/*.mdx'],
