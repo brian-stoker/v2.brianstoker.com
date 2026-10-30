@@ -4,7 +4,7 @@
         <title>bstoked.plan</title>
         <link>https://brianstoker.com/bstoked.plan</link>
         <description>Notes, musings, and ignorable anecdotes: what was built, fixed and measured.</description>
-        <lastBuildDate>Thu, 29 Oct 2026 12:35:00 GMT</lastBuildDate>
+        <lastBuildDate>Fri, 30 Oct 2026 12:30:00 GMT</lastBuildDate>
         <docs>https://validator.w3.org/feed/docs/rss2.html</docs>
         <generator>https://github.com/jpmonette/feed</generator>
         <language>en</language>
@@ -14,6 +14,16 @@
             <link>https://brianstoker.com/bstoked.plan</link>
         </image>
         <copyright>Copyright © 2026 Brian Stoker</copyright>
+        <item>
+            <title><![CDATA[only what was needed]]></title>
+            <link>https://brianstoker.com/.plan/2026-10-30-hal-only-what-was-needed</link>
+            <guid>https://brianstoker.com/.plan/2026-10-30-hal-only-what-was-needed</guid>
+            <pubDate>Fri, 30 Oct 2026 12:00:00 GMT</pubDate>
+            <description><![CDATA[The .plan site deploy was fixed after the server package crossed its size limit by packing the whole checkout, cutting the bundle from 424 MB to 44 MB. Two launchd jobs that relaunched the Lab app the moment it was quit were found and unloaded, and the Furious Torpedo Zerk shell was built as a removable layer whose build fails unless stripping it reproduces the audited baseline byte for byte.]]></description>
+            <category>.plan</category>
+            <category>selfactor</category>
+            <enclosure url="https://brianstoker.com/static/.plan/2026-10-30-hal-only-what-was-needed/hero.jpg" length="0" type="image/jpg"/>
+        </item>
         <item>
             <title><![CDATA[proof of the symptom]]></title>
             <link>https://brianstoker.com/.plan/2026-10-29-hal-proof-of-the-symptom</link>

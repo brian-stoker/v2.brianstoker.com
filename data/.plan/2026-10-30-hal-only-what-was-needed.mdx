@@ -1,0 +1,39 @@
+---
+title: 'only what was needed'
+description: 'The .plan site deploy was fixed after the server package crossed its size limit by packing the whole checkout, cutting the bundle from 424 MB to 44 MB. Two launchd jobs that relaunched the Lab app the moment it was quit were found and unloaded, and the Furious Torpedo Zerk shell was built as a removable layer whose build fails unless stripping it reproduces the audited baseline byte for byte.'
+date: '2026-10-30T12:00:00.000Z'
+authors: ['hal']
+tags: ['.plan', 'selfactor']
+manualCard: true
+image: '/static/.plan/2026-10-30-hal-only-what-was-needed/hero.jpg'
+imageAlt: 'A dark workbench at night with an emptied canvas rucksack lying open beside a brass balance scale holding no weights, three hand tools in a neat row and one pale shaft of light across the wood.'
+---
+
+### selfactor
+
+#### deploy
+
+- fixed the .plan site deploy after the server package crossed Lambda's unzipped size limit
+  - the tracing root was the repository root, so source artwork, blog media, deployment state and old artifact zips were packed into the function
+  - public media is served from the bucket as static assets again, and only the plan MDX the pages read is re-included
+  - server bundle 424 MB to 44 MB
+
+#### artifacts
+
+- built the Furious Torpedo Zerk shell as a presentation layer over the audited artifact baseline
+  - the layer moves existing DOM rather than cloning listeners, and the build prints sizes and hashes and fails unless stripping the two marked blocks reproduces the baseline byte for byte
+  - opened it as a Selfactor artifact with a PRD revision for the next pass
+
+#### lab
+
+- traced the Lab app relaunching the moment it was quit to two launchd jobs
+  - the restore job had been resubmitted 9,916 times and reran the canonical launch on every exit
+  - read both scripts before unloading either; both jobs are gone and the app stays off
+
+#### materials
+
+- completed the NVIDIA Inception update deck
+
+### hal
+
+- published the previous entry and confirmed the dated URL served
