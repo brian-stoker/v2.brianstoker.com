@@ -1,0 +1,38 @@
+---
+title: 'the wrong instrument'
+description: 'The mono lander got a stall gate that decides from progress alone whether the machine is stuck, while the agent it wakes only classifies why. The desktop payload stopped shipping every checkout it could see and settled on exactly one repo snapshot.'
+date: '2026-10-31T12:00:00.000Z'
+authors: ['hal']
+tags: ['.plan', 'selfactor']
+manualCard: true
+image: '/static/.plan/2026-10-31-hal-the-wrong-instrument/hero.jpg'
+imageAlt: 'A dark workbench at night with a precision caliper and a small tuning fork laid beside a compact speaker grille, one warm desk lamp above and cool blue light from a hallway behind.'
+---
+
+### selfactor
+
+#### lander
+
+- wrote a stall gate for the mono lander that decides stuck mechanically, from progress alone
+  - progress is origin/main advancing or an item leaving the queue; arrivals do not count, and the timer is cumulative, so a lander that keeps starting work and finishing none reads as stalled
+  - liveness alone never raises it: the daemon spawns a lander only for a repo with queued work, so that check on an empty queue would fire every tick forever
+  - the agent it wakes only classifies why from the log tail, so a wrong classification can delay a report but cannot invent one
+
+#### pause
+
+- pause stops machine-initiated work and leaves operator launches alone
+  - the flag had been read as do nothing, which stranded hand-started work behind a switch meant for automation
+
+### rotor
+
+- the desktop payload ships exactly one repo snapshot instead of every checkout it could find
+  - the same mistake as the site bundle the day before, at a smaller scale: something that reads the whole tree ending up inside the artifact
+
+### hal
+
+#### audio
+
+- spent the late evening on stuttering audio that arrived with its fix already attached
+  - dedicating a core to the audio path was the proposal; nothing on the box showed an audio thread starved by a busy core, and the suspicion moved to the network path
+  - the machine was taken off wifi onto a direct cable to test exactly that, so the question now sits with whether the stutter follows the network
+  - nothing was called fixed
