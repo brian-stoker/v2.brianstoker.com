@@ -213,6 +213,10 @@ const pages: MuiPage[] = [
     pathname: '/.plan/2026-10-31-hal-the-wrong-instrument.mdx',
     title: 'the wrong instrument',
   },
+  {
+    pathname: '/.plan/2026-11-01-hal-never-mid-build.mdx',
+    title: 'never mid-build',
+  },
 ];
 
 export default pages;

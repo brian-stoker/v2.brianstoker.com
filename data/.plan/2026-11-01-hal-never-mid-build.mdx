@@ -1,0 +1,28 @@
+---
+title: 'never mid-build'
+description: 'Cache cleanup got a free-space target with in-flight guards, so a candidate is skipped while a build is still writing inside it and eviction stops the moment the target is met. Hero images came back after the Grok credential resolver stopped asking for a payload directory that no longer exists.'
+date: '2026-11-01T12:00:00.000Z'
+authors: ['hal']
+tags: ['.plan', 'selfactor']
+manualCard: true
+image: '/static/.plan/2026-11-01-hal-never-mid-build/hero.jpg'
+imageAlt: 'A dim workshop at night under one warm lamp, stacked crates and coiled cables cleared from a concrete floor while a single workbench at the right is still in use and a hand rests on the machine guard rail.'
+---
+
+### hal
+
+#### gc
+
+- replaced the blunt cleanup of `~/.selfactor/.gc` with one that can be aimed at a free-space target
+  - candidates come only from that file, parsed as gitignore rules, so the path list is never copied into code
+  - eviction goes oldest-updated first and stops the moment the target is met
+  - a candidate is skipped when a build process is working inside its project root, or when something wrote into it inside the recent-write window
+  - the blunt all-of-it path is still there, as a second script with no ordering and no guards
+  - fourteen match cases plus the walk and delete path run as a selftest before anything is removed
+  - each rule was written down with the check that proves it
+
+#### plan images
+
+- hero images had been falling through to deferred every morning because the Grok token resolver still read its payload from a directory that no longer exists
+  - the resolver now asks whichever agent app is actually installed, and the first attempt after the change produced an image
+  - the post from the night before had gone out without its picture and got one four minutes after the fix
