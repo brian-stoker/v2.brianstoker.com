@@ -1,0 +1,810 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Red Door Animator</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            background-color: #111827; /* Dark gray to match ambient shadow */
+            color: #f3f4f6;
+            font-family: 'Inter', sans-serif;
+            overflow-x: hidden;
+        }
+
+        html, body {
+            margin: 0;
+            height: 100%;
+            overflow: hidden;
+        }
+
+        /* Status text is still written by the script but never shown */
+        #status-message { display: none; }
+
+        #svg-container {
+            position: fixed;
+            inset: 0;
+            background: #000; /* Fallback background for the wall */
+            /* perspective and perspective-origin are set by layout() to suit the door */
+        }
+
+        #svg-container svg {
+            width: 100%;
+            height: 100%;
+            display: block;
+        }
+
+        /*
+         * The door lives in its own transparent <svg> layered exactly over the scene, and that
+         * HTML element is what rotates. Browsers render 3D transforms on HTML elements
+         * consistently; on shapes inside an SVG the settled state renders differently from the
+         * in-flight one.
+         */
+        .door-layer {
+            position: absolute;
+            inset: 0;
+            transform-style: preserve-3d; /* Lets the edge face sit at its own angle in 3D */
+            pointer-events: none; /* Clicks fall through to the scene except on the door itself */
+            transform: rotateY(0deg);
+            transition: transform 2.5s ease-in-out;
+        }
+
+        #svg-container.open .door-layer {
+            transform: rotateY(85deg);
+        }
+
+        .door-layer svg {
+            position: absolute;
+            inset: 0;
+        }
+
+        .door-edge {
+            position: absolute;
+            transform-origin: 0 0;
+            pointer-events: auto;
+            cursor: pointer;
+            background: linear-gradient(to right, #b3000f, #7d000a);
+            box-shadow: inset 0 0 0 1px #020101;
+        }
+
+        /* Clicking the door or its frame toggles it open/closed; a click mid-swing reverses it */
+        .door {
+            cursor: pointer;
+            pointer-events: visiblePainted;
+        }
+
+        .door-frame {
+            cursor: pointer;
+        }
+
+        /* Light that only shows while the door is open, fading in as it swings */
+        .light-open {
+            opacity: 0;
+            transition: opacity 2.5s ease-in-out;
+        }
+
+        #svg-container.open .light-open {
+            opacity: 1;
+        }
+
+        .light {
+            pointer-events: none;
+        }
+
+        /* The doorway is slightly larger than the door, so hide it while closed: it appears
+           as soon as the door starts to open, and only goes away once the door is shut again */
+        .doorway {
+            opacity: 0;
+            transition: opacity 0.3s ease 2.2s;
+        }
+
+        #svg-container.open .doorway {
+            opacity: 1;
+            transition: opacity 0.2s ease;
+        }
+
+        .flicker {
+            animation: flicker 2.3s steps(1) infinite;
+        }
+
+        .strobe {
+            animation: flicker 0.9s steps(1) infinite;
+        }
+
+        @keyframes flicker {
+            0%   { opacity: 1; }
+            12%  { opacity: 0.55; }
+            18%  { opacity: 0.95; }
+            33%  { opacity: 0.4; }
+            41%  { opacity: 1; }
+            57%  { opacity: 0.7; }
+            63%  { opacity: 0.25; }
+            70%  { opacity: 0.9; }
+            86%  { opacity: 0.6; }
+            93%  { opacity: 1; }
+        }
+    </style>
+</head>
+<body>
+    <!-- Hidden: status text and fallback file picker are kept for the script, not shown -->
+    <div id="status-message"></div>
+    <input type="file" id="file-input" accept=".svg" class="hidden" />
+
+    <!-- SVG Container -->
+    <div id="svg-container">
+        <!-- SVG will be injected here by JS -->
+    </div>
+
+    <!-- Embedded copy of red-door.svg, used when fetch is blocked (file://) -->
+    <template id="embedded-svg">
+<svg id="Layer_2" data-name="Layer 2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1943.06 1086.76"><metadata><?xpacket begin="" id="W5M0MpCehiHzreSzNTczkc9d"?><x:xmpmeta xmlns:x="adobe:ns:meta/" x:xmptk="XMP Core 6.0.0"><rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"><rdf:Description rdf:about="" xmlns:xmp="http://ns.adobe.com/xap/1.0/" xmlns:xmpMM="http://ns.adobe.com/xap/1.0/mm/" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:dcterms="http://purl.org/dc/terms/" xmpMM:DocumentID="xmp.did:cb9f5498-bb58-4572-8043-8c369e6bfb9b" xmpMM:InstanceID="xmp.iid:cb9f5498-bb58-4572-8043-8c369e6bfb9b" dcterms:provenance="https://cai-manifests.adobe.com/manifests/urn-c2pa-ac772751-9cdc-43fc-9b28-6c8f3d7f360e-adobe"> </rdf:Description></rdf:RDF></x:xmpmeta>
+<?xpacket end="w"?></metadata>
+  <g id="Layer_2-2" data-name="Layer 2">
+    <polygon points="4.82 818.44 1943.06 568.18 1935.59 1080 0 1086.76 4.82 818.44" style="fill: #ddd;"/>
+  </g>
+  <g id="Layer_1-2" data-name="Layer 1">
+    <polygon points="6.26 809.79 6.26 0 1926.26 0 1926.26 563.18 6.26 809.79" style="fill: #141414;"/>
+    <g id="Generative_Object" data-name="Generative Object">
+      <g>
+        <path d="M6.26,823.82v-12.86c.44.07.87.1,1.5.02l377.36-48.72.97,12.49L6.26,823.82Z" style="fill: #262523;"/>
+        <g>
+          <path d="M500.84,747.18v1.77c23.98-2.74,1404.02-178.95,1428.22-182.04.51-.07,1.02-4.67,1.02-4.67,0,0-1429.49,182.09-1429.12,182.05" style="fill: #020101;"/>
+          <path d="M505.01,525.9c-.09,6.09-.19,12.17-.28,18.24" style="fill: #020101;"/>
+          <g>
+            <path d="M417.69,504.86s0,0,0-.01c0,0,0,0,0,.01Z" style="fill: #020101;"/>
+            <path d="M1928.66,576.83l-1427.83,178.13,4.49-246.49-141.02-5.95c-.41.12-.7.36-.79.78,4.38,54.29,8.79,108.57,13.22,162.82l2.14,27.46c.48,5.44.96,10.88,1.44,16.31l.09,2.68c1.35,14.89,2.52,29.73,3.53,44.54L6.46,805.67l-.2.61v1.46s.43.54.43.54l377.68-48.64c.06.28.05.54-.02.77L6.39,809.19l-.13.61v1.17s.45.64.45.64c10.97-1.33,366.95-47.28,377.88-48.56l.85,11c-11.27,1.67-367.64,47.81-379.06,49.17l-.13.61v1.46s383.55-49.69,383.55-49.69l10.39-2.71-.03-3.85,87.13-10.9.18,3.19,9.75.36,1431.65-183.41-.2-1.43Z" style="fill: #020101;"/>
+          </g>
+          <g>
+            <polygon points="539.07 754.35 500.65 759.72 500.82 748.95 1929.05 566.9 1928.66 576.83 539.07 754.35" style="fill: #262523;"/>
+            <polygon points="1929.88 563.89 1929.68 565.56 500.88 747.55 500.68 745.93 1929.88 563.89" style="fill: #272725;"/>
+            <g>
+              <path d="M6.26,809.79v-2.05s378.58-48.75,378.58-48.75c.16.66.15,1.14.12,1.93L6.26,809.79Z" style="fill: #272725;"/>
+              <polygon points="490.4 524.04 417.36 521.38 380.98 520.12 385.42 582.2 389.38 637.74 398.89 771.8 390.94 773.91 386.32 715.72 370.19 509.08 499.26 514.57 497.05 684.47 496.04 760.27 488.68 759.91 489.12 704.63 490.4 524.04" style="fill: #e2e4e3;"/>
+              <path d="M370.29,507.68c-.74-.09-.99,0-1.19.11-.27.16-.41.56-.37,1.07l3.35,42.64,2.9,37.17,9.18,117.01,5.46,68.44c-.75.3-1.34.34-2.18.28l-5.54-68.28-4.75-58.91-3.89-48.06-4.29-53.08-3.37-41.49,117.73,5.13,19.95.83-2,126.25-.48,30.21-1.51,92.94c-.63.2-1.21.33-1.92.15l2.4-179.06.88-67.77-45.04-1.99-85.33-3.61Z" style="fill: #262523;"/>
+              <g>
+                <polygon points="489.02 525.22 488.81 557.49 488.54 598.1 488.24 637.28 487.97 683.15 487.64 721.4 487.45 756.74 399.97 767.68 382.46 521.53 424.98 523.02 432.96 523.28 440.85 523.57 449.98 523.84 474.68 524.78 482.99 524.99 489.02 525.22" style="fill: #de0017;"/>
+                <g>
+                  <path d="M415.77,675.4l-8.96.33c-.06.65-.02,1.16-.28,1.6-.21.34-.89.65-1.47.66l-7.85.06c-.62,0-.92-.89-.96-1.39l-.54-6.51c-.06-.78.06-2.26.76-2.7l5.11-.52c1.57-.16,3.04-.29,4.56.13.33,1.03.38,1.99.43,3.15l5.6-.17,6.34-.1c.3,1.61.56,3.45.07,5.01-.42.73-1.95.43-2.81.46Z" style="fill: #040202;"/>
+                  <path d="M417.39,674.08l-16.69.44c-.91.02-1.1-2.44-.24-2.49l16.86-.83c.15,1.04.2,1.56.08,2.88Z" style="fill: #262523;"/>
+                  <path d="M400.32,675.88l4.91-.03c.11.15.15.44.03.76l-7.57.3-.51-8.42,7.86-.34c.25.73.26,1.42.15,2.18l-4.71.24c-1.36.07-2.07,1.19-1.96,2.55.08,1.06.49,2.77,1.81,2.76Z" style="fill: #242422;"/>
+                </g>
+                <g>
+                  <path d="M435.43,658.69l-27.71,1.86c-.47.03-.83-.1-1.05-.28-.36-.29-.28-.62-.32-1.26l-3.99-66.13-.52-10.85,29.45-.03c.44,0,.81.2.98.36.29.28.22.78.24,1.36l2.7,65.95.23,9.03Z" style="fill: #060101;"/>
+                  <polygon points="434.17 657.36 407.66 659.11 406.13 633.64 403.12 583.4 431.21 583.38 434.17 657.36" style="fill: #272623;"/>
+                  <g>
+                    <path d="M412.28,655.81c-.57.03-.87-.26-1.02-.69l-4.15-68.23,20.67-.03,3.02,66.88c.03.67-.34,1-.9,1.03l-17.62,1.04Z" style="fill: #050101;"/>
+                    <polygon points="427.46 608.88 429.48 653.4 412.51 654.45 408.51 588.25 426.64 588.26 426.89 594.64 427.46 608.88" style="fill: #de0017;"/>
+                  </g>
+                </g>
+                <g>
+                  <path d="M447.83,656.84l-.2-10.23-.28-9.35-.29-11.42-.91-30-.2-10.96c-.17-.87-.22-1.92.39-2.6l28.24-.08.16,27.61.28,28.7.13,17.82-26.22,1.61c-.64.04-1.09-.43-1.11-1.09Z" style="fill: #060101;"/>
+                  <polygon points="473.82 655.11 449.24 656.55 447.13 583.72 473.35 583.49 473.82 655.11" style="fill: #262523;"/>
+                  <g>
+                    <path d="M469.91,652.59l-16.57.82c-.48.02-.83-.29-.94-.86l-1.75-65.63,19.23-.16,1,64.65c0,.71-.34,1.16-.95,1.19Z" style="fill: #050101;"/>
+                    <polygon points="453.26 640.22 453 629.85 452.75 618.74 452.55 610.13 452.23 596.95 451.95 588.37 460.13 588.16 468.71 588.1 468.95 610.42 469.25 631.47 469.47 651.27 453.64 652.03 453.26 640.22" style="fill: #de0017;"/>
+                  </g>
+                </g>
+                <g>
+                  <path d="M438.45,739.6l.12,7.03-25.57,3.38c-.62.08-1.14.01-1.67-.26l-2.78-44.78-1.4-23.67,28.78-2.42,1.72,41.35.23,6.65.26,5.27.3,7.46Z" style="fill: #050101;"/>
+                  <polygon points="437.38 745.4 412.56 748.68 410.13 708.76 408.54 682.53 434.73 680.31 436.02 713.42 437.38 745.4" style="fill: #262623;"/>
+                  <g>
+                    <path d="M416.65,745.44c-.56.07-1.23-.14-1.25-.59l-2.99-59.49,18.97-1.71,2.63,59.55-17.35,2.24Z" style="fill: #060101;"/>
+                    <polygon points="432.63 742 416.73 744.04 413.75 686.59 430.18 685.05 430.4 691.67 432.63 742" style="fill: #de0017;"/>
+                  </g>
+                </g>
+                <g>
+                  <path d="M449.51,744.41l-.13-9.19-.3-14.9-.26-17.01-.3-14.61-.17-10.73,26.49-1.96.25,10.64.25,33.04.18,22.44-24.83,3.22c-.38.05-.71-.06-.91-.19-.16-.1-.27-.41-.27-.75Z" style="fill: #060101;"/>
+                  <polygon points="474.22 740.87 450.84 743.93 449.66 679.2 473.65 677.43 474.22 740.87" style="fill: #262523;"/>
+                  <g>
+                    <path d="M470.09,739.24l-16.29,1.69-.86-59.03,17.95-1.53.38,57.62c-.01.76-.37,1.16-1.19,1.24Z" style="fill: #050101;"/>
+                    <path d="M455.11,739.53l-.26-16.57-.29-21.03-.19-15.67c-.09-1.06-.32-2.03-.05-3.14l15.34-1.29.19,34.68.09,21.38-14.83,1.64Z" style="fill: #de0017;"/>
+                  </g>
+                </g>
+                <g>
+                  <path d="M431.78,569.06l-30.67-.12c-.61,0-.87-1.19-.66-1.65l-1.53-22.79c-.15-2.2-.46-4.17-.22-6.43l11.26.16,13.38.3,7,.25,1.43,30.28Z" style="fill: #060101;"/>
+                  <polygon points="430.43 567.78 401.81 567.53 399.9 539.38 429.06 540.04 430.43 567.78" style="fill: #262523;"/>
+                  <g>
+                    <path d="M425.91,563.82l-19.36-.09c-.89,0-1.21-.58-1.26-1.42l-1.07-17.79c-.02-.37.25-1.09.7-1.08l20.61.46,1.16,18.97c.02.4-.28.83-.78.95Z" style="fill: #050101;"/>
+                    <polygon points="424.26 545.16 425.28 562.37 406.66 562.32 405.6 544.83 411.63 544.93 424.26 545.16" style="fill: #de0017;"/>
+                  </g>
+                </g>
+                <g>
+                  <path d="M474.16,551.24l.26,17.23c.01.67-.36,1.06-1.01,1.08l-6.8-.1-21.19-.19-.99-21.42c-.13-2.89-.29-5.59-.13-8.57l9.42.14,13.43.31,6.84.22.18,11.29Z" style="fill: #060101;"/>
+                  <polygon points="473.18 568.18 446.53 567.91 445.54 540.59 472.69 541.23 473.18 568.18" style="fill: #252422;"/>
+                  <g>
+                    <path d="M451.02,564.56c-.29,0-.82-.28-.86-.61l-.79-18c-.02-.43.23-1.2.75-1.19l19.26.42.5,19.47-18.86-.09Z" style="fill: #080101;"/>
+                    <polygon points="468.42 555.25 468.55 563.28 451.48 563.19 450.71 546.2 462.24 546.33 468.17 546.51 468.42 555.25" style="fill: #de0015;"/>
+                  </g>
+                </g>
+              </g>
+            </g>
+          </g>
+        </g>
+      </g>
+    </g>
+  </g>
+</svg>
+    </template>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const svgContainer = document.getElementById('svg-container');
+            const statusMsg = document.getElementById('status-message');
+            const fileInput = document.getElementById('file-input');
+            
+            let doorGroup = null;
+
+            // Helper to deeply check if a color is reddish
+            function isColorRed(colorStr) {
+                if (!colorStr || colorStr === 'none' || colorStr === 'transparent') return false;
+                const s = colorStr.toLowerCase();
+                
+                // Fast path for exact keyword matches
+                if (s.includes('red') || s.includes('#ff0000') || s.includes('#f00')) return true;
+
+                // Compute exact RGB values for arbitrary colors
+                const dummy = document.createElement('div');
+                dummy.style.color = colorStr;
+                document.body.appendChild(dummy);
+                const rgb = window.getComputedStyle(dummy).color;
+                document.body.removeChild(dummy);
+
+                const match = rgb.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)/);
+                if (match) {
+                    const r = parseInt(match[1]);
+                    const g = parseInt(match[2]);
+                    const b = parseInt(match[3]);
+                    // Heuristic: High Red channel, low Green/Blue channels
+                    if (r > 120 && g < 80 && b < 80) return true;
+                }
+                return false;
+            }
+
+            const FLOOR_COLOR = '#c4c4c4';  // Light gray foreground
+            const MAX_DOOR_PX = 250;        // Door never renders taller than this
+            const EXTEND = 20000;           // How far (in SVG units) wall and floor run past the art
+            let doorHeightUnits = 268;      // Replaced with the measured door height once detected
+            let sceneBox = null;            // Original viewBox: { x, y, w, h }
+            let floorLine = null;           // Two points on the floor's top edge (for its slope)
+
+            // Point on the line through a and b at the given x
+            function lineY(a, b, x) {
+                return a[1] + (b[1] - a[1]) * (x - a[0]) / (b[0] - a[0]);
+            }
+
+            function polygonPoints(poly) {
+                return poly.getAttribute('points').trim().split(/[\s,]+/).map(Number)
+                    .reduce((pts, v, i, arr) => (i % 2 ? pts : [...pts, [v, arr[i + 1]]]), []);
+            }
+
+            // Recolor the floor and stretch the wall and floor far past the art so that
+            // whatever the viewBox shows beyond the original edges is still scene.
+            function extendScene(svg) {
+                const [vx, vy, vw, vh] = svg.getAttribute('viewBox').split(/[\s,]+/).map(Number);
+                sceneBox = { x: vx, y: vy, w: vw, h: vh };
+                const L = vx - EXTEND, R = vx + vw + EXTEND;
+                const T = vy - EXTEND, B = vy + vh + EXTEND;
+                const fmt = pts => pts.map(p => p.join(',')).join(' ');
+
+                const floor = svg.querySelector('#Layer_2-2 > polygon');
+                if (floor) {
+                    // Top edge runs from the first point (left) to the second (right)
+                    const [a, b] = polygonPoints(floor);
+                    floorLine = [a, b];
+                    floor.setAttribute('points', fmt([[L, lineY(a, b, L)], [R, lineY(a, b, R)], [R, B], [L, B]]));
+                    floor.style.fill = FLOOR_COLOR;
+                }
+
+                const wall = svg.querySelector('#Layer_1-2 > polygon');
+                if (wall) {
+                    // Bottom edge runs from the bottom-right corner (4th point) to the bottom-left (1st)
+                    const pts = polygonPoints(wall);
+                    const a = pts[0], b = pts[3];
+                    wall.setAttribute('points', fmt([[L, T], [R, T], [R, lineY(a, b, R) + 6], [L, lineY(a, b, L) + 6]]));
+
+                    // Continue the baseboard past both ends of the art. The art's baseboard is
+                    // five bands (black, gray, black, thick gray, black); each boundary below is
+                    // measured from the original render at two x positions per side, since the
+                    // left and right sections sit at slightly different angles.
+                    const BANDS = ['#020101', '#262523', '#020101', '#262523', '#020101'];
+                    const strip = (x0, x1, xa, ya, xb, yb) => BANDS.map((color, i) => {
+                        const top = [[xa, ya[i]], [xb, yb[i]]], bot = [[xa, ya[i + 1]], [xb, yb[i + 1]]];
+                        const band = document.createElementNS('http://www.w3.org/2000/svg', 'polygon');
+                        band.setAttribute('points', fmt([[x0, lineY(...top, x0)], [x1, lineY(...top, x1)], [x1, lineY(...bot, x1)], [x0, lineY(...bot, x0)]]));
+                        band.style.fill = color;
+                        return band;
+                    });
+                    wall.after(
+                        ...strip(L, 12, 12, [805, 807, 809.1, 810.9, 822.4, 824.6], 300, [768, 770, 771.9, 773.9, 785.1, 787.1]),
+                        ...strip(1900, R, 520, [742, 743.4, 745.1, 746.5, 757, 758.9], 1900, [566, 567.6, 569.4, 570.6, 580.4, 581.9])
+                    );
+                }
+            }
+
+            // Size the viewBox to the window: cover it, but never scale the door past
+            // MAX_DOOR_PX. Past that size the extended wall/floor fill the extra space,
+            // with the original art kept centered.
+            function layout() {
+                const svg = svgContainer.querySelector('svg');
+                if (!svg || !sceneBox) return;
+                const vw = window.innerWidth, vh = window.innerHeight;
+                const scale = Math.min(Math.max(vw / sceneBox.w, vh / sceneBox.h), MAX_DOOR_PX / doorHeightUnits);
+                const w = vw / scale, h = vh / scale;
+                const cx = sceneBox.x + sceneBox.w / 2, cy = sceneBox.y + sceneBox.h / 2;
+                const viewBox = `${cx - w / 2} ${cy - h / 2} ${w} ${h}`;
+                svgContainer.querySelectorAll('svg').forEach(s => s.setAttribute('viewBox', viewBox));
+
+                if (doorLayer && doorHinge) {
+                    // Hinge and perspective in screen pixels, so the swing looks the same at any size
+                    const hx = (doorHinge[0] - (cx - w / 2)) * scale, hy = (doorHinge[1] - (cy - h / 2)) * scale;
+                    const doorPx = doorHeightUnits * scale;
+                    doorLayer.style.transformOrigin = `${hx}px ${hy}px`;
+                    svgContainer.style.perspective = `${doorPx * 4}px`;
+                    svgContainer.style.perspectiveOrigin = `${hx - doorPx * 0.2}px ${hy}px`;
+
+                    if (doorEdge && doorEdgeFace) {
+                        const toPx = ([x, y]) => [(x - (cx - w / 2)) * scale, (y - (cy - h / 2)) * scale];
+                        const [top, bottom] = doorEdge.map(toPx);
+                        const tilt = Math.atan2(bottom[0] - top[0], bottom[1] - top[1]) * 180 / Math.PI;
+                        Object.assign(doorEdgeFace.style, {
+                            left: `${top[0]}px`,
+                            top: `${top[1]}px`,
+                            width: `${DOOR_THICKNESS * scale}px`,
+                            height: `${Math.hypot(bottom[0] - top[0], bottom[1] - top[1])}px`,
+                            // Follow the panel's slanted edge, then turn back into the doorway
+                            transform: `rotateZ(${-tilt}deg) rotateY(90deg)`,
+                        });
+                    }
+                }
+            }
+
+            window.addEventListener('resize', layout);
+
+            const SVG_NS = 'http://www.w3.org/2000/svg';
+            const LIGHT_COLORS = '#ff2bd6;#00e5ff;#7cff00;#ffd400;#7a2bff;#ff2bd6';
+
+            // Perspective of the floor, estimated from the art: lines along the wall converge at
+            // VP_WALL (where the door's top and bottom edges meet); lines running straight out
+            // from the wall converge at VP_OUT, further off to the left on the same horizon.
+            const VP_WALL = [1928, 576];
+            const VP_OUT = [-1200, 576];
+
+            // Inner edge of the white door frame in the art: the opening revealed as the door swings
+            const DOORWAY = [[380.98, 520.12], [490.4, 524.04], [488.68, 759.91], [398.89, 771.8]];
+
+            const DOOR_THICKNESS = 6; // SVG units (~5% of the door's width)
+
+            let doorLayer = null;     // Group holding the door's <svg> and edge face, rotated in 3D
+            let doorHinge = null;     // Hinge point (door's right edge, mid-height) in SVG units
+            let doorEdge = null;      // Free (left) edge of the door panel: [top, bottom] in SVG units
+            let doorEdgeFace = null;  // The element drawn as the door's thickness
+
+            // Top-left and bottom-left corners of the red door panel
+            function doorLeftEdge(door) {
+                const panel = Array.from(door.querySelectorAll('polygon'))
+                    .filter(el => isColorRed(window.getComputedStyle(el).fill))
+                    .sort((p, q) => {
+                        const pb = p.getBBox(), qb = q.getBBox();
+                        return qb.width * qb.height - pb.width * pb.height;
+                    })[0];
+                if (panel) {
+                    const corners = polygonPoints(panel);
+                    const top = corners.reduce((m, p) => (p[0] + p[1] < m[0] + m[1] ? p : m));
+                    const bottom = corners.reduce((m, p) => (p[1] - p[0] > m[1] - m[0] ? p : m));
+                    return [top, bottom];
+                }
+                const box = door.getBBox();
+                return [[box.x, box.y], [box.x, box.y + box.height]];
+            }
+
+            function el(tag, attrs, parent) {
+                const node = document.createElementNS(SVG_NS, tag);
+                Object.entries(attrs).forEach(([k, v]) => node.setAttribute(k, v));
+                if (parent) parent.appendChild(node);
+                return node;
+            }
+
+            const pts = list => list.map(p => p.join(',')).join(' ');
+
+            // Clicking the door or its frame toggles it open/closed
+            function armDoor(door) {
+                const svg = door.ownerSVGElement;
+                const box = door.getBBox();
+
+                // The frame is the light-gray polygon around the door
+                const frame = Array.from(svg.querySelectorAll('polygon, path'))
+                    .find(el => window.getComputedStyle(el).fill === 'rgb(226, 228, 227)');
+                if (frame) frame.classList.add('door-frame');
+
+                addDoorLight(svg, door);
+
+                // Move the door into its own layer over the scene (same size and viewBox)
+                doorEdge = doorLeftEdge(door);
+                doorLayer = document.createElement('div');
+                doorLayer.className = 'door-layer';
+                const doorSvg = svg.cloneNode(false);
+                doorSvg.removeAttribute('id');
+                doorSvg.appendChild(door);
+                doorLayer.appendChild(doorSvg);
+                // The door's swinging edge: a strip turned 90° back into the doorway, so it
+                // shows as the door's thickness once the door turns
+                doorEdgeFace = document.createElement('div');
+                doorEdgeFace.className = 'door-edge';
+                doorLayer.appendChild(doorEdgeFace);
+                svgContainer.appendChild(doorLayer);
+                door.classList.add('door');
+                doorHinge = [box.x + box.width, box.y + box.height / 2];
+
+                const toggle = () => svgContainer.classList.toggle('open');
+                door.addEventListener('click', toggle);
+                doorEdgeFace.addEventListener('click', toggle);
+                if (frame) frame.addEventListener('click', toggle);
+                layout();
+            }
+
+            // Bottom-left and bottom-right corners of the red door panel (the largest red shape)
+            function doorBottom(door, slope) {
+                const panel = Array.from(door.querySelectorAll('path, rect, polygon'))
+                    .filter(el => isColorRed(window.getComputedStyle(el).fill))
+                    .sort((p, q) => {
+                        const pb = p.getBBox(), qb = q.getBBox();
+                        return qb.width * qb.height - pb.width * pb.height;
+                    })[0];
+                if (panel && panel.tagName === 'polygon') {
+                    // The two points furthest below a line parallel to the floor
+                    const [p, q] = polygonPoints(panel).sort((u, v) => (v[1] - slope * v[0]) - (u[1] - slope * u[0]));
+                    return p[0] < q[0] ? [p, q] : [q, p];
+                }
+                const box = (panel || door).getBBox();
+                const y = box.y + box.height;
+                return [[box.x, y], [box.x + box.width, y + slope * box.width]];
+            }
+
+            // Vertical-ish gradient whose stops all cycle through the light-show colors
+            function cyclingGradient(defs, id, from, to, stops) {
+                const grad = el('linearGradient', {
+                    id, gradientUnits: 'userSpaceOnUse', x1: from[0], y1: from[1], x2: to[0], y2: to[1],
+                }, defs);
+                stops.forEach(([offset, opacity], i) => {
+                    const stop = el('stop', { offset, 'stop-opacity': opacity }, grad);
+                    // Each stop runs the same cycle slightly offset, so the light shimmers
+                    el('animate', { attributeName: 'stop-color', values: LIGHT_COLORS, dur: '4s', begin: `${-i * 0.4}s`, repeatCount: 'indefinite' }, stop);
+                });
+            }
+
+            // Random-walk every part of the doorway light so it never settles into a pattern
+            function animateDoorway({ turbulence, hue, field, fieldRect, blobs, flash, box }) {
+                const wander = (v, step, min, max) => Math.min(max, Math.max(min, v + (Math.random() - 0.5) * step));
+                let fx = 0.03, fy = 0.02, hueAngle = 0, hueSpeed = 40, driftX = 0, driftY = 0, flashLevel = 0;
+                let last = performance.now(), lastOpen = -Infinity;
+
+                const frame = now => {
+                    const dt = Math.min(0.05, (now - last) / 1000);
+                    last = now;
+                    if (!field.isConnected) return; // Scene was replaced
+                    // Only animate while the doorway can be seen (open, or still fading after closing)
+                    if (svgContainer.classList.contains('open')) lastOpen = now;
+                    if (now - lastOpen > 3000) return requestAnimationFrame(frame);
+
+                    // Field: wobbling scale, drifting position, hue that speeds up, stalls and reverses
+                    fx = wander(fx, 0.004, 0.008, 0.06);
+                    fy = wander(fy, 0.004, 0.008, 0.06);
+                    turbulence.setAttribute('baseFrequency', `${fx} ${fy}`);
+                    hueSpeed = wander(hueSpeed, 60, -220, 220);
+                    if (Math.random() < 0.01) hueAngle += 90 + Math.random() * 180; // Sudden color jump
+                    hueAngle = (hueAngle + hueSpeed * dt) % 360;
+                    hue.setAttribute('values', hueAngle);
+                    driftX = wander(driftX, 12, -180, 180);
+                    driftY = wander(driftY, 12, -180, 180);
+                    field.setAttribute('transform', `translate(${driftX} ${driftY})`);
+                    fieldRect.setAttribute('x', box.x - driftX);
+                    fieldRect.setAttribute('y', box.y - driftY);
+
+                    // Blobs: jittery velocity with damping, bouncing softly off the doorway edges
+                    blobs.forEach(b => {
+                        b.vx = (b.vx + (Math.random() - 0.5) * 400 * dt) * 0.97;
+                        b.vy = (b.vy + (Math.random() - 0.5) * 400 * dt) * 0.97;
+                        b.x += b.vx * dt;
+                        b.y += b.vy * dt;
+                        if (b.x < box.x || b.x > box.x + box.w) b.vx *= -1;
+                        if (b.y < box.y || b.y > box.y + box.h) b.vy *= -1;
+                        b.r = wander(b.r, 4, 6, 45);
+                        b.hue = (b.hue + (Math.random() - 0.3) * 300 * dt + 360) % 360;
+                        b.node.setAttribute('cx', b.x);
+                        b.node.setAttribute('cy', b.y);
+                        b.node.setAttribute('rx', b.r);
+                        b.node.setAttribute('ry', b.r * (0.6 + Math.random() * 0.8));
+                        b.node.setAttribute('fill', `hsl(${b.hue}, 100%, 60%)`);
+                    });
+
+                    // Flashes: rare, uneven spikes that fade at varying speeds
+                    if (Math.random() < 0.02) {
+                        flashLevel = 0.4 + Math.random() * 0.6;
+                        flash.setAttribute('fill', Math.random() < 0.5 ? '#fff' : `hsl(${Math.random() * 360}, 100%, 75%)`);
+                    }
+                    flashLevel *= Math.pow(0.02 + Math.random() * 0.2, dt);
+                    flash.setAttribute('opacity', flashLevel);
+
+                    requestAnimationFrame(frame);
+                };
+                requestAnimationFrame(frame);
+            }
+
+            // The light show: a glow from under the closed door, and when it opens, a blaze of
+            // color filling the doorway, flooding the floor and blooming over the wall.
+            function addDoorLight(svg, door) {
+                const slope = floorLine ? (floorLine[1][1] - floorLine[0][1]) / (floorLine[1][0] - floorLine[0][0]) : 0;
+                const [O, E] = doorBottom(door, slope);
+
+                // Floor-plane coordinates -> screen: s runs along the door's bottom edge
+                // (0 = left corner, 1 = right corner), t runs out from the wall toward the viewer.
+                const a = (E[0] - O[0]) / (VP_WALL[0] - E[0]);
+                const b = -a; // Same scale along both floor axes at the door
+                const floorPoint = (s, t) => {
+                    const w = 1 + a * s + b * t;
+                    return [0, 1].map(i => (O[i] + a * s * VP_WALL[i] + b * t * VP_OUT[i]) / w);
+                };
+
+                const defs = svg.querySelector('defs') || svg.insertBefore(el('defs', {}), svg.firstChild);
+                const blur = (id, amount) => el('feGaussianBlur', { stdDeviation: amount },
+                    el('filter', { id, x: '-50%', y: '-50%', width: '200%', height: '200%' }, defs));
+                blur('light-blur', 2.5);
+                blur('light-bloom', 14);
+
+                // --- Floor: light fans out from the door, wider and fainter with distance ---
+                const spill = (id, depth, fan, peak) => {
+                    cyclingGradient(defs, id, floorPoint(0.5, 0), floorPoint(0.5, depth), [['0', peak], ['0.35', peak * 0.5], ['1', 0]]);
+                    return el('polygon', {
+                        points: pts([floorPoint(0, 0), floorPoint(1, 0), floorPoint(1 + fan, depth), floorPoint(-fan, depth)]),
+                        fill: `url(#${id})`, filter: 'url(#light-blur)',
+                    });
+                };
+                const floorLight = el('g', { class: 'light' });
+                el('g', { class: 'flicker' }, floorLight).appendChild(spill('spill-closed', 2.2, 0.7, 0.95));
+                // Fade (outer) and strobe (inner) on separate groups: an animation on the same
+                // element would override the fade's opacity
+                el('g', { class: 'strobe' }, el('g', { class: 'light-open' }, floorLight)).appendChild(spill('spill-open', 5, 1.8, 1));
+                // Beneath all the door/frame/baseboard art, so only the floor itself is lit
+                const art = svg.querySelector('#Generative_Object') || door;
+                art.parentNode.insertBefore(floorLight, art);
+
+                // --- Gap under the closed door: a bright sliver between the panel's bottom corners ---
+                const gap = el('polygon', {
+                    class: 'light flicker',
+                    points: pts([[O[0], O[1] - 2], [E[0], E[1] - 2], [E[0], E[1] + 1.5], [O[0], O[1] + 1.5]]),
+                });
+                el('animate', { attributeName: 'fill', values: LIGHT_COLORS, dur: '4s', repeatCount: 'indefinite' }, gap);
+                door.parentNode.insertBefore(gap, door);
+
+                // --- Doorway: what's on the other side, revealed as the door swings away ---
+                const xs = DOORWAY.map(p => p[0]), ys = DOORWAY.map(p => p[1]);
+                const dx = Math.min(...xs), dy = Math.min(...ys), dw = Math.max(...xs) - dx, dh = Math.max(...ys) - dy;
+                const cx = dx + dw / 2, cy = dy + dh * 0.55;
+                el('polygon', { points: pts(DOORWAY) }, el('clipPath', { id: 'doorway-clip' }, defs));
+                // Flowing color field: fractal noise pushed into saturated color. Its scale,
+                // drift and hue are random-walked every frame by animateDoorway().
+                // Noise is costly to render, so the filter covers only the doorway itself
+                const noise = el('filter', {
+                    id: 'doorway-noise', 'color-interpolation-filters': 'sRGB', x: 0, y: 0, width: 1, height: 1,
+                }, defs);
+                const turbulence = el('feTurbulence', { type: 'fractalNoise', baseFrequency: '0.03 0.02', numOctaves: 2, seed: Math.floor(Math.random() * 1000) }, noise);
+                el('feColorMatrix', { type: 'matrix', values: '5 -2 -2 0 -0.9  -2 5 -2 0 -0.9  -2 -2 5 0 -0.9  0 0 0 0 1' }, noise);
+                const hue = el('feColorMatrix', { type: 'hueRotate', values: 0 }, noise);
+                blur('blob-blur', 9);
+
+                const doorway = el('g', { class: 'light doorway', 'clip-path': 'url(#doorway-clip)' });
+                // The noise is computed in the field's own coordinates: shifting the group one way and
+                // the rect back the other keeps the rect on the doorway while the noise drifts
+                const field = el('g', {}, doorway);
+                const fieldRect = el('rect', { x: dx, y: dy, width: dw, height: dh, filter: 'url(#doorway-noise)' }, field);
+                // Soft blobs of color wandering through the field
+                const blobLayer = el('g', { style: 'mix-blend-mode: screen', filter: 'url(#blob-blur)' }, doorway);
+                const blobs = Array.from({ length: 7 }, () => ({
+                    node: el('ellipse', {}, blobLayer),
+                    x: dx + Math.random() * dw, y: dy + Math.random() * dh, vx: 0, vy: 0,
+                    r: 10 + Math.random() * 25, hue: Math.random() * 360,
+                }));
+                // Random bursts of light washing over everything
+                const flash = el('rect', { x: dx, y: dy, width: dw, height: dh, fill: '#fff', opacity: 0, style: 'mix-blend-mode: screen' }, doorway);
+
+                animateDoorway({ turbulence, hue, field, fieldRect, blobs, flash, box: { x: dx, y: dy, w: dw, h: dh } });
+                door.parentNode.insertBefore(doorway, door);
+
+                // --- Bloom: blinding glow spilling over the frame and wall once the door opens ---
+                const bloom = el('g', { class: 'light light-open', style: 'mix-blend-mode: screen' });
+                const bloomShape = el('polygon', {
+                    class: 'flicker',
+                    points: pts(DOORWAY.map(([x, y]) => [cx + (x - cx) * 1.25, dy + dh / 2 + (y - dy - dh / 2) * 1.1])),
+                    filter: 'url(#light-bloom)', opacity: 0.8,
+                }, bloom);
+                el('animate', { attributeName: 'fill', values: LIGHT_COLORS, dur: '4s', repeatCount: 'indefinite' }, bloomShape);
+                svg.appendChild(bloom);
+            }
+
+            function setStatus(text, color) {
+                statusMsg.textContent = text;
+                statusMsg.className = `mb-4 text-sm font-medium ${color} h-6`;
+            }
+
+            function loadSVGText(text) {
+                svgContainer.innerHTML = text;
+                const svg = svgContainer.querySelector('svg');
+                if (!svg) {
+                    setStatus("Error: Invalid SVG file.", "text-red-500");
+                    return;
+                }
+
+                svg.setAttribute('preserveAspectRatio', 'none'); // layout() matches the window's aspect exactly
+                extendScene(svg);
+                layout();
+
+                // Reset any previous state
+                doorGroup = null;
+                doorLayer = null;
+                doorEdge = null;
+                doorEdgeFace = null;
+                svgContainer.classList.remove('open');
+                setStatus("SVG loaded. Analyzing elements...", "text-blue-400");
+
+                // Allow browser to render SVG before calculating bounding boxes
+                setTimeout(() => processSVG(svg), 100);
+            }
+
+            // Auto-load the local red-door.svg
+            setStatus("Loading red-door.svg...", "text-yellow-400");
+            fetch('red-door.svg')
+                .then(res => {
+                    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+                    return res.text();
+                })
+                .then(loadSVGText)
+                .catch(() => {
+                    // fetch is blocked on file:// — fall back to the embedded copy
+                    const embedded = document.getElementById('embedded-svg');
+                    if (embedded && embedded.innerHTML.trim()) {
+                        loadSVGText(embedded.innerHTML);
+                    } else {
+                        setStatus("Couldn't load red-door.svg — choose a file instead.", "text-red-500");
+                        fileInput.className = 'fixed top-4 left-4 z-10 text-sm text-gray-300';
+                    }
+                });
+
+            // Fallback: manual file upload
+            fileInput.addEventListener('change', (e) => {
+                const file = e.target.files[0];
+                if (!file) return;
+
+                setStatus("Reading file...", "text-yellow-400");
+
+                const reader = new FileReader();
+                reader.onload = (event) => loadSVGText(event.target.result);
+                reader.onerror = () => setStatus("Error reading file.", "text-red-500");
+                reader.readAsText(file);
+            });
+
+            function processSVG(svg) {
+                try {
+                    // Gather all visual elements
+                    const allElements = Array.from(svg.querySelectorAll('path, rect, polygon, circle, ellipse, polyline, line'));
+                    
+                    // 1. Find elements that are red (checking fill and stroke)
+                    let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
+                    let hasRedElements = false;
+
+                    const redElements = allElements.filter(el => {
+                        let fill = el.getAttribute('fill') || el.style.fill || '';
+                        if (!fill || fill === 'none') {
+                            const comp = window.getComputedStyle(el).fill;
+                            if (comp && comp !== 'none') fill = comp;
+                        }
+                        
+                        let stroke = el.getAttribute('stroke') || el.style.stroke || '';
+                        if (!stroke || stroke === 'none') {
+                            const compStroke = window.getComputedStyle(el).stroke;
+                            if (compStroke && compStroke !== 'none') stroke = compStroke;
+                        }
+
+                        return isColorRed(fill) || isColorRed(stroke);
+                    });
+
+                    if (redElements.length === 0) {
+                        // FALLBACK: Manual Click to Animate
+                        statusMsg.textContent = "No red elements detected. Click the door in the image to animate it.";
+                        statusMsg.className = "mb-4 text-sm font-medium text-yellow-400 h-6";
+                        
+                        const clickHandler = (e) => {
+                            if (doorGroup) return; // Already animating something
+                            let target = e.target;
+                            if (target === svg) return; // Clicked background
+                            
+                            // Try to get the closest group, otherwise use the element itself
+                            target = target.closest('g') || target;
+                            
+                            const bbox = target.getBBox();
+                            const originX = bbox.x + bbox.width; // Right edge
+                            const originY = bbox.y + (bbox.height / 2);
+                            
+                            target.style.transformOrigin = `${originX}px ${originY}px`;
+                            armDoor(target);
+                            doorGroup = target;
+                            
+                            statusMsg.textContent = "Manual door selection animated.";
+                            statusMsg.className = "mb-4 text-sm font-medium text-green-400 h-6";
+                            svg.removeEventListener('click', clickHandler);
+                        };
+                        svg.addEventListener('click', clickHandler);
+                        return; // Exit auto-process
+                    }
+
+                    // 2. Calculate the bounding box union for all red elements (the door body)
+                    redElements.forEach(el => {
+                        try {
+                            const bbox = el.getBBox();
+                            if (bbox.width > 0 && bbox.height > 0) {
+                                minX = Math.min(minX, bbox.x);
+                                minY = Math.min(minY, bbox.y);
+                                maxX = Math.max(maxX, bbox.x + bbox.width);
+                                maxY = Math.max(maxY, bbox.y + bbox.height);
+                                hasRedElements = true;
+                            }
+                        } catch (e) { /* Ignore elements that fail getBBox */ }
+                    });
+
+                    if (!hasRedElements) {
+                        throw new Error("Could not calculate dimensions for the red door components.");
+                    }
+
+                    // 3. Find *all* elements (like black frames, handle, lines) that belong to the door
+                    // We do this by checking if they fall within the red bounding box + a small tolerance
+                    const tolerance = 5; 
+                    const doorParts = allElements.filter(el => {
+                        try {
+                            const bbox = el.getBBox();
+                            return (
+                                bbox.width > 0 && bbox.height > 0 &&
+                                bbox.x >= minX - tolerance &&
+                                bbox.y >= minY - tolerance &&
+                                (bbox.x + bbox.width) <= maxX + tolerance &&
+                                (bbox.y + bbox.height) <= maxY + tolerance
+                            );
+                        } catch (e) {
+                            return false;
+                        }
+                    });
+
+                    // 4. Create a group (<g>) for animation
+                    doorGroup = document.createElementNS("http://www.w3.org/2000/svg", "g");
+                    doorGroup.id = "animated-door-group";
+
+                    // Insert the group before the first door element to maintain rendering (z-index) order as best as possible
+                    if (doorParts.length > 0) {
+                        const firstPart = doorParts[0];
+                        firstPart.parentNode.insertBefore(doorGroup, firstPart);
+                        // Move all identified parts into the new group
+                        doorParts.forEach(part => doorGroup.appendChild(part));
+                    }
+
+                    // 5. Calculate transform origin (Right Edge = Hinge)
+                    // We base this on the exact computed bounding box of our newly assembled group.
+                    const groupBBox = doorGroup.getBBox();
+                    
+                    // armDoor hinges it on the right edge of this box
+                    armDoor(doorGroup);
+                    doorHeightUnits = groupBBox.height;
+                    layout();
+
+                    // Initialization complete
+                    statusMsg.textContent = "Door isolated successfully. Click it to open.";
+                    statusMsg.className = "mb-4 text-sm font-medium text-green-400 h-6";
+
+                } catch (error) {
+                    console.error("Error processing SVG elements:", error);
+                    statusMsg.textContent = `Processing Error: ${error.message}`;
+                    statusMsg.className = "mb-4 text-sm font-medium text-red-500 h-6";
+                }
+            }
+        });
+    </script>
+</body>
+</html>

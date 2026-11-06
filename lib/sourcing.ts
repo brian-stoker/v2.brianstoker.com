@@ -99,6 +99,7 @@ const ALLOWED_TAGS = [
   'selfagent',
   'gdock',
   'sgit',
+  'zerk',
   'Stoked UI',
   'MUI X',
   'Material UI',
