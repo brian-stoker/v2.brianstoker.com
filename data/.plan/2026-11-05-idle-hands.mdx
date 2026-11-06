@@ -1,0 +1,93 @@
+---
+title: 'idle hands'
+description: 'Software Catalog discovery landed, and creation readiness became field completeness, so the server stopped demanding a review receipt no deployment could sign and twenty-nine wedged tasks could finally move. the agent runtime became Rotor and the dock app became Zerk all the way into the code, while the lander learned to resolve a renamed repo by its real identity and main deployed again through 0.2.435.'
+date: '2026-11-05T12:00:00.000Z'
+authors: ['brianstoker']
+tags: ['.plan', 'selfactor', 'sgit', 'zerk', 'rotor']
+manualCard: true
+image: '/static/.plan/2026-11-02-idle-hands/hero.jpg'
+imageAlt: 'A dark server room with an open rack door glowing blue and an empty chair beside it.'
+---
+
+### selfactor
+
+#### catalog
+
+- Software Catalog discovery finished and landed: the CLI, client, web and API gaps closed, incremental maintenance added, and a passive maintenance trigger runs from the daemon
+  - the Brain projection over the catalog and the custom scope tree behind it fixed
+  - a library shows at the App level only when no app uses it
+
+#### work items
+
+- creation readiness is field completeness: the server-side creation review is retired, which released twenty-nine tasks that could never be started, completed or retired
+  - the creating CLI reviews body, PRD, phases and contract before it persists; raw input is stored with named gaps and promoted once the fields land
+- project, task, todo and document share one status vocabulary and one lifecycle, with the API suites green across all four
+- project creation readiness and review job status read from the work item itself
+- contracts are prepared before execution admission
+
+#### lander
+
+- repo resolution ranks candidates by exact id, full name, slug and GitHub id, so a renamed repo's stale record no longer wins
+  - queued work is never rebound onto a record whose slug disagrees with the checkout
+- post-squash re-validation budget follows measured host load, with the configured timeout kept as the floor
+- worktree cleanup proves its authority before it deletes, and unblock refuses under host load
+- the deploy lane deadlock broken, and main deploying again through 0.2.435
+
+#### daemon
+
+- stopped exhausting the GitHub rate limit: access checks cached per token and repo, in-flight checks deduped, denials never cached
+- `self gc` reads `~/.selfactor/.gc`, so the file that declares cache paths is the only copy
+
+#### governance
+
+- every repair task ever opened was audited, and automatic repair creation stays retired: success counts only after landing, build inclusion and the original symptom stopping
+- external Rotor sessions honour the sanction bypass in excluded checkouts, and session open returns the context rendered for the checkout it resolved
+
+#### cli
+
+- `self artifact find <text>` searches artifacts by free text, and artifact approvals can be watched from the CLI
+- a topic research command
+- local URLs coexist with other loopback redirects and gained `selfactor.local` names
+
+#### suite
+
+- the Zerk site and brand kit shipped with exact lockup proportions, and the Rotor and SGit datasheets were built from the approved designs
+- a Lab experiment workspace with a scoped PostHog adapter, organization loading gated on verified authentication
+- shared account and apps controls across the authenticated surfaces; artifact, bench and brain show their own name and icon again
+- both corporate splash pages built behind a brand plugin, ready for an A/B
+
+#### training
+
+- the auto-decider training and serving PRD landed with its contract
+- product owner and code-improvement agent roles specified
+
+### rotor
+
+- the agent runtime became Rotor end to end: home, command and app bundle, with a first migration that adopts the old app data; the old name no longer appears in the tree
+- profiled instead of rewritten, then the idle CPU burn removed
+  - a change watcher had been re-digesting a multi-gigabyte session store twice a second while a turn streamed; it reuses one connection and short-circuits inside a burst
+  - the prompt cache answers before the skills index walks every file, dead pooled backends are evicted instead of dialled for two minutes, and the session list is page-bound
+- the gateway hands an agent's main chat to the desktop app that sends it, and sends queue while the other app's turn runs
+- subchats show on screen, bot chat delegates a side chat instead of nesting it, and the kanban board is back with its dashboard bundles
+- the roster stops booting every agent at launch, and the Anthropic provider failure is fixed
+- titlebar lockup is the mark plus rotor set in the selfactor face, drawn inline so it stays sharp at fractional zoom
+
+### zerk
+
+- the Zerk rename reached the code: the app folder became apps/zerk across 21,205 files, with golden paths, leak scans and the nightly history export following the move
+- schat packaged as Zerk's browser chat
+  - runs its host in tmux, so `schat --attach` rejoins a chat and `--stop` ends it
+  - starts even when no agent matches, and default titles name the provider the workload actually chose
+  - Stop and Send live in the input card, with owner and repo centred in the footer
+
+### sgit
+
+- `sgit fork <owner>/<repo>` forks, waits for the copy, and provisions it like a clone with an upstream remote
+- hub clones fetch origin and track the default branch, so `git pull` works in a fresh clone
+- the menubar is a quiet menu: settings only on request, no Dock icon, restyled tray icon
+- the datasheet and authoring specimens corrected to what shipped
+
+### rr
+
+- a paid onboarding path and checkout built on a task branch
+- a feature went from the standing mockup through deploy and a smoke test, and the next project has its context document

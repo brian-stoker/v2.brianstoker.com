@@ -229,6 +229,10 @@ const pages: MuiPage[] = [
     pathname: '/.plan/2026-11-04-hal-paused-at-nine.mdx',
     title: 'paused at nine',
   },
+  {
+    pathname: '/.plan/2026-11-05-idle-hands.mdx',
+    title: 'idle hands',
+  },
 ];
 
 export default pages;
