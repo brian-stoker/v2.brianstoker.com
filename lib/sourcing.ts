@@ -9,10 +9,7 @@ if (typeof window === 'undefined') {
   fs = require('fs');
 }
 
-const blogDirs = [
-  path.join(process.cwd(), 'data/.plan'),
-  path.join(process.cwd(), 'pages/home'),
-];
+const blogDir = path.join(process.cwd(), 'data/.plan');
 
 type BlogFileEntry = {
   dir: string;
@@ -24,16 +21,14 @@ const getBlogFileEntries = (ext = '.mdx'): BlogFileEntry[] => {
     return [];
   }
 
-  return blogDirs.flatMap((dir) => {
-    if (!fs.existsSync(dir)) {
-      return [];
-    }
+  if (!fs.existsSync(blogDir)) {
+    return [];
+  }
 
-    return fs
-      .readdirSync(dir)
-      .filter((file: string) => file.endsWith(ext))
-      .map((file: string) => ({ dir, file }));
-  });
+  return fs
+    .readdirSync(blogDir)
+    .filter((file: string) => file.endsWith(ext))
+    .map((file: string) => ({ dir: blogDir, file }));
 };
 
 export interface BlogPostMeta {

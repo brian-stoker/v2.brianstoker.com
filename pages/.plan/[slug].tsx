@@ -39,10 +39,7 @@ interface Docs {
   en: LocalizedDoc;
 }
 
-const planContentDirs = [
-  path.join(process.cwd(), 'data', '.plan'),
-  path.join(process.cwd(), 'pages', 'home'),
-];
+const planContentDir = path.join(process.cwd(), 'data', '.plan');
 
 export default function PlanPost({ source, frontMatter, slug }: MDXPost) {
   const authors = Array.isArray(frontMatter.authors)
@@ -77,21 +74,19 @@ export default function PlanPost({ source, frontMatter, slug }: MDXPost) {
 
 // This function gets called at build time to generate the paths
 export const getStaticPaths: GetStaticPaths = async () => {
-  const slugs = new Set<string>();
+  if (!fs.existsSync(planContentDir)) {
+    return {
+      paths: [],
+      fallback: false,
+    };
+  }
 
-  planContentDirs.forEach((dir) => {
-    if (!fs.existsSync(dir)) {
-      return;
-    }
+  const slugs = fs
+    .readdirSync(planContentDir)
+    .filter((filename) => filename.endsWith('.mdx'))
+    .map((filename) => filename.replace(/\.mdx$/, ''));
 
-    fs.readdirSync(dir)
-      .filter((filename) => filename.endsWith('.mdx'))
-      .forEach((filename) => {
-        slugs.add(filename.replace(/\.mdx$/, ''));
-      });
-  });
-
-  const paths = Array.from(slugs).map((slug) => ({
+  const paths = slugs.map((slug) => ({
     params: { slug },
   }));
 
@@ -104,17 +99,13 @@ export const getStaticPaths: GetStaticPaths = async () => {
 // This function gets called at build time on server-side
 export const getStaticProps: GetStaticProps = async ({ params }) => {
   const slug = params?.slug as string;
-  const mdxDir = planContentDirs.find((dir) =>
-    fs.existsSync(path.join(dir, `${slug}.mdx`)),
-  );
+  const mdxPath = path.join(planContentDir, `${slug}.mdx`);
 
-  if (!mdxDir) {
+  if (!fs.existsSync(mdxPath)) {
     return {
       notFound: true,
     };
   }
-
-  const mdxPath = path.join(mdxDir, `${slug}.mdx`);
 
   // Read file content
   const raw = fs.readFileSync(mdxPath, 'utf8');
