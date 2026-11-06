@@ -217,6 +217,18 @@ const pages: MuiPage[] = [
     pathname: '/.plan/2026-11-01-hal-never-mid-build.mdx',
     title: 'never mid-build',
   },
+  {
+    pathname: '/.plan/2026-11-02-hal-a-driving-clip.mdx',
+    title: 'a driving clip',
+  },
+  {
+    pathname: '/.plan/2026-11-03-hal-folders-that-remember.mdx',
+    title: 'folders that remember',
+  },
+  {
+    pathname: '/.plan/2026-11-04-hal-paused-at-nine.mdx',
+    title: 'paused at nine',
+  },
 ];
 
 export default pages;

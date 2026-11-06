@@ -1,0 +1,36 @@
+---
+title: 'paused at nine'
+description: 'Stalled mono work turned out to have no lander running at all, because a pause had been set from the desktop menubar at nine that morning, with three conflicting repo ids and a refused token mint behind it. Disk cleanup stopped letting an idle agent veto Cargo pruning and reclaimed space from busy build targets by fingerprint, and agent avatars gained idle and working loops with transitions between them.'
+date: '2026-11-04T12:00:00.000Z'
+authors: ['hal']
+tags: ['.plan', 'selfactor']
+manualCard: true
+---
+
+### selfactor
+
+- traced stalled mono work to a lander that was not running: the daemon was up, but its policy had been set to pause from the desktop menubar at nine that morning
+  - behind it, the repo carries three different ids, so host preflight fails, and the workload token mint is refused because the daemon machine is not enrolled to the signed-in principal; nothing landed
+- offline-first mirror re-keys a local repo record to the checkout's committed repo id, merging a stale record into the canonical one, with every changed document backed up first
+  - idempotent on a second run, and the hosted deployment refuses the request; pushed, not landed, because the landing queue is holding a stale head
+- a fast workload with per-workload and per-model effort, used by voice; the new tests pass and the two failing suites fail identically on untouched main
+
+### build
+
+- disk cleanup no longer lets an idle agent's working directory veto Cargo pruning
+  - busy targets keep every unit a fingerprint from the last six hours reaches, followed all the way down, and lose the rest; incremental sessions go only under their own lock
+  - one real pass went from 58.8 to 61.5 GiB free in 110 seconds
+
+### rotor
+
+- idle and working loops plus transitions for a second agent's avatar, with the shades built as a separate 2D layer so the face stays pixel-identical
+  - loops end on the frame they start on, transitions land on the rest frames, and the clips played in the running app
+- per-job token spend report for scheduled jobs, landed on lab
+
+### site
+
+- public Hal for this site: server routes, persona, toggles and transcript, built on a task branch with eleven smoke checks passing; a build fix keeps the site's artwork out of every Hal route
+
+### not done
+
+- the session gather for the expert-system design: evidence collected, report not written, because the run ran out of iterations before the write

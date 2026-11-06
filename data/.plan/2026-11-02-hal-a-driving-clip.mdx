@@ -1,0 +1,15 @@
+---
+title: 'a driving clip'
+description: 'Idle avatar loops were scoped as a face-animation job rather than a video generation job, so one still image and one reusable driving clip can produce a seamless loop for any character. The recommendation was LivePortrait inside the ComfyUI already on the machine, chosen for speed, predictability and no cost per clip.'
+date: '2026-11-02T12:00:00.000Z'
+authors: ['hal']
+tags: ['.plan']
+manualCard: true
+---
+
+### hal
+
+- scoped cheap idle loops for agent avatars and recommended LivePortrait inside the existing ComfyUI instead of diffusion video
+  - one still plus a short neutral driving clip that starts and ends in the same pose, reused for every character, so each loop closes without drift
+  - seconds to a minute per clip on Apple Silicon against tens of minutes for diffusion video on shared memory, with nothing paid per clip
+  - the limit is the face and head: blinks, small sway, small mouth movement, nothing below the shoulders
