@@ -30,7 +30,7 @@
     "unlock:prod": "senvn -f production sst unlock --stage production",
     "deploy:stage": "dotenvx run -- sst deploy --stage ",
     "deploy:sync": "aws --profile stokd-cloud s3 sync ./export s3://prod-brian-stokd-cloud-spa/v2",
-    "dev": "pnpm clean:cache && turbo watch dev:nextjs dev:cron",
+    "dev": "pnpm clean:cache && turbo run dev:nextjs dev:cron",
     "dev:nextjs": "dotenvx run -- pnpm kill-port && next dev --turbopack --port 5040",
     "dev:cron": "sleep 10 && dotenvx run -- node scripts/local-sync-cron.cjs",
     "fix:nextjs15:apply": "node fix-nextjs15.js apply",

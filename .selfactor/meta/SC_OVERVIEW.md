@@ -225,14 +225,15 @@ the others (local axiom `AX-MOD-V2BS-003`). Mongo-client tagging landed in commi
 ### 5.1 Local Development
 
 ```bash
-pnpm dev          # turbo watch: starts dev:nextjs + dev:cron concurrently
+pnpm dev          # turbo run: starts dev:nextjs + dev:cron concurrently
 pnpm dev:nextjs   # Next dev server (Turbopack) on port 5040 — kills 5040 first
 pnpm dev:cron     # local cron driver: scripts/local-sync-cron.cjs (sleep 10s then run)
 ```
 
 `pnpm dev` runs `clean:cache` first (`rimraf .next .open-next`) and uses Turbo’s
 `tui` UI to multiplex the two persistent tasks defined in `turbo.json`. Env is
-loaded via `dotenvx run`. Dev server runs on **port 5040** (repo axiom
+loaded via `dotenvx run`. `turbo run` avoids the daemon required by `turbo watch`;
+Next.js handles hot reload itself. Dev server runs on **port 5040** (repo axiom
 `AX-REPO-DEV-PORT-5040`).
 
 ### 5.2 Build Variants
