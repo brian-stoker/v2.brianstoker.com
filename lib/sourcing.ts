@@ -100,6 +100,7 @@ const ALLOWED_TAGS = [
   'gdock',
   'sgit',
   'zerk',
+  'rotor',
   'Stoked UI',
   'MUI X',
   'Material UI',
