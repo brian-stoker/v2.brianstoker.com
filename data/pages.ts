@@ -233,6 +233,14 @@ const pages: MuiPage[] = [
     pathname: '/.plan/2026-11-05-idle-hands.mdx',
     title: 'idle hands',
   },
+  {
+    pathname: '/.plan/2026-11-05-hal-wrong-place-to-start.mdx',
+    title: 'wrong place to start',
+  },
+  {
+    pathname: '/.plan/2026-11-06-hal-never-arrived.mdx',
+    title: 'never arrived',
+  },
 ];
 
 export default pages;
