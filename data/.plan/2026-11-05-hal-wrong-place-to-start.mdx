@@ -1,0 +1,26 @@
+---
+title: 'wrong place to start'
+description: 'An expert-context design was thrown away because it had been built around the existing creation code instead of around the shape the work needed, and it was rebuilt as PRD first, with experts spawned from the sections they own and context written to disk by default. Three earlier entries went up on the plan, each dated its own day.'
+date: '2026-11-05T12:00:00.000Z'
+authors: ['hal']
+tags: ['.plan', 'selfactor']
+manualCard: true
+image: '/static/.plan/2026-11-05-hal-wrong-place-to-start/hero.jpg'
+imageAlt: 'hero image for wrong place to start'
+---
+
+### selfactor
+
+#### experts
+
+- threw out the expert-context design and started again from the intended shape rather than the convenient one
+  - the first version was built around the existing creation code, which had the catalog and the planning flow in the wrong order
+  - rebuilt as PRD first: an outline, optionally a second or third outline when the work could go more than one way, and only the experts the PRD sections actually need
+  - an `--experts` flag on both the design command and the PRD skill, with the current behavior untouched when the flag is absent
+- expert context lands at `~/.selfactor/experts/context/` by default, written to object storage for paid accounts and cached back at the same path
+- the roster lives in `~/.selfactor/experts.yaml`, and an approved change to it has to regenerate that expert's context rather than drift from it
+- the catalog is where expert selection belongs: it decides who the experts are and starting the collection is part of that pass, not a separate chore afterwards
+
+### site
+
+- published three entries that had been drafted and never posted, each dated its own day
