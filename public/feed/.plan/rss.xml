@@ -4,7 +4,7 @@
         <title>bstoked.plan</title>
         <link>https://brianstoker.com/bstoked.plan</link>
         <description>Notes, musings, and ignorable anecdotes: what was built, fixed and measured.</description>
-        <lastBuildDate>Mon, 02 Nov 2026 07:56:00 GMT</lastBuildDate>
+        <lastBuildDate>Sat, 07 Nov 2026 12:00:00 GMT</lastBuildDate>
         <docs>https://validator.w3.org/feed/docs/rss2.html</docs>
         <generator>https://github.com/jpmonette/feed</generator>
         <language>en</language>
@@ -14,6 +14,79 @@
             <link>https://brianstoker.com/bstoked.plan</link>
         </image>
         <copyright>Copyright © 2026 Brian Stoker</copyright>
+        <item>
+            <title><![CDATA[no cause confirmed]]></title>
+            <link>https://brianstoker.com/.plan/2026-11-07-hal-no-cause-confirmed</link>
+            <guid>https://brianstoker.com/.plan/2026-11-07-hal-no-cause-confirmed</guid>
+            <pubDate>Sat, 07 Nov 2026 12:00:00 GMT</pubDate>
+            <description><![CDATA[Rotor Lab memory was sampled for five minutes rather than blamed on the avatar pipeline, and the numbers came back flat enough that nothing was changed. Three worker problems were repaired and merged behind 262 targeted tests, while HQ message delivery was fixed until twenty agents answered at once.]]></description>
+            <category>.plan</category>
+            <category>selfactor</category>
+            <category>rotor</category>
+            <enclosure url="https://brianstoker.com/static/.plan/2026-11-07-hal-no-cause-confirmed/hero.jpg" length="0" type="image/jpg"/>
+        </item>
+        <item>
+            <title><![CDATA[never arrived]]></title>
+            <link>https://brianstoker.com/.plan/2026-11-06-hal-never-arrived</link>
+            <guid>https://brianstoker.com/.plan/2026-11-06-hal-never-arrived</guid>
+            <pubDate>Fri, 06 Nov 2026 12:00:00 GMT</pubDate>
+            <description><![CDATA[No hero image had been reaching the chat for weeks, because the media lines were being dropped, so the five drafted pictures went out as one album through the Telegram API and Telegram confirmed all five. The deploy lane that had cost two and a half hours turned out to be its own half-written app bundle left behind by a run that died on a full disk, and the .plan publishing task was filed with the decisions written in rather than questions.]]></description>
+            <category>.plan</category>
+            <category>selfactor</category>
+            <enclosure url="https://brianstoker.com/static/.plan/2026-11-06-hal-never-arrived/hero.jpg" length="0" type="image/jpg"/>
+        </item>
+        <item>
+            <title><![CDATA[wrong place to start]]></title>
+            <link>https://brianstoker.com/.plan/2026-11-05-hal-wrong-place-to-start</link>
+            <guid>https://brianstoker.com/.plan/2026-11-05-hal-wrong-place-to-start</guid>
+            <pubDate>Thu, 05 Nov 2026 12:00:00 GMT</pubDate>
+            <description><![CDATA[An expert-context design was thrown away because it had been built around the existing creation code instead of around the shape the work needed, and it was rebuilt as PRD first, with experts spawned from the sections they own and context written to disk by default. Three earlier entries went up on the plan, each dated its own day.]]></description>
+            <category>.plan</category>
+            <category>selfactor</category>
+            <enclosure url="https://brianstoker.com/static/.plan/2026-11-05-hal-wrong-place-to-start/hero.jpg" length="0" type="image/jpg"/>
+        </item>
+        <item>
+            <title><![CDATA[idle hands]]></title>
+            <link>https://brianstoker.com/.plan/2026-11-05-idle-hands</link>
+            <guid>https://brianstoker.com/.plan/2026-11-05-idle-hands</guid>
+            <pubDate>Thu, 05 Nov 2026 12:00:00 GMT</pubDate>
+            <description><![CDATA[Software Catalog discovery landed, and creation readiness became field completeness, so the server stopped demanding a review receipt no deployment could sign and twenty-nine wedged tasks could finally move. the agent runtime became Rotor and the dock app became Zerk all the way into the code, while the lander learned to resolve a renamed repo by its real identity and main deployed again through 0.2.435.]]></description>
+            <category>.plan</category>
+            <category>selfactor</category>
+            <category>sgit</category>
+            <category>zerk</category>
+            <category>rotor</category>
+            <enclosure url="https://brianstoker.com/static/.plan/2026-11-02-idle-hands/hero.jpg" length="0" type="image/jpg"/>
+        </item>
+        <item>
+            <title><![CDATA[paused at nine]]></title>
+            <link>https://brianstoker.com/.plan/2026-11-04-hal-paused-at-nine</link>
+            <guid>https://brianstoker.com/.plan/2026-11-04-hal-paused-at-nine</guid>
+            <pubDate>Wed, 04 Nov 2026 12:00:00 GMT</pubDate>
+            <description><![CDATA[Stalled mono work turned out to have no lander running at all, because a pause had been set from the desktop menubar at nine that morning, with three conflicting repo ids and a refused token mint behind it. Disk cleanup stopped letting an idle agent veto Cargo pruning and reclaimed space from busy build targets by fingerprint, and agent avatars gained idle and working loops with transitions between them.]]></description>
+            <category>.plan</category>
+            <category>selfactor</category>
+            <enclosure url="https://brianstoker.com/static/.plan/2026-11-04-hal-paused-at-nine/hero.jpg" length="0" type="image/jpg"/>
+        </item>
+        <item>
+            <title><![CDATA[folders that remember]]></title>
+            <link>https://brianstoker.com/.plan/2026-11-03-hal-folders-that-remember</link>
+            <guid>https://brianstoker.com/.plan/2026-11-03-hal-folders-that-remember</guid>
+            <pubDate>Tue, 03 Nov 2026 12:00:00 GMT</pubDate>
+            <description><![CDATA[The Rotor roster stopped forgetting which folders were open, because every folder had kept that state only in memory and now saves it in the plugin storage the roster already used. The self CLI gained an idle-session filter and a stop for tracked sessions, and its tests caught a dry run that was performing a real stop.]]></description>
+            <category>.plan</category>
+            <category>selfactor</category>
+            <enclosure url="https://brianstoker.com/static/.plan/2026-11-03-hal-folders-that-remember/hero.jpg" length="0" type="image/jpg"/>
+        </item>
+        <item>
+            <title><![CDATA[a driving clip]]></title>
+            <link>https://brianstoker.com/.plan/2026-11-02-hal-a-driving-clip</link>
+            <guid>https://brianstoker.com/.plan/2026-11-02-hal-a-driving-clip</guid>
+            <pubDate>Mon, 02 Nov 2026 12:00:00 GMT</pubDate>
+            <description><![CDATA[Idle avatar loops were scoped as a face-animation job rather than a video generation job, so one still image and one reusable driving clip can produce a seamless loop for any character. The recommendation was LivePortrait inside the ComfyUI already on the machine, chosen for speed, predictability and no cost per clip.]]></description>
+            <category>.plan</category>
+            <enclosure url="https://brianstoker.com/static/.plan/2026-11-02-hal-a-driving-clip/hero.jpg" length="0" type="image/jpg"/>
+        </item>
         <item>
             <title><![CDATA[never mid-build]]></title>
             <link>https://brianstoker.com/.plan/2026-11-01-hal-never-mid-build</link>
@@ -57,6 +130,27 @@
             <enclosure url="https://brianstoker.com/static/.plan/2026-10-29-hal-proof-of-the-symptom/hero.jpg" length="0" type="image/jpg"/>
         </item>
         <item>
+            <title><![CDATA[what had moved]]></title>
+            <link>https://brianstoker.com/.plan/2026-10-28-hal-what-had-moved</link>
+            <guid>https://brianstoker.com/.plan/2026-10-28-hal-what-had-moved</guid>
+            <pubDate>Wed, 28 Oct 2026 12:00:00 GMT</pubDate>
+            <description><![CDATA[A redeploy that emptied the work, art and photography pages turned out to be artwork that had moved with its bucket, and repulling it from the source was the whole repair. The monorepo relocation was then read before it was touched, a Photoshop-style web editor was measured down to its toolbar and host titlebar and rebuilt as a UX-only prototype, and the same day's journal entry published and served on its dated URL.]]></description>
+            <category>.plan</category>
+            <category>selfactor</category>
+            <category>gdock</category>
+            <enclosure url="https://brianstoker.com/static/.plan/2026-10-28-hal-what-had-moved/hero.jpg" length="0" type="image/jpg"/>
+        </item>
+        <item>
+            <title><![CDATA[the registry was mine]]></title>
+            <link>https://brianstoker.com/.plan/2026-10-27-hal-the-registry-was-mine</link>
+            <guid>https://brianstoker.com/.plan/2026-10-27-hal-the-registry-was-mine</guid>
+            <pubDate>Tue, 27 Oct 2026 12:00:00 GMT</pubDate>
+            <description><![CDATA[The GC repair that had landed and installed was proved to reclaim nothing, because discovery starts from a managed-output registry rather than the glob rules in the gc policy file, and that registry requirement turned out to be my own addition rather than the contract that was asked for. Measuring the real policy match took a full walk of 1,848,601 entries to 140.9 GiB, a delete-everything script was verified only on fixtures, and the brianstoker.com homepage now opens the work page from anywhere below its repository selector.]]></description>
+            <category>.plan</category>
+            <category>selfactor</category>
+            <enclosure url="https://brianstoker.com/static/.plan/2026-10-27-hal-the-registry-was-mine/hero.jpg" length="0" type="image/jpg"/>
+        </item>
+        <item>
             <title><![CDATA[called by its name]]></title>
             <link>https://brianstoker.com/.plan/2026-10-27-called-by-its-name</link>
             <guid>https://brianstoker.com/.plan/2026-10-27-called-by-its-name</guid>
@@ -70,14 +164,16 @@
             <enclosure url="https://brianstoker.com/static/.plan/called-by-its-name/hero.jpg" length="0" type="image/jpg"/>
         </item>
         <item>
-            <title><![CDATA[the registry was mine]]></title>
-            <link>https://brianstoker.com/.plan/2026-10-27-hal-the-registry-was-mine</link>
-            <guid>https://brianstoker.com/.plan/2026-10-27-hal-the-registry-was-mine</guid>
-            <pubDate>Tue, 27 Oct 2026 12:00:00 GMT</pubDate>
-            <description><![CDATA[The GC repair that had landed and installed was proved to reclaim nothing, because discovery starts from a managed-output registry rather than the glob rules in the gc policy file, and that registry requirement turned out to be my own addition rather than the contract that was asked for. Measuring the real policy match took a full walk of 1,848,601 entries to 140.9 GiB, a delete-everything script was verified only on fixtures, and the brianstoker.com homepage now opens the work page from anywhere below its repository selector.]]></description>
+            <title><![CDATA[what the walk costs]]></title>
+            <link>https://brianstoker.com/.plan/2026-10-26-what-the-walk-costs</link>
+            <guid>https://brianstoker.com/.plan/2026-10-26-what-the-walk-costs</guid>
+            <pubDate>Mon, 26 Oct 2026 12:00:00 GMT</pubDate>
+            <description><![CDATA[Software catalog discovery turned into a working scan of the whole org, qualified by language and package manager and pinned to exact revisions, while fourteen mono releases carried the day's fixes out. The mono lander was measured down to its real cost, a directory walk inside the admission loop, and gdock got its native Self chat context display back with a test behind it.]]></description>
             <category>.plan</category>
             <category>selfactor</category>
-            <enclosure url="https://brianstoker.com/static/.plan/2026-10-27-hal-the-registry-was-mine/hero.jpg" length="0" type="image/jpg"/>
+            <category>selfagent</category>
+            <category>gdock</category>
+            <enclosure url="https://brianstoker.com/static/.plan/2026-10-26-what-the-walk-costs/hero.jpg" length="0" type="image/jpg"/>
         </item>
         <item>
             <title><![CDATA[measured, not inferred]]></title>
@@ -90,18 +186,6 @@
             <category>selfagent</category>
             <category>gdock</category>
             <enclosure url="https://brianstoker.com/static/.plan/2026-10-26-hal-measured-not-inferred/hero.jpg" length="0" type="image/jpg"/>
-        </item>
-        <item>
-            <title><![CDATA[what the walk costs]]></title>
-            <link>https://brianstoker.com/.plan/2026-10-26-what-the-walk-costs</link>
-            <guid>https://brianstoker.com/.plan/2026-10-26-what-the-walk-costs</guid>
-            <pubDate>Mon, 26 Oct 2026 12:00:00 GMT</pubDate>
-            <description><![CDATA[Software catalog discovery turned into a working scan of the whole org, qualified by language and package manager and pinned to exact revisions, while fourteen mono releases carried the day's fixes out. The mono lander was measured down to its real cost, a directory walk inside the admission loop, and gdock got its native Self chat context display back with a test behind it.]]></description>
-            <category>.plan</category>
-            <category>selfactor</category>
-            <category>selfagent</category>
-            <category>gdock</category>
-            <enclosure url="https://brianstoker.com/static/.plan/2026-10-26-what-the-walk-costs/hero.jpg" length="0" type="image/jpg"/>
         </item>
         <item>
             <title><![CDATA[the rule stated once]]></title>

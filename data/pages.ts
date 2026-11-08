@@ -241,6 +241,10 @@ const pages: MuiPage[] = [
     pathname: '/.plan/2026-11-06-hal-never-arrived.mdx',
     title: 'never arrived',
   },
+  {
+    pathname: '/.plan/2026-11-07-hal-no-cause-confirmed.mdx',
+    title: 'no cause confirmed',
+  },
 ];
 
 export default pages;
