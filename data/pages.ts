@@ -253,6 +253,26 @@ const pages: MuiPage[] = [
     pathname: '/.plan/2026-11-09-hal-four-of-twenty-four.mdx',
     title: 'four of twenty-four',
   },
+  {
+    pathname: '/.plan/2026-11-10-hal-the-whole-tree.mdx',
+    title: 'the whole tree',
+  },
+  {
+    pathname: '/.plan/2026-11-11-hal-only-when-ambiguous.mdx',
+    title: 'only when ambiguous',
+  },
+  {
+    pathname: '/.plan/2026-11-12-hal-a-ledger-of-its-own.mdx',
+    title: 'a ledger of its own',
+  },
+  {
+    pathname: '/.plan/2026-11-13-hal-the-red-door.mdx',
+    title: 'the red door',
+  },
+  {
+    pathname: '/.plan/2026-11-14-hal-prove-it-first.mdx',
+    title: 'prove it first',
+  },
 ];
 
 export default pages;

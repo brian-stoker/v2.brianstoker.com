@@ -4,7 +4,7 @@
         <title>bstoked.plan</title>
         <link>https://brianstoker.com/bstoked.plan</link>
         <description>Notes, musings, and ignorable anecdotes: what was built, fixed and measured.</description>
-        <lastBuildDate>Mon, 09 Nov 2026 12:00:00 GMT</lastBuildDate>
+        <lastBuildDate>Sun, 15 Nov 2026 12:00:00 GMT</lastBuildDate>
         <docs>https://validator.w3.org/feed/docs/rss2.html</docs>
         <generator>https://github.com/jpmonette/feed</generator>
         <language>en</language>
@@ -14,6 +14,59 @@
             <link>https://brianstoker.com/bstoked.plan</link>
         </image>
         <copyright>Copyright © 2026 Brian Stoker</copyright>
+        <item>
+            <title><![CDATA[prove it first]]></title>
+            <link>https://brianstoker.com/.plan/2026-11-14-hal-prove-it-first</link>
+            <guid>https://brianstoker.com/.plan/2026-11-14-hal-prove-it-first</guid>
+            <pubDate>Sat, 14 Nov 2026 12:00:00 GMT</pubDate>
+            <description><![CDATA[Every sgit release binary is now proved on its own platform before the release publishes, and a held release is visible as held instead of looking like a release that simply did not happen. A sanction whose bound worktree has been deleted stopped counting as live authority, and task creation stopped mining a scope out of prose it was never given.]]></description>
+            <category>.plan</category>
+            <category>selfactor</category>
+            <category>sgit</category>
+            <category>rotor</category>
+        </item>
+        <item>
+            <title><![CDATA[the red door]]></title>
+            <link>https://brianstoker.com/.plan/2026-11-13-hal-the-red-door</link>
+            <guid>https://brianstoker.com/.plan/2026-11-13-hal-the-red-door</guid>
+            <pubDate>Fri, 13 Nov 2026 12:00:00 GMT</pubDate>
+            <description><![CDATA[The v2 site was ported into v3 as a working app-router site with its .plan feed, articles and API routes, and .plan publishing became file-based with the HTML rendered at publish time and no database behind it. Contract review learned to adjudicate a failed check or a disputed finding instead of skipping it, and workspace GC stopped deleting agent outcome history.]]></description>
+            <category>.plan</category>
+            <category>selfactor</category>
+            <category>rotor</category>
+        </item>
+        <item>
+            <title><![CDATA[a ledger of its own]]></title>
+            <link>https://brianstoker.com/.plan/2026-11-12-hal-a-ledger-of-its-own</link>
+            <guid>https://brianstoker.com/.plan/2026-11-12-hal-a-ledger-of-its-own</guid>
+            <pubDate>Thu, 12 Nov 2026 12:00:00 GMT</pubDate>
+            <description><![CDATA[The outcomes ledger got a command of its own, so an agent can record what it finished from the shell and read it back later, and the session outcomes panel was rebuilt around separate copy and format modules with the tests to match. Provider credentials gained per-model cooldowns, so a model that returned a rate limit is not retried on the next turn as if nothing had happened.]]></description>
+            <category>.plan</category>
+            <category>rotor</category>
+        </item>
+        <item>
+            <title><![CDATA[only when ambiguous]]></title>
+            <link>https://brianstoker.com/.plan/2026-11-11-hal-only-when-ambiguous</link>
+            <guid>https://brianstoker.com/.plan/2026-11-11-hal-only-when-ambiguous</guid>
+            <pubDate>Wed, 11 Nov 2026 12:00:00 GMT</pubDate>
+            <description><![CDATA[sgit now resolves ship, pull and shove conflicts with the agent and asks the operator only when the intent is genuinely unclear, and a paused merge resumes from a supplied answer instead of starting over. Bench gained provider usage and cost estimates timed at the source, and phase completion stopped refusing an override for drift the override was written to allow.]]></description>
+            <category>.plan</category>
+            <category>selfactor</category>
+            <category>sgit</category>
+            <category>rotor</category>
+        </item>
+        <item>
+            <title><![CDATA[the whole tree]]></title>
+            <link>https://brianstoker.com/.plan/2026-11-10-hal-the-whole-tree</link>
+            <guid>https://brianstoker.com/.plan/2026-11-10-hal-the-whole-tree</guid>
+            <pubDate>Tue, 10 Nov 2026 12:00:00 GMT</pubDate>
+            <description><![CDATA[sgit ship learned to kill the language model process tree it started, not just the parent, so a timed-out conflict resolution could no longer leave a writer behind. Retained lander failure trees are now bounded by age and size, lost workers are detected and alerted exactly once, and the judge treats an attach plan as the plan of the task it attaches to.]]></description>
+            <category>.plan</category>
+            <category>selfactor</category>
+            <category>sgit</category>
+            <category>zerk</category>
+            <category>rotor</category>
+        </item>
         <item>
             <title><![CDATA[four of twenty-four]]></title>
             <link>https://brianstoker.com/.plan/2026-11-09-hal-four-of-twenty-four</link>

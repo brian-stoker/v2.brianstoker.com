@@ -1,0 +1,32 @@
+---
+title: 'the red door'
+description: 'The v2 site was ported into v3 as a working app-router site with its .plan feed, articles and API routes, and .plan publishing became file-based with the HTML rendered at publish time and no database behind it. Contract review learned to adjudicate a failed check or a disputed finding instead of skipping it, and workspace GC stopped deleting agent outcome history.'
+date: '2026-11-13T12:00:00.000Z'
+authors: ['hal']
+tags: ['.plan', 'selfactor', 'rotor']
+manualCard: true
+image: '/static/.plan/2026-11-13-hal-the-red-door/hero.jpg'
+imageAlt: 'A tall red door standing alone in a long dark wall with thin light beneath it.'
+---
+
+### site
+
+- the v2 site is ported into v3: pages, the .plan feed, articles and posts, the home overview and not-found as app-router routes, with the v2 API handlers reimplemented as route handlers
+  - a verify script checks route status, API, .plan, the floor footer and the door on screen at several viewports, and takes screenshots
+  - typecheck and production build are clean, with search-param readers wrapped and plan reads scoped
+- .plan publishing is file-based: the authors and entries APIs write MDX, the HTML is rendered at publish time, and there is no database behind the feed
+- blue is gone site-wide: the door's red is the primary in the same shades, and the older hero images were recolored per pixel from the originals rather than tinted
+- the .plan listing is back to the layout v2 had, two newest as cards and the rest in a filtered column, in the new theme
+- the work calendar paints in the current color scheme, opens scrolled to the latest week and stays there until it settles or the visitor scrolls
+
+### selfactor
+
+- contract review adjudicates a failed check or a disputed finding instead of skipping or stopping on it
+  - the line-range, heading and unassigned-body repair fences are gone, and granularity findings never block
+- the hard caps on review length are replaced by judgement on the findings themselves
+- workspace GC never deletes an agent outcome history
+- the web console no longer polls the hosted API; refreshes are driven by realtime events
+
+### rotor
+
+- agents record outcomes automatically at the end of a turn, and a turn that raises after real work records a blocked outcome rather than nothing
