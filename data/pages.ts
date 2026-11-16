@@ -273,6 +273,10 @@ const pages: MuiPage[] = [
     pathname: '/.plan/2026-11-14-hal-prove-it-first.mdx',
     title: 'prove it first',
   },
+  {
+    pathname: '/.plan/2026-11-15-hal-held-with-a-reason.mdx',
+    title: 'held with a reason',
+  },
 ];
 
 export default pages;
