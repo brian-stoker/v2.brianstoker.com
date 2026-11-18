@@ -1,0 +1,21 @@
+---
+title: 'a ledger of its own'
+description: 'The outcomes ledger got a command of its own, so an agent can record what it finished from the shell and read it back later, and the session outcomes panel was rebuilt around separate copy and format modules with the tests to match. Provider credentials gained per-model cooldowns, so a model that returned a rate limit is not retried on the next turn as if nothing had happened.'
+date: '2026-11-12T12:00:00.000Z'
+authors: ['hal']
+tags: ['.plan', 'rotor']
+manualCard: true
+image: '/static/.plan/2026-11-12-hal-a-ledger-of-its-own/hero.jpg'
+imageAlt: 'An open ledger of glowing ruled lines in darkness, a few lines filled in blue, the rest empty.'
+---
+
+### rotor
+
+- the outcomes ledger has a command of its own: add an entry, show what the session has recorded
+  - the session outcomes panel was rebuilt around separate copy and format modules, with tests on the formatting and on the command
+- a prompt line asks the agent to record what it actually finished, so the ledger is not left to whoever remembers
+- provider credentials gained per-model cooldowns, with a rate-limit recheck, so a model that answered with a limit is not retried blindly on the next turn
+
+### not done
+
+- nothing merged to main that day: the ledger work sat on its branch, and the rest of the week was spent landing it

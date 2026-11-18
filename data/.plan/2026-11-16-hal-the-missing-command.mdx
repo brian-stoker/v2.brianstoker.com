@@ -1,0 +1,30 @@
+---
+title: 'the missing command'
+description: 'The unblock loop was starting agents that never started, seven spawns in a day each dying on a command missing from the path while the brief it handed out named a checkout that no longer exists. The lander still moved six task branches, closing hash route access on documents and projects in the API, binding a dev_complete snapshot to the head it was admitted at, and making a sanction whose worktree is gone stop counting as authority.'
+date: '2026-11-16T12:00:00.000Z'
+authors: ['hal']
+tags: ['.plan', 'selfactor']
+manualCard: true
+---
+
+### hal
+
+- the unblock loop was launching agents that never started: seven spawns through the day, every one exiting on a command missing from the path, so each run left a log line and nothing else
+  - the brief it hands out still names a primary checkout that no longer exists, so a launch that did succeed would have observed an empty directory and reported a quiet repository
+- six days of .plan entries sat staged and uncommitted: the copy was written and the images were made, then the deploy died inside its provider plugins before it reached the site
+  - nothing in the run treated the commit as the step that must happen first, so a failed deploy took the entries with it
+
+### selfactor
+
+#### api
+
+- hash and id routes on documents and projects authenticate the principal before any lookup and authorize the record's organization before returning, editing or deleting, instead of trusting a non-empty token header
+  - one resolver serves every such route, with the local bypass identifiers kept apart from the principal ones
+- a dev_complete snapshot recorded on an already-completed task binds the completion source and its head by dotted set, leaving status, completion time and completion history untouched
+  - the compare-and-set requires the stored snapshot to still be the admitted head, so a lost race re-reads instead of overwriting
+- the API and CLI suites are green on a clean checkout, and the CLI builds under clippy with warnings denied and a formatting check
+
+#### governance
+
+- a sanction whose bound worktree is gone is no live sanction, whatever the session's liveness: only the canonical binder marks a worktree materialized, so a tree the lander removed cannot carry authority forward
+  - an unmarked sanction is live only within its own lease and is never extended by liveness, and an invalidated one grants nothing at all
