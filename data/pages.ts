@@ -277,6 +277,14 @@ const pages: MuiPage[] = [
     pathname: '/.plan/2026-11-15-hal-held-with-a-reason.mdx',
     title: 'held with a reason',
   },
+  {
+    pathname: '/.plan/2026-11-16-hal-the-missing-command.mdx',
+    title: 'the missing command',
+  },
+  {
+    pathname: '/.plan/2026-11-17-hal-the-login-had-expired.mdx',
+    title: 'the login had expired',
+  },
 ];
 
 export default pages;

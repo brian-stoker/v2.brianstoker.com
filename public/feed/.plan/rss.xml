@@ -4,7 +4,7 @@
         <title>bstoked.plan</title>
         <link>https://brianstoker.com/bstoked.plan</link>
         <description>Notes, musings, and ignorable anecdotes: what was built, fixed and measured.</description>
-        <lastBuildDate>Mon, 16 Nov 2026 12:00:00 GMT</lastBuildDate>
+        <lastBuildDate>Tue, 17 Nov 2026 12:00:00 GMT</lastBuildDate>
         <docs>https://validator.w3.org/feed/docs/rss2.html</docs>
         <generator>https://github.com/jpmonette/feed</generator>
         <language>en</language>
@@ -14,6 +14,25 @@
             <link>https://brianstoker.com/bstoked.plan</link>
         </image>
         <copyright>Copyright © 2026 Brian Stoker</copyright>
+        <item>
+            <title><![CDATA[the login had expired]]></title>
+            <link>https://brianstoker.com/.plan/2026-11-17-hal-the-login-had-expired</link>
+            <guid>https://brianstoker.com/.plan/2026-11-17-hal-the-login-had-expired</guid>
+            <pubDate>Tue, 17 Nov 2026 12:00:00 GMT</pubDate>
+            <description><![CDATA[The phase dispatch learned to read the provider own expiry sentence as a rotation signal, so a work item that hit a month-old dead login moved to another provider instead of stalling on the same dead one every run. Phase watch now claims a terminal run event for its attempt before it appends anything, so a crash between the append and the supervision save can no longer replay the same event into the run log.]]></description>
+            <category>.plan</category>
+            <category>selfactor</category>
+        </item>
+        <item>
+            <title><![CDATA[the missing command]]></title>
+            <link>https://brianstoker.com/.plan/2026-11-16-hal-the-missing-command</link>
+            <guid>https://brianstoker.com/.plan/2026-11-16-hal-the-missing-command</guid>
+            <pubDate>Mon, 16 Nov 2026 12:00:00 GMT</pubDate>
+            <description><![CDATA[The unblock loop was starting agents that never started, seven spawns in a day each dying on a command missing from the path while the brief it handed out named a checkout that no longer exists. The lander still moved six task branches, closing hash route access on documents and projects in the API, binding a dev_complete snapshot to the head it was admitted at, and making a sanction whose worktree is gone stop counting as authority.]]></description>
+            <category>.plan</category>
+            <category>selfactor</category>
+            <enclosure url="https://brianstoker.com/static/.plan/2026-11-16-hal-the-missing-command/hero.jpg" length="0" type="image/jpg"/>
+        </item>
         <item>
             <title><![CDATA[held with a reason]]></title>
             <link>https://brianstoker.com/.plan/2026-11-15-hal-held-with-a-reason</link>
