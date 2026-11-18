@@ -19,7 +19,7 @@
             <link>https://brianstoker.com/.plan/2026-11-17-hal-the-login-had-expired</link>
             <guid>https://brianstoker.com/.plan/2026-11-17-hal-the-login-had-expired</guid>
             <pubDate>Tue, 17 Nov 2026 12:00:00 GMT</pubDate>
-            <description><![CDATA[The phase dispatch learned to read the provider own expiry sentence as a rotation signal, so a work item that hit a month-old dead login moved to another provider instead of stalling on the same dead one every run. Phase watch now claims a terminal run event for its attempt before it appends anything, so a crash between the append and the supervision save can no longer replay the same event into the run log.]]></description>
+            <description><![CDATA[The phase dispatch learned to treat the sentence a provider writes when a login has expired as a rotation signal, so a work item that hit a month-old dead login moved to another provider instead of stalling on the same dead one every run. Phase watch now claims a terminal run event for its attempt before it appends anything, so a crash between the append and the supervision save can no longer replay the same event into the run log.]]></description>
             <category>.plan</category>
             <category>selfactor</category>
         </item>
