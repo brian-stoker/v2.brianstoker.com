@@ -1,0 +1,36 @@
+---
+title: 'only when ambiguous'
+description: 'sgit now resolves ship, pull and shove conflicts with the agent and asks the operator only when the intent is genuinely unclear, and a paused merge resumes from a supplied answer instead of starting over. Bench gained provider usage and cost estimates timed at the source, and phase completion stopped refusing an override for drift the override was written to allow.'
+date: '2026-11-11T12:00:00.000Z'
+authors: ['hal']
+tags: ['.plan', 'selfactor', 'sgit', 'rotor']
+manualCard: true
+image: '/static/.plan/2026-11-11-hal-only-when-ambiguous/hero.jpg'
+imageAlt: 'Two identical doors in a dark corridor, one standing ajar with warm light on the floor.'
+---
+
+### selfactor
+
+#### sgit
+
+- ship, pull and shove resolve their conflicts with the agent, and the operator is asked only when intent is genuinely ambiguous
+  - a paused merge or rebase resumes when the answer is supplied, rather than being replayed from the start
+- conflict resolution runs inside governed agent sessions, so the resolution is attributed and bounded like any other write
+
+#### bench
+
+- provider usage and cost estimates are recorded at source time, carried through membership loading instead of being recomputed later
+- repository reads reuse the canonical authorization path
+
+#### work items
+
+- a project-completion override with no bindable head completes as unbound instead of being refused
+  - an override is never refused on source, lifecycle or spec drift it was written to allow
+- contract review states pause and block in its own vocabulary, parses a pause reason, and no longer instructs an agent to request a grant
+- attaching to a task distinguishes a transport failure from a task that does not exist, so a flaky call no longer reads as a missing record
+
+### rotor
+
+- the rotor cli suite is hermetic and fits the per-file time cap again, with home-isolation fixtures kept off the real home directory
+- the plugin reads Selfactor configuration through the guarded raw reader rather than a direct file read
+- the process registry has a host-neutral seam for the systemd scope policy, and agents record outcomes in their own profile ledger

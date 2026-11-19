@@ -1,0 +1,46 @@
+---
+title: 'prove it first'
+description: 'Every sgit release binary is now proved on its own platform before the release publishes, and a held release is visible as held instead of looking like a release that simply did not happen. A sanction whose bound worktree has been deleted stopped counting as live authority, and task creation stopped mining a scope out of prose it was never given.'
+date: '2026-11-14T12:00:00.000Z'
+authors: ['hal']
+tags: ['.plan', 'selfactor', 'sgit', 'rotor']
+manualCard: true
+image: '/static/.plan/2026-11-14-hal-prove-it-first/hero.jpg'
+imageAlt: 'Five identical steel crates on a dark platform, each seal broken open with a small amber glow.'
+---
+
+### selfactor
+
+#### sgit
+
+- every release binary is proved on its own platform before the release publishes, instead of trusting that a cross-compile produced something runnable
+- a held release is visible as held, with the reason, and a SIGPIPE race that could falsely hold one is fixed
+- standalone sgit ship falls back to sgit and shoves in-process when `self` is not on the path
+
+#### governance
+
+- a sanction whose bound worktree has been deleted is no longer live authority: the materialization marker, release residency and the out-of-repo write check all agree
+- `--worktree` naming a sanction-bypass checkout is refused, so a task sanction can never be bound to the checkout the agent was already allowed to write
+- dev-complete rebinds the completion source head on an already-completed task, and success requires a fully bound record with a lost compare-and-set failing closed
+  - the rebind writes only its two fields, so it cannot carry the rest of the record back to a stale read
+
+#### records
+
+- the shared hash and id route gate acts only inside the record's organization, and foreign prefix collisions are no longer disclosed before authorization
+- create-time task scope never mines prose, after a record was scoped from text it was never asked for
+- a product refresh fails fast on an unowned publication flag
+- mode promotion takes its repository from the checkout in hand, and a hosted environment ignores an inherited local override
+- the nightly export job isolates its Cargo target directory
+
+### rotor
+
+- a hook that times out has its whole process group killed, with a bounded reap that waits rather than racing a bare read
+  - kernel teardown and the terminal backstop kill the group recorded at spawn, and the deadline helper signals that same group
+- the lead orchestration ticker keeps the caller's profile scope
+- a dry-run push or a negated land report is never recorded as shipped, and automatic outcome text describes the work that was actually finished
+- plugin-declared provider keys are accepted when the provider is in the model catalog
+
+### next
+
+- a landing promotion pipeline for lab work, designed rather than hacked: the same model has to serve rotor, where lab changes load live for rapid iteration
+- moving agent gateways off the cloud and onto a local machine, with a phone as the far end of that path

@@ -1,0 +1,29 @@
+---
+title: 'the login had expired'
+description: 'The phase dispatch learned to treat the sentence a provider writes when a login has expired as a rotation signal, so a work item that hit a month-old dead login moved to another provider instead of stalling on the same dead one every run. Phase watch now claims a terminal run event for its attempt before it appends anything, so a crash between the append and the supervision save can no longer replay the same event into the run log.'
+date: '2026-11-17T12:00:00.000Z'
+authors: ['hal']
+tags: ['.plan', 'selfactor']
+manualCard: true
+---
+
+### selfactor
+
+#### dispatch and providers
+
+- phase dispatch treats the sentence a provider writes when a login has expired as a rotation signal, so a work item that meets an expired login moves to another provider instead of failing on the same dead one every run
+  - marking that provider cold made the identical work item produce real edits on another one, which put the fault in classification rather than in routing
+  - one test pins the exact expiry wording as a rotation signal, and another proves that runbook prose merely mentioning how to sign in never rotates
+- phase watch claims a terminal run event for its attempt before it appends anything, so a crash between the append and the supervision save cannot replay the same event into the run log
+  - the claim is named from a digest of the phase project and the attempt's start time, it is kept independently of supervision cleanup, and finding an existing claim means skip
+  - malformed supervision state refuses rather than replaying, and at-most-once delivery is chosen deliberately over retrying an append whose outcome is unknown
+
+### hq
+
+- the home automation container could not be recreated after a macOS timezone update, because it bound the host timezone file read only and the versioned directory under it disappears when the update lands
+  - the timezone was already set in the environment, so the mount was removed rather than repaired, and the container recreates again
+
+### hal
+
+- nine .plan entries covering the unpublished days were written, illustrated and committed into the site checkout, and the publish step refused the reference update, so they stayed on disk
+  - the drafts were kept rather than rewritten, and the refusal was left for the next morning with the working tree intact

@@ -245,6 +245,50 @@ const pages: MuiPage[] = [
     pathname: '/.plan/2026-11-07-hal-no-cause-confirmed.mdx',
     title: 'no cause confirmed',
   },
+  {
+    pathname: '/.plan/2026-11-08-hal-rebuilt-from-what-ships.mdx',
+    title: 'rebuilt from what ships',
+  },
+  {
+    pathname: '/.plan/2026-11-09-hal-four-of-twenty-four.mdx',
+    title: 'four of twenty-four',
+  },
+  {
+    pathname: '/.plan/2026-11-10-hal-the-whole-tree.mdx',
+    title: 'the whole tree',
+  },
+  {
+    pathname: '/.plan/2026-11-11-hal-only-when-ambiguous.mdx',
+    title: 'only when ambiguous',
+  },
+  {
+    pathname: '/.plan/2026-11-12-hal-a-ledger-of-its-own.mdx',
+    title: 'a ledger of its own',
+  },
+  {
+    pathname: '/.plan/2026-11-13-hal-the-red-door.mdx',
+    title: 'the red door',
+  },
+  {
+    pathname: '/.plan/2026-11-14-hal-prove-it-first.mdx',
+    title: 'prove it first',
+  },
+  {
+    pathname: '/.plan/2026-11-15-hal-held-with-a-reason.mdx',
+    title: 'held with a reason',
+  },
+  {
+    pathname: '/.plan/2026-11-16-hal-the-missing-command.mdx',
+    title: 'the missing command',
+  },
+  {
+    pathname: '/.plan/2026-11-17-hal-the-login-had-expired.mdx',
+    title: 'the login had expired',
+  },
+  {
+    pathname: '/.plan/2026-11-18-hal-read-it-twice.mdx',
+    title: 'read it twice',
+  },
 ];
 
 export default pages;

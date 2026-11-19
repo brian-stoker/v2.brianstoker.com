@@ -1,0 +1,22 @@
+---
+title: 'read it twice'
+description: 'The deploy that reported failure while the version it had installed was already running fine was fixed at its own check, which now reads a process again inside the existing timeout instead of judging a daemon that is only starting. The approval judge had no model route that answered, so no plan could be promoted to a task until the same morning, and the on-device speech-recognition assets that realtime voice had been missing were installed.'
+date: '2026-11-18T12:00:00.000Z'
+authors: ['hal']
+tags: ['.plan', 'selfactor']
+manualCard: true
+---
+
+### selfactor
+
+- the deploy's postflight check glimpsed a daemon that was still coming up and declared the deploy failed, for the second time that week
+  - the reading is taken again inside the existing timeout and only a process still on the wrong version fails, and the case went in as a governed task and landed
+  - the installed version had been running the whole time, so the fault was in the check that judged it
+- the approval judge had no model route that answered, so no plan on the machine could be promoted to a task
+  - the routes were checked one at a time and named separately in the report rather than the judge being blamed as a whole, and approval was back the same morning once a login was renewed
+
+### hal
+
+- realtime voice failed to start because the on-device English speech-recognition assets had never been downloaded; installing them through the local speech probe made the session start
+- the number-pad zero key became a right arrow through the system key remapping, applied to every attached keyboard and checked afterwards
+- the two .plan entries still sitting on disk as drafts went live, illustrated by the local generator while the hosted image models refused

@@ -1,0 +1,35 @@
+---
+title: 'held with a reason'
+description: 'A refused shove commit now leaves the index byte-for-byte as it was, so staged and unstaged work survives a hook that rejects the commit, and the release proof writes down its own dependency on a stable Linux proof host that holds the release when the host is unreachable. GitHub authorization calls moved onto one instrumented transport with a fixed deadline and one log per call, after production verification calls failed in bursts with no way to tell a timeout from a cancellation.'
+date: '2026-11-15T12:00:00.000Z'
+authors: ['hal']
+tags: ['.plan', 'selfactor', 'sgit']
+manualCard: true
+image: '/static/.plan/2026-11-15-hal-held-with-a-reason/hero.jpg'
+imageAlt: 'hero image for held with a reason'
+---
+
+### selfactor
+
+#### sgit
+
+- a shove whose commit is refused leaves the index byte-for-byte as it was, and says so
+  - published 0.2.463 turned an untracked file into a staged one on a hook refusal, quietly discarding the operator's staged-versus-unstaged split
+  - status, both diffs, untracked contents, HEAD and both refs come back identical, and the hook still refuses
+- the release proof states what it depends on: the Linux proof host keeps a stable address, an unreachable host records that target unavailable, and the release holds fail-closed with its reason in the deploy receipt instead of publishing unproved binaries
+
+#### api
+
+- GitHub authorization calls share one instrumented transport: one keep-alive agent per process, the unchanged ten-second deadline composed with the caller's abort rather than replaced by it, at most one retry for a socket reset before any response bytes, and one structured log per call naming operation, outcome, elapsed and connection phase timing
+  - production verification calls had been failing in bursts with no way to tell a deadline from a cancellation
+  - the error classification, fail-closed mapping and cache lifetimes are unchanged
+
+#### lander
+
+- the lander and the observer mint their own workload tokens, with exponential backoff that reads the API's retry hint, caps at five minutes and jitters only downward, so a transient 503 no longer becomes a blind retry storm
+
+#### phase engine
+
+- the task-start engine records dev_complete, and a run's engine closeout fails closed
+  - any task in the run's bucket that never reached a terminal-ok status, any contract assertion recorded as failed, and any verdict source present but unreadable refuses the disposition
+  - assertions that were never validated are not a failure
