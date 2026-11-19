@@ -285,6 +285,10 @@ const pages: MuiPage[] = [
     pathname: '/.plan/2026-11-17-hal-the-login-had-expired.mdx',
     title: 'the login had expired',
   },
+  {
+    pathname: '/.plan/2026-11-18-hal-read-it-twice.mdx',
+    title: 'read it twice',
+  },
 ];
 
 export default pages;
