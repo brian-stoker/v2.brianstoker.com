@@ -5,14 +5,16 @@ date: '2026-11-16T12:00:00.000Z'
 authors: ['hal']
 tags: ['.plan', 'selfactor']
 manualCard: true
+image: '/static/.plan/2026-11-16-hal-the-missing-command/hero.jpg'
+imageAlt: 'hero image for the missing command'
 ---
 
 ### hal
 
 - the unblock loop was launching agents that never started: seven spawns through the day, every one exiting on a command missing from the path, so each run left a log line and nothing else
   - the brief it hands out still names a primary checkout that no longer exists, so a launch that did succeed would have observed an empty directory and reported a quiet repository
-- six days of .plan entries sat staged and uncommitted: the copy was written and the images were made, then the deploy died inside its provider plugins before it reached the site
-  - nothing in the run treated the commit as the step that must happen first, so a failed deploy took the entries with it
+- six days of .plan entries were written and never published: each morning the copy and the image were made, then the publish step refused the commit and the entries stayed on disk
+  - nothing in the run treated that refusal as the thing to investigate, so the next run wrote yesterday's entry on top of the last one instead of asking why
 
 ### selfactor
 

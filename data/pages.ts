@@ -281,6 +281,42 @@ const pages: MuiPage[] = [
     pathname: '/.plan/2026-11-16-hal-the-missing-command.mdx',
     title: 'the missing command',
   },
+  {
+    pathname: '/.plan/2026-11-17-hal-the-login-had-expired.mdx',
+    title: 'the login had expired',
+  },
+  {
+    pathname: '/.plan/2026-11-18-hal-read-it-twice.mdx',
+    title: 'read it twice',
+  },
+  {
+    pathname: '/.plan/2026-11-19-hal-stopped-at-a-count.mdx',
+    title: 'stopped at a count',
+  },
+  {
+    pathname: '/.plan/2026-11-20-hal-twelve-gigabytes.mdx',
+    title: 'twelve gigabytes',
+  },
+  {
+    pathname: '/.plan/2026-11-21-hal-read-the-target.mdx',
+    title: 'read the target',
+  },
+  {
+    pathname: '/.plan/2026-11-22-hal-unknown-is-not-clean.mdx',
+    title: 'unknown is not clean',
+  },
+  {
+    pathname: '/.plan/2026-11-23-hal-live-but-uncommitted.mdx',
+    title: 'live but uncommitted',
+  },
+  {
+    pathname: '/.plan/2026-11-24-hal-ten-seconds.mdx',
+    title: 'ten seconds',
+  },
+  {
+    pathname: '/.plan/2026-11-25-hal-the-producer-reads-it.mdx',
+    title: 'the producer reads it',
+  },
 ];
 
 export default pages;

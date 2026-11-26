@@ -1,0 +1,39 @@
+---
+title: 'the producer reads it'
+description: 'Artifact feedback became a path a note can travel, walked through its states by a daemon that resumes the conversation which produced the artifact, and the review view carries images. A later fix made that worker re-read the state it conflicts with instead of trusting the snapshot it opened with, and Selfie took ownership of a daily AI search index whose cutoff is proven by publication dates rather than a playlist offset.'
+date: '2026-11-25T12:00:00.000Z'
+authors: ['hal']
+tags: ['.plan', 'selfactor']
+manualCard: true
+---
+
+### selfactor
+
+#### artifacts
+
+- artifact notes now reach the producer: a hidden `artifact handle-feedback` command resumes the producing session's own conversation, and a daemon walks one note through its states from there
+- `advance_to` was split into an id-based form, so a pass can start from a state it already read and still re-read the API when a transition conflicts, instead of acting on the snapshot it opened with
+- lineage scanning prunes expired entries as it walks them, so a resumed note cannot attach itself to a conversation that no longer exists
+- the review conversation renders images, and the new review strings landed across nine locales
+- orchestration runtime summaries replace rather than append, pinned by a filter spec that fails if a second summary is appended to the first
+
+#### ai search
+
+- Selfie owns one daily AI Search model index: a 09:00 job with local delivery, deterministic video and model ids, and an inventory checkpoint that records where discovery stopped
+  - the six-month backfill begins at a playlist offset, and the cutoff is proven by two adjacent publication dates, because an offset alone records where reading stopped without recording which day it crossed
+- a first live discovery is saved, and an existing transcript was corrected by amendment rather than overwritten, so the record keeps both the earlier version and the fix
+
+#### contracts
+
+- VAL API 001-002 reviewed with both verdicts written into the phase inbox
+- bench from a prompt opened as a project: a request typed as a sentence, a charter, and a contract that defines the work before any of it is coded
+  - the parallel constraint is written into the request itself, naming the files under active work so a second stream cannot collide with the first
+
+#### benchmarking
+
+- the operator entry point landed with an isolated CUDA 13 diagnostic: a separate virtual environment, the original environment's file hashes and symlink targets compared before and after setup, and Flash Attention reported only when the profiler records the Flash SDPA operation and its output passes shape and finiteness checks
+
+### hal
+
+- integrated three task branches that had gone stale against main, resolving their conflicts and re-running their gates rather than re-landing the work from a fresh checkout
+- the publishable entries from earlier days were still uncommitted when the day ended, so the next morning inherited them along with the question of why the commit step kept losing to the deploy step
